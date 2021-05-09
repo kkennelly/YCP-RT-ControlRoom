@@ -99,6 +99,7 @@ namespace ControlRoomApplication.Main
             this.IFGainToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.frequencyToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.offsetVoltageToolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.lblMotorsMoving = new System.Windows.Forms.Label();
             this.RAIncGroupbox.SuspendLayout();
             this.overRideGroupbox.SuspendLayout();
             this.decIncGroupbox.SuspendLayout();
@@ -537,6 +538,7 @@ namespace ControlRoomApplication.Main
             // manualGroupBox
             // 
             this.manualGroupBox.BackColor = System.Drawing.Color.Gainsboro;
+            this.manualGroupBox.Controls.Add(this.lblMotorsMoving);
             this.manualGroupBox.Controls.Add(this.speedTrackBar);
             this.manualGroupBox.Controls.Add(this.label4);
             this.manualGroupBox.Controls.Add(this.label5);
@@ -954,6 +956,17 @@ namespace ControlRoomApplication.Main
             this.scanTypeComboBox.TabIndex = 25;
             this.scanTypeComboBox.SelectedIndexChanged += new System.EventHandler(this.scanTypeComboBox_SelectedIndexChanged);
             // 
+            // lblMotorsMoving
+            // 
+            this.lblMotorsMoving.AutoSize = true;
+            this.lblMotorsMoving.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblMotorsMoving.Location = new System.Drawing.Point(204, 70);
+            this.lblMotorsMoving.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblMotorsMoving.Name = "lblMotorsMoving";
+            this.lblMotorsMoving.Size = new System.Drawing.Size(13, 13);
+            this.lblMotorsMoving.TabIndex = 29;
+            this.lblMotorsMoving.Text = "0";
+            // 
             // FreeControlForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1057,7 +1070,6 @@ namespace ControlRoomApplication.Main
         private System.Windows.Forms.ToolTip offsetVoltageToolTip;
         private System.Windows.Forms.ToolTip frequencyToolTip;
         private System.Windows.Forms.TrackBar speedTrackBar;
-    
-
+        private System.Windows.Forms.Label lblMotorsMoving;
     }
 }

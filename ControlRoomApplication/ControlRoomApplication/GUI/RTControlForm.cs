@@ -322,6 +322,7 @@ namespace ControlRoomApplication.Main
 
                 ActualRATextBox.Text = ConvertedPosition.RightAscension.ToString("0.##");
                 ActualDecTextBox.Text = ConvertedPosition.Declination.ToString("0.##");
+                lblMotorsMoving.Text = "az " + rtController.RadioTelescope.PLCDriver.MotorsCurrentlyMoving(RadioTelescopeAxisEnum.AZIMUTH).ToString() + "\nel " + rtController.RadioTelescope.PLCDriver.MotorsCurrentlyMoving(RadioTelescopeAxisEnum.AZIMUTH).ToString();
             });
         }
 

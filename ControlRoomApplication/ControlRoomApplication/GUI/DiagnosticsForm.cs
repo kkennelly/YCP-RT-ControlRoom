@@ -589,16 +589,18 @@ namespace ControlRoomApplication.GUI
                 if (cbOld != null && Acceleration.SequenceEquals(cbOld, cbAccel))
                 {
                     double X_out, Y_out, Z_out;
-                    X_out = cbAccel[cbAccel.Length - 1].x / 512.0;
-                    Y_out = cbAccel[cbAccel.Length - 1].y / 512.0;
-                    Z_out = cbAccel[cbAccel.Length - 1].z / 512.0;
-                    double roll = Math.Atan(Y_out / Math.Sqrt(Math.Pow(X_out, 2) + Math.Pow(Z_out, 2))) * 180.0 / Math.PI;
-                    logger.Info(roll);
+                    X_out = cbAccel[cbAccel.Length - 1].x / 256.0;
+                    Y_out = cbAccel[cbAccel.Length - 1].y / 256.0;
+                    Z_out = cbAccel[cbAccel.Length - 1].z / 256.0;
+                    double pitch = 90 - Math.Atan(-1 * X_out / Math.Sqrt(Math.Pow(Y_out, 2) + Math.Pow(Z_out, 2))) * 180 / Math.PI;
+                    //double roll = Math.Atan(Y_out / Math.Sqrt(Math.Pow(X_out, 2) + Math.Pow(Z_out, 2))) * 180.0 / Math.PI;
+                
+                    //logger.Info(pitch);
                     for (int i = 0; i < cbAccel.Length; i++)
                     {
                         //double pitch = Math.Atan(-1 * cbAccel[i].x / Math.Sqrt(Math.Pow(cbAccel[i].y, 2) + Math.Pow(cbAccel[i].z, 2))) * 180 / Math.PI;
                         //double roll = Math.Atan(cbAccel[i].y / Math.Sqrt(Math.Pow(cbAccel[i].x, 2) + Math.Pow(cbAccel[i].z,2))) * 180 / Math.PI;
-                        logger.Info(roll);
+                        logger.Info(pitch);
 
                         counterBalanceAccChart.Series["x"].Points.AddY(cbAccel[i].x);
                         counterBalanceAccChart.Series["y"].Points.AddY(cbAccel[i].y);

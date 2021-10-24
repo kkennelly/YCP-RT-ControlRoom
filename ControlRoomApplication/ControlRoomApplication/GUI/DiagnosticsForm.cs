@@ -588,20 +588,10 @@ namespace ControlRoomApplication.GUI
 
                 if (cbOld != null && Acceleration.SequenceEquals(cbOld, cbAccel))
                 {
-                    double X_out, Y_out, Z_out;
-                    X_out = cbAccel[cbAccel.Length - 1].x / 256.0;
-                    Y_out = cbAccel[cbAccel.Length - 1].y / 256.0;
-                    Z_out = cbAccel[cbAccel.Length - 1].z / 256.0;
-                    double pitch = 90 - Math.Atan(-1 * X_out / Math.Sqrt(Math.Pow(Y_out, 2) + Math.Pow(Z_out, 2))) * 180 / Math.PI;
-                    //double roll = Math.Atan(Y_out / Math.Sqrt(Math.Pow(X_out, 2) + Math.Pow(Z_out, 2))) * 180.0 / Math.PI;
-                
-                    //logger.Info(pitch);
+                    double y_sum = 0, z_sum = 0, x_sum = 0;
+
                     for (int i = 0; i < cbAccel.Length; i++)
                     {
-                        //double pitch = Math.Atan(-1 * cbAccel[i].x / Math.Sqrt(Math.Pow(cbAccel[i].y, 2) + Math.Pow(cbAccel[i].z, 2))) * 180 / Math.PI;
-                        //double roll = Math.Atan(cbAccel[i].y / Math.Sqrt(Math.Pow(cbAccel[i].x, 2) + Math.Pow(cbAccel[i].z,2))) * 180 / Math.PI;
-                        logger.Info(pitch);
-
                         counterBalanceAccChart.Series["x"].Points.AddY(cbAccel[i].x);
                         counterBalanceAccChart.Series["y"].Points.AddY(cbAccel[i].y);
                         counterBalanceAccChart.Series["z"].Points.AddY(cbAccel[i].z);
@@ -616,7 +606,28 @@ namespace ControlRoomApplication.GUI
                             counterBalanceAccChart.Series["accel"].Points.RemoveAt(0);
                         }
                         counterBalanceAccChart.ChartAreas[0].RecalculateAxesScale();
+
+                        // Gather a sum of all the accerlometer data
+                        y_sum += cbAccel[i].y;
+                        z_sum += cbAccel[i].z;
+                        x_sum += cbAccel[i].x;
                     }
+
+                    // Get an average of all accelerometer data for a more precise reading
+                    double y_avg = y_sum / cbAccel.Length;
+                    double x_avg = x_sum / cbAccel.Length;
+                    double z_avg = z_sum / cbAccel.Length;
+
+                    // Map the accerlerometer output values to their proper G-force range
+                    double X_out = x_avg / 256.0;
+                    double Y_out = y_avg / 256.0;
+                    double Z_out = z_avg / 256.0;
+
+                    //double pitch = 90 - Math.Atan(-1 * X_out / Math.Sqrt(Math.Pow(Y_out, 2) + Math.Pow(Z_out, 2))) * 180 / Math.PI;
+
+                    // Calculate roll orientation
+                    double roll = 90 + Math.Atan2(Z_out, Y_out) * 180.0 / Math.PI + 0.4;
+                    logger.Info(roll);
                 }
 
                 cbOld = cbAccel;

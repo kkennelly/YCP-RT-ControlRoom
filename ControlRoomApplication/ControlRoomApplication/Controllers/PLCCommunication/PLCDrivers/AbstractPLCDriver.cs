@@ -149,5 +149,7 @@ namespace ControlRoomApplication.Controllers
         public abstract bool MotorsCurrentlyMoving(RadioTelescopeAxisEnum axis = RadioTelescopeAxisEnum.BOTH);
 
         public abstract void SetFinalOffset(Orientation finalPos);
+
+        public abstract RadioTelescopeDirectionEnum GetRadioTelescopeDirectionEnum(RadioTelescopeAxisEnum axis);
     }
 }

@@ -169,5 +169,10 @@ namespace ControlRoomApplication.Controllers
         {
             driver.SetFinalOffset(finalPos);
         }
+
+        public override RadioTelescopeDirectionEnum GetRadioTelescopeDirectionEnum(RadioTelescopeAxisEnum axis)
+        {
+                return driver.GetRadioTelescopeDirectionEnum(axis);
+        }
     }
 }

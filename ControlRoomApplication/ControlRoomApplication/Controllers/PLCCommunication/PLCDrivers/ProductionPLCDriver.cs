@@ -679,5 +679,78 @@ namespace ControlRoomApplication.Controllers
         {
             MCU.FinalPositionOffset = finalPos;
         }
+
+        public override RadioTelescopeDirectionEnum GetRadioTelescopeDirectionEnum(RadioTelescopeAxisEnum axis)
+        {
+            //ushort[] directionData = MCU.ReadMCURegisters(10, 1);
+
+            switch (axis)
+            {
+                //Axes must be checked independently because the MCU commands for motor moves have the same value for both Az and El
+                /* case RadioTelescopeAxisEnum.AZIMUTH:
+                  ushort[] directionData = MCU.ReadMCURegisters(10, 1);
+                   //only checking AZ because of possible sim bug 
+                   if ((directionData[(int)MCUConstants.MCUOutputRegs.AZ_Status_Bist_MSW] >> (int)MCUConstants.MCUStatusBitsMSW.CCW_Motion & 0b1) == 1)
+                   {
+                       logger.Info("Azimuth Counter Clockwise");
+                       return RadioTelescopeDirectionEnum.CounterclockwiseOrPositive;
+                   }
+
+                   if ((directionData[(int)MCUConstants.MCUOutputRegs.AZ_Status_Bist_MSW] >> (int)MCUConstants.MCUStatusBitsMSW.CW_Motion & 0b1) == 1)
+                   {
+                       logger.Info("Azimuth clockwise");
+                       return RadioTelescopeDirectionEnum.ClockwiseOrNegative;
+                   }
+
+                   //check for homing, have to read 18 bits from the MCU
+                   directionData = MCU.ReadMCURegisters(0, 18);
+                   if ((directionData[(int)MCUConstants.MCUOutputRegs.AZ_Status_Bist_LSW] >> (int)MCUConstants.MCUStutusBitsLSW.Home_Input & 0b1) == 1)
+                   {
+                       logger.Info("Azimuth Clockwise Homing");
+                       return RadioTelescopeDirectionEnum.ClockwiseHoming;
+                   }
+
+                   break;
+                   */
+
+                case RadioTelescopeAxisEnum.ELEVATION:
+                    //in practice, only need to check the elevation
+                    ushort[] directionData = MCU.ReadMCURegisters(10, 2);
+                   
+
+                    if (((directionData[0] >> (int)MCUConstants.MCUStatusBitsMSW.CCW_Motion) & 0b1) == 1)
+                    {
+                        logger.Info("Elevation Counter Clockwise (in simulation, UP) ");
+                        return RadioTelescopeDirectionEnum.CounterclockwiseOrPositive;
+                    }
+
+                    if (((directionData[0] >> (int)MCUConstants.MCUStatusBitsMSW.CW_Motion) & 0b1) == 1)
+                    {
+                        logger.Info("Elevation Clockwise (in simulation, DOWN)");
+                        return RadioTelescopeDirectionEnum.ClockwiseOrNegative;
+                    }
+
+                   // directionData = MCU.ReadMCURegisters(0, 18);
+                    if ((directionData[1] >> (int)MCUConstants.MCUStutusBitsLSW.Home_Input & 0b1) == 1)
+                    {
+                        logger.Info("Elevation Clockwise HOME");
+                        return RadioTelescopeDirectionEnum.ClockwiseHoming;
+                    }
+
+                    break;
+
+                default:
+                    //This function can only accept a single axis (either Az or El)
+                    //see comment at top of function
+                    throw new ArgumentException();
+            }
+
+            return RadioTelescopeDirectionEnum.None;
+
+            
+
+
+        }
+
     }
 }

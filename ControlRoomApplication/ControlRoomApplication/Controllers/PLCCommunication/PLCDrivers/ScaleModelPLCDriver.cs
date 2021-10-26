@@ -370,5 +370,10 @@ namespace ControlRoomApplication.Controllers {
         {
             throw new NotImplementedException();
         }
+
+        public override RadioTelescopeDirectionEnum GetRadioTelescopeDirectionEnum(RadioTelescopeAxisEnum axis)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

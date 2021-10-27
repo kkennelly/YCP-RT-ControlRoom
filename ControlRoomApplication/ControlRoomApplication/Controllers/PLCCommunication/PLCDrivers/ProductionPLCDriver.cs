@@ -702,8 +702,6 @@ namespace ControlRoomApplication.Controllers
                        return RadioTelescopeDirectionEnum.ClockwiseOrNegative;
                    }
 
-                   //check for homing, have to read 18 bits from the MCU
-                   directionData = MCU.ReadMCURegisters(0, 18);
                    if ((directionData[(int)MCUConstants.MCUOutputRegs.AZ_Status_Bist_LSW] >> (int)MCUConstants.MCUStutusBitsLSW.Home_Input & 0b1) == 1)
                    {
                        logger.Info("Azimuth Clockwise Homing");
@@ -729,7 +727,6 @@ namespace ControlRoomApplication.Controllers
                         return RadioTelescopeDirectionEnum.ClockwiseOrNegative;
                     }
 
-                   // directionData = MCU.ReadMCURegisters(0, 18);
                     if ((directionData[(int)MCUConstants.MCUOutputRegs.EL_Status_Bist_LSW-10] >> (int)MCUConstants.MCUStutusBitsLSW.Home_Input & 0b1) == 1)
                     {
                         logger.Info("Elevation Clockwise HOME");
@@ -745,9 +742,6 @@ namespace ControlRoomApplication.Controllers
             }
 
             return RadioTelescopeDirectionEnum.None;
-
-            
-
 
         }
 

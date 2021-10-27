@@ -511,6 +511,10 @@ namespace ControlRoomApplication.Main
 
                 newRT.Id = DatabaseOperations.FetchLastRadioTelescope().Id;
 
+                // Set software stops
+                newRT.maxElevationDegrees = MiscellaneousConstants.MAX_SOFTWARE_STOP_EL_DEGREES;
+                newRT.minElevationDegrees = MiscellaneousConstants.MIN_SOFTWARE_STOP_EL_DEGREES;
+
                 //Turn telescope on in database 
                 newRT.online = 1;
                 DatabaseOperations.UpdateTelescope(newRT);

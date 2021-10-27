@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using ControlRoomApplication.Controllers;
 using System;
 using ControlRoomApplication.Controllers.SensorNetwork;
+using ControlRoomApplication.Constants;
 
 namespace ControlRoomApplication.Entities
 {
@@ -22,6 +23,8 @@ namespace ControlRoomApplication.Entities
             CalibrationOrientation = calibrationOrientation;
             Location = location;
             CurrentOrientation = new Orientation();
+            maxElevationDegrees = MiscellaneousConstants.MAX_SOFTWARE_STOP_EL_DEGREES;
+            minElevationDegrees = MiscellaneousConstants.MIN_SOFTWARE_STOP_EL_DEGREES;
         }
 
         public RadioTelescope(AbstractSpectraCyberController spectraCyberController, AbstractPLCDriver plcCommsHandler, Location location, Orientation calibrationOrientation, int localDBID) {
@@ -31,6 +34,8 @@ namespace ControlRoomApplication.Entities
             Location = location;
             CurrentOrientation = new Orientation();
             Id = localDBID;
+            maxElevationDegrees = MiscellaneousConstants.MAX_SOFTWARE_STOP_EL_DEGREES;
+            minElevationDegrees = MiscellaneousConstants.MIN_SOFTWARE_STOP_EL_DEGREES;
         }
 
         [Key]
@@ -39,7 +44,13 @@ namespace ControlRoomApplication.Entities
 
         [Column("online")]
         public int online { get; set; }
-        
+
+        [Column("elevation_max_degree")]
+        public double maxElevationDegrees { get; set; }
+
+        [Column("elevation_min_degree")]
+        public double minElevationDegrees { get; set; }
+
         public int current_orientation_id { get; set; }
         [ForeignKey("current_orientation_id")]
         public Orientation CurrentOrientation { get; set; }

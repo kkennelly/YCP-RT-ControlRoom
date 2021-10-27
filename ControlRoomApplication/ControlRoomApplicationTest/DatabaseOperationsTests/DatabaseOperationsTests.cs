@@ -366,6 +366,8 @@ namespace ControlRoomApplicationTest.DatabaseOperationsTests
             telescope.CalibrationOrientation = new Orientation(30, 30);
             telescope.Location = new Location(1, 2, 3, "test");
             telescope._TeleType = RadioTelescopeTypeEnum.SLIP_RING;
+            telescope.maxElevationDegrees = MiscellaneousConstants.MAX_SOFTWARE_STOP_EL_DEGREES;
+            telescope.minElevationDegrees = MiscellaneousConstants.MIN_SOFTWARE_STOP_EL_DEGREES;
 
             DatabaseOperations.AddRadioTelescope(telescope);
 
@@ -393,6 +395,10 @@ namespace ControlRoomApplicationTest.DatabaseOperationsTests
             Assert.IsTrue(telescope.CalibrationOrientation.Azimuth == retrievedTele.CalibrationOrientation.Azimuth);
             Assert.IsTrue(telescope.CalibrationOrientation.Elevation == retrievedTele.CalibrationOrientation.Elevation);
 
+            // elevation thresholds
+            Assert.IsTrue(telescope.maxElevationDegrees == retrievedTele.maxElevationDegrees);
+            Assert.IsTrue(telescope.minElevationDegrees == retrievedTele.minElevationDegrees);
+
             // test FetchByID
             // we will never have this many telescopes, just ensuring null operation performed correctly
             Assert.IsTrue(DatabaseOperations.FetchRadioTelescopeByID(32323232) == null);
@@ -410,6 +416,8 @@ namespace ControlRoomApplicationTest.DatabaseOperationsTests
             Assert.IsTrue(teleByID.CurrentOrientation.Elevation == retrievedTele.CurrentOrientation.Elevation);
             Assert.IsTrue(teleByID.CalibrationOrientation.Azimuth == retrievedTele.CalibrationOrientation.Azimuth);
             Assert.IsTrue(teleByID.CalibrationOrientation.Elevation == retrievedTele.CalibrationOrientation.Elevation);
+            Assert.IsTrue(teleByID.maxElevationDegrees == retrievedTele.maxElevationDegrees);
+            Assert.IsTrue(teleByID.minElevationDegrees == retrievedTele.minElevationDegrees);
         }
 
         [TestMethod]
@@ -569,6 +577,8 @@ namespace ControlRoomApplicationTest.DatabaseOperationsTests
             telescope.CalibrationOrientation = new Orientation(0, 0);
             telescope.Location = new Location(0, 0, 0, "");
             telescope._TeleType = RadioTelescopeTypeEnum.NONE;
+            telescope.maxElevationDegrees = MiscellaneousConstants.MAX_SOFTWARE_STOP_EL_DEGREES;
+            telescope.minElevationDegrees = MiscellaneousConstants.MIN_SOFTWARE_STOP_EL_DEGREES;
             DatabaseOperations.AddRadioTelescope(telescope);
             RadioTelescope retrievedTele = DatabaseOperations.FetchLastRadioTelescope();
 
@@ -584,6 +594,8 @@ namespace ControlRoomApplicationTest.DatabaseOperationsTests
             telescope.CalibrationOrientation = new Orientation(30, 30);
             telescope.Location = new Location(1, 2, 3, "test");
             telescope._TeleType = RadioTelescopeTypeEnum.SLIP_RING;
+            telescope.maxElevationDegrees = 90;
+            telescope.minElevationDegrees = 0;
 
             DatabaseOperations.UpdateTelescope(telescope);
 
@@ -608,6 +620,10 @@ namespace ControlRoomApplicationTest.DatabaseOperationsTests
             // calibration orientation (not yet implemented)
             Assert.IsTrue(telescope.CalibrationOrientation.Azimuth == retrievedTele.CalibrationOrientation.Azimuth);
             Assert.IsTrue(telescope.CalibrationOrientation.Elevation == retrievedTele.CalibrationOrientation.Elevation);
+
+            // elevation thresholds
+            Assert.IsTrue(telescope.maxElevationDegrees == retrievedTele.maxElevationDegrees);
+            Assert.IsTrue(telescope.minElevationDegrees == retrievedTele.minElevationDegrees);
         }
 
         [TestMethod]

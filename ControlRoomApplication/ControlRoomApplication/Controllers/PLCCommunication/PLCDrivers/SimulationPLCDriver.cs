@@ -155,7 +155,7 @@ namespace ControlRoomApplication.Controllers
             return driver.CheckMCUErrors();
         }
 
-        public override bool InterruptMovementAndWaitUntilStopped()
+        public override bool InterruptMovementAndWaitUntilStopped(bool isCriticalMovement = false)
         {
             return driver.InterruptMovementAndWaitUntilStopped();
         }

@@ -638,8 +638,9 @@ namespace ControlRoomApplication.Controllers
         /// If no motors are moving when this is called, then it will not wait, and just be
         /// able to pass through.
         /// </summary>
+        /// <param name="isCriticalMovement">Specify whether or not this is a critical movement</param>
         /// <returns>True if it had to wait for a movement, false if it did not have to wait and there is no movement running.</returns>
-        public override bool InterruptMovementAndWaitUntilStopped()
+        public override bool InterruptMovementAndWaitUntilStopped(bool isCriticalMovement = false)
         {
             bool motorsMoving = MCU.MotorsCurrentlyMoving();
 

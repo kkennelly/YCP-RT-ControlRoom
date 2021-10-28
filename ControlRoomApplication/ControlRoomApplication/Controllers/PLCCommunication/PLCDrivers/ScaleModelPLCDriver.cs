@@ -356,7 +356,7 @@ namespace ControlRoomApplication.Controllers {
             throw new NotImplementedException();
         }
 
-        public override bool InterruptMovementAndWaitUntilStopped()
+        public override bool InterruptMovementAndWaitUntilStopped(bool isCriticalMovement = false)
         {
             throw new NotImplementedException();
         }

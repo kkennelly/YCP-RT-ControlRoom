@@ -155,9 +155,9 @@ namespace ControlRoomApplication.Controllers
             return driver.CheckMCUErrors();
         }
 
-        public override bool InterruptMovementAndWaitUntilStopped(bool isCriticalMovement = false)
+        public override bool InterruptMovementAndWaitUntilStopped(bool isCriticalMovementInterrupt = false)
         {
-            return driver.InterruptMovementAndWaitUntilStopped();
+            return driver.InterruptMovementAndWaitUntilStopped(isCriticalMovementInterrupt);
         }
 
         public override bool MotorsCurrentlyMoving(RadioTelescopeAxisEnum axis = RadioTelescopeAxisEnum.BOTH)

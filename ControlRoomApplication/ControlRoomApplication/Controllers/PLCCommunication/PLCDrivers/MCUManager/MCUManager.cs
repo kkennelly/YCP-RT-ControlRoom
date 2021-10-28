@@ -21,6 +21,7 @@ namespace ControlRoomApplication.Controllers {
     public class MCUManager {
         private static readonly log4net.ILog logger = log4net.LogManager.GetLogger( System.Reflection.MethodBase.GetCurrentMethod().DeclaringType );
         public bool MovementInterruptFlag = false;
+        public bool CriticalMovementInterruptFlag = false;
 
         private long MCU_last_contact = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         private Thread HeartbeatMonitorThread;
@@ -931,7 +932,16 @@ namespace ControlRoomApplication.Controllers {
                     result = MovementResult.Interrupted;
                 }
 
-                ControlledStop();
+                // A critical movement interrupt signals an immediate stop
+                if (CriticalMovementInterruptFlag)
+                {
+                    CriticalMovementInterruptFlag = false;
+                    ImmediateStop();
+                }
+                else
+                {
+                    ControlledStop();
+                }
             }
 
             command.completed = true;

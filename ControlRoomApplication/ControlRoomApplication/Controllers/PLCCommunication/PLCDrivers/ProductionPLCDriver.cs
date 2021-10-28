@@ -638,9 +638,9 @@ namespace ControlRoomApplication.Controllers
         /// If no motors are moving when this is called, then it will not wait, and just be
         /// able to pass through.
         /// </summary>
-        /// <param name="isCriticalMovement">Specify whether or not this is a critical movement</param>
+        /// <param name="isCriticalMovementInterrupt">Specify whether or not this is a critical movement interrupt</param>
         /// <returns>True if it had to wait for a movement, false if it did not have to wait and there is no movement running.</returns>
-        public override bool InterruptMovementAndWaitUntilStopped(bool isCriticalMovement = false)
+        public override bool InterruptMovementAndWaitUntilStopped(bool isCriticalMovementInterrupt = false)
         {
             bool motorsMoving = MCU.MotorsCurrentlyMoving();
 
@@ -649,11 +649,18 @@ namespace ControlRoomApplication.Controllers
                 logger.Info(Utilities.GetTimeStamp() + ": Overriding current movement...");
                 MCU.MovementInterruptFlag = true;
 
-                // Wait until motors stop moving or the interrupt flag is set back to false,
+                // Set corresponding flag depending on whether or not this is a critical movement interrupt
+                if (isCriticalMovementInterrupt)
+                {
+                    MCU.CriticalMovementInterruptFlag = true;
+                }
+
+                // Wait until motors stop moving or both interrupt flags are set back to false,
                 // meaning the MCU has acknowledged and acted on the interrupt.
-                while(MotorsCurrentlyMoving() && MCU.MovementInterruptFlag == true) ;
+                while (MotorsCurrentlyMoving() && (MCU.MovementInterruptFlag == true || MCU.CriticalMovementInterruptFlag == true)) ;
 
                 MCU.MovementInterruptFlag = false;
+                MCU.CriticalMovementInterruptFlag = false;
 
                 // Ensure there is plenty of time between MCU commands
                 Thread.Sleep(2000);

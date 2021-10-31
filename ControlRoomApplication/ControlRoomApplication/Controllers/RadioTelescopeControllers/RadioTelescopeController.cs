@@ -33,6 +33,7 @@ namespace ControlRoomApplication.Controllers
         private Thread SensorMonitoringThread;
         private bool MonitoringSensors;
         private bool AllSensorsSafe;
+        private bool EnableSoftwareStops;
 
         private double MaxElTempThreshold;
         private double MaxAzTempThreshold;
@@ -63,6 +64,7 @@ namespace ControlRoomApplication.Controllers
             SensorMonitoringThread.Start();
             MonitoringSensors = true;
             AllSensorsSafe = true;
+            EnableSoftwareStops = true;
 
             MaxAzTempThreshold = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.AZ_MOTOR_TEMP);
             MaxElTempThreshold = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.ELEV_MOTOR_TEMP);
@@ -706,6 +708,9 @@ namespace ControlRoomApplication.Controllers
                         RadioTelescope.PLCDriver.InterruptMovementAndWaitUntilStopped();
                     }
                 }
+
+                // Run the software-stop routine
+                CheckAndRunSoftwareStops();
                 
                 Thread.Sleep(1000);
             }
@@ -911,5 +916,39 @@ namespace ControlRoomApplication.Controllers
             }
         }
 
+        /// <summary>
+        /// This is the method that handles and executes the software-stop logic
+        /// </summary>
+        private void CheckAndRunSoftwareStops()
+        {
+            // Run checks for software-stops only if they are enabled
+            if (EnableSoftwareStops)
+            {
+                double position;
+                
+                // Get the position based on whether or not the simulation sensor network is in use. The simulation uses the motor encoder position
+                // because the simulation cb accelerometer does not convert to a proper position
+                if (RadioTelescope.SensorNetworkServer.SimulationSensorNetwork != null)
+                {
+                    position = RadioTelescope.PLCDriver.GetMotorEncoderPosition().Elevation;
+                }
+                else
+                {
+                    // Temporary until recieving orientation from SensorNetworkServer
+                    position = 0;
+                }
+
+                // Get the elevation direction
+                RadioTelescopeDirectionEnum direction = RadioTelescope.PLCDriver.GetRadioTelescopeDirectionEnum(RadioTelescopeAxisEnum.ELEVATION);
+
+                // Perform a critical movement interrupt if the telescope is moving past either elevation threshold
+                if ((position > RadioTelescope.maxElevationDegrees && direction == RadioTelescopeDirectionEnum.CounterclockwiseOrPositive) ||
+                    (position < RadioTelescope.minElevationDegrees && direction == RadioTelescopeDirectionEnum.ClockwiseOrNegative))
+                {
+                    RadioTelescope.PLCDriver.InterruptMovementAndWaitUntilStopped(true);
+                    logger.Info("Software-stop hit!");
+                }
+            }
+        }
     }
 }

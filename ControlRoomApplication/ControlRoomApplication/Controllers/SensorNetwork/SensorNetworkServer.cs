@@ -153,7 +153,7 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
         /// <summary>
         /// This is the simulation sensor network, which will run whenever we are not using the hardware.
         /// </summary>
-        private SimulationSensorNetwork SimulationSensorNetwork { get; }
+        public SimulationSensorNetwork SimulationSensorNetwork { get; }
 
         /// <summary>
         /// This will be used to tell us what the SensorNetwork status using <seealso cref="SensorNetworkStatusEnum"/>.

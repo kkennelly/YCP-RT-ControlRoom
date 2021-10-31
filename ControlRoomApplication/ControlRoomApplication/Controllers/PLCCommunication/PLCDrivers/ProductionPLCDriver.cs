@@ -696,51 +696,31 @@ namespace ControlRoomApplication.Controllers
             {
                 //Axes must be checked independently because the MCU commands for motor moves have the same value for both Az and El
                 case RadioTelescopeAxisEnum.AZIMUTH:
-                  directionData = MCU.ReadMCURegisters(0, 2);
-                   //only checking AZ because of possible sim bug 
+                  directionData = MCU.ReadMCURegisters(0, 1);
                    if ((directionData[(int)MCUConstants.MCUOutputRegs.AZ_Status_Bist_MSW] >> (int)MCUConstants.MCUStatusBitsMSW.CCW_Motion & 0b1) == 1)
                    {
-                       logger.Info("Azimuth Counter Clockwise");
                        return RadioTelescopeDirectionEnum.CounterclockwiseOrPositive;
                    }
 
                    if ((directionData[(int)MCUConstants.MCUOutputRegs.AZ_Status_Bist_MSW] >> (int)MCUConstants.MCUStatusBitsMSW.CW_Motion & 0b1) == 1)
                    {
-                       logger.Info("Azimuth clockwise");
                        return RadioTelescopeDirectionEnum.ClockwiseOrNegative;
                    }
-
-                   if ((directionData[(int)MCUConstants.MCUOutputRegs.AZ_Status_Bist_LSW] >> (int)MCUConstants.MCUStutusBitsLSW.Home_Input & 0b1) == 1)
-                   {
-                       logger.Info("Azimuth Clockwise Homing");
-                       return RadioTelescopeDirectionEnum.ClockwiseHoming;
-                   }
-
                    break;
                    
-
                 case RadioTelescopeAxisEnum.ELEVATION:
                     //in practice, only need to check the elevation
-                    directionData = MCU.ReadMCURegisters(10, 2);
+                    directionData = MCU.ReadMCURegisters(10, 1);
 
                     if (((directionData[(int)MCUConstants.MCUOutputRegs.EL_Status_Bist_MSW-10] >> (int)MCUConstants.MCUStatusBitsMSW.CCW_Motion) & 0b1) == 1)
                     {
-                        logger.Info("Elevation Counter Clockwise ");
                         return RadioTelescopeDirectionEnum.CounterclockwiseOrPositive;
                     }
 
                     if (((directionData[(int)MCUConstants.MCUOutputRegs.EL_Status_Bist_MSW-10] >> (int)MCUConstants.MCUStatusBitsMSW.CW_Motion) & 0b1) == 1)
                     {
-                        logger.Info("Elevation Clockwise");
                         return RadioTelescopeDirectionEnum.ClockwiseOrNegative;
                     }
-
-                    if ((directionData[(int)MCUConstants.MCUOutputRegs.EL_Status_Bist_LSW-10] >> (int)MCUConstants.MCUStutusBitsLSW.Home_Input & 0b1) == 1)
-                    {
-                        logger.Info("Elevation Clockwise HOME");
-                        return RadioTelescopeDirectionEnum.ClockwiseHoming;
-                    }
-
                     break;
 
                 default:

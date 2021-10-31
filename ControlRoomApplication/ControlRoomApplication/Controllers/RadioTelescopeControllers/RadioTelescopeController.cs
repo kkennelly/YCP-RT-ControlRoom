@@ -935,7 +935,7 @@ namespace ControlRoomApplication.Controllers
                 else
                 {
                     // Temporary until recieving orientation from SensorNetworkServer
-                    position = 0;
+                    position = RadioTelescope.SensorNetworkServer.CurrentCBAccelElevationPosition;
                 }
 
                 // Get the elevation direction

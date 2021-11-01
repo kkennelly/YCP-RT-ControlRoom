@@ -99,6 +99,7 @@ namespace ControlRoomApplication.Main
             this.IFGainToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.frequencyToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.offsetVoltageToolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.SoftwareStopsCheckBox = new System.Windows.Forms.CheckBox();
             this.RAIncGroupbox.SuspendLayout();
             this.overRideGroupbox.SuspendLayout();
             this.decIncGroupbox.SuspendLayout();
@@ -353,6 +354,7 @@ namespace ControlRoomApplication.Main
             // overRideGroupbox
             // 
             this.overRideGroupbox.BackColor = System.Drawing.Color.Gainsboro;
+            this.overRideGroupbox.Controls.Add(this.SoftwareStopsCheckBox);
             this.overRideGroupbox.Controls.Add(this.label8);
             this.overRideGroupbox.Controls.Add(this.statusTextBox);
             this.overRideGroupbox.Controls.Add(this.ActualRATextBox);
@@ -376,7 +378,7 @@ namespace ControlRoomApplication.Main
             // 
             this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label8.Location = new System.Drawing.Point(18, 167);
+            this.label8.Location = new System.Drawing.Point(18, 152);
             this.label8.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(121, 13);
@@ -385,7 +387,7 @@ namespace ControlRoomApplication.Main
             // 
             // statusTextBox
             // 
-            this.statusTextBox.Location = new System.Drawing.Point(143, 164);
+            this.statusTextBox.Location = new System.Drawing.Point(143, 150);
             this.statusTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.statusTextBox.Name = "statusTextBox";
             this.statusTextBox.ReadOnly = true;
@@ -954,6 +956,19 @@ namespace ControlRoomApplication.Main
             this.scanTypeComboBox.TabIndex = 25;
             this.scanTypeComboBox.SelectedIndexChanged += new System.EventHandler(this.scanTypeComboBox_SelectedIndexChanged);
             // 
+            // SoftwareStopsCheckBox
+            // 
+            this.SoftwareStopsCheckBox.AutoSize = true;
+            this.SoftwareStopsCheckBox.Checked = true;
+            this.SoftwareStopsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.SoftwareStopsCheckBox.Location = new System.Drawing.Point(21, 175);
+            this.SoftwareStopsCheckBox.Name = "SoftwareStopsCheckBox";
+            this.SoftwareStopsCheckBox.Size = new System.Drawing.Size(134, 17);
+            this.SoftwareStopsCheckBox.TabIndex = 17;
+            this.SoftwareStopsCheckBox.Text = "Enable Software Stops";
+            this.SoftwareStopsCheckBox.UseVisualStyleBackColor = true;
+            this.SoftwareStopsCheckBox.CheckedChanged += new System.EventHandler(this.SoftwareStopsCheckBox_CheckedChanged);
+            // 
             // FreeControlForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1057,7 +1072,6 @@ namespace ControlRoomApplication.Main
         private System.Windows.Forms.ToolTip offsetVoltageToolTip;
         private System.Windows.Forms.ToolTip frequencyToolTip;
         private System.Windows.Forms.TrackBar speedTrackBar;
-    
-
+        private System.Windows.Forms.CheckBox SoftwareStopsCheckBox;
     }
 }

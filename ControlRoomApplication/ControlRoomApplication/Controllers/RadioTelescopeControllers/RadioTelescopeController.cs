@@ -33,7 +33,7 @@ namespace ControlRoomApplication.Controllers
         private Thread SensorMonitoringThread;
         private bool MonitoringSensors;
         private bool AllSensorsSafe;
-        private bool EnableSoftwareStops;
+        public bool EnableSoftwareStops;
 
         private double MaxElTempThreshold;
         private double MaxAzTempThreshold;
@@ -942,7 +942,7 @@ namespace ControlRoomApplication.Controllers
                 RadioTelescopeDirectionEnum direction = RadioTelescope.PLCDriver.GetRadioTelescopeDirectionEnum(RadioTelescopeAxisEnum.ELEVATION);
 
                 // Perform a critical movement interrupt if the telescope is moving past either elevation threshold
-                if ((position > RadioTelescope.maxElevationDegrees && direction == RadioTelescopeDirectionEnum.CounterclockwiseOrPositive) ||
+                if ((position > 90 && direction == RadioTelescopeDirectionEnum.CounterclockwiseOrPositive) ||
                     (position < RadioTelescope.minElevationDegrees && direction == RadioTelescopeDirectionEnum.ClockwiseOrNegative))
                 {
                     RadioTelescope.PLCDriver.InterruptMovementAndWaitUntilStopped(true);

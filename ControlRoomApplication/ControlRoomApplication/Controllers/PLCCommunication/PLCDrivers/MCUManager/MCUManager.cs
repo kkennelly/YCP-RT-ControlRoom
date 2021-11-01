@@ -22,6 +22,7 @@ namespace ControlRoomApplication.Controllers {
         private static readonly log4net.ILog logger = log4net.LogManager.GetLogger( System.Reflection.MethodBase.GetCurrentMethod().DeclaringType );
         public bool MovementInterruptFlag = false;
         public bool CriticalMovementInterruptFlag = false;
+        public bool SoftwareStopInterruptFlag = false;
 
         private long MCU_last_contact = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         private Thread HeartbeatMonitorThread;
@@ -925,11 +926,27 @@ namespace ControlRoomApplication.Controllers {
                     result = MovementResult.McuErrorBitSet;
                 }
 
+                // If software stops interrupted, this is reached
+                else if (SoftwareStopInterruptFlag)
+                {
+                    
+                }
+
                 // If the movement was voluntarily interrupted, this is reached
                 else if (MovementInterruptFlag)
                 {
                     MovementInterruptFlag = false;
-                    result = MovementResult.Interrupted;
+
+                    // Return software-stops hit if they caused the interrupt
+                    if (SoftwareStopInterruptFlag)
+                    {
+                        SoftwareStopInterruptFlag = false;
+                        result = MovementResult.SoftwareStopHit;
+                    }
+                    else
+                    {
+                        result = MovementResult.Interrupted;
+                    }
                 }
 
                 // A critical movement interrupt signals an immediate stop

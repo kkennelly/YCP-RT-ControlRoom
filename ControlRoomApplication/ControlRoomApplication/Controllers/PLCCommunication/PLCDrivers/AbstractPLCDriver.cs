@@ -139,8 +139,9 @@ namespace ControlRoomApplication.Controllers
         /// If no motors are moving when this is called, then it will not wait, and just be
         /// able to pass through.
         /// </summary>
-        /// <param name="isCriticalMovementInterrupt">Specify whether or not this is a critical movement interrupt</param>
-        public abstract bool InterruptMovementAndWaitUntilStopped(bool isCriticalMovementInterrupt = false);
+        /// <param name="isCriticalMovementInterrupt">Specify whether or not this is a critical movement interrupt and perform and immediate stop</param>
+        /// <param name="isSoftwareStopInterrupt">Specify whether or not this is a software-stop interrupt</param>
+        public abstract bool InterruptMovementAndWaitUntilStopped(bool isCriticalMovementInterrupt = false, bool isSoftwareStopInterrupt = false);
 
         /// <summary>
         /// Checks to see if the motors are currently moving.

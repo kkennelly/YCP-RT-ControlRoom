@@ -638,9 +638,10 @@ namespace ControlRoomApplication.Controllers
         /// If no motors are moving when this is called, then it will not wait, and just be
         /// able to pass through.
         /// </summary>
-        /// <param name="isCriticalMovementInterrupt">Specify whether or not this is a critical movement interrupt</param>
+        /// <param name="isCriticalMovementInterrupt">Specify whether or not this is a critical movement interrupt and perform and immediate stop</param>
+        /// <param name="isSoftwareStopInterrupt">Specify whether or not this is a software-stop interrupt</param>
         /// <returns>True if it had to wait for a movement, false if it did not have to wait and there is no movement running.</returns>
-        public override bool InterruptMovementAndWaitUntilStopped(bool isCriticalMovementInterrupt = false)
+        public override bool InterruptMovementAndWaitUntilStopped(bool isCriticalMovementInterrupt = false, bool isSoftwareStopInterrupt = false)
         {
             bool motorsMoving = MCU.MotorsCurrentlyMoving();
 
@@ -655,12 +656,19 @@ namespace ControlRoomApplication.Controllers
                     MCU.CriticalMovementInterruptFlag = true;
                 }
 
+                // Set corresponding flag depending on whether or not this is a software stop interrupt
+                if (isSoftwareStopInterrupt)
+                {
+                    MCU.SoftwareStopInterruptFlag = true;
+                }
+
                 // Wait until motors stop moving or both interrupt flags are set back to false,
                 // meaning the MCU has acknowledged and acted on the interrupt.
-                while (MotorsCurrentlyMoving() && (MCU.MovementInterruptFlag == true || MCU.CriticalMovementInterruptFlag == true)) ;
+                while (MotorsCurrentlyMoving() && (MCU.MovementInterruptFlag == true || MCU.CriticalMovementInterruptFlag == true || MCU.SoftwareStopInterruptFlag == true)) ;
 
                 MCU.MovementInterruptFlag = false;
                 MCU.CriticalMovementInterruptFlag = false;
+                MCU.SoftwareStopInterruptFlag = false;
 
                 // Ensure there is plenty of time between MCU commands
                 Thread.Sleep(2000);

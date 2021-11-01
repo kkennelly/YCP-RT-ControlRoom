@@ -40,6 +40,11 @@ namespace ControlRoomApplication.Controllers.PLCCommunication.PLCDrivers.MCUMana
         LimitSwitchOrEstopHit,
 
         /// <summary>
+        /// The telescope elevation was out of range and was moving furthur out of range, so it was cancelled.
+        /// </summary>
+        SoftwareStopHit,
+
+        /// <summary>
         /// The movement took too long to complete, so it timed out.
         /// </summary>
         TimedOut,

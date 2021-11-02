@@ -295,6 +295,21 @@ namespace ControlRoomApplication.Controllers
             return RadioTelescope.PLCDriver.Configure_MCU(startSpeedAzimuth, startSpeedElevation, homeTimeoutAzimuth, homeTimeoutElevation); // NO MOVE
         }
 
+        public bool PastSoftwareStopLimit()
+        {
+            double position = 0;
+            if (RadioTelescope.SensorNetworkServer.SimulationSensorNetwork != null)
+            {
+                 position = RadioTelescope.PLCDriver.GetMotorEncoderPosition().Elevation;
+            }
+            else
+            {
+                position= RadioTelescope.SensorNetworkServer.CurrentCBAccelElevationPosition;
+            }
+
+            return (position > RadioTelescope.maxElevationDegrees || position < RadioTelescope.minElevationDegrees);
+        }
+
         /// <summary>
         /// Method used to request to move the Radio Telescope to an objective
         /// azimuth/elevation orientation.
@@ -306,6 +321,8 @@ namespace ControlRoomApplication.Controllers
         public MovementResult MoveRadioTelescopeToOrientation(Orientation orientation, MovementPriority priority)
         {
             MovementResult result = MovementResult.None;
+
+            if (PastSoftwareStopLimit()) return MovementResult.SoftwareStopHit;
 
             // Return if incoming priority is equal to or less than current movement
             if (priority <= RadioTelescope.PLCDriver.CurrentMovementPriority) return MovementResult.AlreadyMoving;
@@ -345,6 +362,8 @@ namespace ControlRoomApplication.Controllers
         public MovementResult MoveRadioTelescopeToCoordinate(Coordinate coordinate, MovementPriority priority)
         {
             MovementResult result = MovementResult.None;
+
+            if (PastSoftwareStopLimit()) return MovementResult.SoftwareStopHit;
 
             // Return if incoming priority is equal to or less than current movement
             if (priority <= RadioTelescope.PLCDriver.CurrentMovementPriority) return MovementResult.AlreadyMoving;
@@ -515,6 +534,8 @@ namespace ControlRoomApplication.Controllers
         public MovementResult StartRadioTelescopeJog(double speed, RadioTelescopeDirectionEnum direction, RadioTelescopeAxisEnum axis)
         {
             MovementResult result = MovementResult.None;
+
+            if (PastSoftwareStopLimit()) return MovementResult.SoftwareStopHit;
 
             // Return if incoming priority is equal to or less than current movement
             if ((MovementPriority.Jog - 1) <= RadioTelescope.PLCDriver.CurrentMovementPriority) return MovementResult.AlreadyMoving;
@@ -924,25 +945,14 @@ namespace ControlRoomApplication.Controllers
             // Run checks for software-stops only if they are enabled
             if (EnableSoftwareStops)
             {
-                double position;
-                
-                // Get the position based on whether or not the simulation sensor network is in use. The simulation uses the motor encoder position
-                // because the simulation cb accelerometer does not convert to a proper position
-                if (RadioTelescope.SensorNetworkServer.SimulationSensorNetwork != null)
-                {
-                    position = RadioTelescope.PLCDriver.GetMotorEncoderPosition().Elevation;
-                }
-                else
-                {
-                    position = RadioTelescope.SensorNetworkServer.CurrentCBAccelElevationPosition;
-                }
-
                 // Get the elevation direction
                 RadioTelescopeDirectionEnum direction = RadioTelescope.PLCDriver.GetRadioTelescopeDirectionEnum(RadioTelescopeAxisEnum.ELEVATION);
 
+                bool pastSoftwareStopLimit = PastSoftwareStopLimit();
+
                 // Perform a critical movement interrupt if the telescope is moving past either elevation threshold
-                if ((position > RadioTelescope.maxElevationDegrees && direction == RadioTelescopeDirectionEnum.CounterclockwiseOrPositive) ||
-                    (position < RadioTelescope.minElevationDegrees && direction == RadioTelescopeDirectionEnum.ClockwiseOrNegative))
+                if ((pastSoftwareStopLimit && direction == RadioTelescopeDirectionEnum.CounterclockwiseOrPositive) ||
+                    (pastSoftwareStopLimit && direction == RadioTelescopeDirectionEnum.ClockwiseOrNegative))
                 {
                     RadioTelescope.PLCDriver.InterruptMovementAndWaitUntilStopped(true, true);
                     logger.Info("Software-stop hit!");

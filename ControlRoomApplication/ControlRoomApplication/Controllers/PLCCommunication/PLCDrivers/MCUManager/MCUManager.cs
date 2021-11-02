@@ -869,6 +869,7 @@ namespace ControlRoomApplication.Controllers {
             while (!command.timeout.IsCancellationRequested && !MovementInterruptFlag && CheckMCUErrors().Count == 0 && result == MovementResult.None)
             {
 
+                Thread.Sleep(100);
                 // Anything but homing...
                 if (!homing) completed = MovementCompleted();
 

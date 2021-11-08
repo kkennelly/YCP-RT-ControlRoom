@@ -24,6 +24,7 @@ namespace ControlRoomApplication.Controllers {
 
         private long MCU_last_contact = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         private Thread HeartbeatMonitorThread;
+        private Thread LoggerThread;
         private bool HeartbeatMonitorRunning;
         private int AZStartSpeed = 0;
         private int ELStartSpeed = 0;
@@ -51,6 +52,31 @@ namespace ControlRoomApplication.Controllers {
 
             HeartbeatMonitorThread = new Thread(new ThreadStart(HeartbeatMonitor)) { Name = "MCU Heartbeat Monitor Thread" };
             FinalPositionOffset = new Orientation(0, 0);
+            LoggerThread = new Thread(new ThreadStart(PrintIncomingRegisters)) { Name = "Logger Thread" };
+        }
+
+        public void PrintIncomingRegisters()
+        {
+            ushort[] old = new ushort[20];
+            ushort[] current;
+            while(true)
+            {
+                Thread.Sleep(10);
+                current = ReadMCURegisters(0, 20);
+                if(current.SequenceEqual(old))
+                    continue;
+
+                logger.Info("NEW REGISTERS INCOMING");
+                for(int i = 0; i < current.Length; i++)
+                {
+                    if(i == -1)
+                        continue;
+                    logger.Info("Register " + i + ": " + current[i]);
+                }
+                logger.Info("END OF NEW REGISTERS");
+
+                old = current;
+            }
         }
 
         /// <summary>
@@ -200,6 +226,7 @@ namespace ControlRoomApplication.Controllers {
             try
             {
                 HeartbeatMonitorThread.Start();
+                LoggerThread.Start();
             }
             catch (Exception e)
             {
@@ -221,6 +248,7 @@ namespace ControlRoomApplication.Controllers {
             HeartbeatMonitorRunning = false;
             try {
                 HeartbeatMonitorThread.Join();
+                LoggerThread.Join();
             } catch(Exception e) {
                 if((e is ThreadStateException) || (e is ThreadStartException)) {
                     logger.Error(Utilities.GetTimeStamp() + ": " + e);

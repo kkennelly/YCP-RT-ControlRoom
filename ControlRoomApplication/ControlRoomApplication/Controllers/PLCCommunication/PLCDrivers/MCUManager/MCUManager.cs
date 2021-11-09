@@ -63,22 +63,22 @@ namespace ControlRoomApplication.Controllers {
             ushort[] current2;
             while (true)
             {
-                current1 = ReadMCURegisters(0, 10);
-                current2 = ReadMCURegisters(10, 10);
+                current1 = ReadMCURegisters(0, 2);
+                current2 = ReadMCURegisters(10, 2);
                 if(current1.SequenceEqual(last1) && current2.SequenceEqual(last2))
                     continue;
 
-                logger.Info("NEW REGISTERS INCOMING");
+                logger.Info("NEW STATUS REGISTERS INCOMING");
                 for(int i = 0; i < current1.Length; i++)
                 {
-                    logger.Info("Register " + i + ": " + current1[i]);
+                    logger.Info("Register " + i + ": 0x" + Convert.ToString(current1[i], 16));
                 }
-                int offset = current1.Length;
+                int offset = current1.Length + 8;
                 for (int i = 0; i < current2.Length; i++)
                 {
-                    logger.Info("Register " + (i + offset) + ": " + current1[i]);
+                    logger.Info("Register " + (i + offset) + ": 0x" + Convert.ToString(current2[i], 16));
                 }
-                logger.Info("END OF NEW REGISTERS");
+                logger.Info("END OF NEW STATUS REGISTERS");
 
                 last1 = current1;
                 last2 = current2;

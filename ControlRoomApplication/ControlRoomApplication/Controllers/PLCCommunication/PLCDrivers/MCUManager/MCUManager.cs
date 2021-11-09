@@ -57,25 +57,31 @@ namespace ControlRoomApplication.Controllers {
 
         public void PrintIncomingRegisters()
         {
-            ushort[] old = new ushort[20];
-            ushort[] current;
-            while(true)
+            ushort[] last1 = new ushort[10];
+            ushort[] last2 = new ushort[10];
+            ushort[] current1;
+            ushort[] current2;
+            while (true)
             {
-                Thread.Sleep(10);
-                current = ReadMCURegisters(0, 20);
-                if(current.SequenceEqual(old))
+                current1 = ReadMCURegisters(0, 10);
+                current2 = ReadMCURegisters(10, 10);
+                if(current1.SequenceEqual(last1) && current2.SequenceEqual(last2))
                     continue;
 
                 logger.Info("NEW REGISTERS INCOMING");
-                for(int i = 0; i < current.Length; i++)
+                for(int i = 0; i < current1.Length; i++)
                 {
-                    if(i == -1)
-                        continue;
-                    logger.Info("Register " + i + ": " + current[i]);
+                    logger.Info("Register " + i + ": " + current1[i]);
+                }
+                int offset = current1.Length;
+                for (int i = 0; i < current2.Length; i++)
+                {
+                    logger.Info("Register " + (i + offset) + ": " + current1[i]);
                 }
                 logger.Info("END OF NEW REGISTERS");
 
-                old = current;
+                last1 = current1;
+                last2 = current2;
             }
         }
 

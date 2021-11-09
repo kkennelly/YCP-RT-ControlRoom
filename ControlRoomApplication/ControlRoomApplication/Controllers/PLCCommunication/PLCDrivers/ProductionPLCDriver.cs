@@ -659,6 +659,10 @@ namespace ControlRoomApplication.Controllers
                 // Set corresponding flag depending on whether or not this is a software stop interrupt
                 if (isSoftwareStopInterrupt)
                 {
+                    if(CurrentMovementPriority == MovementPriority.Jog)
+                    {
+                        ImmediateStop();
+                    }
                     MCU.SoftwareStopInterruptFlag = true;
                 }
 

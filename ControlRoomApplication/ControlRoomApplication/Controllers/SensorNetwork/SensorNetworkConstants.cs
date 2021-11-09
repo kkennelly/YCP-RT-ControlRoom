@@ -27,7 +27,7 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
         /// ~50ms delay. For example, a 250ms interval will yield about a 300ms receive interval.
         /// This is also used in the SensorNetworkSimulation.
         /// </summary>
-        public const int DataSendingInterval = 250; // in milliseconds
+        public const int DataSendingInterval = 100; // in milliseconds
 
         /// <summary>
         /// This is the default data retrieval timeout when the user has run the telescope for the first time,

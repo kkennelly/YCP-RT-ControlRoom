@@ -16,6 +16,17 @@ namespace ControlRoomApplication.Constants
 
         public static readonly double THERMAL_CALIBRATION_OFFSET = 0.01;
 
+        // Software stop elevation thresholds
+
+        /// <summary>
+        /// The maximum degree threshold for software stops to stop the telescope
+        /// </summary>
+        public const double MAX_SOFTWARE_STOP_EL_DEGREES = 91.0;
+
+        /// <summary>
+        /// The minimum degree threshold for software stops to stop the telescope
+        /// </summary>
+        public const double MIN_SOFTWARE_STOP_EL_DEGREES = -5.0;
 
         // constants used for user input validation
         public const int MAX_PORT_VALUE = 65535;
@@ -33,7 +44,16 @@ namespace ControlRoomApplication.Constants
         /// </summary>
         public static readonly Orientation Stow = new Orientation(0, 90);
 
-        //private const
+
+        //constants for acceleration blob
+
+        /// <summary>
+        /// The number of acceleration datapoints in one blob to be added to the database
+        /// </summary>
+        public const int BLOB_SIZE = 4000;
+
+
+
 
 
 

@@ -335,7 +335,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests {
             posTransEl = ConversionHelper.DegreesToSteps(expectedOrientation.Elevation - currOrientation.Elevation, MotorConstants.GEARING_RATIO_ELEVATION);
 
             // Move telescope
-            TestRadioTelescopeController.RadioTelescope.PLCDriver.RelativeMove(100_000, posTransAz, posTransEl, expectedOrientation);
+            TestRadioTelescopeController.RadioTelescope.PLCDriver.RelativeMove(100_000, 100_000, posTransAz, posTransEl, expectedOrientation);
 
             // Create result orientation
             Orientation resultOrientation = TestRadioTelescopeController.RadioTelescope.PLCDriver.GetMotorEncoderPosition();
@@ -365,7 +365,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests {
             posTransEl = ConversionHelper.DegreesToSteps(expectedOrientation.Elevation - currOrientation.Elevation, MotorConstants.GEARING_RATIO_ELEVATION);
 
             // Move telescope
-            TestRadioTelescopeController.RadioTelescope.PLCDriver.RelativeMove(100_000, posTransAz, posTransEl, expectedOrientation);
+            TestRadioTelescopeController.RadioTelescope.PLCDriver.RelativeMove(100_000, 100_000, posTransAz, posTransEl, expectedOrientation);
 
             // Create result orientation
             Orientation resultOrientation = TestRadioTelescopeController.RadioTelescope.PLCDriver.GetMotorEncoderPosition();
@@ -398,7 +398,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests {
             posTransEl = ConversionHelper.DegreesToSteps(expectedOrientation.Elevation - currOrientation.Elevation, MotorConstants.GEARING_RATIO_ELEVATION);
 
             // Move telescope
-            TestRadioTelescopeController.RadioTelescope.PLCDriver.RelativeMove(100_000, posTransAz, posTransEl, expectedOrientation);
+            TestRadioTelescopeController.RadioTelescope.PLCDriver.RelativeMove(100_000, 100_000, posTransAz, posTransEl, expectedOrientation);
 
             // Create result orientation
             Orientation resultOrientation = TestRadioTelescopeController.RadioTelescope.PLCDriver.GetMotorEncoderPosition();
@@ -926,6 +926,96 @@ namespace ControlRoomApplicationTest.EntityControllersTests {
         }
 
         [TestMethod]
+        public void TestMoveRadioByxDegreesAllStatusesOK_Success()
+        {
+            Orientation o = new Orientation(-20,70);
+
+            MovementResult result = TestRadioTelescopeController.MoveRadioTelescopeByXDegrees(o, MovementPriority.Manual);
+
+            Assert.AreEqual(MovementResult.Success, result);
+            //verify move within 1/10th of a degree 
+            Assert.AreEqual(TestRadioTelescopeController.GetCurrentOrientation().Azimuth,340, 0.1);
+            Assert.AreEqual(TestRadioTelescopeController.GetCurrentOrientation().Elevation, 70,0.1);
+
+        }
+
+        [TestMethod]
+        public void TestMoveRadioTelescopeByxDegrees_SensorDataUnsafe_SensorsNotSafe()
+        {
+            TestRadioTelescopeController.overrides.setElevationMotTemp(false);
+            SensorNetworkServer.CurrentElevationMotorTemp[0].temp = 3000;
+            SensorNetworkServer.CurrentElevationMotorTemp[0].location_ID = (int)SensorLocationEnum.EL_MOTOR;
+
+            Orientation o = new Orientation();
+
+            Thread.Sleep(2000);
+
+            MovementResult result = TestRadioTelescopeController.MoveRadioTelescopeByXDegrees(o, MovementPriority.Manual);
+
+            Assert.AreEqual(MovementResult.SensorsNotSafe, result);
+        }
+
+        [TestMethod]
+        public void TestMoveRadioTelescopeToByxDegrees_TriesMoveRadioTelescopeToOrientationWithAnotherCommandRunning_AlreadyMoving()
+        {
+            MovementResult result0 = MovementResult.None;
+            MovementResult result1 = MovementResult.None;
+            MovementPriority priority = MovementPriority.Manual;
+
+            // This is running two commands at the same time. One of them should succeed, while
+            // the other is rejected
+
+            Orientation o = new Orientation();
+
+            Thread t0 = new Thread(() =>
+            {
+                result0 = TestRadioTelescopeController.MoveRadioTelescopeByXDegrees(o, priority);
+            });
+
+            Thread t1 = new Thread(() =>
+            {
+                result1 = TestRadioTelescopeController.MoveRadioTelescopeByXDegrees(o, priority);
+            });
+
+            t0.Start();
+            t1.Start();
+
+            t0.Join();
+            t1.Join();
+
+            Assert.IsTrue(result0 == MovementResult.Success || result1 == MovementResult.Success);
+            Assert.IsTrue(result0 == MovementResult.AlreadyMoving || result1 == MovementResult.AlreadyMoving);
+        }
+
+        [TestMethod]
+        public void TestMoveRadioByxDegreesAzAboveThreshold()
+        {
+            Orientation o = new Orientation(1024, 20);
+
+            MovementResult result = TestRadioTelescopeController.MoveRadioTelescopeByXDegrees(o, MovementPriority.Manual);
+
+            Assert.AreEqual(MovementResult.RequestedAzimuthMoveTooLarge, result);
+
+            //ensure that the telescope did not move in either dimension
+            Assert.AreEqual(TestRadioTelescopeController.GetCurrentOrientation().Azimuth,0, 0.1);
+            Assert.AreEqual(TestRadioTelescopeController.GetCurrentOrientation().Elevation, 0,0.1);
+        }
+
+        [TestMethod]
+        public void TestMoveRadioByxDegreesInvalidReuqestedPosition()
+        {
+            Orientation o = new Orientation(0, -300);
+
+            MovementResult result = TestRadioTelescopeController.MoveRadioTelescopeByXDegrees(o, MovementPriority.Manual);
+
+            Assert.AreEqual(MovementResult.InvalidRequestedPostion, result);
+
+            //ensure that the telescope did not move in either dimension
+            Assert.AreEqual(TestRadioTelescopeController.GetCurrentOrientation().Azimuth, 0);
+            Assert.AreEqual(TestRadioTelescopeController.GetCurrentOrientation().Elevation, 0);
+        }
+
+        [TestMethod]
         public void TestThermalCalibrateRadioTelescope_AllStatusesOK_Success()
         {
             MovementResult result = TestRadioTelescopeController.ThermalCalibrateRadioTelescope(MovementPriority.Manual);
@@ -1020,7 +1110,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests {
         [TestMethod]
         public void TestAllTelescopeMovements_RunABunchOfCommandsAtTheSameTime_OnlyOneCommandSucceedsWhileTheRestAreAlreadyMoving()
         {
-            int threadCount = 7;
+            int threadCount = 8;
 
             MovementPriority priority = MovementPriority.Manual;
             Coordinate c = new Coordinate(0, 0);
@@ -1031,7 +1121,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests {
             for (int i = 0; i < threadCount; i++)
                 results[i] = MovementResult.None;
 
-            Thread[] threads = new Thread[7];
+            Thread[] threads = new Thread[threadCount];
 
             threads[0] = new Thread(() =>
             {
@@ -1061,6 +1151,10 @@ namespace ControlRoomApplicationTest.EntityControllersTests {
             {
                 results[6] = TestRadioTelescopeController.FullElevationMove(priority);
             });
+            threads[7] = new Thread(() =>
+            {
+                results[7] = TestRadioTelescopeController.MoveRadioTelescopeByXDegrees(o, priority);
+            });
 
             // Run all threads concurrently
             // These cannot be looped through because a loop adds enough delay to throw off concurrency
@@ -1071,9 +1165,10 @@ namespace ControlRoomApplicationTest.EntityControllersTests {
             threads[4].Start();
             threads[5].Start();
             threads[6].Start();
+            threads[7].Start();
 
             // Wait for all threads to complete
-            foreach(Thread thread in threads)
+            foreach (Thread thread in threads)
             {
                 thread.Join();
             }

@@ -209,7 +209,13 @@ namespace ControlRoomApplication.Main
             DatabaseOperations.UpdateAppointment(CurrentAppointment);
 
             var threads = controlRoom.RTControllerManagementThreads.Where<RadioTelescopeControllerManagementThread>(t => t.RTController == rtController).ToList<RadioTelescopeControllerManagementThread>();
-            threads[0].EndAppointment();
+
+            //Done in a new thread so the UI does not freeze while waiting for the move to finish
+            new Thread(() =>
+            {
+                threads[0].EndAppointment();
+            }).Start();
+            
 
             timer1.Enabled = false;
         }
@@ -560,6 +566,10 @@ namespace ControlRoomApplication.Main
                         movementResult = MovementResult.Success;
                         break;
 
+                    // Hardware movement script
+                    case 10:
+                        movementResult = rtController.ExecuteHardwareMovementScript(MovementPriority.Manual);
+                        break;
                     default:
                         // Script does not exist
                         break;
@@ -885,6 +895,8 @@ namespace ControlRoomApplication.Main
                         rtController.RadioTelescope.SpectraCyberController.SetSpectraCyberIFGain(Convert.ToDouble(IFGainVal.Text));
                         break;
                 }
+            
+                finalizeSettingsButton.Enabled = false;
 
                 startScanButton.Enabled = false;
                 startScanButton.BackColor = System.Drawing.Color.DarkGray;
@@ -907,6 +919,8 @@ namespace ControlRoomApplication.Main
                 rtController.RadioTelescope.SpectraCyberController.StopScan();
                 logger.Info(Utilities.GetTimeStamp() + ": [SpectraCyberController] Scan has stopped");
             }
+
+            finalizeSettingsButton.Enabled = true;
 
             startScanButton.Enabled = true;
             startScanButton.BackColor = System.Drawing.Color.LimeGreen;
@@ -968,7 +982,7 @@ namespace ControlRoomApplication.Main
                 Utilities.WriteToGUIFromThread<FreeControlForm>(this, () =>
                 {
                    this.frequencyToolTip.Show("Frequency must be a non-negative\n " +
-                "value, in hertz (>= 0 Hz)", lblFrequency);
+                "value, in kilohertz (>= 0 kHz)", lblFrequency);
                 });
                 
             }
@@ -1080,6 +1094,31 @@ namespace ControlRoomApplication.Main
         private void speedTextBox_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        /// <summary>
+        /// Enable/disable the telescope's software-stops when the check box is checked or unchecked
+        /// </summary>
+        private void SoftwareStopsCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!SoftwareStopsCheckBox.Checked)
+            {
+                DialogResult result = MessageBox.Show("Are you sure you want to disable software stops?", "Software-Stops Confirmation", MessageBoxButtons.YesNo);
+
+                if (result == DialogResult.Yes)
+                {
+                    rtController.EnableSoftwareStops = false;
+                }
+                else
+                {
+                    SoftwareStopsCheckBox.Checked = true;
+                    rtController.EnableSoftwareStops = true;
+                }
+            }
+            else
+            {
+                rtController.EnableSoftwareStops = true;
+            }
         }
     }
 }

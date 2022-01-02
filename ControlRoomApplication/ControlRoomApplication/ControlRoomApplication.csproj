@@ -140,6 +140,11 @@
       <HintPath>..\packages\ScottPlot.WinForms.4.0.48\lib\net461\ScottPlot.WinForms.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Collections.NonGeneric, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Collections.NonGeneric.4.3.0\lib\net46\System.Collections.NonGeneric.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Collections.Specialized, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Collections.Specialized.4.3.0\lib\net46\System.Collections.Specialized.dll</HintPath>
     </Reference>
@@ -198,6 +203,7 @@
     <Compile Include="Constants\AWSConstants.cs" />
     <Compile Include="Constants\CelestialBodyConstants.cs" />
     <Compile Include="Constants\SimulationConstants.cs" />
+    <Compile Include="Constants\TCPCommunicationConstants.cs" />
     <Compile Include="Constants\TIME.cs" />
     <Compile Include="Constants\MiscellaneousHardwareConstants.cs" />
     <Compile Include="Constants\HardwareFlags.cs" />
@@ -208,11 +214,14 @@
     <Compile Include="Constants\PLCConstants.cs" />
     <Compile Include="Constants\ThreadNameConstants.cs" />
     <Compile Include="Controllers\AASharpControllers\CoordinateCalculationController.cs" />
+    <Compile Include="Controllers\Communications\ParseTCPCommandResult.cs" />
     <Compile Include="Controllers\Communications\DataToCSV.cs" />
     <Compile Include="Controllers\Communications\EmailNotifications.cs" />
+    <Compile Include="Controllers\Communications\Enumerations\ParseTCPCommandResultEnum.cs" />
     <Compile Include="Controllers\Communications\MessageType.cs" />
     <Compile Include="Controllers\Communications\pushNotification.cs" />
     <Compile Include="Controllers\Communications\SendAttachmentHelper.cs" />
+    <Compile Include="Controllers\Communications\ExecuteTCPCommandResult.cs" />
     <Compile Include="Controllers\ControlRoomController\ControlRoomController.cs" />
     <Compile Include="Controllers\ControlRoomController\RadioTelescopeControllerManagementThread.cs" />
     <Compile Include="Controllers\PLCCommunication\ConversionHelper.cs" />
@@ -253,6 +262,9 @@
     <Compile Include="Controllers\Communications\SNSMessage.cs" />
     <Compile Include="Documentation\LoggerQueue.cs" />
     <Compile Include="Entities\Acceleration\AccelerationBlob.cs" />
+    <Compile Include="Entities\Acceleration\CounterbalanceAccelerationBlob.cs" />
+    <Compile Include="Entities\Acceleration\ElevationAccelerationBlob.cs" />
+    <Compile Include="Entities\Acceleration\AzimuthAccelerationBlob.cs" />
     <Compile Include="Entities\Appointment\AppointmentPriorityEnum.cs" />
     <Compile Include="Entities\Appointment\AppointmentStatusEnum.cs" />
     <Compile Include="Entities\Appointment\AppointmentTypeEnum.cs" />
@@ -472,6 +484,7 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

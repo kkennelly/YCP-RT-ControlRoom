@@ -42,7 +42,10 @@ namespace ControlRoomApplication.Main
         public DbSet<Log> Logs { get; set; }
         public DbSet<Temperature> Temperatures { get; set; }
         public DbSet<Acceleration> Accelerations { get; set; }
-        public DbSet<AccelerationBlob> AccelerationBlobs { get; set; }
+        public DbSet<AzimuthAccelerationBlob> AzimuthAccelerationBlobs { get; set; }
+        public DbSet<ElevationAccelerationBlob> ElevationAccelerationBlobs { get; set; }
+        public DbSet<CounterbalanceAccelerationBlob> CounterbalanceAccelerationBlobs { get; set; }
+
         public DbSet<CelestialBody> CelestialBodies { get; set; }
         public DbSet<SensorNetworkConfig> SensorNetworkConfig { get; set; }
         public DbSet<SpectraCyberConfig> SpectraCyberConfigs { get; set; }

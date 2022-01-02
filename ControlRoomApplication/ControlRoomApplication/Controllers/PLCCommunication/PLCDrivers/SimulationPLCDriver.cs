@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using ControlRoomApplication.Constants;
+using ControlRoomApplication.Controllers.PLCCommunication.PLCDrivers.MCUManager;
 using ControlRoomApplication.Controllers.PLCCommunication.PLCDrivers.MCUManager.Enumerations;
 using ControlRoomApplication.Entities;
 using ControlRoomApplication.Simulators.Hardware.PLC_MCU;
@@ -38,7 +39,7 @@ namespace ControlRoomApplication.Controllers
             driver.set_is_test( is_Test );
         }
 
-
+        public override MovementPriority CurrentMovementPriority { get { return driver.CurrentMovementPriority; } set { driver.CurrentMovementPriority = value; } }
 
         public override bool RequestStopAsyncAcceptingClientsAndJoin()
         {
@@ -91,9 +92,9 @@ namespace ControlRoomApplication.Controllers
             return driver.ImmediateStop();
         }
 
-        public override MovementResult RelativeMove(int programmedPeakSpeedAZInt, int positionTranslationAZ, int positionTranslationEL, Orientation targetOrientation)
+        public override MovementResult RelativeMove(int programmedPeakSpeedAZInt, int programmedPeakSpeedELInt,  int positionTranslationAZ, int positionTranslationEL, Orientation targetOrientation)
         {
-            return driver.RelativeMove(programmedPeakSpeedAZInt, positionTranslationAZ, positionTranslationEL, targetOrientation);
+            return driver.RelativeMove(programmedPeakSpeedAZInt, programmedPeakSpeedELInt, positionTranslationAZ, positionTranslationEL, targetOrientation);
         }
 
         public override MovementResult MoveToOrientation(Orientation target_orientation, Orientation current_orientation)
@@ -155,9 +156,9 @@ namespace ControlRoomApplication.Controllers
             return driver.CheckMCUErrors();
         }
 
-        public override bool InterruptMovementAndWaitUntilStopped()
+        public override bool InterruptMovementAndWaitUntilStopped(bool isCriticalMovementInterrupt = false, bool isSoftwareStopInterrupt = false)
         {
-            return driver.InterruptMovementAndWaitUntilStopped();
+            return driver.InterruptMovementAndWaitUntilStopped(isCriticalMovementInterrupt, isSoftwareStopInterrupt);
         }
 
         public override bool MotorsCurrentlyMoving(RadioTelescopeAxisEnum axis = RadioTelescopeAxisEnum.BOTH)
@@ -165,5 +166,14 @@ namespace ControlRoomApplication.Controllers
             return driver.MotorsCurrentlyMoving(axis);
         }
 
+        public override void SetFinalOffset(Orientation finalPos)
+        {
+            driver.SetFinalOffset(finalPos);
+        }
+
+        public override RadioTelescopeDirectionEnum GetRadioTelescopeDirectionEnum(RadioTelescopeAxisEnum axis)
+        {
+                return driver.GetRadioTelescopeDirectionEnum(axis);
+        }
     }
 }

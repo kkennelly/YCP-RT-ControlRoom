@@ -70,5 +70,10 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
         /// This is where our simulation CSV files are located. These files can be swapped out with each other.
         /// </summary>
         public const string SimCSVDirectory = "../../Controllers/SensorNetwork/Simulation/SimulationCSVData/";
+
+        /// <summary>
+        /// This is the degrees offset manually applied to the counterbalance accelerometer position used for greater precision.
+        /// </summary>
+        public const double CBAccelPositionOffset = 2;
     }
 }

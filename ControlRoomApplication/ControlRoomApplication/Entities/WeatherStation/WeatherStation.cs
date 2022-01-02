@@ -72,8 +72,7 @@ namespace ControlRoomApplication.Entities.WeatherStation
 
         Weather_Data data;
 
-
-        public WeatherStation(int currentWindSpeedScanDelayMS, int commPort = 8)
+        public WeatherStation(int currentWindSpeedScanDelayMS, int commPort = 3)
             : base(currentWindSpeedScanDelayMS)
         {
 
@@ -104,7 +103,7 @@ namespace ControlRoomApplication.Entities.WeatherStation
             if (OpenCommPort_V((short)commPort, 19200) != 0)
             {
                 logger.Error(Utilities.GetTimeStamp() + ": OpenCommPort unsuccessful!");
-                    throw new ExternalException();
+                throw new ExternalException();
             }
 
             if (InitStation_V() == COM_ERROR)

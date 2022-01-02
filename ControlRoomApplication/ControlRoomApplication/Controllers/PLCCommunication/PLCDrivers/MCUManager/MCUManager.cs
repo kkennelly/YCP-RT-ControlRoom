@@ -21,6 +21,8 @@ namespace ControlRoomApplication.Controllers {
     public class MCUManager {
         private static readonly log4net.ILog logger = log4net.LogManager.GetLogger( System.Reflection.MethodBase.GetCurrentMethod().DeclaringType );
         public bool MovementInterruptFlag = false;
+        public bool CriticalMovementInterruptFlag = false;
+        public bool SoftwareStopInterruptFlag = false;
 
         private long MCU_last_contact = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         private Thread HeartbeatMonitorThread;
@@ -36,6 +38,7 @@ namespace ControlRoomApplication.Controllers {
         /// </summary>
         private MCUCommand RunningCommand= new MCUCommand(new ushort[20], MCUCommandType.EmptyData) { completed = true };
         private MCUCommand PreviousCommand = new MCUCommand(new ushort[20], MCUCommandType.EmptyData) { completed = true };
+        public Orientation FinalPositionOffset { get; set; }
 
         private int McuPort;
         private string McuIp;
@@ -49,6 +52,7 @@ namespace ControlRoomApplication.Controllers {
             ConnectToModbusServer();
 
             HeartbeatMonitorThread = new Thread(new ThreadStart(HeartbeatMonitor)) { Name = "MCU Heartbeat Monitor Thread" };
+            FinalPositionOffset = new Orientation(0, 0);
         }
 
         /// <summary>
@@ -805,6 +809,9 @@ namespace ControlRoomApplication.Controllers {
             TimeToMove = ( int)(TimeToMove * 1.2);
             TimeToMove += 100;
 
+            if (targetOrientation.Azimuth == 0.0 || targetOrientation.Azimuth==360.0) TimeToMove += 100;
+   
+
             // Calculate azimuth movement direction
             RadioTelescopeDirectionEnum azDirection;
             if (positionTranslationAZ > 0) azDirection = RadioTelescopeDirectionEnum.ClockwiseOrNegative;
@@ -864,6 +871,7 @@ namespace ControlRoomApplication.Controllers {
             
             while (!command.timeout.IsCancellationRequested && !MovementInterruptFlag && CheckMCUErrors().Count == 0 && result == MovementResult.None)
             {
+                // We must wait for the MCU registers to be set before trying to read them
                 Thread.Sleep(100);
 
                 // Anything but homing...
@@ -879,13 +887,23 @@ namespace ControlRoomApplication.Controllers {
 
                 if (completed && !MotorsCurrentlyMoving() && !MovementInterruptFlag)
                 {
-
+                    Thread.Sleep(200);
                     // If this is reached, the motors have stopped and we are now checking that the orientation is correct
                     Orientation encoderOrientation = GetMotorEncoderPosition();
-                    if (Math.Abs(encoderOrientation.Azimuth - targetOrientation.Azimuth) <= 0.1 && Math.Abs(encoderOrientation.Elevation - targetOrientation.Elevation) <= 0.1)
+                    Orientation offsetOrientation = new Orientation(encoderOrientation.Azimuth + FinalPositionOffset.Azimuth, encoderOrientation.Elevation + FinalPositionOffset.Elevation);
+
+                    while (offsetOrientation.Azimuth > 360) offsetOrientation.Azimuth -= 360;
+                    while (offsetOrientation.Azimuth < 0) offsetOrientation.Azimuth += 360;
+
+                    if ((targetOrientation.Azimuth == 0.0 || targetOrientation.Azimuth==360.0) && (offsetOrientation.Azimuth > 359.9 || offsetOrientation.Azimuth < 0.1))
                     {
                         result = MovementResult.Success;
                     }
+
+                   else if (Math.Abs(offsetOrientation.Azimuth - targetOrientation.Azimuth) <= 0.1 && Math.Abs(offsetOrientation.Elevation - targetOrientation.Elevation) <= 0.1)
+                   {
+                        result = MovementResult.Success;
+                   }
                     else
                     {
                         result = MovementResult.IncorrectPosition;
@@ -924,10 +942,29 @@ namespace ControlRoomApplication.Controllers {
                 else if (MovementInterruptFlag)
                 {
                     MovementInterruptFlag = false;
-                    result = MovementResult.Interrupted;
+
+                    // Return software-stops hit if they caused the interrupt
+                    if (SoftwareStopInterruptFlag)
+                    {
+                        SoftwareStopInterruptFlag = false;
+                        result = MovementResult.SoftwareStopHit;
+                    }
+                    else
+                    {
+                        result = MovementResult.Interrupted;
+                    }
                 }
 
-                ControlledStop();
+                // A critical movement interrupt signals an immediate stop
+                if (CriticalMovementInterruptFlag)
+                {
+                    CriticalMovementInterruptFlag = false;
+                    ImmediateStop();
+                }
+                else
+                {
+                    ControlledStop();
+                }
             }
 
             command.completed = true;

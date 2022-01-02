@@ -28,7 +28,7 @@ namespace ControlRoomApplicationTest.EntitiesTests
             long dateTime2 = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
             //Generate Acceleration
-            Acceleration a1 = Acceleration.Generate(dateTime1, 0.0, 0.0, 0.0, loc1);
+            Acceleration a1 = Acceleration.Generate(dateTime1, 0, 0, 0, loc1);
             //Acceleration t2 = Acceleration.Generate(dateTime, 2.0, loc1);
 
 

@@ -285,7 +285,7 @@ namespace ControlRoomApplication.Simulators.Hardware.PLC_MCU {
                 MCU_Modbusserver.DataStore.HoldingRegisters[(int)MCUConstants.MCUOutputRegs.AZ_Status_Bist_MSW + 1] |= 1 << (int)MCUConstants.MCUStatusBitsMSW.At_Home;
             }
             else {
-                Console.WriteLine("Invalid telescope movement command");
+                //logger.Info("SIMULATION CONTROL PANEL: Invalid telescope movement command");
             }
             return false;
         }

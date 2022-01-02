@@ -4,40 +4,66 @@ using ControlRoomApplication.Entities;
 using ControlRoomApplication.Controllers;
 using ControlRoomApplication.Constants;
 using System.Net.Sockets;
+using System.Net;
+using ControlRoomApplication.Controllers.SensorNetwork;
 
 namespace ControlRoomApplicationTest.EntitiesTests
 {
     [TestClass]
     public class ControlRoomTest
     {
-        private ControlRoom controlRoom;
+        private static ControlRoom controlRoom;
         private AbstractWeatherStation weatherStation;
         private List<RadioTelescopeControllerManagementThread> rtManagementThreads;
 
+        // PLC driver
+        readonly string PlcIp = "127.0.0.1";
+        readonly int PlcPort = 4000;
+        readonly string McuIp = "127.0.0.1";
+        readonly int McuPort = 4010;
+
+        // Sensor Network
+        readonly IPAddress SnServerIp = IPAddress.Parse("127.0.0.1");
+        readonly int SnServerPort = 3000;
+        readonly string SnClientIp = "127.0.0.1";
+        readonly int SnClientPort = 3001;
+        readonly int SnTelescopeId = 3000;
+
         [TestInitialize]
         public void BuildUp() {
-            string IP = PLCConstants.LOCAL_HOST_IP;
+
+            SensorNetworkServer SN = new SensorNetworkServer(SnServerIp, SnServerPort, SnClientIp, SnClientPort, SnTelescopeId, true);
 
             rtManagementThreads = new List<RadioTelescopeControllerManagementThread>()
             {
                 new RadioTelescopeControllerManagementThread(new RadioTelescopeController(
-                    new RadioTelescope(new SpectraCyberController(new SpectraCyber()),  new  SimulationPLCDriver(IP, IP, 8103, 8103,true,false), new Location(), new Orientation()))),
+                    new RadioTelescope(new SpectraCyberSimulatorController(new SpectraCyberSimulator()),  new  SimulationPLCDriver(PlcIp, McuIp, McuPort, PlcPort, true, false), new Location(), new Orientation() , 1, SN))),
                 new RadioTelescopeControllerManagementThread(new RadioTelescopeController(
-                    new RadioTelescope(new SpectraCyberController(new SpectraCyber()),  new  SimulationPLCDriver(IP, IP, 8106, 8106,true,false), new Location(), new Orientation()))),
+                    new RadioTelescope(new SpectraCyberSimulatorController(new SpectraCyberSimulator()),  new  SimulationPLCDriver(PlcIp, McuIp, McuPort+1, PlcPort+1, true, false), new Location(), new Orientation(), 2, SN))),
                 new RadioTelescopeControllerManagementThread(new RadioTelescopeController(
-                    new RadioTelescope(new SpectraCyberController(new SpectraCyber()), new  SimulationPLCDriver(IP, IP, 8109, 8109,true,false), new Location(), new Orientation()))),
+                    new RadioTelescope(new SpectraCyberSimulatorController(new SpectraCyberSimulator()), new  SimulationPLCDriver(PlcIp, McuIp, McuPort+2, PlcPort+2, true, false), new Location(), new Orientation() , 3, SN))),
             };
 
-            controlRoom = new ControlRoom( weatherStation );
+            controlRoom = new ControlRoom( weatherStation, 87 );
 
             // End the CR's listener's server. We have to do this until we stop hard-coding that dang value.
             // TODO: Remove this logic when the value is no longer hard-coded (issue #350)
-            PrivateObject listener = new PrivateObject(controlRoom.mobileControlServer);
-            ((TcpListener)listener.GetFieldOrProperty("server")).Stop();
+            //PrivateObject listener = new PrivateObject(controlRoom.mobileControlServer);
+            //((TcpListener)listener.GetFieldOrProperty("server")).Stop();
 
             controlRoom.RTControllerManagementThreads.Add( rtManagementThreads[0] );
             controlRoom.RTControllerManagementThreads.Add( rtManagementThreads[1] );
             controlRoom.RTControllerManagementThreads.Add( rtManagementThreads[2] );
+        }
+
+        [ClassCleanup]
+        public static void cleanUp()
+        {
+            foreach (RadioTelescopeControllerManagementThread RTCMT in controlRoom.RTControllerManagementThreads)
+            {
+                RTCMT.RequestToKill();
+            }
+            controlRoom.mobileControlServer.RequestToKillTCPMonitoringRoutine();
         }
 
         

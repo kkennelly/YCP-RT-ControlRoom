@@ -51,7 +51,9 @@
             this.label8 = new System.Windows.Forms.Label();
             this.txtSpectraPort = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
+            this.RLLabel = new System.Windows.Forms.Label();
             this.txtWSCOMPort = new System.Windows.Forms.TextBox();
+            this.txtRemoteListenerCOMPort = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.portGroupbox = new System.Windows.Forms.GroupBox();
@@ -63,7 +65,6 @@
             this.sensorNetworkServerIPAddress = new System.Windows.Forms.TextBox();
             this.txtMcuCOMPort = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
-            this.createWSButton = new System.Windows.Forms.Button();
             this.acceptSettings = new System.Windows.Forms.Button();
             this.startRTGroupbox = new System.Windows.Forms.GroupBox();
             this.helpButton = new System.Windows.Forms.Button();
@@ -71,6 +72,7 @@
             this.MCUIPToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.MCUPortToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.PLCPortToolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.RLPortToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.WCOMPortToolTip = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.simulationSettingsGroupbox.SuspendLayout();
@@ -285,7 +287,9 @@
             this.simulationSettingsGroupbox.Controls.Add(this.comboPLCType);
             this.simulationSettingsGroupbox.Controls.Add(this.comboBox1);
             this.simulationSettingsGroupbox.Controls.Add(this.label2);
+            this.simulationSettingsGroupbox.Controls.Add(this.RLLabel);
             this.simulationSettingsGroupbox.Controls.Add(this.txtWSCOMPort);
+            this.simulationSettingsGroupbox.Controls.Add(this.txtRemoteListenerCOMPort);
             this.simulationSettingsGroupbox.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.simulationSettingsGroupbox.Location = new System.Drawing.Point(12, 258);
             this.simulationSettingsGroupbox.Name = "simulationSettingsGroupbox";
@@ -312,7 +316,7 @@
             this.txtSpectraPort.BackColor = System.Drawing.Color.Gainsboro;
             this.txtSpectraPort.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
             this.txtSpectraPort.ForeColor = System.Drawing.Color.DarkGray;
-            this.txtSpectraPort.Location = new System.Drawing.Point(389, 53);
+            this.txtSpectraPort.Location = new System.Drawing.Point(390, 18);
             this.txtSpectraPort.Margin = new System.Windows.Forms.Padding(2);
             this.txtSpectraPort.Name = "txtSpectraPort";
             this.txtSpectraPort.Size = new System.Drawing.Size(104, 29);
@@ -326,7 +330,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(258, 21);
+            this.label2.Location = new System.Drawing.Point(257, 21);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(132, 18);
             this.label2.TabIndex = 17;
@@ -334,13 +338,24 @@
             this.WCOMPortToolTip.SetToolTip(this.label2, "Enter a valid port number, between 1 and 65536");
             this.label2.Click += new System.EventHandler(this.label2_MouseHover);
             // 
+            // RLLabel
+            // 
+            this.RLLabel.AutoSize = true;
+            this.RLLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.RLLabel.Location = new System.Drawing.Point(257, 97);
+            this.RLLabel.Name = "RLLabel";
+            this.RLLabel.Size = new System.Drawing.Size(137, 18);
+            this.RLLabel.TabIndex = 17;
+            this.RLLabel.Text = "Remote Listener:";
+            this.RLPortToolTip.SetToolTip(this.RLLabel, "Enter a valid port number, between 1 and 65536");
+            // 
             // txtWSCOMPort
             // 
             this.txtWSCOMPort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.txtWSCOMPort.BackColor = System.Drawing.Color.Gainsboro;
             this.txtWSCOMPort.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
             this.txtWSCOMPort.ForeColor = System.Drawing.Color.DarkGray;
-            this.txtWSCOMPort.Location = new System.Drawing.Point(390, 17);
+            this.txtWSCOMPort.Location = new System.Drawing.Point(390, 54);
             this.txtWSCOMPort.Margin = new System.Windows.Forms.Padding(2);
             this.txtWSCOMPort.Name = "txtWSCOMPort";
             this.txtWSCOMPort.Size = new System.Drawing.Size(104, 29);
@@ -349,6 +364,22 @@
             this.txtWSCOMPort.TextChanged += new System.EventHandler(this.txtWSCOMPort_TextChanged);
             this.txtWSCOMPort.Enter += new System.EventHandler(this.txtWSCOMPort_Enter);
             this.txtWSCOMPort.Leave += new System.EventHandler(this.txtWSCOMPort_Leave);
+            // 
+            // txtRemoteListenerCOMPort
+            // 
+            this.txtRemoteListenerCOMPort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.txtRemoteListenerCOMPort.BackColor = System.Drawing.Color.Gainsboro;
+            this.txtRemoteListenerCOMPort.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
+            this.txtRemoteListenerCOMPort.ForeColor = System.Drawing.Color.DarkGray;
+            this.txtRemoteListenerCOMPort.Location = new System.Drawing.Point(390, 90);
+            this.txtRemoteListenerCOMPort.Margin = new System.Windows.Forms.Padding(2);
+            this.txtRemoteListenerCOMPort.Name = "txtRemoteListenerCOMPort";
+            this.txtRemoteListenerCOMPort.Size = new System.Drawing.Size(104, 29);
+            this.txtRemoteListenerCOMPort.TabIndex = 22;
+            this.txtRemoteListenerCOMPort.Text = "COM port";
+            this.txtRemoteListenerCOMPort.TextChanged += new System.EventHandler(this.txtRemoteListenerCOMPort_TextChanged);
+            this.txtRemoteListenerCOMPort.Enter += new System.EventHandler(this.txtRemoteListenerCOMPort_Enter);
+            this.txtRemoteListenerCOMPort.Leave += new System.EventHandler(this.txtRemoteListenerCOMPort_Leave);
             // 
             // label3
             // 
@@ -498,22 +529,6 @@
             this.MCUPortToolTip.SetToolTip(this.label5, "Enter a valid port number, between 1 and 65536");
             this.label5.Click += new System.EventHandler(this.label5_MouseHover);
             // 
-            // createWSButton
-            // 
-            this.createWSButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.createWSButton.BackColor = System.Drawing.Color.LightGray;
-            this.createWSButton.Enabled = false;
-            this.createWSButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.createWSButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.createWSButton.Location = new System.Drawing.Point(723, 262);
-            this.createWSButton.Margin = new System.Windows.Forms.Padding(2);
-            this.createWSButton.Name = "createWSButton";
-            this.createWSButton.Size = new System.Drawing.Size(170, 51);
-            this.createWSButton.TabIndex = 22;
-            this.createWSButton.Text = "Create Production Weather Station";
-            this.createWSButton.UseVisualStyleBackColor = false;
-            this.createWSButton.Click += new System.EventHandler(this.createWSButton_Click);
-            // 
             // acceptSettings
             // 
             this.acceptSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -524,7 +539,7 @@
             this.acceptSettings.Location = new System.Drawing.Point(539, 262);
             this.acceptSettings.Margin = new System.Windows.Forms.Padding(2);
             this.acceptSettings.Name = "acceptSettings";
-            this.acceptSettings.Size = new System.Drawing.Size(170, 51);
+            this.acceptSettings.Size = new System.Drawing.Size(352, 51);
             this.acceptSettings.TabIndex = 23;
             this.acceptSettings.Text = "Finalize settings";
             this.acceptSettings.UseVisualStyleBackColor = false;
@@ -580,7 +595,6 @@
             this.Controls.Add(this.helpButton);
             this.Controls.Add(this.startRTGroupbox);
             this.Controls.Add(this.acceptSettings);
-            this.Controls.Add(this.createWSButton);
             this.Controls.Add(this.portGroupbox);
             this.Controls.Add(this.simulationSettingsGroupbox);
             this.Controls.Add(this.label1);
@@ -589,7 +603,7 @@
             this.Controls.Add(this.ProdcheckBox);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Margin = new System.Windows.Forms.Padding(2);
-            this.MinimumSize = new System.Drawing.Size(920, 365);
+            this.MinimumSize = new System.Drawing.Size(920, 363);
             this.Name = "MainForm";
             this.Text = "MainForm";
             this.Load += new System.EventHandler(this.MainForm_Load);
@@ -622,12 +636,13 @@
         private System.Windows.Forms.GroupBox simulationSettingsGroupbox;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox txtWSCOMPort;
+        private System.Windows.Forms.TextBox txtRemoteListenerCOMPort;
+        private System.Windows.Forms.Label RLLabel;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.GroupBox portGroupbox;
         private System.Windows.Forms.TextBox txtMcuCOMPort;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Button createWSButton;
         private System.Windows.Forms.Button acceptSettings;
         private System.Windows.Forms.GroupBox startRTGroupbox;
         private System.Windows.Forms.Button helpButton;
@@ -636,6 +651,7 @@
         private System.Windows.Forms.ToolTip MCUPortToolTip;
         private System.Windows.Forms.ToolTip PLCPortToolTip;
         private System.Windows.Forms.ToolTip WCOMPortToolTip;
+        private System.Windows.Forms.ToolTip RLPortToolTip;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox sensorNetworkClientPort;

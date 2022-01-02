@@ -86,7 +86,7 @@ namespace ControlRoomApplication.Controllers
             }
         }
 
-
+        public override MovementPriority CurrentMovementPriority { get; set; }
 
         /// <summary>
         /// runs the modbus server to interface with the plc
@@ -378,6 +378,7 @@ namespace ControlRoomApplication.Controllers
                             if (plcInput.Estop)
                             {
                                 logger.Info(Utilities.GetTimeStamp() + ": Estop Hit");
+                                CurrentMovementPriority = MovementPriority.Critical;
 
                                 pushNotification.sendToAllAdmins("E-STOP ACTIVITY", "E-stop has been hit.");
                                 EmailNotifications.sendToAllAdmins("E-STOP ACTIVITY", "E-stop has been hit.");
@@ -385,6 +386,7 @@ namespace ControlRoomApplication.Controllers
                             else
                             {
                                 logger.Info(Utilities.GetTimeStamp() + ": Estop released");
+                                CurrentMovementPriority = MovementPriority.None;
 
                                 pushNotification.sendToAllAdmins("E-STOP ACTIVITY", "E-stop has been released.");
                                 EmailNotifications.sendToAllAdmins("E-STOP ACTIVITY", "E-stop has been released.");
@@ -518,8 +520,8 @@ namespace ControlRoomApplication.Controllers
         /// <param name="positionTranslationEL"></param>
         /// <param name="targetOrientation">The target orientation.</param>
         /// <returns></returns>
-        public override MovementResult RelativeMove(int programmedPeakSpeedAZInt, int positionTranslationAZ, int positionTranslationEL, Orientation targetOrientation) {
-            return MCU.MoveAndWaitForCompletion(programmedPeakSpeedAZInt, programmedPeakSpeedAZInt, positionTranslationAZ, positionTranslationEL, targetOrientation);
+        public override MovementResult RelativeMove(int programmedPeakSpeedAZInt, int programmedPeakSpeedELInt, int positionTranslationAZ, int positionTranslationEL, Orientation targetOrientation) {
+            return MCU.MoveAndWaitForCompletion(programmedPeakSpeedAZInt, programmedPeakSpeedELInt, positionTranslationAZ, positionTranslationEL, targetOrientation);
         }
 
         public override MovementResult MoveToOrientation(Orientation target_orientation, Orientation current_orientation)
@@ -636,8 +638,10 @@ namespace ControlRoomApplication.Controllers
         /// If no motors are moving when this is called, then it will not wait, and just be
         /// able to pass through.
         /// </summary>
+        /// <param name="isCriticalMovementInterrupt">Specify whether or not this is a critical movement interrupt and perform and immediate stop</param>
+        /// <param name="isSoftwareStopInterrupt">Specify whether or not this is a software-stop interrupt</param>
         /// <returns>True if it had to wait for a movement, false if it did not have to wait and there is no movement running.</returns>
-        public override bool InterruptMovementAndWaitUntilStopped()
+        public override bool InterruptMovementAndWaitUntilStopped(bool isCriticalMovementInterrupt = false, bool isSoftwareStopInterrupt = false)
         {
             bool motorsMoving = MCU.MotorsCurrentlyMoving();
 
@@ -646,11 +650,31 @@ namespace ControlRoomApplication.Controllers
                 logger.Info(Utilities.GetTimeStamp() + ": Overriding current movement...");
                 MCU.MovementInterruptFlag = true;
 
-                // Wait until motors stop moving or the interrupt flag is set back to false,
+                // Set corresponding flag depending on whether or not this is a critical movement interrupt
+                if (isCriticalMovementInterrupt)
+                {
+                    MCU.CriticalMovementInterruptFlag = true;
+                }
+
+                // Set corresponding flag depending on whether or not this is a software stop interrupt
+                if (isSoftwareStopInterrupt)
+                {
+                    // Currently necessary to stop Jog movements. Setting the SoftwaeStopInterruptFlag does not
+                    // interrupt Jog movements. This should be investigated in the future.
+                    if (CurrentMovementPriority == MovementPriority.Jog)
+                    {
+                        ImmediateStop();
+                    }
+                    MCU.SoftwareStopInterruptFlag = true;
+                }
+
+                // Wait until motors stop moving or all interrupt flags are set back to false,
                 // meaning the MCU has acknowledged and acted on the interrupt.
-                while(MotorsCurrentlyMoving() && MCU.MovementInterruptFlag == true) ;
+                while (MotorsCurrentlyMoving() && (MCU.MovementInterruptFlag == true || MCU.CriticalMovementInterruptFlag == true || MCU.SoftwareStopInterruptFlag == true)) ;
 
                 MCU.MovementInterruptFlag = false;
+                MCU.CriticalMovementInterruptFlag = false;
+                MCU.SoftwareStopInterruptFlag = false;
 
                 // Ensure there is plenty of time between MCU commands
                 Thread.Sleep(2000);
@@ -671,6 +695,60 @@ namespace ControlRoomApplication.Controllers
         public override bool MotorsCurrentlyMoving(RadioTelescopeAxisEnum axis = RadioTelescopeAxisEnum.BOTH)
         {
             return MCU.MotorsCurrentlyMoving(axis);
+        }
+
+        public override void SetFinalOffset(Orientation finalPos)
+        {
+            MCU.FinalPositionOffset = finalPos;
+        }
+
+        /// <summary>
+        /// Gets the direction that the specfied axis is moving.
+        /// </summary>
+        /// <param name="axis">Azimuth or elevation.</param>
+        /// <returns>The direction that the specfied axis is spinning.</returns>
+        public override RadioTelescopeDirectionEnum GetRadioTelescopeDirectionEnum(RadioTelescopeAxisEnum axis)
+        {
+            ushort[] directionData;
+
+            switch (axis)
+            {
+                //Axes must be checked independently because the MCU commands for motor moves have the same value for both Az and El
+                case RadioTelescopeAxisEnum.AZIMUTH:
+                  directionData = MCU.ReadMCURegisters(0, 1);
+                   if ((directionData[(int)MCUConstants.MCUOutputRegs.AZ_Status_Bist_MSW] >> (int)MCUConstants.MCUStatusBitsMSW.CCW_Motion & 0b1) == 1)
+                   {
+                       return RadioTelescopeDirectionEnum.CounterclockwiseOrPositive;
+                   }
+
+                   if ((directionData[(int)MCUConstants.MCUOutputRegs.AZ_Status_Bist_MSW] >> (int)MCUConstants.MCUStatusBitsMSW.CW_Motion & 0b1) == 1)
+                   {
+                       return RadioTelescopeDirectionEnum.ClockwiseOrNegative;
+                   }
+                   break;
+                   
+                case RadioTelescopeAxisEnum.ELEVATION:
+                    //in practice, only need to check the elevation
+                    directionData = MCU.ReadMCURegisters(10, 1);
+
+                    if (((directionData[(int)MCUConstants.MCUOutputRegs.EL_Status_Bist_MSW-10] >> (int)MCUConstants.MCUStatusBitsMSW.CCW_Motion) & 0b1) == 1)
+                    {
+                        return RadioTelescopeDirectionEnum.CounterclockwiseOrPositive;
+                    }
+
+                    if (((directionData[(int)MCUConstants.MCUOutputRegs.EL_Status_Bist_MSW-10] >> (int)MCUConstants.MCUStatusBitsMSW.CW_Motion) & 0b1) == 1)
+                    {
+                        return RadioTelescopeDirectionEnum.ClockwiseOrNegative;
+                    }
+                    break;
+
+                default:
+                    //This function can only accept a single axis (either Az or El)
+                    //see comment at top of function
+                    throw new ArgumentException();
+            }
+
+            return RadioTelescopeDirectionEnum.None;
         }
     }
 }

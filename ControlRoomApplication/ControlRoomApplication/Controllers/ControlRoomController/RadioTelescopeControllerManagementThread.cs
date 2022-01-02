@@ -444,7 +444,11 @@ namespace ControlRoomApplication.Controllers
         {
             logger.Info(Utilities.GetTimeStamp() + ": Ending Appointment");
             endAppt = true;
-            RTController.MoveRadioTelescopeToOrientation(new Orientation(0, 90), MovementPriority.Appointment);
+            MovementResult result = RTController.MoveRadioTelescopeToOrientation(new Orientation(0, 90), MovementPriority.Appointment);
+            if (result != MovementResult.Success)
+            {
+                logger.Error("Stowing telescope failed with message " + result);
+            }
         }
 
         /// <summary>

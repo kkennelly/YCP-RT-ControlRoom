@@ -34,7 +34,7 @@ namespace ControlRoomApplication.Controllers
         /// This is the priority of the currently-running move. This will be "None" if no move is currently running, otherwise it will
         /// reflect the priority.
         /// </summary>
-        public MovementPriority CurrentMovementPriority { get; set; }
+        public abstract MovementPriority CurrentMovementPriority { get; set; }
 
         /// <summary>
         /// the PLC will look for the server that we create in the control room, the control room will look for the remote server that the MCU has setup
@@ -98,7 +98,7 @@ namespace ControlRoomApplication.Controllers
 
         public abstract bool ImmediateStop();
 
-        public abstract MovementResult RelativeMove(int programmedPeakSpeedAZInt, int positionTranslationAZ, int positionTranslationEL, Orientation targetOrientation);
+        public abstract MovementResult RelativeMove(int programmedPeakSpeedAZInt, int programmedPeakSpeedELInt, int positionTranslationAZ, int positionTranslationEL, Orientation targetOrientation);
 
         public abstract MovementResult MoveToOrientation(Orientation target_orientation, Orientation current_orientation);
 
@@ -139,7 +139,9 @@ namespace ControlRoomApplication.Controllers
         /// If no motors are moving when this is called, then it will not wait, and just be
         /// able to pass through.
         /// </summary>
-        public abstract bool InterruptMovementAndWaitUntilStopped();
+        /// <param name="isCriticalMovementInterrupt">Specify whether or not this is a critical movement interrupt and perform and immediate stop</param>
+        /// <param name="isSoftwareStopInterrupt">Specify whether or not this is a software-stop interrupt</param>
+        public abstract bool InterruptMovementAndWaitUntilStopped(bool isCriticalMovementInterrupt = false, bool isSoftwareStopInterrupt = false);
 
         /// <summary>
         /// Checks to see if the motors are currently moving.
@@ -147,5 +149,14 @@ namespace ControlRoomApplication.Controllers
         /// <param name="axis">Azimuth, elevation, or both.</param>
         /// <returns>True if moving, false if not moving.</returns>
         public abstract bool MotorsCurrentlyMoving(RadioTelescopeAxisEnum axis = RadioTelescopeAxisEnum.BOTH);
+
+        public abstract void SetFinalOffset(Orientation finalPos);
+
+        /// <summary>
+        /// Gets the direction that the specfied axis is moving.
+        /// </summary>
+        /// <param name="axis">Azimuth or elevation.</param>
+        /// <returns>The direction that the specfied axis is spinning.</returns>
+        public abstract RadioTelescopeDirectionEnum GetRadioTelescopeDirectionEnum(RadioTelescopeAxisEnum axis);
     }
 }

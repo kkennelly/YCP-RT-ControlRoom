@@ -53,6 +53,7 @@ namespace ControlRoomApplication.Main
             this.editButton = new System.Windows.Forms.Button();
             this.errorLabel = new System.Windows.Forms.Label();
             this.overRideGroupbox = new System.Windows.Forms.GroupBox();
+            this.SoftwareStopsCheckBox = new System.Windows.Forms.CheckBox();
             this.label8 = new System.Windows.Forms.Label();
             this.statusTextBox = new System.Windows.Forms.TextBox();
             this.ActualDecTextBox = new System.Windows.Forms.TextBox();
@@ -265,9 +266,9 @@ namespace ControlRoomApplication.Main
             this.RAIncGroupbox.Controls.Add(this.oneButton);
             this.RAIncGroupbox.Controls.Add(this.oneForthButton);
             this.RAIncGroupbox.Location = new System.Drawing.Point(4, 45);
-            this.RAIncGroupbox.Margin = new System.Windows.Forms.Padding(2);
+            this.RAIncGroupbox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.RAIncGroupbox.Name = "RAIncGroupbox";
-            this.RAIncGroupbox.Padding = new System.Windows.Forms.Padding(2);
+            this.RAIncGroupbox.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.RAIncGroupbox.Size = new System.Drawing.Size(188, 54);
             this.RAIncGroupbox.TabIndex = 16;
             this.RAIncGroupbox.TabStop = false;
@@ -278,7 +279,7 @@ namespace ControlRoomApplication.Main
             this.tenButton.BackColor = System.Drawing.Color.DarkGray;
             this.tenButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.tenButton.Location = new System.Drawing.Point(136, 15);
-            this.tenButton.Margin = new System.Windows.Forms.Padding(2);
+            this.tenButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.tenButton.Name = "tenButton";
             this.tenButton.Size = new System.Drawing.Size(40, 30);
             this.tenButton.TabIndex = 3;
@@ -291,7 +292,7 @@ namespace ControlRoomApplication.Main
             this.fiveButton.BackColor = System.Drawing.Color.DarkGray;
             this.fiveButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.fiveButton.Location = new System.Drawing.Point(93, 15);
-            this.fiveButton.Margin = new System.Windows.Forms.Padding(2);
+            this.fiveButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.fiveButton.Name = "fiveButton";
             this.fiveButton.Size = new System.Drawing.Size(40, 30);
             this.fiveButton.TabIndex = 2;
@@ -304,7 +305,7 @@ namespace ControlRoomApplication.Main
             this.oneButton.BackColor = System.Drawing.Color.DarkGray;
             this.oneButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.oneButton.Location = new System.Drawing.Point(49, 15);
-            this.oneButton.Margin = new System.Windows.Forms.Padding(2);
+            this.oneButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.oneButton.Name = "oneButton";
             this.oneButton.Size = new System.Drawing.Size(40, 30);
             this.oneButton.TabIndex = 1;
@@ -317,7 +318,7 @@ namespace ControlRoomApplication.Main
             this.oneForthButton.BackColor = System.Drawing.Color.DarkGray;
             this.oneForthButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.oneForthButton.Location = new System.Drawing.Point(5, 15);
-            this.oneForthButton.Margin = new System.Windows.Forms.Padding(2);
+            this.oneForthButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.oneForthButton.Name = "oneForthButton";
             this.oneForthButton.Size = new System.Drawing.Size(40, 30);
             this.oneForthButton.TabIndex = 0;
@@ -353,6 +354,7 @@ namespace ControlRoomApplication.Main
             // overRideGroupbox
             // 
             this.overRideGroupbox.BackColor = System.Drawing.Color.Gainsboro;
+            this.overRideGroupbox.Controls.Add(this.SoftwareStopsCheckBox);
             this.overRideGroupbox.Controls.Add(this.label8);
             this.overRideGroupbox.Controls.Add(this.statusTextBox);
             this.overRideGroupbox.Controls.Add(this.ActualRATextBox);
@@ -372,11 +374,25 @@ namespace ControlRoomApplication.Main
             this.overRideGroupbox.TabStop = false;
             this.overRideGroupbox.Text = "Position Information";
             // 
+            // SoftwareStopsCheckBox
+            // 
+            this.SoftwareStopsCheckBox.AutoSize = true;
+            this.SoftwareStopsCheckBox.Checked = true;
+            this.SoftwareStopsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.SoftwareStopsCheckBox.Location = new System.Drawing.Point(20, 176);
+            this.SoftwareStopsCheckBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.SoftwareStopsCheckBox.Name = "SoftwareStopsCheckBox";
+            this.SoftwareStopsCheckBox.Size = new System.Drawing.Size(134, 17);
+            this.SoftwareStopsCheckBox.TabIndex = 17;
+            this.SoftwareStopsCheckBox.Text = "Enable Software Stops";
+            this.SoftwareStopsCheckBox.UseVisualStyleBackColor = true;
+            this.SoftwareStopsCheckBox.CheckedChanged += new System.EventHandler(this.SoftwareStopsCheckBox_CheckedChanged);
+            // 
             // label8
             // 
             this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label8.Location = new System.Drawing.Point(18, 167);
+            this.label8.Location = new System.Drawing.Point(16, 149);
             this.label8.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(121, 13);
@@ -385,7 +401,7 @@ namespace ControlRoomApplication.Main
             // 
             // statusTextBox
             // 
-            this.statusTextBox.Location = new System.Drawing.Point(143, 164);
+            this.statusTextBox.Location = new System.Drawing.Point(154, 146);
             this.statusTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.statusTextBox.Name = "statusTextBox";
             this.statusTextBox.ReadOnly = true;
@@ -396,7 +412,7 @@ namespace ControlRoomApplication.Main
             // 
             this.ActualDecTextBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.ActualDecTextBox.Location = new System.Drawing.Point(153, 119);
-            this.ActualDecTextBox.Margin = new System.Windows.Forms.Padding(2);
+            this.ActualDecTextBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.ActualDecTextBox.Name = "ActualDecTextBox";
             this.ActualDecTextBox.ReadOnly = true;
             this.ActualDecTextBox.Size = new System.Drawing.Size(76, 20);
@@ -411,9 +427,9 @@ namespace ControlRoomApplication.Main
             this.decIncGroupbox.Controls.Add(this.oneButtonDec);
             this.decIncGroupbox.Controls.Add(this.oneForthButtonDec);
             this.decIncGroupbox.Location = new System.Drawing.Point(4, 104);
-            this.decIncGroupbox.Margin = new System.Windows.Forms.Padding(2);
+            this.decIncGroupbox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.decIncGroupbox.Name = "decIncGroupbox";
-            this.decIncGroupbox.Padding = new System.Windows.Forms.Padding(2);
+            this.decIncGroupbox.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.decIncGroupbox.Size = new System.Drawing.Size(188, 56);
             this.decIncGroupbox.TabIndex = 20;
             this.decIncGroupbox.TabStop = false;
@@ -424,7 +440,7 @@ namespace ControlRoomApplication.Main
             this.tenButtonDec.BackColor = System.Drawing.Color.DarkGray;
             this.tenButtonDec.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.tenButtonDec.Location = new System.Drawing.Point(136, 15);
-            this.tenButtonDec.Margin = new System.Windows.Forms.Padding(2);
+            this.tenButtonDec.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.tenButtonDec.Name = "tenButtonDec";
             this.tenButtonDec.Size = new System.Drawing.Size(40, 30);
             this.tenButtonDec.TabIndex = 3;
@@ -436,7 +452,7 @@ namespace ControlRoomApplication.Main
             this.fiveButtonDec.BackColor = System.Drawing.Color.DarkGray;
             this.fiveButtonDec.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.fiveButtonDec.Location = new System.Drawing.Point(93, 15);
-            this.fiveButtonDec.Margin = new System.Windows.Forms.Padding(2);
+            this.fiveButtonDec.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.fiveButtonDec.Name = "fiveButtonDec";
             this.fiveButtonDec.Size = new System.Drawing.Size(40, 30);
             this.fiveButtonDec.TabIndex = 2;
@@ -448,7 +464,7 @@ namespace ControlRoomApplication.Main
             this.oneButtonDec.BackColor = System.Drawing.Color.DarkGray;
             this.oneButtonDec.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.oneButtonDec.Location = new System.Drawing.Point(49, 15);
-            this.oneButtonDec.Margin = new System.Windows.Forms.Padding(2);
+            this.oneButtonDec.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.oneButtonDec.Name = "oneButtonDec";
             this.oneButtonDec.Size = new System.Drawing.Size(40, 30);
             this.oneButtonDec.TabIndex = 1;
@@ -460,7 +476,7 @@ namespace ControlRoomApplication.Main
             this.oneForthButtonDec.BackColor = System.Drawing.Color.DarkGray;
             this.oneForthButtonDec.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.oneForthButtonDec.Location = new System.Drawing.Point(5, 15);
-            this.oneForthButtonDec.Margin = new System.Windows.Forms.Padding(2);
+            this.oneForthButtonDec.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.oneForthButtonDec.Name = "oneForthButtonDec";
             this.oneForthButtonDec.Size = new System.Drawing.Size(40, 30);
             this.oneForthButtonDec.TabIndex = 0;
@@ -500,7 +516,8 @@ namespace ControlRoomApplication.Main
             "Snow Dump",
             "Home Telescope",
             "Custom Orientation Movement",
-            "Endless Azimuth Rotation"});
+            "Endless Azimuth Rotation",
+            "Hardware Movement Script"});
             this.controlScriptsCombo.Location = new System.Drawing.Point(4, 28);
             this.controlScriptsCombo.Name = "controlScriptsCombo";
             this.controlScriptsCombo.Size = new System.Drawing.Size(260, 21);
@@ -513,9 +530,9 @@ namespace ControlRoomApplication.Main
             this.groupBox4.Controls.Add(this.runControlScriptButton);
             this.groupBox4.Controls.Add(this.controlScriptsCombo);
             this.groupBox4.Location = new System.Drawing.Point(296, 29);
-            this.groupBox4.Margin = new System.Windows.Forms.Padding(2);
+            this.groupBox4.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Padding = new System.Windows.Forms.Padding(2);
+            this.groupBox4.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.groupBox4.Size = new System.Drawing.Size(418, 65);
             this.groupBox4.TabIndex = 24;
             this.groupBox4.TabStop = false;
@@ -526,7 +543,7 @@ namespace ControlRoomApplication.Main
             this.runControlScriptButton.BackColor = System.Drawing.Color.DarkGray;
             this.runControlScriptButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.runControlScriptButton.Location = new System.Drawing.Point(288, 16);
-            this.runControlScriptButton.Margin = new System.Windows.Forms.Padding(2);
+            this.runControlScriptButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.runControlScriptButton.Name = "runControlScriptButton";
             this.runControlScriptButton.Size = new System.Drawing.Size(126, 33);
             this.runControlScriptButton.TabIndex = 24;
@@ -552,9 +569,9 @@ namespace ControlRoomApplication.Main
             this.manualGroupBox.Controls.Add(this.subElaButton);
             this.manualGroupBox.Controls.Add(this.cwAzJogButton);
             this.manualGroupBox.Location = new System.Drawing.Point(423, 213);
-            this.manualGroupBox.Margin = new System.Windows.Forms.Padding(2);
+            this.manualGroupBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.manualGroupBox.Name = "manualGroupBox";
-            this.manualGroupBox.Padding = new System.Windows.Forms.Padding(2);
+            this.manualGroupBox.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.manualGroupBox.Size = new System.Drawing.Size(279, 201);
             this.manualGroupBox.TabIndex = 25;
             this.manualGroupBox.TabStop = false;
@@ -608,7 +625,7 @@ namespace ControlRoomApplication.Main
             this.manualControlButton.BackColor = System.Drawing.Color.OrangeRed;
             this.manualControlButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.manualControlButton.Location = new System.Drawing.Point(15, 17);
-            this.manualControlButton.Margin = new System.Windows.Forms.Padding(2);
+            this.manualControlButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.manualControlButton.Name = "manualControlButton";
             this.manualControlButton.Size = new System.Drawing.Size(150, 28);
             this.manualControlButton.TabIndex = 25;
@@ -621,7 +638,7 @@ namespace ControlRoomApplication.Main
             this.immediateRadioButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.immediateRadioButton.AutoSize = true;
             this.immediateRadioButton.Location = new System.Drawing.Point(9, 123);
-            this.immediateRadioButton.Margin = new System.Windows.Forms.Padding(2);
+            this.immediateRadioButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.immediateRadioButton.Name = "immediateRadioButton";
             this.immediateRadioButton.Size = new System.Drawing.Size(98, 17);
             this.immediateRadioButton.TabIndex = 24;
@@ -634,7 +651,7 @@ namespace ControlRoomApplication.Main
             this.ControlledButtonRadio.AutoSize = true;
             this.ControlledButtonRadio.Checked = true;
             this.ControlledButtonRadio.Location = new System.Drawing.Point(9, 104);
-            this.ControlledButtonRadio.Margin = new System.Windows.Forms.Padding(2);
+            this.ControlledButtonRadio.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.ControlledButtonRadio.Name = "ControlledButtonRadio";
             this.ControlledButtonRadio.Size = new System.Drawing.Size(97, 17);
             this.ControlledButtonRadio.TabIndex = 23;
@@ -646,7 +663,7 @@ namespace ControlRoomApplication.Main
             // 
             this.speedTextBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.speedTextBox.Location = new System.Drawing.Point(9, 162);
-            this.speedTextBox.Margin = new System.Windows.Forms.Padding(2);
+            this.speedTextBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.speedTextBox.Name = "speedTextBox";
             this.speedTextBox.ReadOnly = true;
             this.speedTextBox.Size = new System.Drawing.Size(69, 20);
@@ -677,7 +694,7 @@ namespace ControlRoomApplication.Main
             this.ccwAzJogButton.BackColor = System.Drawing.Color.DarkGray;
             this.ccwAzJogButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.ccwAzJogButton.Location = new System.Drawing.Point(150, 54);
-            this.ccwAzJogButton.Margin = new System.Windows.Forms.Padding(2);
+            this.ccwAzJogButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.ccwAzJogButton.Name = "ccwAzJogButton";
             this.ccwAzJogButton.Size = new System.Drawing.Size(40, 40);
             this.ccwAzJogButton.TabIndex = 6;
@@ -692,7 +709,7 @@ namespace ControlRoomApplication.Main
             this.plusElaButton.BackColor = System.Drawing.Color.DarkGray;
             this.plusElaButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.plusElaButton.Location = new System.Drawing.Point(190, 10);
-            this.plusElaButton.Margin = new System.Windows.Forms.Padding(2);
+            this.plusElaButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.plusElaButton.Name = "plusElaButton";
             this.plusElaButton.Size = new System.Drawing.Size(40, 40);
             this.plusElaButton.TabIndex = 4;
@@ -707,7 +724,7 @@ namespace ControlRoomApplication.Main
             this.subElaButton.BackColor = System.Drawing.Color.DarkGray;
             this.subElaButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.subElaButton.Location = new System.Drawing.Point(190, 100);
-            this.subElaButton.Margin = new System.Windows.Forms.Padding(2);
+            this.subElaButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.subElaButton.Name = "subElaButton";
             this.subElaButton.Size = new System.Drawing.Size(40, 40);
             this.subElaButton.TabIndex = 5;
@@ -722,7 +739,7 @@ namespace ControlRoomApplication.Main
             this.cwAzJogButton.BackColor = System.Drawing.Color.DarkGray;
             this.cwAzJogButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.cwAzJogButton.Location = new System.Drawing.Point(230, 54);
-            this.cwAzJogButton.Margin = new System.Windows.Forms.Padding(2);
+            this.cwAzJogButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.cwAzJogButton.Name = "cwAzJogButton";
             this.cwAzJogButton.Size = new System.Drawing.Size(40, 40);
             this.cwAzJogButton.TabIndex = 7;
@@ -738,7 +755,7 @@ namespace ControlRoomApplication.Main
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button1.ForeColor = System.Drawing.SystemColors.ControlText;
             this.button1.Location = new System.Drawing.Point(692, 2);
-            this.button1.Margin = new System.Windows.Forms.Padding(2);
+            this.button1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(22, 23);
             this.button1.TabIndex = 26;
@@ -764,9 +781,9 @@ namespace ControlRoomApplication.Main
             this.spectraCyberGroupBox.Controls.Add(this.offsetVoltage);
             this.spectraCyberGroupBox.Controls.Add(this.scanTypeComboBox);
             this.spectraCyberGroupBox.Location = new System.Drawing.Point(296, 111);
-            this.spectraCyberGroupBox.Margin = new System.Windows.Forms.Padding(2);
+            this.spectraCyberGroupBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.spectraCyberGroupBox.Name = "spectraCyberGroupBox";
-            this.spectraCyberGroupBox.Padding = new System.Windows.Forms.Padding(2);
+            this.spectraCyberGroupBox.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.spectraCyberGroupBox.Size = new System.Drawing.Size(418, 84);
             this.spectraCyberGroupBox.TabIndex = 29;
             this.spectraCyberGroupBox.TabStop = false;
@@ -794,7 +811,7 @@ namespace ControlRoomApplication.Main
             "0.5(S)/1.00(C) ",
             "1.00(S)/10.00(C)"});
             this.integrationStepCombo.Location = new System.Drawing.Point(215, 56);
-            this.integrationStepCombo.Margin = new System.Windows.Forms.Padding(2);
+            this.integrationStepCombo.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.integrationStepCombo.MaxDropDownItems = 6;
             this.integrationStepCombo.Name = "integrationStepCombo";
             this.integrationStepCombo.Size = new System.Drawing.Size(79, 21);
@@ -816,7 +833,7 @@ namespace ControlRoomApplication.Main
             // 
             this.IFGainVal.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.IFGainVal.Location = new System.Drawing.Point(77, 57);
-            this.IFGainVal.Margin = new System.Windows.Forms.Padding(2);
+            this.IFGainVal.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.IFGainVal.Name = "IFGainVal";
             this.IFGainVal.Size = new System.Drawing.Size(44, 20);
             this.IFGainVal.TabIndex = 42;
@@ -838,7 +855,7 @@ namespace ControlRoomApplication.Main
             this.finalizeSettingsButton.BackColor = System.Drawing.Color.DarkGray;
             this.finalizeSettingsButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.finalizeSettingsButton.Location = new System.Drawing.Point(309, 10);
-            this.finalizeSettingsButton.Margin = new System.Windows.Forms.Padding(2);
+            this.finalizeSettingsButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.finalizeSettingsButton.Name = "finalizeSettingsButton";
             this.finalizeSettingsButton.Size = new System.Drawing.Size(97, 27);
             this.finalizeSettingsButton.TabIndex = 40;
@@ -860,7 +877,7 @@ namespace ControlRoomApplication.Main
             "X50",
             "X60"});
             this.DCGain.Location = new System.Drawing.Point(4, 56);
-            this.DCGain.Margin = new System.Windows.Forms.Padding(2);
+            this.DCGain.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.DCGain.MaxDropDownItems = 6;
             this.DCGain.Name = "DCGain";
             this.DCGain.Size = new System.Drawing.Size(57, 21);
@@ -873,7 +890,7 @@ namespace ControlRoomApplication.Main
             this.stopScanButton.BackColor = System.Drawing.Color.OrangeRed;
             this.stopScanButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.stopScanButton.Location = new System.Drawing.Point(361, 44);
-            this.stopScanButton.Margin = new System.Windows.Forms.Padding(2);
+            this.stopScanButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.stopScanButton.Name = "stopScanButton";
             this.stopScanButton.Size = new System.Drawing.Size(45, 36);
             this.stopScanButton.TabIndex = 37;
@@ -887,7 +904,7 @@ namespace ControlRoomApplication.Main
             this.startScanButton.BackColor = System.Drawing.Color.LimeGreen;
             this.startScanButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.startScanButton.Location = new System.Drawing.Point(309, 44);
-            this.startScanButton.Margin = new System.Windows.Forms.Padding(2);
+            this.startScanButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.startScanButton.Name = "startScanButton";
             this.startScanButton.Size = new System.Drawing.Size(48, 36);
             this.startScanButton.TabIndex = 36;
@@ -899,7 +916,7 @@ namespace ControlRoomApplication.Main
             // 
             this.frequency.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.frequency.Location = new System.Drawing.Point(158, 18);
-            this.frequency.Margin = new System.Windows.Forms.Padding(2);
+            this.frequency.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.frequency.Name = "frequency";
             this.frequency.Size = new System.Drawing.Size(76, 20);
             this.frequency.TabIndex = 35;
@@ -912,9 +929,9 @@ namespace ControlRoomApplication.Main
             this.lblFrequency.Location = new System.Drawing.Point(155, 0);
             this.lblFrequency.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblFrequency.Name = "lblFrequency";
-            this.lblFrequency.Size = new System.Drawing.Size(79, 13);
+            this.lblFrequency.Size = new System.Drawing.Size(85, 13);
             this.lblFrequency.TabIndex = 34;
-            this.lblFrequency.Text = "Frequency (Hz)";
+            this.lblFrequency.Text = "Frequency (kHz)";
             // 
             // label9
             // 
@@ -931,7 +948,7 @@ namespace ControlRoomApplication.Main
             // 
             this.offsetVoltage.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.offsetVoltage.Location = new System.Drawing.Point(136, 57);
-            this.offsetVoltage.Margin = new System.Windows.Forms.Padding(2);
+            this.offsetVoltage.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.offsetVoltage.Name = "offsetVoltage";
             this.offsetVoltage.Size = new System.Drawing.Size(44, 20);
             this.offsetVoltage.TabIndex = 27;
@@ -947,7 +964,7 @@ namespace ControlRoomApplication.Main
             "Continuum",
             "Spectral"});
             this.scanTypeComboBox.Location = new System.Drawing.Point(4, 18);
-            this.scanTypeComboBox.Margin = new System.Windows.Forms.Padding(2);
+            this.scanTypeComboBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.scanTypeComboBox.MaxDropDownItems = 2;
             this.scanTypeComboBox.Name = "scanTypeComboBox";
             this.scanTypeComboBox.Size = new System.Drawing.Size(83, 21);
@@ -968,7 +985,7 @@ namespace ControlRoomApplication.Main
             this.Controls.Add(this.overRideGroupbox);
             this.Controls.Add(this.errorLabel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.MinimumSize = new System.Drawing.Size(600, 478);
+            this.MinimumSize = new System.Drawing.Size(600, 476);
             this.Name = "FreeControlForm";
             this.Text = "Control Form";
             this.RAIncGroupbox.ResumeLayout(false);
@@ -1057,7 +1074,6 @@ namespace ControlRoomApplication.Main
         private System.Windows.Forms.ToolTip offsetVoltageToolTip;
         private System.Windows.Forms.ToolTip frequencyToolTip;
         private System.Windows.Forms.TrackBar speedTrackBar;
-    
-
+        private System.Windows.Forms.CheckBox SoftwareStopsCheckBox;
     }
 }

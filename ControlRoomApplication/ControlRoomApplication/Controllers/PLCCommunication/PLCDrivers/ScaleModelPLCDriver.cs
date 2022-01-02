@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using ControlRoomApplication.Constants;
+using ControlRoomApplication.Controllers.PLCCommunication.PLCDrivers.MCUManager;
 using ControlRoomApplication.Controllers.PLCCommunication.PLCDrivers.MCUManager.Enumerations;
 using ControlRoomApplication.Entities;
 using Newtonsoft.Json;
@@ -193,6 +194,8 @@ namespace ControlRoomApplication.Controllers {
             Console.WriteLine( MCU_ip );
         }
 
+        public override MovementPriority CurrentMovementPriority { get; set; }
+
         public override void setregvalue(ushort adr, ushort value)
         {
             throw new NotImplementedException();
@@ -264,7 +267,7 @@ namespace ControlRoomApplication.Controllers {
             return MovementResult.Success;
         }
 
-        public override MovementResult RelativeMove(int programmedPeakSpeedAZInt, int positionTranslationAZ, int positionTranslationEL, Orientation targetOrientation) {
+        public override MovementResult RelativeMove(int programmedPeakSpeedAZInt, int programmedPeakSpeedELInt,  int positionTranslationAZ, int positionTranslationEL, Orientation targetOrientation) {
             /*
                     if(Plc.OutgoingOrientation.Azimuth < PLCConstants.RIGHT_ASCENSION_LOWER_LIMIT || Plc.OutgoingOrientation.Azimuth > PLCConstants.RIGHT_ASCENSION_UPPER_LIMIT) {
                         logger.Error( $"Azimuth ({Plc.OutgoingOrientation.Azimuth}) was out of range." );
@@ -276,7 +279,7 @@ namespace ControlRoomApplication.Controllers {
                     */
             // Convert orientation object to a json string
             //string jsonOrientation = JsonConvert.SerializeObject( Plc.OutgoingOrientation );
-            return SendRelativeMove(programmedPeakSpeedAZInt, programmedPeakSpeedAZInt, positionTranslationAZ, positionTranslationEL);
+            return SendRelativeMove(programmedPeakSpeedAZInt, programmedPeakSpeedELInt, positionTranslationAZ, positionTranslationEL);
 
         }
 
@@ -356,12 +359,22 @@ namespace ControlRoomApplication.Controllers {
             throw new NotImplementedException();
         }
 
-        public override bool InterruptMovementAndWaitUntilStopped()
+        public override bool InterruptMovementAndWaitUntilStopped(bool isCriticalMovementInterrupt = false, bool isSoftwareStopInterrupt = false)
         {
             throw new NotImplementedException();
         }
 
         public override bool MotorsCurrentlyMoving(RadioTelescopeAxisEnum axis = RadioTelescopeAxisEnum.BOTH)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void SetFinalOffset(Orientation finalPos)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override RadioTelescopeDirectionEnum GetRadioTelescopeDirectionEnum(RadioTelescopeAxisEnum axis)
         {
             throw new NotImplementedException();
         }

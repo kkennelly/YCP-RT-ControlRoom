@@ -1,4 +1,8 @@
-﻿using ControlRoomApplication.Controllers;
+﻿using ControlRoomApplication.Constants;
+using ControlRoomApplication.Controllers;
+using ControlRoomApplication.Controllers.Communications;
+using ControlRoomApplication.Controllers.Communications.Enumerations;
+using ControlRoomApplication.Controllers.PLCCommunication.PLCDrivers.MCUManager.Enumerations;
 using ControlRoomApplication.Controllers.SensorNetwork;
 using ControlRoomApplication.Database;
 using ControlRoomApplication.Entities;
@@ -54,7 +58,7 @@ namespace ControlRoomApplicationTest.CommunicationTests
 
             AbstractWeatherStation WS = new SimulationWeatherStation(1000);
 
-            ControlRoom = new ControlRoom(WS);
+            ControlRoom = new ControlRoom(WS,80);
             
             ControlRoom.mobileControlServer.rtController = RtController;
 
@@ -81,7 +85,7 @@ namespace ControlRoomApplicationTest.CommunicationTests
             byte expectedDisabled = 0;
             int expectedDataTimeout = 6;
             int expectedInitTimeout = 5;
-            string command = 
+            string command = "1.0 | SENSOR_INIT | "+
                 $"{expectedDisabled}," +
                 $"{expectedDisabled}," +
                 $"{expectedDisabled}," +
@@ -90,24 +94,25 @@ namespace ControlRoomApplicationTest.CommunicationTests
                 $"{expectedDisabled}," +
                 $"{expectedDisabled}," +
                 $"{expectedDataTimeout}," +
-                $"{expectedInitTimeout}," +
-                $"SENSOR_INIT";
+                $"{expectedInitTimeout}" + "| 12:00:00";
 
-            bool result = (bool)PrivListener.Invoke("processMessage", command);
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] { result.parsedString });
             byte[] resultInitBytes = RadioTelescope.SensorNetworkServer.InitializationClient.SensorNetworkConfig.GetSensorInitAsBytes();
             int resultDataTimeout = RadioTelescope.SensorNetworkServer.InitializationClient.SensorNetworkConfig.TimeoutDataRetrieval / 1000; // ms to seconds
             int resultInitTimeout = RadioTelescope.SensorNetworkServer.InitializationClient.SensorNetworkConfig.TimeoutInitialization / 1000; // ms to seconds
 
-            Assert.IsTrue(result);
+            Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
+
 
             // Verify the init values are as expected
-            Assert.AreEqual(expectedDisabled, resultInitBytes[(int)SensorInitializationEnum.AzimuthTemp]);
             Assert.AreEqual(expectedDisabled, resultInitBytes[(int)SensorInitializationEnum.ElevationTemp]);
-            Assert.AreEqual(expectedDisabled, resultInitBytes[(int)SensorInitializationEnum.AzimuthAccelerometer]);
-            Assert.AreEqual(expectedDisabled, resultInitBytes[(int)SensorInitializationEnum.ElevationAccelerometer]);
-            Assert.AreEqual(expectedDisabled, resultInitBytes[(int)SensorInitializationEnum.ElevationAccelerometer]);
-            Assert.AreEqual(expectedDisabled, resultInitBytes[(int)SensorInitializationEnum.AzimuthEncoder]);
+            Assert.AreEqual(expectedDisabled, resultInitBytes[(int)SensorInitializationEnum.AzimuthTemp]);
             Assert.AreEqual(expectedDisabled, resultInitBytes[(int)SensorInitializationEnum.ElevationEncoder]);
+            Assert.AreEqual(expectedDisabled, resultInitBytes[(int)SensorInitializationEnum.AzimuthEncoder]);
+            Assert.AreEqual(expectedDisabled, resultInitBytes[(int)SensorInitializationEnum.AzimuthAccelerometer]);
+            Assert.AreEqual(expectedDisabled, resultInitBytes[(int)SensorInitializationEnum.ElevationEncoder]);
+            Assert.AreEqual(expectedDisabled, resultInitBytes[(int)SensorInitializationEnum.CounterbalanceAccelerometer]);
 
             // Verify init values are as expected
             Assert.AreEqual(expectedDataTimeout, resultDataTimeout);
@@ -120,241 +125,289 @@ namespace ControlRoomApplicationTest.CommunicationTests
         [TestMethod]
         public void TestProcessMessage_SensorInitInvalidMessage_Fail()
         {
-            string invalidCommand = "SENSOR_INIT,1,2,3,4";
+            string invalidCommand = "1.0 | SENSOR_INIT | 0,1,2,3,4 | 12:00:00";
 
-            bool result = (bool)PrivListener.Invoke("processMessage", invalidCommand);
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", invalidCommand);
 
-            Assert.IsFalse(result);
+            Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.MissingCommandArgs);
         }
 
         [TestMethod]
         public void TestProcessMessage_SetOverrideSetCounterbalanceAcc_SetsCounterbalanceOverride()
         {
-            string command = "SET_OVERRIDE OVR CB_ACC";
-            
-            bool result = (bool)PrivListener.Invoke("processMessage", command);
+            string command = "1.0 | SET_OVERRIDE | CB_ACC | TRUE | 12:00:00";
 
-            Assert.IsTrue(result);
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] {result.parsedString });
+
+            Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
+            Assert.AreEqual(mvmtResult.movementResult, MovementResult.Success);
             Assert.IsTrue(RtController.overrides.overrideCounterbalanceAccelerometer);
         }
 
         [TestMethod]
         public void TestProcessMessage_SetOverrideRemCounterbalanceAcc_RemovesCounterbalanceOverride()
         {
-            string command = "SET_OVERRIDE CB_ACC";
+            string command = "1.0 | SET_OVERRIDE | CB_ACC | FALSE | 12:00:00";
 
-            bool result = (bool)PrivListener.Invoke("processMessage", command);
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] {result.parsedString });
 
-            Assert.IsTrue(result);
+            Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
+            Assert.AreEqual(mvmtResult.movementResult, MovementResult.Success);
             Assert.IsFalse(RtController.overrides.overrideCounterbalanceAccelerometer);
         }
 
         [TestMethod]
         public void TestProcessMessage_SetOverrideSetElevationAcc_SetsElevationAccOverride()
         {
-            string command = "SET_OVERRIDE OVR EL_ACC";
+            string command = "1.0 | SET_OVERRIDE | EL_ACC | TRUE | 12:00:00";
 
-            bool result = (bool)PrivListener.Invoke("processMessage", command);
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] {result.parsedString });
 
-            Assert.IsTrue(result);
+
+            Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
+            Assert.AreEqual(mvmtResult.movementResult, MovementResult.Success);
             Assert.IsTrue(RtController.overrides.overrideElevationAccelerometer);
         }
 
         [TestMethod]
         public void TestProcessMessage_SetOverrideRemElevationAcc_RemovesElevationAccOverride()
         {
-            string command = "SET_OVERRIDE EL_ACC";
+            string command = "1.0 | SET_OVERRIDE | EL_ACC | FALSE | 12:00:00";
 
-            bool result = (bool)PrivListener.Invoke("processMessage", command);
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] {result.parsedString });
 
-            Assert.IsTrue(result);
+
+            Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
+            Assert.AreEqual(mvmtResult.movementResult, MovementResult.Success);
             Assert.IsFalse(RtController.overrides.overrideElevationAccelerometer);
         }
 
         [TestMethod]
         public void TestProcessMessage_SetOverrideSetAzimuthAcc_SetsAzimuthAccOverride()
         {
-            string command = "SET_OVERRIDE OVR AZ_ACC";
+            string command = "1.0 | SET_OVERRIDE | AZ_ACC | TRUE | 12:00:00";
 
-            bool result = (bool)PrivListener.Invoke("processMessage", command);
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] {result.parsedString });
 
-            Assert.IsTrue(result);
+
+            Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
+            Assert.AreEqual(mvmtResult.movementResult, MovementResult.Success);
             Assert.IsTrue(RtController.overrides.overrideAzimuthAccelerometer);
         }
 
         [TestMethod]
         public void TestProcessMessage_SetOverrideRemAzimuthAcc_RemovesAzimuthAccOverride()
         {
-            string command = "SET_OVERRIDE AZ_ACC";
+            string command = "1.0 | SET_OVERRIDE | AZ_ACC | FALSE | 12:00:00";
 
-            bool result = (bool)PrivListener.Invoke("processMessage", command);
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] {result.parsedString });
 
-            Assert.IsTrue(result);
+
+            Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
+            Assert.AreEqual(mvmtResult.movementResult, MovementResult.Success);
             Assert.IsFalse(RtController.overrides.overrideAzimuthAccelerometer);
         }
 
         [TestMethod]
         public void TestProcessMessage_SetOverrideSetElevationEnc_SetsElevationEncOverride()
         {
-            string command = "SET_OVERRIDE OVR EL_ABS_ENC";
+            string command = "1.0 | SET_OVERRIDE | EL_ABS_ENC | TRUE | 12:00:00";
 
-            bool result = (bool)PrivListener.Invoke("processMessage", command);
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] {result.parsedString });
 
-            Assert.IsTrue(result);
+
+            Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
+            Assert.AreEqual(mvmtResult.movementResult, MovementResult.Success);
             Assert.IsTrue(RtController.overrides.overrideElevationAbsEncoder);
         }
 
         [TestMethod]
         public void TestProcessMessage_SetOverrideRemElevationEnc_RemovesElevationEncOverride()
         {
-            string command = "SET_OVERRIDE EL_ABS_ENC";
+            string command = "1.0 | SET_OVERRIDE | EL_ABS_ENC | FALSE | 12:00:00";
 
-            bool result = (bool)PrivListener.Invoke("processMessage", command);
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] {result.parsedString });
 
-            Assert.IsTrue(result);
+
+            Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
+            Assert.AreEqual(mvmtResult.movementResult, MovementResult.Success);
             Assert.IsFalse(RtController.overrides.overrideElevationAbsEncoder);
         }
 
         [TestMethod]
         public void TestProcessMessage_SetOverrideSetAzimuthEnc_SetsAzimuthEncOverride()
         {
-            string command = "SET_OVERRIDE OVR AZ_ABS_ENC";
+            string command = "1.0 | SET_OVERRIDE | AZ_ABS_ENC | TRUE | 12:00:00";
 
-            bool result = (bool)PrivListener.Invoke("processMessage", command);
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] {result.parsedString });
 
-            Assert.IsTrue(result);
+            Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
+            Assert.AreEqual(mvmtResult.movementResult, MovementResult.Success);
             Assert.IsTrue(RtController.overrides.overrideAzimuthAbsEncoder);
         }
 
         [TestMethod]
         public void TestProcessMessage_SetOverrideRemAzimuthEnc_RemovesAzimuthEncOverride()
         {
-            string command = "SET_OVERRIDE AZ_ABS_ENC";
+            string command = "1.0 | SET_OVERRIDE | AZ_ABS_ENC | FALSE | 12:00:00";
 
-            bool result = (bool)PrivListener.Invoke("processMessage", command);
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] {result.parsedString });
 
-            Assert.IsTrue(result);
+            Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
+            Assert.AreEqual(mvmtResult.movementResult, MovementResult.Success);
             Assert.IsFalse(RtController.overrides.overrideAzimuthAbsEncoder);
         }
 
         [TestMethod]
         public void TestProcessMessage_SetOverrideSetElProx90_SetsElProx90Override()
         {
-            string command = "SET_OVERRIDE OVR ELEVATION_LIMIT_90";
+            string command = "1.0 | SET_OVERRIDE | ELEVATION_LIMIT_90 | TRUE | 12:00:00";
 
-            bool result = (bool)PrivListener.Invoke("processMessage", command);
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] {result.parsedString });
 
-            Assert.IsTrue(result);
+            Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
+            Assert.AreEqual(mvmtResult.movementResult, MovementResult.Success);
             Assert.IsTrue(RtController.overrides.overrideElevatProx90);
         }
 
         [TestMethod]
         public void TestProcessMessage_SetOverrideRemElProx90_RemovesElProx90Override()
         {
-            string command = "SET_OVERRIDE ELEVATION_LIMIT_90";
+            string command = "1.0 | SET_OVERRIDE | ELEVATION_LIMIT_90 | FALSE | 12:00:00";
 
-            bool result = (bool)PrivListener.Invoke("processMessage", command);
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] {result.parsedString });
 
-            Assert.IsTrue(result);
+            Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
+            Assert.AreEqual(mvmtResult.movementResult, MovementResult.Success);
             Assert.IsFalse(RtController.overrides.overrideElevatProx90);
         }
 
         [TestMethod]
         public void TestProcessMessage_SetOverrideSetElProx0_SetsElProx0Override()
         {
-            string command = "SET_OVERRIDE OVR ELEVATION_LIMIT_0";
+            string command = "1.0 | SET_OVERRIDE | ELEVATION_LIMIT_0 | TRUE | 12:00:00";
 
-            bool result = (bool)PrivListener.Invoke("processMessage", command);
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] {result.parsedString });
 
-            Assert.IsTrue(result);
+            Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
+            Assert.AreEqual(mvmtResult.movementResult, MovementResult.Success);
             Assert.IsTrue(RtController.overrides.overrideElevatProx0);
         }
 
         [TestMethod]
         public void TestProcessMessage_SetOverrideSetAzMotTemp_SetsAzMotTempOverride()
         {
-            string command = "SET_OVERRIDE OVR AZIMUTH_MOT_TEMP";
+            string command = "1.0 | SET_OVERRIDE | AZIMUTH_MOT_TEMP | TRUE | 12:00:00";
 
-            bool result = (bool)PrivListener.Invoke("processMessage", command);
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] {result.parsedString });
 
-            Assert.IsTrue(result);
+            Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
+            Assert.AreEqual(mvmtResult.movementResult, MovementResult.Success);
             Assert.IsTrue(RtController.overrides.overrideAzimuthMotTemp);
         }
 
         [TestMethod]
         public void TestProcessMessage_SetOverrideRemAzMotTemp_RemovesAzMotTempOverride()
         {
-            string command = "SET_OVERRIDE AZIMUTH_MOT_TEMP";
+            string command = "1.0 | SET_OVERRIDE | AZIMUTH_MOT_TEMP | FALSE | 12:00:00";
 
-            bool result = (bool)PrivListener.Invoke("processMessage", command);
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] {result.parsedString });
 
-            Assert.IsTrue(result);
+            Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
+            Assert.AreEqual(mvmtResult.movementResult, MovementResult.Success);
             Assert.IsFalse(RtController.overrides.overrideAzimuthMotTemp);
         }
 
         [TestMethod]
         public void TestProcessMessage_SetOverrideSetElMotTemp_SetsElMotTempOverride()
         {
-            string command = "SET_OVERRIDE OVR ELEVATION_MOT_TEMP";
+            string command = "1.0 | SET_OVERRIDE | ELEVATION_MOT_TEMP | TRUE | 12:00:00";
 
-            bool result = (bool)PrivListener.Invoke("processMessage", command);
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] {result.parsedString });
 
-            Assert.IsTrue(result);
+            Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
+            Assert.AreEqual(mvmtResult.movementResult, MovementResult.Success);
             Assert.IsTrue(RtController.overrides.overrideElevatMotTemp);
         }
 
         [TestMethod]
         public void TestProcessMessage_SetOverrideRemElMotTemp_RemovesElMotTempOverride()
         {
-            string command = "SET_OVERRIDE ELEVATION_MOT_TEMP";
+            string command = "1.0 | SET_OVERRIDE | ELEVATION_MOT_TEMP | FALSE | 12:00:00";
 
-            bool result = (bool)PrivListener.Invoke("processMessage", command);
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] {result.parsedString });
 
-            Assert.IsTrue(result);
+            Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
+            Assert.AreEqual(mvmtResult.movementResult, MovementResult.Success);
             Assert.IsFalse(RtController.overrides.overrideElevatMotTemp);
         }
 
         [TestMethod]
         public void TestProcessMessage_SetOverrideSetGate_SetsGateOverride()
         {
-            string command = "SET_OVERRIDE OVR MAIN_GATE";
+            string command = "1.0 | SET_OVERRIDE | MAIN_GATE | TRUE | 12:00:00";
 
-            bool result = (bool)PrivListener.Invoke("processMessage", command);
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] {result.parsedString });
 
-            Assert.IsTrue(result);
+            Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
+            Assert.AreEqual(mvmtResult.movementResult, MovementResult.Success);
             Assert.IsTrue(RtController.overrides.overrideGate);
         }
 
         [TestMethod]
         public void TestProcessMessage_SetOverrideRemGate_RemovesGateOverride()
         {
-            string command = "SET_OVERRIDE MAIN_GATE";
+            string command = "1.0 | SET_OVERRIDE | MAIN_GATE | FALSE | 12:00:00";
 
-            bool result = (bool)PrivListener.Invoke("processMessage", command);
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] {result.parsedString });
 
-            Assert.IsTrue(result);
+            Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
+            Assert.AreEqual(mvmtResult.movementResult, MovementResult.Success);
             Assert.IsFalse(RtController.overrides.overrideGate);
         }
 
         [TestMethod]
         public void TestProcessMessage_SetOverrideSetWeather_SetsWeatherOverride()
         {
-            string command = "SET_OVERRIDE OVR WEATHER_STATION";
+            string command = "1.0 | SET_OVERRIDE | WEATHER_STATION | TRUE | 12:00:00";
 
-            bool result = (bool)PrivListener.Invoke("processMessage", command);
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] {result.parsedString });
 
-            Assert.IsTrue(result);
+            Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
+            Assert.AreEqual(mvmtResult.movementResult, MovementResult.Success);
             Assert.IsTrue(ControlRoom.weatherStationOverride);
         }
 
         [TestMethod]
         public void TestProcessMessage_SetOverrideRemWeather_RemovesWeatherOverride()
         {
-            string command = "SET_OVERRIDE WEATHER_STATION";
+            string command = "1.0 | SET_OVERRIDE | WEATHER_STATION | FALSE | 12:00:00";
 
-            bool result = (bool)PrivListener.Invoke("processMessage", command);
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] {result.parsedString });
 
-            Assert.IsTrue(result);
+            Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
+            Assert.AreEqual(mvmtResult.movementResult, MovementResult.Success);
             Assert.IsFalse(ControlRoom.weatherStationOverride);
         }
 
@@ -363,9 +416,268 @@ namespace ControlRoomApplicationTest.CommunicationTests
         {
             string command = "SET_OVERRIDE CACTUS";
 
-            bool result = (bool)PrivListener.Invoke("processMessage", command);
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
 
-            Assert.IsFalse(result);
+            Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.MissingCommandArgs);
         }
+
+        [TestMethod]
+        public void TestProcessMessage_TestInvalidNumberArgs_SensorOverrideCommand_MissingTimestamp()
+        {
+            string command = "1.0 | SET_OVERRIDE | MAIN_GATE | TRUE  ";
+
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            Assert.AreEqual(ParseTCPCommandResultEnum.MissingCommandArgs, result.parseTCPCommandResultEnum);
+            Assert.IsTrue(result.errorMessage.Contains(TCPCommunicationConstants.MISSING_COMMAND_ARGS));
+        }
+
+        [TestMethod]
+        public void TestProcessMessage_Sensor_Override_InvalidSensor()
+        {
+            string command = "1.0 | SET_OVERRIDE | I_AINT_NO_SENSOR | TRUE | 12:00:00 ";
+
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            Assert.AreEqual(ParseTCPCommandResultEnum.InvalidCommandArgs, result.parseTCPCommandResultEnum);
+            Assert.IsTrue(result.errorMessage.Contains(TCPCommunicationConstants.INVALID_SENSOR_OVERRIDE));
+        }
+
+        [TestMethod]
+        public void TestProcessMessage_Sensor_Override_InvalidOverride()
+        {
+            string command = "1.0 | SET_OVERRIDE | I_AINT_NO_SENSOR | NOT_T_OR_F| 12:00:00 ";
+
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            Assert.AreEqual(ParseTCPCommandResultEnum.MissingCommandArgs, result.parseTCPCommandResultEnum);
+            Assert.IsTrue(result.errorMessage.Contains(TCPCommunicationConstants.MISSING_SET_OVERRIDE_ARG));
+        }
+
+        [TestMethod]
+        public void TestProcessMessage_Sensor_Override_MissingOverride()
+        {
+            string command = "1.0 | SET_OVERRIDE | I_AINT_NO_SENSOR | | 12:00:00 ";
+
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            Assert.AreEqual(ParseTCPCommandResultEnum.MissingCommandArgs, result.parseTCPCommandResultEnum);
+            Assert.IsTrue(result.errorMessage.Contains(TCPCommunicationConstants.MISSING_SET_OVERRIDE_ARG));
+        }
+
+        [TestMethod]
+        public void TestProcessMessage_Sensor_Override_MissingSensor()
+        {
+            string command = "1.0 | SET_OVERRIDE |  | TRUE | 12:00:00 ";
+
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            Assert.AreEqual(ParseTCPCommandResultEnum.InvalidCommandArgs, result.parseTCPCommandResultEnum);
+            Assert.IsTrue(result.errorMessage.Contains(TCPCommunicationConstants.INVALID_SENSOR_OVERRIDE));
+        }
+
+        [TestMethod]
+        public void TestProcessMessage_TestInvalidVersion_DoesNotExist()
+        {
+            string command = "12.0 | STOP_RT | 12:00:00";
+
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            Assert.AreEqual(ParseTCPCommandResultEnum.InvalidVersion, result.parseTCPCommandResultEnum);
+            Assert.IsTrue(result.errorMessage.Contains(TCPCommunicationConstants.VERSION_NOT_FOUND));
+        }
+
+        [TestMethod]
+        public void TestProcessMessage_TestInvalidVersion_InvalidConversion()
+        {
+            string command = "yoooooo | STOP_RT | 12:00:00";
+
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            Assert.AreEqual(ParseTCPCommandResultEnum.InvalidVersion, result.parseTCPCommandResultEnum);
+            Assert.IsTrue(result.errorMessage.Contains(TCPCommunicationConstants.VERSION_CONVERSION_ERR));
+        }
+
+
+        [TestMethod]
+        public void TestProcessMessage_TestMissingAzElArgs()
+        {
+            string command = "1.0 | ORIENTATION_MOVE | AZ | EL | 12:00:00";
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.MissingCommandArgs);
+        }
+
+        [TestMethod]
+        public void TestProcessMessage_TestInvalidAzElArgs_ElOutOfRange()
+        {
+            string command = "1.0 | ORIENTATION_MOVE | AZ 50 | EL 500 | 12:00:00";
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] { result.parsedString });
+
+            Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
+            Assert.AreEqual(mvmtResult.movementResult, MovementResult.ValidationError);
+        }
+
+        [TestMethod]
+        public void TestProcessMessage_TestInvalidAzElArgs_NotNumbers()
+        {
+            string command = "1.0 | ORIENTATION_MOVE | AZ hi | EL sup | 12:00:00";
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+
+            Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.InvalidCommandArgs);
+            Assert.IsTrue(result.errorMessage.Contains(TCPCommunicationConstants.AZ_EL_CONVERSION_ERR));
+        }
+
+        [TestMethod]
+        public void TestProcessMessage_TestInvalidNumberArgs_StopCommand_MissingTimestamp()
+        {
+            string command = "1.0 | STOP_RT ";
+
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            Assert.AreEqual(ParseTCPCommandResultEnum.MissingCommandArgs, result.parseTCPCommandResultEnum);
+            Assert.IsTrue(result.errorMessage.Contains(TCPCommunicationConstants.MISSING_COMMAND_ARGS));
+        }
+
+        [TestMethod]
+        public void TestProcessMessage_TestInvalidNumberArgs_ScriptCommand_MissingTimestamp()
+        {
+            string command = "1.0 | SCRIPT | DUMP ";
+
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            Assert.AreEqual(ParseTCPCommandResultEnum.MissingCommandArgs, result.parseTCPCommandResultEnum);
+            Assert.IsTrue(result.errorMessage.Contains(TCPCommunicationConstants.MISSING_COMMAND_ARGS));
+        }
+
+        [TestMethod]
+        public void TestProcessMessage_TestInvalidNumberArgs_AbsMove_MissingTimestamp()
+        {
+            string command = "1.0 | ORIENTATION_MOVE | AZ 20 | EL 40";
+
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            Assert.AreEqual(ParseTCPCommandResultEnum.MissingCommandArgs, result.parseTCPCommandResultEnum);
+            Assert.IsTrue(result.errorMessage.Contains(TCPCommunicationConstants.MISSING_COMMAND_ARGS));
+        }
+
+        [TestMethod]
+        public void TestProcessMessage_TestInvalidNumberArgs_RelMove_MissingTimestamp()
+        {
+            string command = "1.0 | RELATIVE_MOVE | AZ 20 | EL 40";
+
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            Assert.AreEqual(ParseTCPCommandResultEnum.MissingCommandArgs, result.parseTCPCommandResultEnum);
+            Assert.IsTrue(result.errorMessage.Contains(TCPCommunicationConstants.MISSING_COMMAND_ARGS));
+        }
+
+        [TestMethod]
+        public void TestProcessMessage_TestInvalidNumberArgs_SensorInit_MissingTimestamp()
+        {
+            string command = "1.0 | SENSOR_INIT | 1,0,1,1,1,1,1,1,1 ";
+            
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            Assert.AreEqual(ParseTCPCommandResultEnum.MissingCommandArgs, result.parseTCPCommandResultEnum);
+            Assert.IsTrue(result.errorMessage.Contains(TCPCommunicationConstants.MISSING_COMMAND_ARGS));
+        }
+
+        [TestMethod]
+        public void TestProcessMessage_TestInvalidNumberArgs_Request_MissingTimestamp()
+        {
+            string command = "1.0 | REQUEST | MVMT_DATA ";
+
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            Assert.AreEqual(ParseTCPCommandResultEnum.MissingCommandArgs, result.parseTCPCommandResultEnum);
+            Assert.IsTrue(result.errorMessage.Contains(TCPCommunicationConstants.MISSING_COMMAND_ARGS));
+        }
+
+        [TestMethod]
+        public void TestProcessMessage_TestInvalidNumberArgs_Request_InvalidRequest()
+        {
+            string command = "1.0 | REQUEST | NOT_A_REAL_REQUEST | 12:00:00 ";
+
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            Assert.AreEqual(ParseTCPCommandResultEnum.InvalidRequestType, result.parseTCPCommandResultEnum);
+            Assert.IsTrue(result.errorMessage.Contains(TCPCommunicationConstants.INVALID_REQUEST_TYPE));
+        }
+
+        [TestMethod]
+        public void TestProcessMessage_TestInvalidNumberArgs_MissingVersion()
+        {
+            string command = "REQUEST | MVMT_DATA | 12:00:00";
+
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            Assert.AreEqual(ParseTCPCommandResultEnum.InvalidVersion, result.parseTCPCommandResultEnum);
+            Assert.IsTrue(result.errorMessage.Contains(TCPCommunicationConstants.VERSION_CONVERSION_ERR));
+        }
+
+        [TestMethod]
+        public void TestProcessMessage_TestInvalidNumberArgs_MissingCommand()
+        {
+            string command = "1.0 | MVMT_DATA | 12:00:00";
+
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            Assert.AreEqual(ParseTCPCommandResultEnum.InvalidCommandType, result.parseTCPCommandResultEnum);
+            Assert.IsTrue(result.errorMessage.Contains(TCPCommunicationConstants.COMMAND_NOT_FOUND));
+        }
+
+        [TestMethod]
+        public void TestProcessMessage_TestInvalidCommandType()
+        {
+            string command = "1.0 | I_AINT_NO_COMMAND | 12:00:00";
+
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            Assert.AreEqual(ParseTCPCommandResultEnum.InvalidCommandType, result.parseTCPCommandResultEnum);
+            Assert.IsTrue(result.errorMessage.Contains(TCPCommunicationConstants.COMMAND_NOT_FOUND));
+        }
+
+        [TestMethod]
+        public void TestProcessMessage_TestInvalidScriptType()
+        {
+            string command = "1.0 | SCRIPT | I_AINT_NO_SCRIPT | 12:00:00";
+
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            Assert.AreEqual(ParseTCPCommandResultEnum.InvalidScript, result.parseTCPCommandResultEnum);
+            Assert.IsTrue(result.errorMessage.Contains(TCPCommunicationConstants.SCRIPT_NOT_FOUND));
+        }
+
+        // Test happy paths
+        [TestMethod]
+        public void TestProcessMessage_TestValidOrientationMove()
+        {
+            string command = "1.0 | ORIENTATION_MOVE | AZ 10 | EL 30 | 12:00:00";
+
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            Assert.AreEqual(ParseTCPCommandResultEnum.Success, result.parseTCPCommandResultEnum);
+        }
+
+        [TestMethod]
+        public void TestProcessMessage_TestValidRelativeMove()
+        {
+            string command = "1.0 | RELATIVE_MOVE | AZ 1 | EL 1 | 12:00:00";
+
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            Assert.AreEqual(ParseTCPCommandResultEnum.Success, result.parseTCPCommandResultEnum);
+        }
+
+        [TestMethod]
+        public void TestProcessMessage_TestValidScript()
+        {
+            string command = "1.0 | SCRIPT | DUMP | 12:00:00";
+
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            Assert.AreEqual(ParseTCPCommandResultEnum.Success, result.parseTCPCommandResultEnum);
+        }
+
+        [TestMethod]
+        public void TestProcessMessage_TestValidRequest()
+        {
+            string command = "1.0 | REQUEST | MVMT_DATA | 12:00:00";
+
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            Assert.AreEqual(ParseTCPCommandResultEnum.Success, result.parseTCPCommandResultEnum);
+        }
+
+        [TestMethod]
+        public void TestProcessMessage_TestValidStopRT()
+        {
+            string command = "1.0 | STOP_RT | 12:00:00";
+
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] { result.parsedString });
+            Assert.AreEqual(ParseTCPCommandResultEnum.Success, result.parseTCPCommandResultEnum);
+            Assert.AreEqual(MovementResult.Success, mvmtResult.movementResult);
+        }
+
     }
 }

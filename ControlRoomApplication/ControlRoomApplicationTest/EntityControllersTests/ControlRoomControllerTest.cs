@@ -5,6 +5,8 @@ using ControlRoomApplication.Constants;
 using ControlRoomApplication.Entities;
 using ControlRoomApplication.Simulators.Hardware.WeatherStation;
 using System.Net.Sockets;
+using System.Net;
+using ControlRoomApplication.Controllers.SensorNetwork;
 
 namespace ControlRoomApplicationTest.EntityControllersTests
 {
@@ -21,29 +23,42 @@ namespace ControlRoomApplicationTest.EntityControllersTests
         public static RadioTelescopeController RTController1;
         public static RadioTelescopeController RTController2;
 
+
+        public static IPAddress SnServerIp = IPAddress.Parse("127.0.0.1");
+        public static int SnServerPort = 3000;
+        public static string SnClientIp = "127.0.0.1";
+        public static int SnClientPort = 3001;
+        public static int SnTelescopeId = 3000;
+
         [ClassInitialize]
         public static void BringUp(TestContext context)
         {
-            ControlRoom = new ControlRoom(new SimulationWeatherStation(100));
+            ControlRoom = new ControlRoom(new SimulationWeatherStation(100), 81);
 
             // End the CR's listener's server. We have to do this until we stop hard-coding that dang value.
             // TODO: Remove this logic when the value is no longer hard-coded (issue #350)
-            PrivateObject listener = new PrivateObject(ControlRoom.mobileControlServer);
-            ((TcpListener)listener.GetFieldOrProperty("server")).Stop();
+           // PrivateObject listener = new PrivateObject(ControlRoom.mobileControlServer);
+            //((TcpListener)listener.GetFieldOrProperty("server")).Stop();
 
             CRController = new ControlRoomController(ControlRoom);
             CalibrationOrientation = new Orientation(0, 90);
         }
 
+
+
         [TestInitialize]
         public void ReinitializeRTs()
         {
+
+            SensorNetworkServer server = new SensorNetworkServer(SnServerIp, SnServerPort, SnClientIp, SnClientPort, SnTelescopeId, true);
+
+
             RTController0 = new RadioTelescopeController(
                 new RadioTelescope(
                     new SpectraCyberSimulatorController(new SpectraCyberSimulator()),
                      new TestPLCDriver(IP, IP, Port1, Port2, true),
                     MiscellaneousConstants.JOHN_RUDY_PARK,
-                    CalibrationOrientation
+                    CalibrationOrientation,1,server
                 )
             );
 
@@ -52,7 +67,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests
                     new SpectraCyberSimulatorController(new SpectraCyberSimulator()),
                     new TestPLCDriver(IP, IP, Port1 + 3, Port2 + 3,true),
                     MiscellaneousConstants.JOHN_RUDY_PARK,
-                    CalibrationOrientation
+                    CalibrationOrientation,2,server
                 )
             );
 
@@ -61,9 +76,12 @@ namespace ControlRoomApplicationTest.EntityControllersTests
                     new SpectraCyberSimulatorController(new SpectraCyberSimulator()),
                     new TestPLCDriver(IP, IP, Port1 + 6, Port2 + 6,true),
                     MiscellaneousConstants.JOHN_RUDY_PARK,
-                    CalibrationOrientation
+                    CalibrationOrientation,3,server
                 )
             );
+
+            
+
         }
 
         [TestCleanup]
@@ -168,6 +186,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             RTController0.RadioTelescope.PLCDriver.Bring_down();
             RTController1.RadioTelescope.PLCDriver.Bring_down();
             RTController2.RadioTelescope.PLCDriver.Bring_down();
+            CRController.ControlRoom.mobileControlServer.RequestToKillTCPMonitoringRoutine();
+
         }
     }
 }

@@ -26,21 +26,21 @@ namespace ControlRoomApplication.Entities {
 
         [Required]
         [Column( "acceleration_x" )]
-        public double x { get; set; }
+        public int x { get; set; }
 
         [Required]
         [Column("acceleration_y")]
-        public double y { get; set; }
+        public int y { get; set; }
 
         [Required]
         [Column("acceleration_z")]
-        public double z { get; set; }
+        public int z { get; set; }
 
         [Required]
         [Column( "location" )]
         public int location_ID { get; set; }
 
-        public static Acceleration Generate( long UTCtics , double x , double y , double z , SensorLocationEnum loc ) {
+        public static Acceleration Generate( long UTCtics , int x , int y , int z , SensorLocationEnum loc ) {
             Acceleration acx = new Acceleration();
             acx.TimeCaptured = UTCtics;// Constants.TIME.UnixEpoch.AddMilliseconds( UTCtics );
             acx.x = x;

@@ -489,7 +489,7 @@ namespace ControlRoomApplication.Main
                 switch (index)
                 {
                     case 1:
-                        movementResult = rtController.MoveRadioTelescopeToOrientation(MiscellaneousConstants.Stow, MovementPriority.Manual);
+                        movementResult = rtController.StowRadioTelescope(MovementPriority.Manual);
                         break;
 
                     case 2:

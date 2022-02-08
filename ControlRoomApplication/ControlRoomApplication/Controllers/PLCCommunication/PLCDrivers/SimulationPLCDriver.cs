@@ -175,5 +175,11 @@ namespace ControlRoomApplication.Controllers
         {
                 return driver.GetRadioTelescopeDirectionEnum(axis);
         }
+
+        public override bool GetMotorsHomed()
+        {
+            // Simulation motors will always be calibrated with home
+            return true;
+        }
     }
 }

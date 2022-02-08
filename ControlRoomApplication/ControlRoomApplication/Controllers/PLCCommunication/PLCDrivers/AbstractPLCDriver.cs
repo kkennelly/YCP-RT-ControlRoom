@@ -158,5 +158,11 @@ namespace ControlRoomApplication.Controllers
         /// <param name="axis">Azimuth or elevation.</param>
         /// <returns>The direction that the specfied axis is spinning.</returns>
         public abstract RadioTelescopeDirectionEnum GetRadioTelescopeDirectionEnum(RadioTelescopeAxisEnum axis);
+
+        /// <summary>
+        /// Gets whether or not the motors have been homed.
+        /// </summary>
+        /// <returns>Whether or not the motors have been homed</returns>
+        public abstract bool GetMotorsHomed();
     }
 }

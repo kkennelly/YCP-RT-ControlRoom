@@ -178,8 +178,7 @@ namespace ControlRoomApplication.Controllers
 
         public override bool GetMotorsHomed()
         {
-            // Simulation motors will always be calibrated with home
-            return true;
+            return driver.GetMotorsHomed();
         }
     }
 }

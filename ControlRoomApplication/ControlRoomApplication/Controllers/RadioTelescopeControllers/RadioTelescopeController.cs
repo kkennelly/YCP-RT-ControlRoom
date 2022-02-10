@@ -1135,6 +1135,7 @@ namespace ControlRoomApplication.Controllers
             // If motors are homed
             if (RadioTelescope.PLCDriver.GetMotorsHomed())
             {
+                logger.Info(Utilities.GetTimeStamp() + ": Stowing telescope");
                 return MoveRadioTelescopeToOrientation(MiscellaneousConstants.Stow, priority);
             }
             // Motors are not homed, try to use absolute encoders if we are not using the simulation sensor network 
@@ -1142,11 +1143,13 @@ namespace ControlRoomApplication.Controllers
                 RadioTelescope.SensorNetworkServer.SensorStatuses.ElevationAbsoluteEncoderStatus != SensorNetworkSensorStatus.Error &&
                 RadioTelescope.SensorNetworkServer.SensorStatuses.AzimuthAbsoluteEncoderStatus != SensorNetworkSensorStatus.Error)
             {
+                logger.Info(Utilities.GetTimeStamp() + ": Stowing telescope with absolute encoders");
                 return MoveRadioTelescopeToOrientation(MiscellaneousConstants.Stow, priority, true);
             }
             // Don't perform the movement if the motors aren't homed and the absolute encoders are not connected
             else
             {
+                logger.Info(Utilities.GetTimeStamp() + ": Canceled stow. Motors not homed and absolute encoders offline!");
                 return MovementResult.MotorsNotHomed;
             }
         }

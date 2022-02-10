@@ -1138,7 +1138,7 @@ namespace ControlRoomApplication.Controllers
                 return MoveRadioTelescopeToOrientation(MiscellaneousConstants.Stow, priority);
             }
             // Motors are not homed, try to use absolute encoders if we are not using the simulation sensor network 
-            else if (RadioTelescope.SensorNetworkServer.SimulationSensorNetwork != null && 
+            else if (RadioTelescope.SensorNetworkServer.SimulationSensorNetwork == null && 
                 RadioTelescope.SensorNetworkServer.SensorStatuses.ElevationAbsoluteEncoderStatus != SensorNetworkSensorStatus.Error &&
                 RadioTelescope.SensorNetworkServer.SensorStatuses.AzimuthAbsoluteEncoderStatus != SensorNetworkSensorStatus.Error)
             {

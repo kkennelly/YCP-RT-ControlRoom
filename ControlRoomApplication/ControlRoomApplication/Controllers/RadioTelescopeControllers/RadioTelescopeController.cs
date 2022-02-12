@@ -1144,7 +1144,18 @@ namespace ControlRoomApplication.Controllers
                 RadioTelescope.SensorNetworkServer.SensorStatuses.AzimuthAbsoluteEncoderStatus != SensorNetworkSensorStatus.Error)
             {
                 logger.Info(Utilities.GetTimeStamp() + ": Stowing telescope with absolute encoders");
-                return MoveRadioTelescopeToOrientation(MiscellaneousConstants.Stow, priority, true);
+                MovementResult result = MoveRadioTelescopeToOrientation(MiscellaneousConstants.Stow, priority, true);
+
+                // Since the motors are not homed, the movement result will likely return an incorrect position,
+                // so check the absolute encoder orientations instead
+                if (result == MovementResult.IncorrectPosition && 
+                    // Using delta of 0.5 to account for potential abs en inaccuracies and because we do not need this to be a precise movement
+                    Math.Abs(GetAbsoluteOrientation().Azimuth - MiscellaneousConstants.Stow.Azimuth) <= 0.5 &&
+                    Math.Abs(GetAbsoluteOrientation().Elevation - MiscellaneousConstants.Stow.Elevation) <= 0.5)
+                {
+                    result = MovementResult.Success;
+                }
+                return result;
             }
             // Don't perform the movement if the motors aren't homed and the absolute encoders are not connected
             else

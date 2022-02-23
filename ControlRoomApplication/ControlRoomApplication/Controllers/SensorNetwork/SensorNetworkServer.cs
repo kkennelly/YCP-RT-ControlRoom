@@ -368,7 +368,6 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
                         {
                             //Create array of acceleration objects 
                             CurrentElevationMotorAccl = GetAccelerationFromBytes(ref k, data, elAcclSize, SensorLocationEnum.EL_MOTOR, ConnectionTimestamp);
-                            Console.WriteLine(CurrentElevationMotorAccl.Length);
                             ElevationAccBlob.BuildAccelerationBlob(CurrentElevationMotorAccl);
                         }
 

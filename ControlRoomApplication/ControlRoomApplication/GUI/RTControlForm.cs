@@ -504,7 +504,7 @@ namespace ControlRoomApplication.Main
                         break;
 
                     case 5:
-                        movementResult = rtController.ThermalCalibrateRadioTelescope(MovementPriority.Manual);
+                        //movementResult = rtController.ThermalCalibrateRadioTelescope(MovementPriority.Manual);
                         break;
 
                     case 6:

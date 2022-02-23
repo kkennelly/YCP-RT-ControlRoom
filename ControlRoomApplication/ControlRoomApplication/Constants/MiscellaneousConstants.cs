@@ -21,7 +21,7 @@ namespace ControlRoomApplication.Constants
         /// <summary>
         /// The maximum degree threshold for software stops to stop the telescope
         /// </summary>
-        public const double MAX_SOFTWARE_STOP_EL_DEGREES = 91.0;
+        public const double MAX_SOFTWARE_STOP_EL_DEGREES = 41.0;
 
         /// <summary>
         /// The minimum degree threshold for software stops to stop the telescope
@@ -42,7 +42,7 @@ namespace ControlRoomApplication.Constants
         /// <summary>
         /// The stow position of the telescope. This position has it pointing straight up in the air
         /// </summary>
-        public static readonly Orientation Stow = new Orientation(0, 90);
+        public static readonly Orientation Stow = new Orientation(0, 20);
 
 
         //constants for acceleration blob

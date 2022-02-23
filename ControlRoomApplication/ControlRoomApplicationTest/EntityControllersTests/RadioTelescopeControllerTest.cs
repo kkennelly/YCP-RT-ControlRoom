@@ -928,14 +928,14 @@ namespace ControlRoomApplicationTest.EntityControllersTests {
         [TestMethod]
         public void TestMoveRadioByxDegreesAllStatusesOK_Success()
         {
-            Orientation o = new Orientation(-20,70);
+            Orientation o = new Orientation(-20, MiscellaneousConstants.MAX_SOFTWARE_STOP_EL_DEGREES);
 
             MovementResult result = TestRadioTelescopeController.MoveRadioTelescopeByXDegrees(o, MovementPriority.Manual);
 
             Assert.AreEqual(MovementResult.Success, result);
             //verify move within 1/10th of a degree 
             Assert.AreEqual(TestRadioTelescopeController.GetCurrentOrientation().Azimuth,340, 0.1);
-            Assert.AreEqual(TestRadioTelescopeController.GetCurrentOrientation().Elevation, 70,0.1);
+            Assert.AreEqual(TestRadioTelescopeController.GetCurrentOrientation().Elevation, MiscellaneousConstants.MAX_SOFTWARE_STOP_EL_DEGREES, 0.1);
 
         }
 

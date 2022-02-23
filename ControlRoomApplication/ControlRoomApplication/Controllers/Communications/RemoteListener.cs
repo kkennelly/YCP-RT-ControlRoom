@@ -435,7 +435,7 @@ namespace ControlRoomApplication.Controllers
                             break;
 
                         case "THERMAL_CALIBRATE":
-                            result = rtController.ThermalCalibrateRadioTelescope(MovementPriority.Manual);
+                            //result = rtController.ThermalCalibrateRadioTelescope(MovementPriority.Manual);
                             break;
 
                         case "STOW":

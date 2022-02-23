@@ -10,6 +10,7 @@ using System.IO;
 using ControlRoomApplication.Util;
 using ControlRoomApplication.Controllers.PLCCommunication.PLCDrivers.MCUManager;
 using ControlRoomApplication.Controllers.PLCCommunication.PLCDrivers.MCUManager.Enumerations;
+using ControlRoomApplication.Constants;
 
 namespace ControlRoomApplication.Controllers
 {
@@ -194,7 +195,7 @@ namespace ControlRoomApplication.Controllers
                     if (NextAppointment._Type != AppointmentTypeEnum.FREE_CONTROL)
                     {
                         logger.Info(Utilities.GetTimeStamp() + ": Thermal Calibrating RadioTelescope");
-                        RTController.ThermalCalibrateRadioTelescope(MovementPriority.Appointment);
+                        //RTController.ThermalCalibrateRadioTelescope(MovementPriority.Appointment);
 
                         // If the temperature is low and there's precipitation, dump the dish
                         if (RTController.RadioTelescope.WeatherStation.GetOutsideTemp() <= 40.00 && RTController.RadioTelescope.WeatherStation.GetTotalRain() > 0.00)
@@ -455,7 +456,7 @@ namespace ControlRoomApplication.Controllers
         {
             logger.Info(Utilities.GetTimeStamp() + ": Ending Appointment");
             endAppt = true;
-            MovementResult result = RTController.MoveRadioTelescopeToOrientation(new Orientation(0, 90), MovementPriority.Appointment);
+            MovementResult result = RTController.MoveRadioTelescopeToOrientation(MiscellaneousConstants.Stow, MovementPriority.Appointment);
             if (result != MovementResult.Success)
             {
                 logger.Error("Stowing telescope failed with message " + result);

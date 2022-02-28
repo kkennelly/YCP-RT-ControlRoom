@@ -1185,6 +1185,39 @@ namespace ControlRoomApplicationTest.EntityControllersTests {
             Assert.AreEqual(1, successes);
             Assert.AreEqual(threadCount - 1, alreadyMovings);
         }
+
+        /// <summary>
+        /// Test method that checks for discrepancy between motor and absolute encoders (to see if motor skips steps/is behind)
+        /// </summary>
+        [TestMethod]
+        public void TestCompareMotorAndAbsoluteEncoders()
+        {
+            // If equal
+            Orientation motor = new Orientation(0.0, 0.0);
+            Orientation absolute = new Orientation(0.0, 0.0);
+            Assert.IsTrue(TestRadioTelescopeController.CompareMotorAndAbsoluteEncoders(motor, absolute));
+
+            // If minor discrepancy
+            motor.Elevation = 10.02;
+            motor.Azimuth = 2.98;
+            absolute.Elevation = 5.49;
+            absolute.Azimuth = 3.5;
+            Assert.IsTrue(TestRadioTelescopeController.CompareMotorAndAbsoluteEncoders(motor, absolute));
+
+            // If major discrepancy
+            motor.Elevation = 24.49;
+            motor.Azimuth = 15.0;
+            absolute.Elevation = 25.0;
+            absolute.Azimuth = 26.749;
+            Assert.IsFalse(TestRadioTelescopeController.CompareMotorAndAbsoluteEncoders(motor, absolute));
+
+            // If both major discrepancy
+            motor.Elevation = -2.045;
+            motor.Azimuth = 6.01;
+            absolute.Elevation = 12.098;
+            absolute.Azimuth = 36.001;
+            Assert.IsFalse(TestRadioTelescopeController.CompareMotorAndAbsoluteEncoders(motor, absolute));
+        }
     }
 }
 

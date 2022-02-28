@@ -769,7 +769,7 @@ namespace ControlRoomApplication.Controllers
             return false;
         }
 
-        // Checks the motor temperatures against acceptable ranges every second
+        // Checks the motor temperatures and positions against acceptable ranges every second
         private void SensorMonitor()
         {
             // Getting initial current temperatures
@@ -1123,10 +1123,10 @@ namespace ControlRoomApplication.Controllers
         /// <summary>
         /// This is the method that checks for acceptable discrepancy in the absolute and motor encoders, returning a bool (true if within acceptable range)
         /// </summary>
-        private bool CompareMotorAndAbsoluteEncoders (Orientation motor, Orientation absolute)
+        public bool CompareMotorAndAbsoluteEncoders (Orientation motor, Orientation absolute)
         {
             // Compare discrepancy of current orientations and keep below constant
-            if (Math.Abs(motor.Elevation - absolute.Elevation) <= Constants.MiscellaneousConstants.MOTOR_ABSOLUTE_ENCODER_DISCREPANCY || 
+            if (Math.Abs(motor.Elevation - absolute.Elevation) <= Constants.MiscellaneousConstants.MOTOR_ABSOLUTE_ENCODER_DISCREPANCY && 
                 Math.Abs(motor.Azimuth - absolute.Azimuth) <= Constants.MiscellaneousConstants.MOTOR_ABSOLUTE_ENCODER_DISCREPANCY)
                 return true;
             else 

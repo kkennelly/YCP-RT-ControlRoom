@@ -1126,8 +1126,8 @@ namespace ControlRoomApplication.Controllers
         private bool CompareMotorAndAbsoluteEncoders (Orientation motor, Orientation absolute)
         {
             // Compare discrepancy of current orientations and keep below constant
-            if (Math.Abs(motor.Elevation - absolute.Elevation) <= 10 || 
-                Math.Abs(motor.Azimuth - absolute.Azimuth) <= 10)
+            if (Math.Abs(motor.Elevation - absolute.Elevation) <= Constants.MiscellaneousConstants.MOTOR_ABSOLUTE_ENCODER_DISCREPANCY || 
+                Math.Abs(motor.Azimuth - absolute.Azimuth) <= Constants.MiscellaneousConstants.MOTOR_ABSOLUTE_ENCODER_DISCREPANCY)
                 return true;
             else 
                 return false;

@@ -28,6 +28,13 @@ namespace ControlRoomApplication.Constants
         /// </summary>
         public const double MIN_SOFTWARE_STOP_EL_DEGREES = -5.0;
 
+        // Absolute and Motor Discrepancy
+
+        /// <summary>
+        /// Make sure that the motors/absolute encoders are within a specific range of one another
+        /// </summary>
+        public const double MOTOR_ABSOLUTE_ENCODER_DISCREPANCY = 10.0;
+
         // constants used for user input validation
         public const int MAX_PORT_VALUE = 65535;
 

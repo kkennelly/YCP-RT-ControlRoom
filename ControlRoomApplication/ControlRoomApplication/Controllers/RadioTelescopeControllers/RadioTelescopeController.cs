@@ -778,6 +778,10 @@ namespace ControlRoomApplication.Controllers
             bool elTempSafe = checkTemp(currElTemp, true);
             bool azTempSafe = checkTemp(currAzTemp, true);
 
+            // Get initial motor and absolute encoder values
+            Orientation currentABSPosition = RadioTelescope.SensorNetworkServer.CurrentAbsoluteOrientation;
+            Orientation currentMotorPosition = RadioTelescope.PLCDriver.GetMotorEncoderPosition();
+
             // Sensor overrides must be taken into account
             bool currentAZOveride = overrides.overrideAzimuthMotTemp;
             bool currentELOveride = overrides.overrideElevatMotTemp;
@@ -792,7 +796,7 @@ namespace ControlRoomApplication.Controllers
                 elTempSafe = checkTemp(elTemp, elTempSafe);
 
                 // Determines if the telescope is in a safe state
-                if (azTempSafe && elTempSafe) AllSensorsSafe = true;
+                if (azTempSafe && elTempSafe && CompareMotorAndAbsoluteEncoders(currentMotorPosition, currentABSPosition)) AllSensorsSafe = true;
                 else
                 {
                     AllSensorsSafe = false;
@@ -1115,6 +1119,18 @@ namespace ControlRoomApplication.Controllers
                     logger.Info(Utilities.GetTimeStamp() + ": Software-stop hit!");
                 }
             }
+        }
+        /// <summary>
+        /// This is the method that checks for acceptable discrepancy in the absolute and motor encoders, returning a bool (true if within acceptable range)
+        /// </summary>
+        private bool CompareMotorAndAbsoluteEncoders (Orientation motor, Orientation absolute)
+        {
+            // Compare discrepancy of current orientations and keep below constant
+            if (Math.Abs(motor.Elevation - absolute.Elevation) <= 10 || 
+                Math.Abs(motor.Azimuth - absolute.Azimuth) <= 10)
+                return true;
+            else 
+                return false;
         }
     }
 }

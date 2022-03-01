@@ -328,11 +328,12 @@ namespace ControlRoomApplication.Controllers {
 
         /// <summary>
         /// Immediately stops the telescope movement with no ramp down in speed.
-        /// Homing is unaffected by this command.
+        /// Motors are no longer homed because immediate stop commands can cause inertial drift.
         /// </summary>
         /// <returns></returns>
         public bool ImmediateStop() {
             SendGenericCommand(new MCUCommand( MCUMessages.ImmediateStop , MCUCommandType.ImmediateStop) { completed = true } );
+            MotorsHomed = false;
             return true;
         }
 

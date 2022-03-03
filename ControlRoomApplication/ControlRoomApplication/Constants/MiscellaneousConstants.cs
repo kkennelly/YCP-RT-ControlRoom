@@ -31,7 +31,7 @@ namespace ControlRoomApplication.Constants
         // Absolute and Motor Discrepancy
 
         /// <summary>
-        /// Make sure that the motors/absolute encoders are within a specific range of one another
+        /// Make sure that the motors/absolute encoders are within a specific range of one another (in degrees)
         /// </summary>
         public const double MOTOR_ABSOLUTE_ENCODER_DISCREPANCY = 10.0;
 

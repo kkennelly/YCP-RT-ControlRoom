@@ -779,8 +779,8 @@ namespace ControlRoomApplication.Controllers
             bool azTempSafe = checkTemp(currAzTemp, true);
 
             // Get initial motor and absolute encoder values
-            Orientation currentABSPosition = RadioTelescope.SensorNetworkServer.CurrentAbsoluteOrientation;
-            Orientation currentMotorPosition = RadioTelescope.PLCDriver.GetMotorEncoderPosition();
+            Orientation currentABSPosition = GetAbsoluteOrientation();
+            Orientation currentMotorPosition = GetCurrentOrientation();
 
             // Sensor overrides must be taken into account
             bool currentAZOveride = overrides.overrideAzimuthMotTemp;
@@ -1121,8 +1121,11 @@ namespace ControlRoomApplication.Controllers
             }
         }
         /// <summary>
-        /// This is the method that checks for acceptable discrepancy in the absolute and motor encoders, returning a bool (true if within acceptable range)
+        /// This is the method that checks for acceptable discrepancy in the absolute and motor encoders
         /// </summary>
+        /// <returns> True if the discrepancy is below the desired threshold for both Elevation and Azimuth values, false otherwise </returns>
+        /// <param name="motor"></param>
+        /// <param name="absolute"></param>
         public bool CompareMotorAndAbsoluteEncoders (Orientation motor, Orientation absolute)
         {
             // Compare discrepancy of current orientations and keep below constant

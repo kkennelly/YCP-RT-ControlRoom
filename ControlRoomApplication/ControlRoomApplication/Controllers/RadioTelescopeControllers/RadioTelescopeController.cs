@@ -777,10 +777,11 @@ namespace ControlRoomApplication.Controllers
             Temperature currElTemp = RadioTelescope.SensorNetworkServer.CurrentElevationMotorTemp[RadioTelescope.SensorNetworkServer.CurrentElevationMotorTemp.Length - 1];
             bool elTempSafe = checkTemp(currElTemp, true);
             bool azTempSafe = checkTemp(currAzTemp, true);
-
+            
             // Get initial motor and absolute encoder values
             Orientation currentABSPosition = GetAbsoluteOrientation();
             Orientation currentMotorPosition = GetCurrentOrientation();
+            bool orientationSafe;
 
             // Sensor overrides must be taken into account
             bool currentAZOveride = overrides.overrideAzimuthMotTemp;
@@ -794,9 +795,15 @@ namespace ControlRoomApplication.Controllers
 
                 azTempSafe = checkTemp(azTemp, azTempSafe);
                 elTempSafe = checkTemp(elTemp, elTempSafe);
+                
+                // If using not using sensor network (running a simulation) then just set sensor orientations to true since we won't need to monitor simulation values
+                if (RadioTelescope.SensorNetworkServer.SimulationSensorNetwork != null)
+                    orientationSafe = true;
+                else
+                    orientationSafe = CompareMotorAndAbsoluteEncoders(currentMotorPosition, currentABSPosition);
 
                 // Determines if the telescope is in a safe state
-                if (azTempSafe && elTempSafe && CompareMotorAndAbsoluteEncoders(currentMotorPosition, currentABSPosition)) AllSensorsSafe = true;
+                if (azTempSafe && elTempSafe && orientationSafe) AllSensorsSafe = true;
                 else
                 {
                     AllSensorsSafe = false;

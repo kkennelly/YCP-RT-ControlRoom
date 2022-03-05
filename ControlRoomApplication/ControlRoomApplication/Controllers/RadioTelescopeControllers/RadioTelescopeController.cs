@@ -1165,8 +1165,8 @@ namespace ControlRoomApplication.Controllers
 
             while (currentlyRunning)
             {
-                double positionAz = GetCurrentOrientation().Azimuth;
-                double positionEl = GetCurrentOrientation().Elevation;
+                double positionAz = (RadioTelescope.SensorNetworkServer.SimulationSensorNetwork != null) ? GetCurrentOrientation().Azimuth : GetAbsoluteOrientation().Azimuth;
+                double positionEl = (RadioTelescope.SensorNetworkServer.SimulationSensorNetwork != null) ? GetCurrentOrientation().Elevation : GetAbsoluteOrientation().Elevation;
                 double velocityAz = 0;
                 double velocityEl = 0;
                 double accelerationAz = 0;
@@ -1196,7 +1196,7 @@ namespace ControlRoomApplication.Controllers
                 string str = ((timeStamp - referenceTimeStamp) / 1000.0) + ", " + positionEl + ", " + velocityEl + ", " + accelerationEl + ", , " + positionAz + ", " + velocityAz + ", " + accelerationAz;
                 sb.AppendLine(str);
                 numEntries++;
-                Thread.Sleep(200);
+                Thread.Sleep(100);
             }
 
             sw.Write(sb);
@@ -1207,8 +1207,8 @@ namespace ControlRoomApplication.Controllers
 
         private void EndCSVLog()
         {
-            currentlyRunning = false;
-            CSVLoggingThread.Join();
+            Thread timeout = new Thread(() => { Thread.Sleep(5000); currentlyRunning = false; });
+            timeout.Start();
         }
     }
 }

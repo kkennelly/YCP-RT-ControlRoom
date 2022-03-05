@@ -12,6 +12,8 @@ using System.Timers;
 using System.Diagnostics;
 using ControlRoomApplication.Controllers.PLCCommunication.PLCDrivers.MCUManager;
 using ControlRoomApplication.Controllers.PLCCommunication.PLCDrivers.MCUManager.Enumerations;
+using System.Text;
+using System.IO;
 
 namespace ControlRoomApplication.Controllers
 {
@@ -632,6 +634,8 @@ namespace ControlRoomApplication.Controllers
 
                 if (axis == RadioTelescopeAxisEnum.AZIMUTH) azSpeed = speed;
                 else elSpeed = speed;
+
+                StartCSVLog();
                 
                 result = RadioTelescope.PLCDriver.StartBothAxesJog(azSpeed, direction, elSpeed, direction);
 
@@ -668,6 +672,7 @@ namespace ControlRoomApplication.Controllers
                 else throw new ArgumentException("Jogs can only be stopped with a controlled stop or immediate stop.");
 
                 RadioTelescope.PLCDriver.CurrentMovementPriority = MovementPriority.None;
+                EndCSVLog();
 
                 Monitor.Exit(MovementLock);
             }
@@ -1115,6 +1120,95 @@ namespace ControlRoomApplication.Controllers
                     logger.Info(Utilities.GetTimeStamp() + ": Software-stop hit!");
                 }
             }
+        }
+
+        /*******************************/
+        // TEMPORARY MOTION TESTING!!! //
+        /*******************************/
+        private Thread CSVLoggingThread { get; set; }
+        private bool currentlyRunning = false;
+
+        private void StartCSVLog()
+        {
+            StringBuilder sb = new StringBuilder();
+            string path = AppDomain.CurrentDomain.BaseDirectory + "\\MotionTests";
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+            string fileName = $"{Utilities.GetTimeStamp()}.csv";
+            fileName = fileName.Replace(':', '_');
+            string finalLoc = Path.Combine(path, fileName);
+
+            FileStream file = File.Create(finalLoc);
+            file.Close();
+
+            CSVLoggingThread = new Thread(() => { CSVWritingThread(finalLoc, fileName); });
+            currentlyRunning = true;
+            CSVLoggingThread.Start();
+        }
+
+        private void CSVWritingThread(string fileLoc, string fileName)
+        {
+            int numEntries = 0;
+            TextWriter sw = new StreamWriter(fileLoc, true);
+
+            string header = "Time (s), El Position (degrees), El Velocity (degrees/s), El Acceleration (degrees/s/s), , Az Position (degrees), Az Velocity (degrees/s), Az Acceleration (degrees/s/s)\n";
+            sw.Write(header);
+
+            double lastPositionEl = 0, lastPositionAz = 0;
+            double lastVelocityEl = 0, lastVelocityAz = 0;
+            long lastTimeStamp = 0;
+            long referenceTimeStamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+            StringBuilder sb = new StringBuilder();
+
+            while (currentlyRunning)
+            {
+                double positionAz = GetCurrentOrientation().Azimuth;
+                double positionEl = GetCurrentOrientation().Elevation;
+                double velocityAz = 0;
+                double velocityEl = 0;
+                double accelerationAz = 0;
+                double accelerationEl = 0;
+                long timeStamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+                if (numEntries > 0)
+                {
+                    double dt = (timeStamp - lastTimeStamp) / 1000.0;
+                    velocityAz = (positionAz - lastPositionAz) / dt;
+                    velocityEl = (positionEl - lastPositionEl) / dt;
+
+                    if (numEntries > 1)
+                    {
+                        accelerationAz = (velocityAz - lastVelocityAz) / dt;
+                        accelerationEl = (velocityEl - lastVelocityEl) / dt;
+                    }
+
+                    lastVelocityAz = velocityAz;
+                    lastVelocityEl = velocityEl;
+                }
+
+                lastPositionAz = positionAz;
+                lastPositionEl = positionEl;
+                lastTimeStamp = timeStamp;
+
+                string str = ((timeStamp - referenceTimeStamp) / 1000.0) + ", " + positionEl + ", " + velocityEl + ", " + accelerationEl + ", , " + positionAz + ", " + velocityAz + ", " + accelerationAz;
+                sb.AppendLine(str);
+                numEntries++;
+                Thread.Sleep(200);
+            }
+
+            sw.Write(sb);
+            sw.Close();
+            string newFileName = fileName.Substring(0, fileName.Length - 8) + " - " + Utilities.GetTimeStamp().Replace(':', '_').Substring(11).Substring(0,8) + ".csv";
+            File.Move(".\\MotionTests\\" + fileName, ".\\MotionTests\\" + newFileName);
+        }
+
+        private void EndCSVLog()
+        {
+            currentlyRunning = false;
+            CSVLoggingThread.Join();
         }
     }
 }

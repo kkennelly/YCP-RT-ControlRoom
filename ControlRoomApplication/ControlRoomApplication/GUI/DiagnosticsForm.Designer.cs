@@ -252,6 +252,13 @@
             this.InitTimeoutValidation = new System.Windows.Forms.ToolTip(this.components);
             this.UpperLimitToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.LowerLimitToolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.grpAmbTempHumid = new System.Windows.Forms.GroupBox();
+            this.lblAmbientTempUnit = new System.Windows.Forms.Label();
+            this.lblAmbientHumidityUnit = new System.Windows.Forms.Label();
+            this.lblAmbientTemp = new System.Windows.Forms.Label();
+            this.fldAmbientHumidity = new System.Windows.Forms.Label();
+            this.fldAmbientTemp = new System.Windows.Forms.Label();
+            this.lblAmbientHumidity = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -293,6 +300,7 @@
             this.tabPage4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.spectraCyberScanChart)).BeginInit();
             this.tabPage5.SuspendLayout();
+            this.grpAmbTempHumid.SuspendLayout();
             this.SuspendLayout();
             // 
             // dataGridView1
@@ -973,6 +981,7 @@
             // tabPage2
             // 
             this.tabPage2.BackColor = System.Drawing.Color.Gray;
+            this.tabPage2.Controls.Add(this.grpAmbTempHumid);
             this.tabPage2.Controls.Add(this.grpAccelerometerSensorData);
             this.tabPage2.Controls.Add(this.grpSensorData);
             this.tabPage2.Controls.Add(this.grpMcuStatus);
@@ -1438,11 +1447,11 @@
             this.grpMcuStatus.Controls.Add(this.lblMCUErrors);
             this.grpMcuStatus.Controls.Add(this.btnResetMcuErrors);
             this.grpMcuStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.grpMcuStatus.Location = new System.Drawing.Point(314, 394);
+            this.grpMcuStatus.Location = new System.Drawing.Point(314, 447);
             this.grpMcuStatus.Margin = new System.Windows.Forms.Padding(2);
             this.grpMcuStatus.Name = "grpMcuStatus";
             this.grpMcuStatus.Padding = new System.Windows.Forms.Padding(2);
-            this.grpMcuStatus.Size = new System.Drawing.Size(324, 106);
+            this.grpMcuStatus.Size = new System.Drawing.Size(324, 53);
             this.grpMcuStatus.TabIndex = 38;
             this.grpMcuStatus.TabStop = false;
             this.grpMcuStatus.Text = "Motor Controller Status";
@@ -1452,7 +1461,7 @@
             this.lblMCUStatus.AutoSize = true;
             this.lblMCUStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblMCUStatus.ForeColor = System.Drawing.Color.Black;
-            this.lblMCUStatus.Location = new System.Drawing.Point(95, 81);
+            this.lblMCUStatus.Location = new System.Drawing.Point(95, 30);
             this.lblMCUStatus.Name = "lblMCUStatus";
             this.lblMCUStatus.Size = new System.Drawing.Size(34, 16);
             this.lblMCUStatus.TabIndex = 76;
@@ -1462,7 +1471,7 @@
             // 
             this.lblMCUStatusText.AutoSize = true;
             this.lblMCUStatusText.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblMCUStatusText.Location = new System.Drawing.Point(6, 81);
+            this.lblMCUStatusText.Location = new System.Drawing.Point(6, 30);
             this.lblMCUStatusText.Name = "lblMCUStatusText";
             this.lblMCUStatusText.Size = new System.Drawing.Size(92, 16);
             this.lblMCUStatusText.TabIndex = 33;
@@ -1480,7 +1489,7 @@
             // btnResetMcuErrors
             // 
             this.btnResetMcuErrors.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnResetMcuErrors.Location = new System.Drawing.Point(210, 78);
+            this.btnResetMcuErrors.Location = new System.Drawing.Point(210, 27);
             this.btnResetMcuErrors.Name = "btnResetMcuErrors";
             this.btnResetMcuErrors.Size = new System.Drawing.Size(110, 23);
             this.btnResetMcuErrors.TabIndex = 0;
@@ -1493,7 +1502,7 @@
             this.groupBox14.BackColor = System.Drawing.Color.Gainsboro;
             this.groupBox14.Controls.Add(this.farTempConvert);
             this.groupBox14.Controls.Add(this.celTempConvert);
-            this.groupBox14.Location = new System.Drawing.Point(314, 19);
+            this.groupBox14.Location = new System.Drawing.Point(314, 4);
             this.groupBox14.Name = "groupBox14";
             this.groupBox14.Size = new System.Drawing.Size(324, 54);
             this.groupBox14.TabIndex = 39;
@@ -1529,11 +1538,11 @@
             // 
             this.grpAbsoluteMotorPositionsTemperatures.BackColor = System.Drawing.Color.Gainsboro;
             this.grpAbsoluteMotorPositionsTemperatures.Controls.Add(this.splitContainer1);
-            this.grpAbsoluteMotorPositionsTemperatures.Location = new System.Drawing.Point(314, 267);
+            this.grpAbsoluteMotorPositionsTemperatures.Location = new System.Drawing.Point(314, 252);
             this.grpAbsoluteMotorPositionsTemperatures.Margin = new System.Windows.Forms.Padding(2);
             this.grpAbsoluteMotorPositionsTemperatures.Name = "grpAbsoluteMotorPositionsTemperatures";
             this.grpAbsoluteMotorPositionsTemperatures.Padding = new System.Windows.Forms.Padding(2);
-            this.grpAbsoluteMotorPositionsTemperatures.Size = new System.Drawing.Size(324, 123);
+            this.grpAbsoluteMotorPositionsTemperatures.Size = new System.Drawing.Size(324, 129);
             this.grpAbsoluteMotorPositionsTemperatures.TabIndex = 38;
             this.grpAbsoluteMotorPositionsTemperatures.TabStop = false;
             this.grpAbsoluteMotorPositionsTemperatures.Text = "Absolute Motor Positions and Temperatures";
@@ -1676,7 +1685,7 @@
             this.groupBox5.Controls.Add(this.windDirLabel);
             this.groupBox5.Controls.Add(this.label11);
             this.groupBox5.Controls.Add(this.windSpeedLabel);
-            this.groupBox5.Location = new System.Drawing.Point(314, 78);
+            this.groupBox5.Location = new System.Drawing.Point(314, 63);
             this.groupBox5.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Padding = new System.Windows.Forms.Padding(2);
@@ -2663,6 +2672,85 @@
             this.consoleLogBox.Size = new System.Drawing.Size(631, 494);
             this.consoleLogBox.TabIndex = 0;
             // 
+            // grpAmbTempHumid
+            // 
+            this.grpAmbTempHumid.BackColor = System.Drawing.Color.Gainsboro;
+            this.grpAmbTempHumid.Controls.Add(this.lblAmbientTempUnit);
+            this.grpAmbTempHumid.Controls.Add(this.lblAmbientHumidityUnit);
+            this.grpAmbTempHumid.Controls.Add(this.lblAmbientTemp);
+            this.grpAmbTempHumid.Controls.Add(this.fldAmbientHumidity);
+            this.grpAmbTempHumid.Controls.Add(this.fldAmbientTemp);
+            this.grpAmbTempHumid.Controls.Add(this.lblAmbientHumidity);
+            this.grpAmbTempHumid.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.grpAmbTempHumid.Location = new System.Drawing.Point(314, 385);
+            this.grpAmbTempHumid.Margin = new System.Windows.Forms.Padding(2);
+            this.grpAmbTempHumid.Name = "grpAmbTempHumid";
+            this.grpAmbTempHumid.Padding = new System.Windows.Forms.Padding(2);
+            this.grpAmbTempHumid.Size = new System.Drawing.Size(324, 58);
+            this.grpAmbTempHumid.TabIndex = 44;
+            this.grpAmbTempHumid.TabStop = false;
+            this.grpAmbTempHumid.Text = "Elevation Ambient Temperature and Humidity";
+            // 
+            // lblAmbientTempUnit
+            // 
+            this.lblAmbientTempUnit.AutoSize = true;
+            this.lblAmbientTempUnit.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblAmbientTempUnit.Location = new System.Drawing.Point(253, 18);
+            this.lblAmbientTempUnit.Name = "lblAmbientTempUnit";
+            this.lblAmbientTempUnit.Size = new System.Drawing.Size(57, 13);
+            this.lblAmbientTempUnit.TabIndex = 38;
+            this.lblAmbientTempUnit.Text = "Fahrenheit";
+            // 
+            // lblAmbientHumidityUnit
+            // 
+            this.lblAmbientHumidityUnit.AutoSize = true;
+            this.lblAmbientHumidityUnit.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblAmbientHumidityUnit.Location = new System.Drawing.Point(253, 39);
+            this.lblAmbientHumidityUnit.Name = "lblAmbientHumidityUnit";
+            this.lblAmbientHumidityUnit.Size = new System.Drawing.Size(15, 13);
+            this.lblAmbientHumidityUnit.TabIndex = 37;
+            this.lblAmbientHumidityUnit.Text = "%";
+            // 
+            // lblAmbientTemp
+            // 
+            this.lblAmbientTemp.AutoSize = true;
+            this.lblAmbientTemp.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblAmbientTemp.Location = new System.Drawing.Point(6, 15);
+            this.lblAmbientTemp.Name = "lblAmbientTemp";
+            this.lblAmbientTemp.Size = new System.Drawing.Size(112, 16);
+            this.lblAmbientTemp.TabIndex = 33;
+            this.lblAmbientTemp.Text = "Ambient Temp:";
+            // 
+            // fldAmbientHumidity
+            // 
+            this.fldAmbientHumidity.AutoSize = true;
+            this.fldAmbientHumidity.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.fldAmbientHumidity.Location = new System.Drawing.Point(198, 35);
+            this.fldAmbientHumidity.Name = "fldAmbientHumidity";
+            this.fldAmbientHumidity.Size = new System.Drawing.Size(18, 18);
+            this.fldAmbientHumidity.TabIndex = 36;
+            this.fldAmbientHumidity.Text = "--";
+            // 
+            // fldAmbientTemp
+            // 
+            this.fldAmbientTemp.AutoSize = true;
+            this.fldAmbientTemp.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.fldAmbientTemp.Location = new System.Drawing.Point(198, 13);
+            this.fldAmbientTemp.Name = "fldAmbientTemp";
+            this.fldAmbientTemp.Size = new System.Drawing.Size(18, 18);
+            this.fldAmbientTemp.TabIndex = 35;
+            this.fldAmbientTemp.Text = "--";
+            // 
+            // lblAmbientHumidity
+            // 
+            this.lblAmbientHumidity.AutoSize = true;
+            this.lblAmbientHumidity.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblAmbientHumidity.Location = new System.Drawing.Point(7, 32);
+            this.lblAmbientHumidity.Name = "lblAmbientHumidity";
+            this.lblAmbientHumidity.Size = new System.Drawing.Size(132, 16);
+            this.lblAmbientHumidity.TabIndex = 34;
+            this.lblAmbientHumidity.Text = "Ambient Humidity:";
+            // 
             // DiagnosticsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2741,6 +2829,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.spectraCyberScanChart)).EndInit();
             this.tabPage5.ResumeLayout(false);
             this.tabPage5.PerformLayout();
+            this.grpAmbTempHumid.ResumeLayout(false);
+            this.grpAmbTempHumid.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -2952,5 +3042,12 @@
         private System.Windows.Forms.Label SWStopUpperLabel;
         private System.Windows.Forms.ToolTip UpperLimitToolTip;
         private System.Windows.Forms.ToolTip LowerLimitToolTip;
+        private System.Windows.Forms.GroupBox grpAmbTempHumid;
+        private System.Windows.Forms.Label lblAmbientTempUnit;
+        private System.Windows.Forms.Label lblAmbientHumidityUnit;
+        private System.Windows.Forms.Label lblAmbientTemp;
+        private System.Windows.Forms.Label fldAmbientHumidity;
+        private System.Windows.Forms.Label fldAmbientTemp;
+        private System.Windows.Forms.Label lblAmbientHumidity;
     }
 }

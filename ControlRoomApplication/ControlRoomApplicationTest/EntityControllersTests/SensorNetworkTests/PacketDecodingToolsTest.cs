@@ -136,7 +136,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests
             // This is only used for the counter, becuase it needs a variable to be passed by reference
             int i = 0;
 
-            var result = PacketDecodingTools.GetTemperatureFromBytes(ref i, oneTemperature, 1, SensorLocationEnum.COUNTERBALANCE);
+            var result = PacketDecodingTools.GetMotorTemperatureFromBytes(ref i, oneTemperature, 1, SensorLocationEnum.COUNTERBALANCE);
 
             Assert.AreEqual(1, result.Length); // Only expecting one result
 
@@ -164,7 +164,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests
             // This is only used for the counter, becuase it needs a variable to be passed by reference
             int i = 0;
 
-            var result = PacketDecodingTools.GetTemperatureFromBytes(ref i, twoTemperature, 2, SensorLocationEnum.COUNTERBALANCE);
+            var result = PacketDecodingTools.GetMotorTemperatureFromBytes(ref i, twoTemperature, 2, SensorLocationEnum.COUNTERBALANCE);
 
             Assert.AreEqual(2, result.Length); // Expecting two results
 

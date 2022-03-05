@@ -80,6 +80,7 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
             SensorStatuses.AzimuthTemperature2Status = SensorNetworkSensorStatus.Okay;
             SensorStatuses.ElevationTemperature1Status = SensorNetworkSensorStatus.Okay;
             SensorStatuses.ElevationTemperature2Status = SensorNetworkSensorStatus.Okay;
+            SensorStatuses.ElevationAmbientStatus = SensorNetworkSensorStatus.Okay;
             SensorStatuses.AzimuthAccelerometerStatus = SensorNetworkSensorStatus.Okay;
             SensorStatuses.ElevationAccelerometerStatus = SensorNetworkSensorStatus.Okay;
             SensorStatuses.CounterbalanceAccelerometerStatus = SensorNetworkSensorStatus.Okay;
@@ -357,24 +358,26 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
                         // At this point, we may begin parsing the data
 
                         // Sensor statuses and error codes
-                        BitArray sensorStatus = new BitArray(new byte[] { data[5] }); // sensor statuses 
-                        UInt32 sensorErrors = (UInt32)(data[6] << 16 | data[7] << 8 | data[8]); // sensor self-tests | adxl error codes and azimuth encoder error code | temp sensor error codes
+                        BitArray sensorStatus = new BitArray(new byte[] { data[5], data[6] }); // sensor statuses 
+                        UInt32 sensorErrors = (UInt32)(data[7] << 16 | data[8] << 8 | data[9]); // sensor self-tests | adxl error codes and azimuth encoder error code | temp sensor error codes
 
                         // Acquire the sample sizes for each sensor
-                        UInt16 elAcclSize = (UInt16)(data[9] << 8 | data[10]);
-                        UInt16 azAcclSize = (UInt16)(data[11] << 8 | data[12]);
-                        UInt16 cbAcclSize = (UInt16)(data[13] << 8 | data[14]);
-                        UInt16 elTempSensorSize = (UInt16)(data[15] << 8 | data[16]);
-                        UInt16 azTempSensorSize = (UInt16)(data[17] << 8 | data[18]);
-                        UInt16 elEncoderSize = (UInt16)(data[19] << 8 | data[20]);
-                        UInt16 azEncoderSize = (UInt16)(data[21] << 8 | data[22]);
+                        UInt16 elAcclSize = (UInt16)(data[10] << 8 | data[11]);
+                        UInt16 azAcclSize = (UInt16)(data[12] << 8 | data[13]);
+                        UInt16 cbAcclSize = (UInt16)(data[14] << 8 | data[15]);
+                        UInt16 elTempSensorSize = (UInt16)(data[16] << 8 | data[17]);
+                        UInt16 azTempSensorSize = (UInt16)(data[18] << 8 | data[19]);
+                        UInt16 elEncoderSize = (UInt16)(data[20] << 8 | data[21]);
+                        UInt16 azEncoderSize = (UInt16)(data[22] << 8 | data[23]);
+                        UInt16 ambientTempSize = (UInt16)(data[24] << 8 | data[25]);
+                        UInt16 ambientHumiditySize = (UInt16)(data[26] << 8 | data[27]);
 
                         // TODO: Outside of right here, we aren't doing anything with the sensor statuses. These should
                         // be updated along with the sensor data on the diagnostics form. How this looks is up to you. (issue #353)
                         SensorStatuses = ParseSensorStatuses(sensorStatus, sensorErrors);
 
                         // This is the index we start reading sensor data
-                        int k = 23;
+                        int k = 28;
 
                         // If no data comes through for a sensor (i.e. the size is 0), then it will not be updated,
                         // otherwise the UI value would temporarily be set to 0, which would be inaccurate
@@ -407,14 +410,14 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
                         // Elevation temperature
                         if (elTempSensorSize > 0)
                         {
-                            CurrentElevationMotorTemp = GetTemperatureFromBytes(ref k, data, elTempSensorSize, SensorLocationEnum.EL_MOTOR);
+                            CurrentElevationMotorTemp = GetMotorTemperatureFromBytes(ref k, data, elTempSensorSize, SensorLocationEnum.EL_MOTOR);
                             Database.DatabaseOperations.AddSensorData(CurrentElevationMotorTemp);
                         }
 
                         // Azimuth temperature
                         if (azTempSensorSize > 0)
                         {
-                            CurrentAzimuthMotorTemp = GetTemperatureFromBytes(ref k, data, azTempSensorSize, SensorLocationEnum.AZ_MOTOR);
+                            CurrentAzimuthMotorTemp = GetMotorTemperatureFromBytes(ref k, data, azTempSensorSize, SensorLocationEnum.AZ_MOTOR);
                             Database.DatabaseOperations.AddSensorData(CurrentAzimuthMotorTemp);
                         }
 
@@ -428,6 +431,20 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
                         if (azEncoderSize > 0)
                         {
                             CurrentAbsoluteOrientation.Azimuth = GetAzimuthAxisPositionFromBytes(ref k, data, AbsoluteOrientationOffset.Azimuth, CurrentAbsoluteOrientation.Azimuth);
+                        }
+
+                        // Elevation Ambient Temperature
+                        if (ambientTempSize > 0)
+                        {
+                            CurrentElevationAmbientTemp = GetAmbientTemperatureFromBytes(ref k, data, ambientTempSize, SensorLocationEnum.EL_FRAME);
+                            Database.DatabaseOperations.AddSensorData(CurrentElevationAmbientTemp);
+                        }
+
+                        // Elevation Ambient Temperature
+                        if (ambientHumiditySize > 0)
+                        {
+                            CurrentElevationAmbientHumidity = GetAmbientHumidityFromBytes(ref k, data, ambientHumiditySize, SensorLocationEnum.EL_FRAME);
+                            Database.DatabaseOperations.AddSensorData(CurrentElevationAmbientHumidity);
                         }
 
                         success = true;

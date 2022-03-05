@@ -14,6 +14,7 @@ using System.Data.Entity.Core.Objects;
 using ControlRoomApplication.Util;
 using System.Threading;
 using System.Text;
+using ControlRoomApplication.Entities.DiagnosticData;
 
 namespace ControlRoomApplication.Database
 {
@@ -571,6 +572,31 @@ namespace ControlRoomApplication.Database
 
             if (testflag) t.Join();
         }
+
+        /// <summary>
+        /// Add an array of sensor data to the appropriate table.
+        /// </summary>
+        /// <param name="humidity">The humidity data to add.</param>
+        public static void AddSensorData(Humidity[] humidity, bool testflag = false)
+        {
+            Thread t = new Thread(() =>
+            {
+                if (humidity.Length <= 0) { return; }
+                if (!USING_REMOTE_DATABASE)
+                {
+                    using (RTDbContext Context = InitializeDatabaseContext())
+                    {
+                        Context.Humidity.AddRange(humidity);
+                        SaveContext(Context);
+                    }
+                }
+            });
+
+            t.Start();
+
+            if (testflag) t.Join();
+        }
+
         /// <summary>
         /// add an array of sensor data to the apropriat table
         /// </summary>

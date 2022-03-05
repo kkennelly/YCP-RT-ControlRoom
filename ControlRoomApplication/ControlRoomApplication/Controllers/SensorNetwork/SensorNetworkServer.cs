@@ -53,6 +53,12 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
             CurrentAzimuthMotorTemp = new Temperature[1];
             CurrentAzimuthMotorTemp[0] = new Temperature();
 
+            CurrentElevationAmbientTemp = new Temperature[1];
+            CurrentElevationAmbientTemp[0] = new Temperature();
+
+            CurrentElevationAmbientHumidity = new Humidity[1];
+            CurrentElevationAmbientHumidity[0] = new Humidity();
+
             CurrentAbsoluteOrientation = new Orientation();
 
             CurrentElevationMotorAccl = new Acceleration[1];
@@ -112,6 +118,16 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
         /// The current azimuth motor temperature received from the sensor network. 
         /// </summary>
         public Temperature[] CurrentAzimuthMotorTemp { get; set; }
+
+        /// <summary>
+        /// The current elevation ambient temperature received from the sensor network. 
+        /// </summary>
+        public Temperature[] CurrentElevationAmbientTemp { get; set; }
+
+        /// <summary>
+        /// The current elevation ambient humidity received from the sensor network. 
+        /// </summary>
+        public Humidity[] CurrentElevationAmbientHumidity { get; set; }
 
         /// <summary>
         /// The current orientation of the telescope based off of the absolute encoders. These

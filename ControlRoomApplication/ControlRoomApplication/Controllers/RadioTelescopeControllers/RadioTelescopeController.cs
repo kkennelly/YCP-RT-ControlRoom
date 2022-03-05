@@ -1207,7 +1207,12 @@ namespace ControlRoomApplication.Controllers
 
         private void EndCSVLog()
         {
-            Thread timeout = new Thread(() => { Thread.Sleep(5000); currentlyRunning = false; });
+            Thread timeout = new Thread(
+                () => { 
+                    Thread.Sleep(5000); 
+                    currentlyRunning = false; 
+                    logger.Info("Abs El: " + GetAbsoluteOrientation().Elevation + ", Abs Az: " + GetAbsoluteOrientation().Elevation); 
+                });
             timeout.Start();
         }
     }

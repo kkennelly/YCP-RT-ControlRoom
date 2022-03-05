@@ -28,6 +28,7 @@ namespace ControlRoomApplication.Controllers.Sensors
         // Sensor Network
         public bool overrideAzimuthMotTemp { get; set; }
         public bool overrideElevatMotTemp { get; set; }
+        public bool overrideAmbientTempHumidity { get; set; }
 
         public bool overrideAzimuthAbsEncoder { get; set; }
         public bool overrideElevationAbsEncoder { get; set; }
@@ -51,6 +52,7 @@ namespace ControlRoomApplication.Controllers.Sensors
             // Sensor Network
             overrideAzimuthMotTemp = DatabaseOperations.GetOverrideStatusForSensor(SensorItemEnum.AZIMUTH_MOTOR);
             overrideElevatMotTemp = DatabaseOperations.GetOverrideStatusForSensor(SensorItemEnum.ELEVATION_MOTOR);
+            overrideAmbientTempHumidity = DatabaseOperations.GetOverrideStatusForSensor(SensorItemEnum.AMBIENT_TEMP_HUMIDITY);
 
             overrideAzimuthAbsEncoder = DatabaseOperations.GetOverrideStatusForSensor(SensorItemEnum.AZIMUTH_ABS_ENCODER);
             overrideElevationAbsEncoder = DatabaseOperations.GetOverrideStatusForSensor(SensorItemEnum.ELEVATION_ABS_ENCODER);
@@ -95,6 +97,12 @@ namespace ControlRoomApplication.Controllers.Sensors
         {
             overrideElevatMotTemp = doOverride;
             DatabaseOperations.SetOverrideForSensor(SensorItemEnum.ELEVATION_MOTOR, doOverride);
+        }
+
+        public void setAmbientTempHumidity(bool doOverride)
+        {
+            overrideAmbientTempHumidity = doOverride;
+            DatabaseOperations.SetOverrideForSensor(SensorItemEnum.AMBIENT_TEMP_HUMIDITY, doOverride);
         }
 
         public void setAzimuthAbsEncoder(bool doOverride)

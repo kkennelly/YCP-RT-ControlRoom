@@ -1211,7 +1211,6 @@ namespace ControlRoomApplication.Controllers
                 () => { 
                     Thread.Sleep(5000); 
                     currentlyRunning = false; 
-                    logger.Info("Abs El: " + GetAbsoluteOrientation().Elevation + ", Abs Az: " + GetAbsoluteOrientation().Elevation); 
                 });
             timeout.Start();
         }

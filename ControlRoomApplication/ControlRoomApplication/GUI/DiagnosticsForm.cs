@@ -175,6 +175,7 @@ namespace ControlRoomApplication.GUI
 
             AzimuthTemperature1.Checked = SensorNetworkConfig.AzimuthTemp1Init;
             ElevationTemperature1.Checked = SensorNetworkConfig.ElevationTemp1Init;
+            AmbientTempHumid.Checked = SensorNetworkConfig.ElevationAmbientInit;
             AzimuthAccelerometer.Checked = SensorNetworkConfig.AzimuthAccelerometerInit;
             ElevationAccelerometer.Checked = SensorNetworkConfig.ElevationAccelerometerInit;
             CounterbalanceAccelerometer.Checked = SensorNetworkConfig.CounterbalanceAccelerometerInit;
@@ -1281,6 +1282,7 @@ namespace ControlRoomApplication.GUI
                 // First set all the checkboxes equal to the sensor network config
                 SensorNetworkConfig.AzimuthTemp1Init = AzimuthTemperature1.Checked;
                 SensorNetworkConfig.ElevationTemp1Init = ElevationTemperature1.Checked;
+                SensorNetworkConfig.ElevationAmbientInit = AmbientTempHumid.Checked;
                 SensorNetworkConfig.AzimuthAccelerometerInit = AzimuthAccelerometer.Checked;
                 SensorNetworkConfig.ElevationAccelerometerInit = ElevationAccelerometer.Checked;
                 SensorNetworkConfig.CounterbalanceAccelerometerInit = CounterbalanceAccelerometer.Checked;

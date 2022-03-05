@@ -149,7 +149,7 @@ namespace ControlRoomApplication.GUI
             bool currWS = controlRoom.weatherStationOverride;
             bool currAZ = rtController.overrides.overrideAzimuthMotTemp;
             bool currEL = rtController.overrides.overrideElevatMotTemp;
-            bool currAmbTempHumidity = rtController.overrides.overrideElevatMotTemp;
+            bool currAmbTempHumidity = rtController.overrides.overrideAmbientTempHumidity;
             bool currElProx0 = rtController.overrides.overrideElevatProx0;
             bool currElProx90 = rtController.overrides.overrideElevatProx90;
             bool currAzimuthAbsEncoder = rtController.overrides.overrideAzimuthAbsEncoder;
@@ -961,7 +961,7 @@ namespace ControlRoomApplication.GUI
             bool currWS = controlRoom.weatherStationOverride;
             bool currAZ = rtController.overrides.overrideAzimuthMotTemp;
             bool currEL = rtController.overrides.overrideElevatMotTemp;
-            bool currAmbTempHumidity = rtController.overrides.overrideElevatMotTemp;
+            bool currAmbTempHumidity = rtController.overrides.overrideAmbientTempHumidity;
             bool currElProx0 = rtController.overrides.overrideElevatProx0;
             bool currElProx90 = rtController.overrides.overrideElevatProx90;
             bool currAzimuthAbsEncoder = rtController.overrides.overrideAzimuthAbsEncoder;
@@ -980,7 +980,7 @@ namespace ControlRoomApplication.GUI
                 newWS = controlRoom.weatherStationOverride;
                 newAZ = rtController.overrides.overrideAzimuthMotTemp;
                 newEL = rtController.overrides.overrideElevatMotTemp;
-                newAmbTempHumidity = rtController.overrides.overrideElevatMotTemp;
+                newAmbTempHumidity = rtController.overrides.overrideAmbientTempHumidity;
                 newElProx0 = rtController.overrides.overrideElevatProx0;
                 newElProx90 = rtController.overrides.overrideElevatProx90;
                 newAzimuthAbsEncoder = rtController.overrides.overrideAzimuthAbsEncoder;
@@ -1080,12 +1080,12 @@ namespace ControlRoomApplication.GUI
             if (currAmbTempHumidity)
             {
                 AmbTempHumidSensOverride.Text = "OVERRIDING";
-                ElMotTempSensOverride.BackColor = System.Drawing.Color.Red;
+                AmbTempHumidSensOverride.BackColor = System.Drawing.Color.Red;
             }
             else
             {
                 AmbTempHumidSensOverride.Text = "ENABLED";
-                ElMotTempSensOverride.BackColor = System.Drawing.Color.LimeGreen;
+                AmbTempHumidSensOverride.BackColor = System.Drawing.Color.LimeGreen;
             }
 
             // Elevation Limit Switch 0 Degrees Override

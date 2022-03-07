@@ -415,6 +415,8 @@
       <SubType>Designer</SubType>
     </None>
     <None Include=".travis.yml" />
+    <None Include="Controllers\SensorNetwork\Simulation\SimulationCSVData\TestAmbHumidity.csv" />
+    <None Include="Controllers\SensorNetwork\Simulation\SimulationCSVData\TestAmbTemp.csv" />
     <None Include="Controllers\SensorNetwork\Simulation\SimulationCSVData\TestAzAccX.csv" />
     <None Include="Controllers\SensorNetwork\Simulation\SimulationCSVData\TestAzAccY.csv" />
     <None Include="Controllers\SensorNetwork\Simulation\SimulationCSVData\TestAzAccZ.csv" />

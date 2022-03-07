@@ -116,9 +116,10 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
             {
                 temperature[j] = Temperature.Generate(
                     DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                    (float)((data[currPointer++] << 8 | data[currPointer++])),  // Comes in as fahrenheit float
+                    BitConverter.ToSingle(data, currPointer),  // Comes in as fahrenheit float
                     sensor
                 );
+                currPointer += 4;
             }
 
             return temperature;
@@ -140,9 +141,10 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
             {
                 humidity[j] = Humidity.Generate(
                     DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                    (float)((data[currPointer++] << 8 | data[currPointer++])),  // Comes in as percent humidity float
+                    BitConverter.ToSingle(data, currPointer),  // Comes in as percent humidity float
                     sensor
                 );
+                currPointer += 4;
             }
 
             return humidity;

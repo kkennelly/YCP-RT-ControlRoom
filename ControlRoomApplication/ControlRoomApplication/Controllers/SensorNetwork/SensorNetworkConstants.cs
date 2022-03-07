@@ -45,7 +45,7 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
         /// This is the total number of Sensor Network sensors that can be receiving data at a given time. 
         /// This is used to determine the byte size of the initialization. 
         /// </summary>
-        public const int SensorNetworkSensorCount = 7;
+        public const int SensorNetworkSensorCount = 9;
 
         /// <summary>
         /// If we receive this ID from the sensor network, it means that everything is going well, and we are about

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ControlRoomApplication.Entities;
 using EmbeddedSystemsTest.SensorNetworkSimulation;
+using ControlRoomApplication.Entities.DiagnosticData;
 
 namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests
 {
@@ -120,7 +121,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests
         }
 
         [TestMethod]
-        public void TestGetTemperatureFromBytes_BytesToTemperature_ReturnsTemperature()
+        public void TestGetMotorTemperatureFromBytes_BytesToTemperature_ReturnsTemperature()
         {
             // The byte size for one temperature is 2 bytes
             byte[] oneTemperature = new byte[2];
@@ -145,7 +146,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests
         }
 
         [TestMethod]
-        public void TestGetTemperatureFromBytes_BytesToMultipleTemperatures_ReturnsMultipleTemperatures()
+        public void TestGetMotorTemperatureFromBytes_BytesToMultipleTemperatures_ReturnsMultipleTemperatures()
         {
             // The byte size for one temperature is 2 bytes
             byte[] twoTemperature = new byte[4];
@@ -173,6 +174,116 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests
 
             Assert.AreEqual(expected[1].temp, result[1].temp);
             Assert.AreEqual(expected[1].location_ID, result[1].location_ID);
+        }
+
+        [TestMethod]
+        public void TestGetAmbientTemperatureFromBytes_BytesToTemperature_ReturnsTemperature()
+        {
+            // This will create temperature value of 1
+            byte[] oneTemperature = BitConverter.GetBytes(1f);
+
+            // Skipping the timestamp because we aren't concerned with that in this test
+            Temperature[] expected = new Temperature[1];
+            expected[0] = Temperature.Generate(0, 1, SensorLocationEnum.EL_FRAME);
+
+            // This is only used for the counter, becuase it needs a variable to be passed by reference
+            int i = 0;
+
+            var result = PacketDecodingTools.GetAmbientTemperatureFromBytes(ref i, oneTemperature, 1, SensorLocationEnum.EL_FRAME);
+
+            Assert.AreEqual(1, result.Length); // Only expecting one result
+
+            Assert.AreEqual(expected[0].temp, result[0].temp);
+            Assert.AreEqual(expected[0].location_ID, result[0].location_ID);
+        }
+
+        [TestMethod]
+        public void TestGetAmbientTemperatureFromBytes_BytesToMultipleTemperatures_ReturnsMultipleTemperatures()
+        {
+            // The byte size for one temperature is 8 bytes
+            byte[] twoTemperature = new byte[8];
+
+            // This will create temperature value of 1, because the temperature is divided by 16
+            byte[] oneTemperature = BitConverter.GetBytes(1f);
+
+            // Add 1 to the array twice
+            for (int j = 0; j < 8; j++)
+            {
+                twoTemperature[j] = oneTemperature[j % 2];
+            }
+
+            // Skipping the timestamp because we aren't concerned with that in this test
+            Temperature[] expected = new Temperature[2];
+            expected[0] = Temperature.Generate(0, 1, SensorLocationEnum.EL_FRAME);
+            expected[1] = Temperature.Generate(0, 1, SensorLocationEnum.EL_FRAME);
+
+            // This is only used for the counter, becuase it needs a variable to be passed by reference
+            int i = 0;
+
+            var result = PacketDecodingTools.GetAmbientTemperatureFromBytes(ref i, twoTemperature, 2, SensorLocationEnum.EL_FRAME);
+
+            Assert.AreEqual(2, result.Length); // Expecting two results
+
+            Assert.AreEqual(expected[0].temp, result[0].temp);
+            Assert.AreEqual(expected[0].location_ID, result[0].location_ID);
+
+            Assert.AreEqual(expected[1].temp, result[1].temp);
+            Assert.AreEqual(expected[1].location_ID, result[1].location_ID);
+        }
+
+        [TestMethod]
+        public void TestGetAmbientHumidityFromBytes_BytesToHumidity_ReturnsHumidity()
+        {
+            // This will create humidity value of 1
+            byte[] oneHumidity = BitConverter.GetBytes(1f);
+
+            // Skipping the timestamp because we aren't concerned with that in this test
+            Humidity[] expected = new Humidity[1];
+            expected[0] = Humidity.Generate(0, 1, SensorLocationEnum.EL_FRAME);
+
+            // This is only used for the counter, becuase it needs a variable to be passed by reference
+            int i = 0;
+
+            var result = PacketDecodingTools.GetAmbientHumidityFromBytes(ref i, oneHumidity, 1, SensorLocationEnum.EL_FRAME);
+
+            Assert.AreEqual(1, result.Length); // Only expecting one result
+
+            Assert.AreEqual(expected[0].HumidityReading, result[0].HumidityReading);
+            Assert.AreEqual(expected[0].LocationID, result[0].LocationID);
+        }
+
+        [TestMethod]
+        public void TestGetAmbientHumidityFromBytes_BytesToMultipleHumidity_ReturnsMultipleHumidity()
+        {
+            // The byte size for two humidity is 8 bytes
+            byte[] twoHumidity = new byte[8];
+
+            // This will create temperature value of 1, because the temperature is divided by 16
+            byte[] oneHumidity = BitConverter.GetBytes(1f);
+
+            // Add 1 to the array twice
+            for (int j = 0; j < 8; j++)
+            {
+                twoHumidity[j] = oneHumidity[j % 2];
+            }
+
+            // Skipping the timestamp because we aren't concerned with that in this test
+            Humidity[] expected = new Humidity[2];
+            expected[0] = Humidity.Generate(0, 1, SensorLocationEnum.EL_FRAME);
+            expected[1] = Humidity.Generate(0, 1, SensorLocationEnum.EL_FRAME);
+
+            // This is only used for the counter, becuase it needs a variable to be passed by reference
+            int i = 0;
+
+            var result = PacketDecodingTools.GetAmbientHumidityFromBytes(ref i, twoHumidity, 2, SensorLocationEnum.EL_FRAME);
+
+            Assert.AreEqual(2, result.Length); // Expecting two results
+
+            Assert.AreEqual(expected[0].HumidityReading, result[0].HumidityReading);
+            Assert.AreEqual(expected[0].LocationID, result[0].LocationID);
+
+            Assert.AreEqual(expected[1].HumidityReading, result[1].HumidityReading);
+            Assert.AreEqual(expected[1].LocationID, result[1].LocationID);
         }
 
         [TestMethod]

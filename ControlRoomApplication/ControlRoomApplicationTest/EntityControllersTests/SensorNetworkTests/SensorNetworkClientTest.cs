@@ -169,6 +169,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             client.SensorNetworkConfig.CounterbalanceAccelerometerInit = false;
             client.SensorNetworkConfig.ElevationEncoderInit = false;
             client.SensorNetworkConfig.AzimuthEncoderInit = false;
+            client.SensorNetworkConfig.ElevationAmbientInit = false;
 
             // Send the init byte array
             bool succeeded = client.SendSensorInitialization();

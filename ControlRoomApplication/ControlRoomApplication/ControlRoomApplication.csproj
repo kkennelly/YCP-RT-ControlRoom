@@ -226,6 +226,7 @@
     <Compile Include="Controllers\ControlRoomController\RadioTelescopeControllerManagementThread.cs" />
     <Compile Include="Controllers\PLCCommunication\ConversionHelper.cs" />
     <Compile Include="Controllers\PLCCommunication\PLCDrivers\MCUManager\Enumerations\MCUNetworkStatus.cs" />
+    <Compile Include="Controllers\PLCCommunication\PLCDrivers\MCUManager\Enumerations\MCUResetResult.cs" />
     <Compile Include="Controllers\PLCCommunication\PLCDrivers\MCUManager\Enumerations\MovementResult.cs" />
     <Compile Include="Controllers\PLCCommunication\PLCDrivers\MCUManager\MCUCommand.cs" />
     <Compile Include="Controllers\PLCCommunication\PLCDrivers\MCUManager\Enumerations\MCUCommandType.cs" />

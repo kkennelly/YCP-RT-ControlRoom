@@ -68,6 +68,7 @@ namespace ControlRoomApplication.Constants
         public static int NUM_ALL_STOP_PARAMS = 3;
         public static int NUM_SENSOR_INIT_PARAMS = 4;
         public static int NUM_REQUEST_PARAMS = 4;
+        public static int NUM_MCU_RESET_PARAMS = 3;
 
         // SET_OVERRIDE specific numbers
         public static int SENSOR_TO_OVERRIDE = 2;

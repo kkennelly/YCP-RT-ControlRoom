@@ -678,6 +678,16 @@ namespace ControlRoomApplicationTest.CommunicationTests
             Assert.AreEqual(ParseTCPCommandResultEnum.Success, result.parseTCPCommandResultEnum);
             Assert.AreEqual(MovementResult.Success, mvmtResult.movementResult);
         }
+        
+        [TestMethod]
+        public void TestProcessMessage_TestValidMcuReset()
+        {
+            string command = "1.0 | MCU_RESET | 12:00:00";
 
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            ExecuteTCPCommandResult resetResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] { result.parsedString });
+            Assert.AreEqual(ParseTCPCommandResultEnum.Success, result.parseTCPCommandResultEnum);
+            Assert.AreEqual(MCUResetResult.Success, resetResult.mcuResetResult);
+        }
     }
 }

@@ -519,6 +519,13 @@ namespace ControlRoomApplication.Controllers
                             return new ExecuteTCPCommandResult(MovementResult.InvalidCommand, TCPCommunicationConstants.INVALID_REQUEST_TYPE + splitCommandString[TCPCommunicationConstants.REQUEST_TYPE]);
                     }
                 }
+                else if (command=="MCU_RESET")
+                {
+                    if (rtController.ResetMCUErrors())
+                    {
+                        return new ExecuteTCPCommandResult(MCUResetResult.Success, "Successfully reset MCU error bit.");
+                    }
+                }
 
                 // can't find a keyword then we return Invalid Command sent
                 return new ExecuteTCPCommandResult(MovementResult.InvalidCommand, TCPCommunicationConstants.COMMAND_NOT_FOUND + command);
@@ -723,10 +730,22 @@ namespace ControlRoomApplication.Controllers
                     }
                     break;
 
+                    
+                case "MCU_RESET":
+                    if (splitCommandString.Length != TCPCommunicationConstants.NUM_MCU_RESET_PARAMS)
+                    {
+                        return new ParseTCPCommandResult(ParseTCPCommandResultEnum.MissingCommandArgs, splitCommandString, TCPCommunicationConstants.MISSING_COMMAND_ARGS + command);
+                    }
+                    else
+                    {
+                        return new ParseTCPCommandResult(ParseTCPCommandResultEnum.Success, splitCommandString);
+                    }
+                    break;
+
                 // if we get here, command type not found
                 default:
                     return new ParseTCPCommandResult(ParseTCPCommandResultEnum.InvalidCommandType, splitCommandString, TCPCommunicationConstants.COMMAND_NOT_FOUND);
-              
+                
             }
 
 

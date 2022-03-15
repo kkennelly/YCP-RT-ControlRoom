@@ -146,6 +146,7 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="EntityControllersTests\SensorNetworkTests\SensorNetworkTestPackets\AllData50.snp" />
+    <None Include="EntityControllersTests\SensorNetworkTests\SensorNetworkTestPackets\OnlyAmbTempHumidity50.snp" />
     <None Include="EntityControllersTests\SensorNetworkTests\SensorNetworkTestPackets\OnlyAzAccl123.snp" />
     <None Include="EntityControllersTests\SensorNetworkTests\SensorNetworkTestPackets\OnlyAzEnc50.snp" />
     <None Include="EntityControllersTests\SensorNetworkTests\SensorNetworkTestPackets\OnlyAzTemp50C.snp" />

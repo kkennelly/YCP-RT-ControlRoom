@@ -1355,12 +1355,12 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             PrivSim.Invoke("ReadFakeDataFromCSV");
 
             // Retrieve populated sensor
-            double[] initArray = (double[])PrivSim.GetFieldOrProperty("AmbientTempData");
-            double[] expectedArray = new double[initArray.Length + 1]; // + 1 is to test looping back to the beginning
+            float[] initArray = (float[])PrivSim.GetFieldOrProperty("AmbientTempData");
+            float[] expectedArray = new float[initArray.Length + 1]; // + 1 is to test looping back to the beginning
             initArray.CopyTo(expectedArray, 0);
             expectedArray[expectedArray.Length - 1] = initArray[0];
 
-            double[] resultArray = new double[expectedArray.Length];
+            float[] resultArray = new float[expectedArray.Length];
 
             int? index = 0;
             int? nullInt = null;
@@ -1396,12 +1396,12 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             PrivSim.Invoke("ReadFakeDataFromCSV");
 
             // Retrieve populated sensor
-            double[] initArray = (double[])PrivSim.GetFieldOrProperty("AmbientHumidityData");
-            double[] expectedArray = new double[initArray.Length + 1]; // + 1 is to test looping back to the beginning
+            float[] initArray = (float[])PrivSim.GetFieldOrProperty("AmbientHumidityData");
+            float[] expectedArray = new float[initArray.Length + 1]; // + 1 is to test looping back to the beginning
             initArray.CopyTo(expectedArray, 0);
             expectedArray[expectedArray.Length - 1] = initArray[0];
 
-            double[] resultArray = new double[expectedArray.Length];
+            float[] resultArray = new float[expectedArray.Length];
 
             int? index = 0;
             int? nullInt = null;

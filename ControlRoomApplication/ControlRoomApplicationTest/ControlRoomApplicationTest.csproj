@@ -159,6 +159,8 @@
     <None Include="EntityControllersTests\SensorNetworkTests\Simulation\TestCSVData\TestAzAccY.csv" />
     <None Include="EntityControllersTests\SensorNetworkTests\Simulation\TestCSVData\TestAzAccZ.csv" />
     <None Include="EntityControllersTests\SensorNetworkTests\Simulation\TestCSVData\TestAzEnc.csv" />
+    <None Include="EntityControllersTests\SensorNetworkTests\Simulation\TestCSVData\TestAmbTemp.csv" />
+    <None Include="EntityControllersTests\SensorNetworkTests\Simulation\TestCSVData\TestAmbHumidity.csv" />
     <None Include="EntityControllersTests\SensorNetworkTests\Simulation\TestCSVData\TestAzTemp.csv" />
     <None Include="EntityControllersTests\SensorNetworkTests\Simulation\TestCSVData\TestCbAccX.csv" />
     <None Include="EntityControllersTests\SensorNetworkTests\Simulation\TestCSVData\TestCbAccY.csv" />

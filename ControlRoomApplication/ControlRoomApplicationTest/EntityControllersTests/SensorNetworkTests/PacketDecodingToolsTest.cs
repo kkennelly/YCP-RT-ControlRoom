@@ -209,7 +209,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests
             // Add 1 to the array twice
             for (int j = 0; j < 8; j++)
             {
-                twoTemperature[j] = oneTemperature[j % 2];
+                twoTemperature[j] = oneTemperature[j % 4];
             }
 
             // Skipping the timestamp because we aren't concerned with that in this test
@@ -264,7 +264,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests
             // Add 1 to the array twice
             for (int j = 0; j < 8; j++)
             {
-                twoHumidity[j] = oneHumidity[j % 2];
+                twoHumidity[j] = oneHumidity[j % 4];
             }
 
             // Skipping the timestamp because we aren't concerned with that in this test

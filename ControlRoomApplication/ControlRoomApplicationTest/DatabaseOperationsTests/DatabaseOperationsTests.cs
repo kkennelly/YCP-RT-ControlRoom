@@ -8,6 +8,7 @@ using ControlRoomApplication.Entities;
 using ControlRoomApplication.Controllers;
 using System.Threading;
 using System.Text;
+using ControlRoomApplication.Entities.DiagnosticData;
 
 namespace ControlRoomApplicationTest.DatabaseOperationsTests
 {
@@ -476,6 +477,65 @@ namespace ControlRoomApplicationTest.DatabaseOperationsTests
             Assert.AreEqual(temp[tempReturn.Count - 2].location_ID, tempReturn[tempReturn.Count - 2].location_ID);
             Assert.AreEqual(temp[tempReturn.Count - 2].temp, tempReturn[tempReturn.Count - 2].temp);
             Assert.AreEqual(temp[tempReturn.Count - 2].TimeCapturedUTC, tempReturn[tempReturn.Count - 2].TimeCapturedUTC);
+
+        }
+
+        [TestMethod]
+        public void TestAddAndRetrieveHumidity()
+        {
+            Humidity[] humidity = new Humidity[1];
+            SensorLocationEnum loc1 = SensorLocationEnum.EL_FRAME;
+
+            //Generate current time
+            long dateTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+            //Generate Humidity
+            Humidity h1 = Humidity.Generate(dateTime, 0.0, loc1);
+
+            humidity[0] = (h1);
+
+            DatabaseOperations.AddSensorData(humidity, true);
+            List<Humidity> humidityReturn = DatabaseOperations.GetHumidityData(dateTime - 1, dateTime + 1, loc1);
+
+            Assert.AreEqual(humidityReturn.Count, 1);
+
+            //Test only humidity
+            Assert.AreEqual(humidity[humidityReturn.Count - 1].LocationID, humidityReturn[humidityReturn.Count - 1].LocationID);
+            Assert.AreEqual(humidity[humidityReturn.Count - 1].HumidityReading, humidityReturn[humidityReturn.Count - 1].HumidityReading);
+            Assert.AreEqual(humidity[humidityReturn.Count - 1].TimeCapturedUTC, humidityReturn[humidityReturn.Count - 1].TimeCapturedUTC);
+
+        }
+
+        [TestMethod]
+        public void TestAddAndRetrieveMultipleHumidity()
+        {
+            Humidity[] humidity = new Humidity[2];
+            SensorLocationEnum loc1 = SensorLocationEnum.EL_FRAME;
+
+            //Generate current time
+            long dateTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+            //Make 2 new humidity
+            Humidity h1 = Humidity.Generate(dateTime, 500.0, loc1);
+            Humidity h2 = Humidity.Generate(dateTime, 999.0, loc1);
+
+            humidity[0] = (h1);
+            humidity[1] = (h2);
+
+            DatabaseOperations.AddSensorData(humidity, true);
+            List<Humidity> humidityReturn = DatabaseOperations.GetHumidityData(dateTime - 1, dateTime + 1, loc1);
+
+            Assert.AreEqual(humidityReturn.Count, 2);
+
+            //Test first temp
+            Assert.AreEqual(humidity[humidityReturn.Count - 1].LocationID, humidityReturn[humidityReturn.Count - 1].LocationID);
+            Assert.AreEqual(humidity[humidityReturn.Count - 1].HumidityReading, humidityReturn[humidityReturn.Count - 1].HumidityReading);
+            Assert.AreEqual(humidity[humidityReturn.Count - 1].TimeCapturedUTC, humidityReturn[humidityReturn.Count - 1].TimeCapturedUTC);
+
+            //Test second temp
+            Assert.AreEqual(humidity[humidityReturn.Count - 2].LocationID, humidityReturn[humidityReturn.Count - 2].LocationID);
+            Assert.AreEqual(humidity[humidityReturn.Count - 2].HumidityReading, humidityReturn[humidityReturn.Count - 2].HumidityReading);
+            Assert.AreEqual(humidity[humidityReturn.Count - 2].TimeCapturedUTC, humidityReturn[humidityReturn.Count - 2].TimeCapturedUTC);
 
         }
 

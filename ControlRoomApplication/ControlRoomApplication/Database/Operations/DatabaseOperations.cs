@@ -717,6 +717,21 @@ namespace ControlRoomApplication.Database
         }
 
         /// <summary>
+        /// Get humidity between starttime and now from sensor location loc
+        /// </summary>
+        /// <param name="starttime"></param>
+        /// <param name="endTime"></param>
+        /// <param name="loc"></param>
+        /// <returns></returns>
+        public static List<Humidity> GetHumidityData(long starttime, long endTime, SensorLocationEnum loc)
+        {
+            using (RTDbContext Context = InitializeDatabaseContext())
+            {// && x.TimeCaptured < endTime) )   && x.TimeCaptured.Ticks < endTime.Ticks
+                return Context.Humidity.Where(x => x.TimeCapturedUTC > starttime && x.LocationID == (int)loc).ToList();
+            }
+        }
+
+        /// <summary>
         /// returns the most recent temerature for a given location
         /// </summary>
         /// <param name="loc"></param>

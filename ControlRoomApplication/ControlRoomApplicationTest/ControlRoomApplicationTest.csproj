@@ -104,6 +104,7 @@
     <Compile Include="DatabaseOperationsTests\DatabaseOperationsTests.cs" />
     <Compile Include="EntitiesTests\AccelerationBlobTest.cs" />
     <Compile Include="EntitiesTests\AccelerationTest.cs" />
+    <Compile Include="EntitiesTests\HumidityTest.cs" />
     <Compile Include="EntitiesTests\TemperatureTest.cs" />
     <Compile Include="EntitiesTests\SensorNetworkConfigTest.cs" />
     <Compile Include="EntitiesTests\SpectraCyberConfigTest.cs" />

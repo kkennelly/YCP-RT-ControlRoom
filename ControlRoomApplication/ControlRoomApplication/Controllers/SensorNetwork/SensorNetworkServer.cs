@@ -131,6 +131,12 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
         public Humidity[] CurrentElevationAmbientHumidity { get; set; }
 
         /// <summary>
+        /// The current elevation ambient dew point calculated from the ambient humidity and 
+        /// temperature recieved from the sensor network.
+        /// </summary>
+        public double CurrentElevationAmbientDewPoint { get; set; }
+
+        /// <summary>
         /// The current orientation of the telescope based off of the absolute encoders. These
         /// are totally separate from the motor encoders' data that we get from the GetMotorEncoderPosition
         /// function in the PLC and MCU, and will provide more accurate data regarding the telescope's
@@ -437,6 +443,7 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
                         if (ambientTempSize > 0)
                         {
                             CurrentElevationAmbientTemp = GetAmbientTemperatureFromBytes(ref k, data, ambientTempSize, SensorLocationEnum.EL_FRAME);
+                            UpdateAmbientDewPoint();
                             Database.DatabaseOperations.AddSensorData(CurrentElevationAmbientTemp);
                         }
 
@@ -444,6 +451,8 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
                         if (ambientHumiditySize > 0)
                         {
                             CurrentElevationAmbientHumidity = GetAmbientHumidityFromBytes(ref k, data, ambientHumiditySize, SensorLocationEnum.EL_FRAME);
+                            UpdateAmbientDewPoint();
+                            Console.WriteLine("Dewpoint: " + CurrentElevationAmbientDewPoint);
                             Database.DatabaseOperations.AddSensorData(CurrentElevationAmbientHumidity);
                         }
 
@@ -610,6 +619,32 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
             //Console.WriteLine(Math.Atan2(Y_out, -Z_out) * 180.0 / Math.PI + SensorNetworkConstants.CBAccelPositionOffset);
             // Calculate roll orientation
             CurrentCBAccelElevationPosition = Math.Atan2(Y_out, -Z_out) * 180.0 / Math.PI + SensorNetworkConstants.CBAccelPositionOffset;
+        }
+        /// <summary>
+        /// A method to update the current ambient dew point.
+        /// Code was taken/modeled from https://www.best-microcontroller-projects.com/dht22.html
+        /// reference (1) : http://wahiduddin.net/calc/density_algorithms.htm
+        /// reference (2) : http://www.colorado.edu/geography/weather_station/Geog_site/about.htm
+        /// </summary>
+        private void UpdateAmbientDewPoint()
+        {
+            double currentTempC = (CurrentElevationAmbientTemp[CurrentElevationAmbientTemp.Length - 1].temp - 32) * 5 / 9;
+            // (1) Saturation Vapor Pressure = ESGG(T)
+            double ratio = 373.15 / (273.15 + currentTempC);
+            double rhs = -7.90298 * (ratio - 1);
+            rhs += 5.02808 * Math.Log10(ratio);
+            rhs += -1.3816e-7 * (Math.Pow(10, (11.344 * (1 - 1 / ratio))) - 1);
+            rhs += 8.1328e-3 * (Math.Pow(10, (-3.49149 * (ratio - 1))) - 1);
+            rhs += Math.Log10(1013.246);
+
+            // factor -3 is to adjust units -Vapor Pressure SVP * humidity
+            double vp = Math.Pow(10, rhs - 3) * CurrentElevationAmbientHumidity[CurrentElevationAmbientHumidity.Length - 1].HumidityReading;
+
+            // (2) DEWPOINT = F(Vapor Pressure)
+            double t = Math.Log(vp / 0.61078);
+            double dewPointC = (241.88 * t) / (17.558 - t);
+
+            CurrentElevationAmbientDewPoint = 9 / 5 * dewPointC + 32;
         }
     }
 }

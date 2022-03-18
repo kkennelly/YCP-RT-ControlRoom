@@ -240,6 +240,7 @@
     <Compile Include="Controllers\SensorNetwork\Enumerations\AccelerometerErrorCodes.cs" />
     <Compile Include="Controllers\SensorNetwork\Enumerations\AccelerometerSelfTestState.cs" />
     <Compile Include="Controllers\SensorNetwork\Enumerations\AzimuthEncoderErrorCodes.cs" />
+    <Compile Include="Controllers\SensorNetwork\Enumerations\AmbientTempHumidityErrorCodes.cs" />
     <Compile Include="Controllers\SensorNetwork\Enumerations\TemperatureErrorCodes.cs" />
     <Compile Include="Controllers\SensorNetwork\PacketDecodingTools.cs" />
     <Compile Include="Controllers\SensorNetwork\Enumerations\SensorInitializationEnum.cs" />

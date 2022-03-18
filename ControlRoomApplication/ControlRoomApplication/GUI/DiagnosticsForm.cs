@@ -291,6 +291,7 @@ namespace ControlRoomApplication.GUI
 
             Temperature[] ElAmbTemps = rtController.RadioTelescope.SensorNetworkServer.CurrentElevationAmbientTemp;
             Humidity[] ElAmbHumidity = rtController.RadioTelescope.SensorNetworkServer.CurrentElevationAmbientHumidity;
+            double ElAmbDewPoint = rtController.RadioTelescope.SensorNetworkServer.CurrentElevationAmbientDewPoint;
 
             // these come in as celsius
             double ElMotTemp = ElMotTemps[ElMotTemps.Length - 1].temp;
@@ -312,6 +313,7 @@ namespace ControlRoomApplication.GUI
             double ElAmbTemp = ElAmbTemps[ElAmbTemps.Length - 1].temp;
             double ElAmbHumid = ElAmbHumidity[ElAmbHumidity.Length - 1].HumidityReading;
             double ElAmbTempCelsius = (ElAmbTemp - 32) * (5.0 / 9.0);
+            double ElAmbDewPointCelsius = (ElAmbDewPoint - 32) * (5.0 / 9.0);
 
 
             if (controlRoom.RTControllerManagementThreads.Count > 0 && controlRoom.RTControllerManagementThreads[0].AppointmentToDisplay != null)
@@ -336,6 +338,7 @@ namespace ControlRoomApplication.GUI
                 AZTempUnitLabel.Text = "Celsius";
                 ElTempUnitLabel.Text = "Celsius";
                 lblAmbientTempUnit.Text = "Celsius";
+                lblAmbientDewPointUnit.Text = "Celsius";
                 outsideTempLabel.Text = Math.Round(insideTempCel, 2).ToString();
                 insideTempLabel.Text = Math.Round(outsideTempCel, 2).ToString();
 
@@ -361,11 +364,13 @@ namespace ControlRoomApplication.GUI
                 {
                     fldAmbientTemp.Text = Math.Round(ElAmbTempCelsius, 2).ToString();
                     fldAmbientHumidity.Text = Math.Round(ElAmbHumid, 2).ToString();
+                    fldAmbientDewPoint.Text = Math.Round(ElAmbDewPointCelsius, 2).ToString();
                 }
                 else
                 {
                     fldAmbientTemp.Text = "--";
                     fldAmbientHumidity.Text = "--";
+                    fldAmbientDewPoint.Text = "--";
                 }
             }
             //fahrenheit
@@ -376,6 +381,7 @@ namespace ControlRoomApplication.GUI
                 AZTempUnitLabel.Text = "Fahrenheit";
                 ElTempUnitLabel.Text = "Fahrenheit";
                 lblAmbientTempUnit.Text = "Fahrenheit";
+                lblAmbientDewPointUnit.Text = "Fahrenheit";
                 outsideTempLabel.Text = Math.Round(controlRoom.WeatherStation.GetOutsideTemp(), 2).ToString();
                 insideTempLabel.Text = Math.Round(controlRoom.WeatherStation.GetInsideTemp(), 2).ToString();
 
@@ -401,11 +407,13 @@ namespace ControlRoomApplication.GUI
                 {
                     fldAmbientTemp.Text = Math.Round(ElAmbTemp, 2).ToString();
                     fldAmbientHumidity.Text = Math.Round(ElAmbHumid, 2).ToString();
+                    fldAmbientDewPoint.Text = Math.Round(ElAmbDewPoint, 2).ToString();
                 }
                 else
                 {
                     fldAmbientTemp.Text = "--";
                     fldAmbientHumidity.Text = "--";
+                    fldAmbientDewPoint.Text = "--";
                 }
             }
 

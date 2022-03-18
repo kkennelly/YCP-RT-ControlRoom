@@ -452,7 +452,6 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
                         {
                             CurrentElevationAmbientHumidity = GetAmbientHumidityFromBytes(ref k, data, ambientHumiditySize, SensorLocationEnum.EL_FRAME);
                             UpdateAmbientDewPoint();
-                            Console.WriteLine("Dewpoint: " + CurrentElevationAmbientDewPoint);
                             Database.DatabaseOperations.AddSensorData(CurrentElevationAmbientHumidity);
                         }
 
@@ -628,7 +627,7 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
         /// </summary>
         private void UpdateAmbientDewPoint()
         {
-            double currentTempC = (CurrentElevationAmbientTemp[CurrentElevationAmbientTemp.Length - 1].temp - 32) * 5 / 9;
+            double currentTempC = (CurrentElevationAmbientTemp[CurrentElevationAmbientTemp.Length - 1].temp - 32) * 5.0 / 9.0;
             // (1) Saturation Vapor Pressure = ESGG(T)
             double ratio = 373.15 / (273.15 + currentTempC);
             double rhs = -7.90298 * (ratio - 1);
@@ -644,7 +643,7 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
             double t = Math.Log(vp / 0.61078);
             double dewPointC = (241.88 * t) / (17.558 - t);
 
-            CurrentElevationAmbientDewPoint = 9 / 5 * dewPointC + 32;
+            CurrentElevationAmbientDewPoint = 9.0 / 5.0 * dewPointC + 32;
         }
     }
 }

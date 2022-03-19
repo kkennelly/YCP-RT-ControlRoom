@@ -1128,7 +1128,7 @@ namespace ControlRoomApplication.Controllers
         private Thread CSVLoggingThread { get; set; }
         private bool currentlyRunning = false;
 
-        private void StartCSVLog()
+        public void StartCSVLog()
         {
             StringBuilder sb = new StringBuilder();
             string path = AppDomain.CurrentDomain.BaseDirectory + "\\MotionTests";
@@ -1153,7 +1153,7 @@ namespace ControlRoomApplication.Controllers
             int numEntries = 0;
             TextWriter sw = new StreamWriter(fileLoc, true);
 
-            string header = "Time (s), El Position (degrees), El Velocity (degrees/s), El Acceleration (degrees/s/s), , Az Position (degrees), Az Velocity (degrees/s), Az Acceleration (degrees/s/s)\n";
+            string header = "Time (s), El Position (degrees), El Velocity (degrees/s), El Acceleration (degrees/s/s), , Az Position (degrees), Az Velocity (degrees/s), Az Acceleration (degrees/s/s), Az Mot En\n";
             sw.Write(header);
 
             double lastPositionEl = 0, lastPositionAz = 0;
@@ -1167,6 +1167,7 @@ namespace ControlRoomApplication.Controllers
             {
                 double positionAz = (RadioTelescope.SensorNetworkServer.SimulationSensorNetwork != null) ? GetCurrentOrientation().Azimuth : GetAbsoluteOrientation().Azimuth;
                 double positionEl = (RadioTelescope.SensorNetworkServer.SimulationSensorNetwork != null) ? GetCurrentOrientation().Elevation : GetAbsoluteOrientation().Elevation;
+                double azMotEn = GetCurrentOrientation().Azimuth;
                 double velocityAz = 0;
                 double velocityEl = 0;
                 double accelerationAz = 0;
@@ -1193,7 +1194,7 @@ namespace ControlRoomApplication.Controllers
                 lastPositionEl = positionEl;
                 lastTimeStamp = timeStamp;
 
-                string str = ((timeStamp - referenceTimeStamp) / 1000.0) + ", " + positionEl + ", " + velocityEl + ", " + accelerationEl + ", , " + positionAz + ", " + velocityAz + ", " + accelerationAz;
+                string str = ((timeStamp - referenceTimeStamp) / 1000.0) + ", " + positionEl + ", " + velocityEl + ", " + accelerationEl + ", , " + positionAz + ", " + velocityAz + ", " + accelerationAz + ", " + azMotEn;
                 sb.AppendLine(str);
                 numEntries++;
                 Thread.Sleep(100);
@@ -1205,7 +1206,7 @@ namespace ControlRoomApplication.Controllers
             File.Move(".\\MotionTests\\" + fileName, ".\\MotionTests\\" + newFileName);
         }
 
-        private void EndCSVLog()
+        public void EndCSVLog()
         {
             Thread timeout = new Thread(
                 () => { 
@@ -1213,6 +1214,55 @@ namespace ControlRoomApplication.Controllers
                     currentlyRunning = false; 
                 });
             timeout.Start();
+        }
+
+        public void ExecuteTestAppointment()
+        {
+            Thread appointment = new Thread(
+                () => {
+                    int timeBetweenMove = 10000; // 10 second
+                    int appointmentDuration = 1000 * 60 * 60 * 4;   // 4 hour duration in ms
+                    int numOscillations = 1; // Number of oscillations for the movement
+                    double maxElevationHeight = 10; // Maximum elevation degrees
+
+                    int numMovements = appointmentDuration / timeBetweenMove;   // Number of moves throughout appointment
+                    double azimuthDistance = 15 * appointmentDuration / (1000.0 * 60 * 60); // 180 degrees in 12 hours = 15 degrees per hour. Determine how many degrees moved
+                    double azimuthStepSize = azimuthDistance / numMovements;    // How much the azimuth will increment for each step
+                    double piMappedStepSize = 2 * Math.PI / numMovements;    // Get the step size for each elevation reading
+
+                    Orientation[] azimuthOrientations = new Orientation[numMovements];
+                    double[] elevationPositions = new double[numMovements];
+
+                    // Populate coordinates
+                    for (int i = 0; i < numMovements; i++)
+                    {
+                        azimuthOrientations[i] = new Orientation(i * azimuthStepSize, 0);   // Elevation always 0 because always disconnected
+                        elevationPositions[i] = maxElevationHeight / 2 * Math.Sin(numOscillations * piMappedStepSize * i) + maxElevationHeight / 2; // Compute elevation point from sin wave
+                    }
+
+                    // Execute movements
+                    for (int i = 0; i < numMovements; i++)
+                    {
+                        // Make azimuth movement
+                        MoveRadioTelescopeToOrientation(azimuthOrientations[i], MovementPriority.Appointment);
+
+                        // Determine what direction we need to move to get closer to the specified elevation position
+                        RadioTelescopeDirectionEnum elevationDirection = GetAbsoluteOrientation().Elevation < elevationPositions[i] ? RadioTelescopeDirectionEnum.ClockwiseOrNegative : RadioTelescopeDirectionEnum.CounterclockwiseOrPositive;
+                        logger.Info(Utilities.GetTimeStamp() + ": Target Elevation " + elevationPositions[i]);
+
+                        // Elevation encoder is offline, so absolute movements will not work. Make a jog movement instead
+                        StartRadioTelescopeJog(0.1, elevationDirection, RadioTelescopeAxisEnum.ELEVATION);
+
+                        Thread.Sleep(50);
+                        // Stop the Jog movement immediately so we have some control over the incremental movement
+                        ExecuteRadioTelescopeStopJog(MCUCommandType.ControlledStop);
+
+                        Thread.Sleep(timeBetweenMove);
+                    }
+
+                    logger.Info(Utilities.GetTimeStamp() + ": Test Appointment Complete");
+                });
+            appointment.Start();
         }
     }
 }

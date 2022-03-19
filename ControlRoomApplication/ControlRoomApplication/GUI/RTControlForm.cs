@@ -496,11 +496,15 @@ namespace ControlRoomApplication.Main
                         break;
 
                     case 3:
+                        rtController.StartCSVLog();
                         movementResult = rtController.MoveRadioTelescopeByXDegrees(new Entities.Orientation(360, 0), MovementPriority.Manual);
+                        rtController.EndCSVLog();
                         break;
 
                     case 4:
+                        rtController.StartCSVLog();
                         movementResult = rtController.MoveRadioTelescopeByXDegrees(new Entities.Orientation(-360, 0), MovementPriority.Manual);
+                        rtController.EndCSVLog();
                         break;
 
                     case 5:
@@ -527,7 +531,9 @@ namespace ControlRoomApplication.Main
                         if (id.ShowDialog() == DialogResult.OK)     // Use the data entered when the user clicks OK. (OK cannot be clicked unless the input is valid) 
                         {
                             Entities.Orientation moveTo = new Entities.Orientation(id.AzimuthPos, id.ElevationPos);
+                            rtController.StartCSVLog();
                             movementResult = rtController.MoveRadioTelescopeToOrientation(moveTo, MovementPriority.Manual);
+                            rtController.EndCSVLog();
                         }
 
                         break;
@@ -542,6 +548,9 @@ namespace ControlRoomApplication.Main
                     // Hardware movement script
                     case 10:
                         movementResult = rtController.ExecuteHardwareMovementScript(MovementPriority.Manual);
+                        break;
+                    case 11:
+                        rtController.ExecuteTestAppointment();
                         break;
                     default:
                         // Script does not exist

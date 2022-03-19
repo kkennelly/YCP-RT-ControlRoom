@@ -748,6 +748,7 @@ namespace ControlRoomApplication.Controllers {
 
             // This needs flipped so that the elevation axis moves the correct direction
             positionTranslationEl = -positionTranslationEl;
+            positionTranslationAz = -positionTranslationAz;
 
             command.commandData = new ushort[] {
                 // Azimuth data

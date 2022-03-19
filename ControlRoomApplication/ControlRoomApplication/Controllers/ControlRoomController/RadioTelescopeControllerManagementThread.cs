@@ -456,11 +456,11 @@ namespace ControlRoomApplication.Controllers
         {
             logger.Info(Utilities.GetTimeStamp() + ": Ending Appointment");
             endAppt = true;
-            MovementResult result = RTController.MoveRadioTelescopeToOrientation(MiscellaneousConstants.Stow, MovementPriority.Appointment);
-            if (result != MovementResult.Success)
-            {
-                logger.Error("Stowing telescope failed with message " + result);
-            }
+            //MovementResult result = RTController.MoveRadioTelescopeToOrientation(MiscellaneousConstants.Stow, MovementPriority.Appointment);
+            //if (result != MovementResult.Success)
+            //{
+            //    logger.Error("Stowing telescope failed with message " + result);
+            //}
         }
 
         /// <summary>

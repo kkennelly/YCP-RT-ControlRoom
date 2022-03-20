@@ -555,6 +555,7 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
                 AzimuthAccelerometerStatus = statuses[6] ? SensorNetworkSensorStatus.Okay : SensorNetworkSensorStatus.Error,
                 ElevationAccelerometerStatus = statuses[7] ? SensorNetworkSensorStatus.Okay : SensorNetworkSensorStatus.Error,
                 CounterbalanceAccelerometerStatus = statuses[5] ? SensorNetworkSensorStatus.Okay : SensorNetworkSensorStatus.Error,
+                ElevationAmbientStatus = statuses[8] ? SensorNetworkSensorStatus.Okay : SensorNetworkSensorStatus.Error
 
                 // TODO: Parse errors here. You will need to add the errors to the SensorStatuses object (issue #353)
             };
@@ -619,6 +620,7 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
             // Calculate roll orientation
             CurrentCBAccelElevationPosition = Math.Atan2(Y_out, -Z_out) * 180.0 / Math.PI + SensorNetworkConstants.CBAccelPositionOffset;
         }
+
         /// <summary>
         /// A method to update the current ambient dew point.
         /// Code was taken/modeled from https://www.best-microcontroller-projects.com/dht22.html

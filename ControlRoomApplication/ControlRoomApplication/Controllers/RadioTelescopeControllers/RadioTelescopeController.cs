@@ -1081,9 +1081,9 @@ namespace ControlRoomApplication.Controllers
                 Thread.Sleep(5000);
 
                 //TEST 7: Return to home
-                logger.Info($"{Utilities.GetTimeStamp()}: Beginning eigth movement: Move to Home");
+                logger.Info($"{Utilities.GetTimeStamp()}: Beginning eighth movement: Move to Home");
                 movementResult = HomeTelescope(MovementPriority.Manual);
-                logger.Info($"{Utilities.GetTimeStamp()}: Finished eigth movement: Move to home");
+                logger.Info($"{Utilities.GetTimeStamp()}: Finished eighth movement: Move to home");
                 Thread.Sleep(1000);
 
                 Monitor.Exit(MovementLock);

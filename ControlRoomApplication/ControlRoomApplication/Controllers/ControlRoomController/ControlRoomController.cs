@@ -184,7 +184,8 @@ namespace ControlRoomApplication.Controllers
                 Thread.Sleep(1000);
             }
         }
-
+       
+        // TODO: Modify this routine to be absorbed into the sensor status update routine
         public void WeatherMonitoringRoutine()
         {
             while (KeepWeatherMonitoringThreadAlive)

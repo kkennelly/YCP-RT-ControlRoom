@@ -299,7 +299,7 @@ namespace ControlRoomApplication.Controllers
 
         /// <summary>
         /// Gets the elevation readings used by the software stops. When the simulation sensor network is in use,
-        /// the motor positions are used, otherwise the sensor network's orientation reading is used.
+        /// the motor positions are used, otherwise the sensor network's absolute orientation reading is used.
         /// </summary>
         /// /// <returns></returns>
         private double GetSoftwareStopElevation()
@@ -310,7 +310,7 @@ namespace ControlRoomApplication.Controllers
             }
             else
             {
-                return RadioTelescope.SensorNetworkServer.CurrentCBAccelElevationPosition;
+                return RadioTelescope.SensorNetworkServer.CurrentAbsoluteOrientation.Elevation;
             }
         }
 

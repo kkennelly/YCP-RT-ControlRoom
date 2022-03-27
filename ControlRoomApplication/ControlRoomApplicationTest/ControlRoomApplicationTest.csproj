@@ -97,6 +97,7 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommunicationTests\AESTest.cs" />
     <Compile Include="CommunicationTests\DataToCSVTest.cs" />
     <Compile Include="CommunicationTests\EmailNotificationTests.cs" />
     <Compile Include="CommunicationTests\PushNotificationTest.cs" />

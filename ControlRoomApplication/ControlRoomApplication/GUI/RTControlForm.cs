@@ -579,6 +579,21 @@ namespace ControlRoomApplication.Main
 
         }
 
+        /// <summary>
+        /// Functionality for when the STOP Telescope button is pressed. Creates a confirmation pop up box to prevent accidental presses of the stop button before sending any stop script.
+        /// </summary>
+        private void stopRT_click(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show("Are you sure you want to stop the telescope?", "Telescope Stop Confirmation", MessageBoxButtons.YesNo);
+
+            if (result == DialogResult.Yes)
+            {
+                // Run the stop script for the telescope
+                rtController.RadioTelescope.PLCDriver.InterruptMovementAndWaitUntilStopped(true);
+                logger.Info($"{Utilities.GetTimeStamp()}: Telescope movement stopped.");
+            }
+        }
+
         private void ccwAzJogButton_Down( object sender , MouseEventArgs e ) {
             if (Validator.ValidateSpeedTextOnly(speedTextBox.Text))
             {

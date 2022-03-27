@@ -306,7 +306,7 @@ namespace ControlRoomApplication.Main
                         int rlPort=0;
                         try
                         {
-                            Int32.Parse(txtRemoteListenerCOMPort.Text);
+                            rlPort = Int32.Parse(txtRemoteListenerCOMPort.Text);
                         }catch(Exception ex)
                         {
                             logger.Error("There was an error parsing the Remote Listener port to an integer"+ex);

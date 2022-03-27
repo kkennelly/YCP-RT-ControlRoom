@@ -732,6 +732,20 @@ namespace ControlRoomApplication.Database
         }
 
         /// <summary>
+        /// Grabs the most recent sensor status data
+        /// </summary>
+        public static SensorStatus GetSensorStatusData()
+        {
+            SensorStatus status;
+            using (RTDbContext Context = InitializeDatabaseContext())
+            {
+                var statusData = Context.SensorStatus.SqlQuery("SELECT * FROM sensor_status ORDER BY id DESC limit 1").ToList<SensorStatus>();
+                status = statusData[0];
+            }
+            return status;
+        }
+
+        /// <summary>
         /// Grabs the current threshold value from the database for the specific sensor
         /// </summary>
         public static double GetThresholdForSensor(SensorItemEnum item)

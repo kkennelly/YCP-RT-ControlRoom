@@ -778,6 +778,13 @@ namespace ControlRoomApplication.Controllers
             bool elTempSafe = checkTemp(currElTemp, true);
             bool azTempSafe = checkTemp(currAzTemp, true);
 
+            // Current Elevation Position, used to compare to see if the elevation changes when motors move
+            double prevElevation = GetCurrentOrientation().Elevation;
+
+            // Set the timeout count to 0, the threshold will be how many 100 milliseconds of no updated data we need to consider timeout, ie 50 is 5 seconds
+            int elevationTimeoutCount = 0;
+            int elevationTimeoutThreshold = 50;
+
             // Sensor overrides must be taken into account
             bool currentAZOveride = overrides.overrideAzimuthMotTemp;
             bool currentELOveride = overrides.overrideElevatMotTemp;
@@ -790,6 +797,69 @@ namespace ControlRoomApplication.Controllers
 
                 azTempSafe = checkTemp(azTemp, azTempSafe);
                 elTempSafe = checkTemp(elTemp, elTempSafe);
+
+                // Sensor status routine, checks for each sensor to update the status in the DB
+                // Check Gate
+                SensorStatusEnum gate = SensorStatusEnum.NORMAL;
+
+                // Check azimuth temp 1
+                SensorStatusEnum azTemp1 = SensorStatusEnum.NORMAL;
+
+                // Check azimuth temp 2
+                SensorStatusEnum azTemp2 = SensorStatusEnum.NORMAL;
+
+                // Check elevation temp 1
+                SensorStatusEnum elTemp1 = SensorStatusEnum.NORMAL;
+
+                // Check elevation temp 2
+                SensorStatusEnum elTemp2 = SensorStatusEnum.NORMAL;
+
+                // Check weather
+                SensorStatusEnum weather = SensorStatusEnum.NORMAL;
+
+                // Check elevation absolute encoder, set to ALERT if timed out
+                SensorStatusEnum elAbsEncoder = SensorStatusEnum.NORMAL;
+                if (RadioTelescope.PLCDriver.MotorsCurrentlyMoving())
+                {
+                    if (prevElevation == GetCurrentOrientation().Elevation)
+                    {
+                        elevationTimeoutCount++;
+                        if (elevationTimeoutCount >= elevationTimeoutThreshold)
+                        {
+                            elAbsEncoder = SensorStatusEnum.ALARM;
+                        }
+                    }
+                    else
+                    {
+                        elevationTimeoutCount = 0;
+                    }
+                }
+                prevElevation = GetCurrentOrientation().Elevation;
+
+                // Check azimuth absolute encoder
+                SensorStatusEnum azAbsEncoder = SensorStatusEnum.NORMAL;
+
+                // Check proximity 0
+                SensorStatusEnum prox0 = SensorStatusEnum.NORMAL;
+
+                // Check proximity 90
+                SensorStatusEnum prox90 = SensorStatusEnum.NORMAL;
+
+                // Check azimuth acceleration
+                SensorStatusEnum azAccel = SensorStatusEnum.NORMAL;
+
+                // Check elevation acceleration
+                SensorStatusEnum elAccel = SensorStatusEnum.NORMAL;
+
+                // Check CB acceleration
+                SensorStatusEnum cbAccel = SensorStatusEnum.NORMAL;
+
+                // Check ambient temp humidity
+                SensorStatusEnum ambientTempHumidity = SensorStatusEnum.NORMAL;
+
+                // Take all updated statuses and add them to the DB
+                DatabaseOperations.AddSensorStatusData(SensorStatus.Generate(gate, azTemp1, azTemp2, elTemp1, elTemp2,
+                    weather, elAbsEncoder, azAbsEncoder, prox0, prox90, azAccel, elAccel, cbAccel, ambientTempHumidity));
 
                 // Determines if the telescope is in a safe state
                 if (azTempSafe && elTempSafe) AllSensorsSafe = true;

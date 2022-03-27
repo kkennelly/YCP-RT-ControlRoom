@@ -353,10 +353,6 @@ namespace ControlRoomApplication.Main
                     logger.Info(Utilities.GetTimeStamp() + ": Starting Weather Monitoring Routine");
                     MainControlRoomController.StartWeatherMonitoringRoutine();
 
-                    // Begin to update the sensor statuses in the DB
-                    logger.Info(Utilities.GetTimeStamp() + ": Starting Sensor Status Update Routine");
-                    MainControlRoomController.StartSensorStatusUpdateRoutine();
-
                     logger.Info(Utilities.GetTimeStamp() + ": Starting Spectra Cyber Controller");
                     ARadioTelescope.SpectraCyberController.BringUp();
 
@@ -446,15 +442,6 @@ namespace ControlRoomApplication.Main
             {
                 logger.Info(Utilities.GetTimeStamp() + ": ERROR shutting down weather monitoring routine!");
             }
-            if (MainControlRoomController != null && MainControlRoomController.RequestToKillSensorStatusUpdateRoutine())
-            {
-                logger.Info(Utilities.GetTimeStamp() + ": Successfully shut down sensor status update routine.");
-            }
-            else
-            {
-                logger.Info(Utilities.GetTimeStamp() + ": Successfully shut down sensor status update routine.");
-            }
-            
 
             // Loop through the list of telescope controllers and call their respective bring down sequences.
             for (int i = 0; i < ProgramRTControllerList.Count; i++)

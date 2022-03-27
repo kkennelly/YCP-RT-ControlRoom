@@ -39,15 +39,15 @@ namespace ControlRoomApplication.Entities
 
         [Required]
         [Column("weather_station")]
-        public SByte weather { get; set; }
+        public SByte weather_station { get; set; }
 
         [Required]
         [Column("elevation_abs_encoder")]
-        public SByte el_abs_encoder { get; set; }
+        public SByte elevation_abs_encoder { get; set; }
 
         [Required]
         [Column("azimuth_abs_encoder")]
-        public SByte az_abs_encoder { get; set; }
+        public SByte azimuth_abs_encoder { get; set; }
 
         [Required]
         [Column("el_proximity_0")]
@@ -67,7 +67,7 @@ namespace ControlRoomApplication.Entities
 
         [Required]
         [Column("counter_balance_accel")]
-        public SByte cb_accel { get; set; }
+        public SByte counter_balance_accel { get; set; }
 
         [Required]
         [Column("ambient_temp_humidity")]
@@ -87,14 +87,14 @@ namespace ControlRoomApplication.Entities
             status.az_motor_temp_2 = Convert.ToSByte(azTemp2Enum);
             status.el_motor_temp_1 = Convert.ToSByte(elTemp1Enum);
             status.el_motor_temp_2 = Convert.ToSByte(elTemp2Enum);
-            status.weather = Convert.ToSByte(weatherEnum);
-            status.el_abs_encoder = Convert.ToSByte(elAbsEncoderEnum);
-            status.az_abs_encoder = Convert.ToSByte(azAbsEncoderEnum);
+            status.weather_station = Convert.ToSByte(weatherEnum);
+            status.elevation_abs_encoder = Convert.ToSByte(elAbsEncoderEnum);
+            status.azimuth_abs_encoder = Convert.ToSByte(azAbsEncoderEnum);
             status.el_proximity_0 = Convert.ToSByte(elProximity0Enum);
             status.el_proximity_90 = Convert.ToSByte(elProximity90Enum);
             status.az_accel = Convert.ToSByte(azAccelEnum);
             status.el_accel = Convert.ToSByte(elAccelEnum);
-            status.cb_accel = Convert.ToSByte(cbAccelEnum);
+            status.counter_balance_accel = Convert.ToSByte(cbAccelEnum);
             status.ambient_temp_humidity = Convert.ToSByte(ambientTempHumidityEnum);
 
             return status;

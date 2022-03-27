@@ -24,58 +24,8 @@ namespace ControlRoomApplication.Controllers
         public ControlRoomController(ControlRoom controlRoom)
         {
             ControlRoom = controlRoom;
-            SensorStatusUpdateThread = new Thread(new ThreadStart(SensorStatusUpdateRoutine)) { Name = "Sensor Status Update Routine" };
-            KeepSensorStatusUpdateThreadAlive = false;
             WeatherMonitoringThread = new Thread(new ThreadStart(WeatherMonitoringRoutine)) { Name = "Weather Monitoring Routine" };
             KeepWeatherMonitoringThreadAlive = false;
-        }
-
-        public bool StartSensorStatusUpdateRoutine()
-        {
-            KeepSensorStatusUpdateThreadAlive = true;
-
-            try
-            {
-                SensorStatusUpdateThread.Start();
-            }
-            catch (Exception e)
-            {
-                if ((e is ThreadStateException) || (e is OutOfMemoryException))
-                {
-                    return false;
-                }
-                else
-                {
-                    // Unexpected exception
-                    throw e;
-                }
-            }
-
-            return true;
-        }
-
-        public bool RequestToKillSensorStatusUpdateRoutine()
-        {
-            KeepSensorStatusUpdateThreadAlive = false;
-
-            try
-            {
-                SensorStatusUpdateThread.Join();
-            }
-            catch (Exception e)
-            {
-                if ((e is ThreadStateException) || (e is ThreadInterruptedException))
-                {
-                    return false;
-                }
-                else
-                {
-                    // Unexpected exception
-                    throw e;
-                }
-            }
-
-            return true;
         }
 
         public bool StartWeatherMonitoringRoutine()
@@ -130,62 +80,8 @@ namespace ControlRoomApplication.Controllers
 
             return true;
         }
-
-        public void SensorStatusUpdateRoutine()
-        {
-            while (KeepSensorStatusUpdateThreadAlive)
-            {
-                // Add checks for each sensor to update the status
-                // Check Gate
-                SensorStatusEnum gate = SensorStatusEnum.NORMAL;
-
-                // Check azimuth temp 1
-                SensorStatusEnum azTemp1 = SensorStatusEnum.NORMAL;
-
-                // Check azimuth temp 2
-                SensorStatusEnum azTemp2 = SensorStatusEnum.NORMAL;
-
-                // Check elevation temp 1
-                SensorStatusEnum elTemp1 = SensorStatusEnum.NORMAL;
-
-                // Check elevation temp 2
-                SensorStatusEnum elTemp2 = SensorStatusEnum.NORMAL;
-
-                // Check weather
-                SensorStatusEnum weather = SensorStatusEnum.NORMAL;
-
-                // Check elevation absolute encoder
-                SensorStatusEnum elAbsEncoder = SensorStatusEnum.NORMAL;
-
-                // Check azimuth absolute encoder
-                SensorStatusEnum azAbsEncoder = SensorStatusEnum.NORMAL;
-
-                // Check proximity 0
-                SensorStatusEnum prox0 = SensorStatusEnum.NORMAL;
-
-                // Check proximity 90
-                SensorStatusEnum prox90 = SensorStatusEnum.NORMAL;
-
-                // Check azimuth acceleration
-                SensorStatusEnum azAccel = SensorStatusEnum.NORMAL;
-
-                // Check elevation acceleration
-                SensorStatusEnum elAccel = SensorStatusEnum.NORMAL;
-
-                // Check CB acceleration
-                SensorStatusEnum cbAccel = SensorStatusEnum.NORMAL;
-
-                // Check ambient temp humidity
-                SensorStatusEnum ambientTempHumidity = SensorStatusEnum.NORMAL;
-
-                // Take all updated statuses and add them to the DB
-                DatabaseOperations.AddSensorStatusData(SensorStatus.Generate(gate, azTemp1, azTemp2, elTemp1, elTemp2,
-                    weather, elAbsEncoder, azAbsEncoder, prox0, prox90, azAccel, elAccel, cbAccel, ambientTempHumidity));
-                Thread.Sleep(1000);
-            }
-        }
        
-        // TODO: Modify this routine to be absorbed into the sensor status update routine
+        // TODO: Modify this routine to be absorbed into the sensor status update routine inside of sensorMonitor inside of RTController
         public void WeatherMonitoringRoutine()
         {
             while (KeepWeatherMonitoringThreadAlive)

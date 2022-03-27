@@ -279,7 +279,16 @@ namespace ControlRoomApplication.GUI
             _azEncoderDegrees = currAbsOrientation.Azimuth;
             _elEncoderDegrees = currAbsOrientation.Elevation;
             lblAzAbsPos.Text = Math.Round(_azEncoderDegrees, 2).ToString();
-            lblElAbsPos.Text = Math.Round(_elEncoderDegrees, 2).ToString();
+
+            // Check if elevation encoder is timed out, output ERR if so, otherwise output current position
+            if (DatabaseOperations.GetSensorStatusData().elevation_abs_encoder.Equals((SByte)SensorStatusEnum.ALARM))
+            {
+                lblElAbsPos.Text = "ERR";
+            }
+            else 
+            {
+                lblElAbsPos.Text = Math.Round(_elEncoderDegrees, 2).ToString();
+            }
 
             timer1.Interval = 200;
 
@@ -1400,6 +1409,5 @@ namespace ControlRoomApplication.GUI
             ValidateLowerLimit(); 
 
         }
-
     }
 }

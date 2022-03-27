@@ -589,8 +589,16 @@ namespace ControlRoomApplication.Main
             if (result == DialogResult.Yes)
             {
                 // Run the stop script for the telescope
-                rtController.RadioTelescope.PLCDriver.InterruptMovementAndWaitUntilStopped(true);
-                logger.Info($"{Utilities.GetTimeStamp()}: Telescope movement stopped.");
+                MovementResult moveResult = rtController.InterruptRadioTelescope();
+                
+                if (moveResult == MovementResult.Success)
+                {
+                    logger.Info($"{Utilities.GetTimeStamp()}: Telescope movement stopped.");
+                }
+                else
+                {
+                    logger.Info($"{Utilities.GetTimeStamp()}: Failed to stop telescope movement.");
+                }
             }
         }
 

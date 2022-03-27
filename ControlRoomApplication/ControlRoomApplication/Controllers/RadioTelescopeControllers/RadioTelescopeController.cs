@@ -1116,5 +1116,22 @@ namespace ControlRoomApplication.Controllers
                 }
             }
         }
+
+        /// <summary>
+        /// Interrupts the telescope regardless of the movement movement type and stops it immediately.
+        /// </summary>
+        /// <returns>The result of the stop command</returns>
+        public MovementResult InterruptRadioTelescope()
+        {
+            if (RadioTelescope.PLCDriver.CurrentMovementPriority == MovementPriority.Jog)
+            {
+                return ExecuteRadioTelescopeImmediateStop(MovementPriority.Critical);
+            }
+            else
+            {
+                RadioTelescope.PLCDriver.InterruptMovementAndWaitUntilStopped(true);
+                return MovementResult.Success;
+            }
+        }
     }
 }

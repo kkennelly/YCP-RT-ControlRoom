@@ -1035,10 +1035,16 @@ namespace ControlRoomApplication.Controllers
             // If the thread is locked (two moves coming in at the same time), return
             if (Monitor.TryEnter(MovementLock))
             {
+                bool isSim = RadioTelescope.SensorNetworkServer.SimulationSensorNetwork != null;
+
                 // First, home telescope to get correct positioning
                 logger.Info($"{Utilities.GetTimeStamp()}: Beginning first movement: Home Telescope...");
                 movementResult = HomeTelescope(MovementPriority.Manual);
-
+                if (movementResult != MovementResult.Success)
+                {
+                    Monitor.Exit(MovementLock);
+                    return movementResult;
+                }
                 logger.Info($"{Utilities.GetTimeStamp()}: Finished first movement: Home Telescope, waiting 1 second before beginning next movement...");
                 Thread.Sleep(1000);
 
@@ -1047,42 +1053,77 @@ namespace ControlRoomApplication.Controllers
                 logger.Info($"{Utilities.GetTimeStamp()}: Beginning second movement: Move Azimuth by 180 degrees...");
                 Entities.Orientation currOrientation = GetCurrentOrientation();
                 movementResult = MoveRadioTelescopeToOrientation(new Entities.Orientation(180, currOrientation.Elevation), MovementPriority.Manual);
+                if (movementResult != MovementResult.Success)
+                {
+                    Monitor.Exit(MovementLock);
+                    return movementResult;
+                }
                 logger.Info($"{Utilities.GetTimeStamp()}: Finished second movement: Move Azimuth by 180 degrees, waiting 1 second before beginning next movement...");
                 Thread.Sleep(1000);
 
                 //TEST 2: Move in opposite direction 180 degrees using orientation from 180 degrees in opposite direction
                 logger.Info($"{Utilities.GetTimeStamp()}: Beginning third movement: Move Azimuth by -180 degrees...");
                 movementResult = MoveRadioTelescopeToOrientation(currOrientation, MovementPriority.Manual);
+                if (movementResult != MovementResult.Success)
+                {
+                    Monitor.Exit(MovementLock);
+                    return movementResult;
+                }
                 logger.Info($"{Utilities.GetTimeStamp()}: Finished third movement: Move Azimuth by -180 degrees, waiting 1 second before beginning next movement...");
                 Thread.Sleep(1000);
 
                 // TEST 3: Move to 90 degrees elevation
                 logger.Info($"{Utilities.GetTimeStamp()}: Beginning fourth movement: Move Elevation to 90 degrees");
                 movementResult = MoveRadioTelescopeToOrientation(new Entities.Orientation(currOrientation.Azimuth, 90), MovementPriority.Manual);
+                if (movementResult != MovementResult.Success)
+                {
+                    Monitor.Exit(MovementLock);
+                    return movementResult;
+                }
                 logger.Info($"{Utilities.GetTimeStamp()}: Finished fourth movement: Move Elevation to 90 degrees, waiting 1 second before beginning next movement...");
                 Thread.Sleep(1000);
 
                 //TEST 4: Move to 0 degrees elevation
                 logger.Info($"{Utilities.GetTimeStamp()}: Beginning fifth movement: Move Elevation to 0 degrees");
                 movementResult = MoveRadioTelescopeToOrientation(new Entities.Orientation(currOrientation.Azimuth, 0), MovementPriority.Manual);
+                if (movementResult != MovementResult.Success)
+                {
+                    Monitor.Exit(MovementLock);
+                    return movementResult;
+                }
                 logger.Info($"{Utilities.GetTimeStamp()}: Finished fifth movement: Move Elevation to 0 degrees, waiting 1 second before beginning next movement...");
                 Thread.Sleep(1000);
 
                 // TEST 5: Move to lower elevation limit switch - movement should fail
                 logger.Info($"{Utilities.GetTimeStamp()}: Beginning sixth movement: Move Elevation to -8 degrees (lower limit switch)");
                 movementResult = MoveRadioTelescopeToOrientation(new Entities.Orientation(currOrientation.Azimuth, -8), MovementPriority.Manual);
+                if (movementResult != MovementResult.LimitSwitchOrEstopHit && movementResult != MovementResult.SoftwareStopHit)
+                {
+                    Monitor.Exit(MovementLock);
+                    return movementResult;
+                }
                 logger.Info($"{Utilities.GetTimeStamp()}: Finished sixth movement: Move Elevation to -8 degrees, waiting 5 seconds before beginning next movement...");
                 Thread.Sleep(5000);
 
                 // TEST 6: Move to upper elevation limit switch - movement should fail
                 logger.Info($"{Utilities.GetTimeStamp()}: Beginning seventh movement: Move Elevation to 95 degrees (upper limit switch)");
                 movementResult = MoveRadioTelescopeToOrientation(new Entities.Orientation(currOrientation.Azimuth, 95), MovementPriority.Manual);
+                if (movementResult != MovementResult.LimitSwitchOrEstopHit && movementResult != MovementResult.SoftwareStopHit)
+                {
+                    Monitor.Exit(MovementLock);
+                    return movementResult;
+                }
                 logger.Info($"{Utilities.GetTimeStamp()}: Finished seventh movement: Move Elevation to 95 degrees, waiting 1 second before beginning next movement...");
                 Thread.Sleep(5000);
 
                 //TEST 7: Return to home
                 logger.Info($"{Utilities.GetTimeStamp()}: Beginning eigth movement: Move to Home");
                 movementResult = HomeTelescope(MovementPriority.Manual);
+                if (movementResult != MovementResult.Success)
+                {
+                    Monitor.Exit(MovementLock);
+                    return movementResult;
+                }
                 logger.Info($"{Utilities.GetTimeStamp()}: Finished eigth movement: Move to home");
                 Thread.Sleep(1000);
 
@@ -1123,6 +1164,7 @@ namespace ControlRoomApplication.Controllers
         /// <returns>The result of the stop command</returns>
         public MovementResult InterruptRadioTelescope()
         {
+            // Execute special stop if a jog movement. (Jog movements are not monitored and cannot be interrupted)
             if (RadioTelescope.PLCDriver.CurrentMovementPriority == MovementPriority.Jog)
             {
                 return ExecuteRadioTelescopeImmediateStop(MovementPriority.Critical);

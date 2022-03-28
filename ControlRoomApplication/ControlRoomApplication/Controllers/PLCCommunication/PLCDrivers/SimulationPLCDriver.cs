@@ -175,5 +175,10 @@ namespace ControlRoomApplication.Controllers
         {
                 return driver.GetRadioTelescopeDirectionEnum(axis);
         }
+
+        public override bool GetMotorsHomed()
+        {
+            return driver.GetMotorsHomed();
+        }
     }
 }

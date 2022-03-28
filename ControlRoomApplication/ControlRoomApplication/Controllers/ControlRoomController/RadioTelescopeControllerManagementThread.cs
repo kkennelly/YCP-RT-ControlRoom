@@ -190,6 +190,12 @@ namespace ControlRoomApplication.Controllers
                     logger.Info(Utilities.GetTimeStamp() + ": Starting appointment...");
                     endAppt = false;
 
+                    // Home the telescope if it hasn't been homed already 
+                    if (!RTController.RadioTelescope.PLCDriver.GetMotorsHomed())
+                    {
+                        RTController.HomeTelescope(MovementPriority.Appointment);
+                    }
+
                     // Calibrate telescope
                     if (NextAppointment._Type != AppointmentTypeEnum.FREE_CONTROL)
                     {

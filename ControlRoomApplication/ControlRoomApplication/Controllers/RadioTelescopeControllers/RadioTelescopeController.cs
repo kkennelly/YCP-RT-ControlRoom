@@ -229,6 +229,8 @@ namespace ControlRoomApplication.Controllers
                 // temporarily set spectracyber mode to continuum
                 RadioTelescope.SpectraCyberController.SetSpectraCyberModeType(SpectraCyberModeTypeEnum.CONTINUUM);
 
+
+                // WE NEED TO KEEP READING HERE FOR FIVE SECONDS 
                 // read data
                 SpectraCyberResponse response = RadioTelescope.SpectraCyberController.DoSpectraCyberScan();
 

@@ -184,9 +184,12 @@ namespace ControlRoomApplication.Controllers
                     logger.Info(Utilities.GetTimeStamp() + ": Waiting for next Appointment");
                 }
 
-
                 if (NextAppointment != null)
                 {
+                    // HOME TELESCOPE HERE IF HASN'T BEEN HOMED
+
+                    // CALIBRATE HERE 
+
                     logger.Info(Utilities.GetTimeStamp() + ": Starting appointment...");
                     endAppt = false;
 
@@ -194,6 +197,7 @@ namespace ControlRoomApplication.Controllers
                     if (NextAppointment._Type != AppointmentTypeEnum.FREE_CONTROL)
                     {
                         logger.Info(Utilities.GetTimeStamp() + ": Thermal Calibrating RadioTelescope");
+
                         RTController.ThermalCalibrateRadioTelescope(MovementPriority.Appointment);
 
                         // If the temperature is low and there's precipitation, dump the dish

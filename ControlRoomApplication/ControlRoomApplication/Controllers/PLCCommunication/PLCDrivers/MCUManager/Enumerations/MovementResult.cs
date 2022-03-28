@@ -98,6 +98,11 @@ namespace ControlRoomApplication.Controllers.PLCCommunication.PLCDrivers.MCUMana
         /// This is only used for the "moveradiotelescopebyxdegrees" function in RadioTelescopeController
         /// will be returned if a requested azimuth move is too large
         /// </summary>
-        RequestedAzimuthMoveTooLarge
+        RequestedAzimuthMoveTooLarge,
+
+        /// <summary>
+        /// Used if the motors are not homed, thus a we cannot perform a safe movement
+        /// </summary>
+        MotorsNotHomed
     }
 }

@@ -474,7 +474,7 @@ namespace ControlRoomApplication.Controllers
                             break;
 
                         case "STOW":
-                            result = rtController.MoveRadioTelescopeToOrientation(MiscellaneousConstants.Stow, MovementPriority.Manual);
+                            result = rtController.StowRadioTelescope(MovementPriority.Manual);
                             break;
 
                         case "FULL_CLOCK":

@@ -297,8 +297,6 @@ namespace ControlRoomApplication.GUI
             double ElMotTemp = ElMotTemps[ElMotTemps.Length - 1].temp;
             double AzMotTemp = AzMotTemps[AzMotTemps.Length - 1].temp;
 
-            
-
             float insideTemp = controlRoom.WeatherStation.GetInsideTemp();
             float outsideTemp = controlRoom.WeatherStation.GetOutsideTemp();
 
@@ -314,7 +312,6 @@ namespace ControlRoomApplication.GUI
             double ElAmbHumid = ElAmbHumidity[ElAmbHumidity.Length - 1].HumidityReading;
             double ElAmbTempCelsius = (ElAmbTemp - 32) * (5.0 / 9.0);
             double ElAmbDewPointCelsius = (ElAmbDewPoint - 32) * (5.0 / 9.0);
-
 
             if (controlRoom.RTControllerManagementThreads.Count > 0 && controlRoom.RTControllerManagementThreads[0].AppointmentToDisplay != null)
             {

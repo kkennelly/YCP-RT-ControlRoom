@@ -52,7 +52,6 @@ namespace ControlRoomApplicationTest.EntitiesTests
             Humidity h1 = Humidity.Generate(dateTime, 0.0, loc1);
             Humidity h2 = Humidity.Generate(dateTime, 2.0, loc1);
 
-
             Assert.AreEqual(h1, h1);
             Assert.AreNotEqual(h1, h2);
             Assert.AreNotEqual(h2, h1);

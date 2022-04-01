@@ -477,7 +477,6 @@ namespace ControlRoomApplicationTest.DatabaseOperationsTests
             Assert.AreEqual(temp[tempReturn.Count - 2].location_ID, tempReturn[tempReturn.Count - 2].location_ID);
             Assert.AreEqual(temp[tempReturn.Count - 2].temp, tempReturn[tempReturn.Count - 2].temp);
             Assert.AreEqual(temp[tempReturn.Count - 2].TimeCapturedUTC, tempReturn[tempReturn.Count - 2].TimeCapturedUTC);
-
         }
 
         [TestMethod]
@@ -503,7 +502,6 @@ namespace ControlRoomApplicationTest.DatabaseOperationsTests
             Assert.AreEqual(humidity[humidityReturn.Count - 1].LocationID, humidityReturn[humidityReturn.Count - 1].LocationID);
             Assert.AreEqual(humidity[humidityReturn.Count - 1].HumidityReading, humidityReturn[humidityReturn.Count - 1].HumidityReading);
             Assert.AreEqual(humidity[humidityReturn.Count - 1].TimeCapturedUTC, humidityReturn[humidityReturn.Count - 1].TimeCapturedUTC);
-
         }
 
         [TestMethod]

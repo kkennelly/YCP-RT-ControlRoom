@@ -92,7 +92,7 @@ namespace EmbeddedSystemsTest.SensorNetworkSimulation
         /// <param name="azTemp">Array of RAW azimuth temperature samples.</param>
         /// <param name="elEnc">Array of RAW elevation encoder samples. (Should only ever be a size of 1)</param>
         /// <param name="azEnc">Array of RAW azimuth encoder samples. (Should only ever be a size of 1)</param>
-        /// <param name="ambTemp">Array of ambient temperature samples./param>
+        /// <param name="ambTemp">Array of ambient temperature samples.</param>
         /// <param name="ambHumidity">Array of ambient humidity samples.</param>
         /// <param name="connectionTimeStamp">The time the sensor network connected to the control room. Used to generate simulated acceleration time captures</param>
         /// <returns></returns>
@@ -222,7 +222,7 @@ namespace EmbeddedSystemsTest.SensorNetworkSimulation
             // 1 for the transmit ID
             // 4 for the total data size
             // 5 for the sensor statuses and errors
-            // 18 for each sensor's data size (each sensor size is 2 bytes, with 7 sensors total)
+            // 18 for each sensor's data size (each sensor size is 2 bytes, with 9 readings total)
             uint length = 1 + 4 + 5 + 18;
 
             // Each accelerometer axis is 2 bytes each. With three axes, that's 6 bytes per accelerometer

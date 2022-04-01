@@ -507,8 +507,8 @@ namespace ControlRoomApplication.Controllers
                 // Verify the absolute encoders have successfully zeroed out. There is a bit of fluctuation with their values, so homing could have occurred
                 // with an outlier value. This check (with half-degree of precision) verifies that did not happen.
                 Orientation absOrientation = RadioTelescope.SensorNetworkServer.CurrentAbsoluteOrientation;
-                if ((Math.Abs(absOrientation.Elevation) > 0.5 && !overrides.overrideElevationAbsEncoder) || 
-                        (Math.Abs(absOrientation.Azimuth) > 0.5 && !overrides.overrideAzimuthAbsEncoder))
+                if (RadioTelescope.SensorNetworkServer.SimulationSensorNetwork == null && ((Math.Abs(absOrientation.Elevation) > 0.5 && !overrides.overrideElevationAbsEncoder) || 
+                        (Math.Abs(absOrientation.Azimuth) > 0.5 && !overrides.overrideAzimuthAbsEncoder)))
                 {
                     result = MovementResult.IncorrectPosition;
                 }
@@ -1097,7 +1097,7 @@ namespace ControlRoomApplication.Controllers
                 // TEST 5: Move to lower elevation limit switch - movement should fail
                 logger.Info($"{Utilities.GetTimeStamp()}: Beginning sixth movement: Move Elevation to -8 degrees (lower limit switch)");
                 movementResult = MoveRadioTelescopeToOrientation(new Entities.Orientation(currOrientation.Azimuth, -8), MovementPriority.Manual);
-                if (movementResult != MovementResult.LimitSwitchOrEstopHit && movementResult != MovementResult.SoftwareStopHit)
+                if ((movementResult != MovementResult.LimitSwitchOrEstopHit && movementResult != MovementResult.SoftwareStopHit) || (isSim && movementResult == MovementResult.TimedOut))
                 {
                     Monitor.Exit(MovementLock);
                     return movementResult;
@@ -1108,7 +1108,7 @@ namespace ControlRoomApplication.Controllers
                 // TEST 6: Move to upper elevation limit switch - movement should fail
                 logger.Info($"{Utilities.GetTimeStamp()}: Beginning seventh movement: Move Elevation to 95 degrees (upper limit switch)");
                 movementResult = MoveRadioTelescopeToOrientation(new Entities.Orientation(currOrientation.Azimuth, 95), MovementPriority.Manual);
-                if (movementResult != MovementResult.LimitSwitchOrEstopHit && movementResult != MovementResult.SoftwareStopHit)
+                if ((movementResult != MovementResult.LimitSwitchOrEstopHit && movementResult != MovementResult.SoftwareStopHit) || (isSim && movementResult == MovementResult.TimedOut))
                 {
                     Monitor.Exit(MovementLock);
                     return movementResult;

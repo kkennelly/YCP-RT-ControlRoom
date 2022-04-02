@@ -1,4 +1,4 @@
-﻿using ControlRoomApplication.Entities;
+using ControlRoomApplication.Entities;
 using ControlRoomApplication.Util;
 using System;
 using System.Collections.Generic;

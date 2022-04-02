@@ -775,5 +775,17 @@ namespace ControlRoomApplicationTest.DatabaseOperationsTests
             Assert.AreEqual(120, time);
 
         }
+
+        [TestMethod]
+        public void testGetSensorStatus()
+        {
+            DatabaseOperations.AddSensorStatusData(SensorStatus.Generate(SensorStatusEnum.NORMAL, SensorStatusEnum.ALARM,
+                SensorStatusEnum.ALARM, SensorStatusEnum.ALARM, SensorStatusEnum.ALARM, SensorStatusEnum.ALARM, SensorStatusEnum.ALARM,
+                SensorStatusEnum.ALARM, SensorStatusEnum.ALARM, SensorStatusEnum.ALARM, SensorStatusEnum.ALARM, SensorStatusEnum.ALARM,
+                SensorStatusEnum.ALARM, SensorStatusEnum.ALARM));
+            SensorStatus status = null;
+            status = DatabaseOperations.GetSensorStatusData();
+            Assert.AreEqual(status.gate, (SByte)SensorStatusEnum.NORMAL);
+        }
     }
 }

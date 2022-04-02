@@ -186,8 +186,8 @@ namespace ControlRoomApplication.GUI
 
             //get the current software stops thresholds
             //get the current software stops thresholds
-            LowerSWStopsLimitText.Text = "" + rtController.RadioTelescope.minElevationDegrees.ToString("0.00");
-            UpperSWStopsLimitText.Text = "" + rtController.RadioTelescope.maxElevationDegrees.ToString("0.00");
+            txtLowerSWStopsLimit.Text = "" + rtController.RadioTelescope.minElevationDegrees.ToString("0.00");
+            txtUpperSWStopsLimit.Text = "" + rtController.RadioTelescope.maxElevationDegrees.ToString("0.00");
 
             // Set default values for timeout validation
             DataTimeoutValid = true;
@@ -1361,10 +1361,10 @@ namespace ControlRoomApplication.GUI
 
             if(ValidLowerSWStopLimit && ValidUpperSWStopLimit)
             {
-                rtController.RadioTelescope.maxElevationDegrees = double.Parse(UpperSWStopsLimitText.Text);
-                rtController.RadioTelescope.minElevationDegrees = double.Parse(LowerSWStopsLimitText.Text);
+                rtController.RadioTelescope.maxElevationDegrees = double.Parse(txtUpperSWStopsLimit.Text);
+                rtController.RadioTelescope.minElevationDegrees = double.Parse(txtLowerSWStopsLimit.Text);
 
-                logger.Info(Utilities.GetTimeStamp() + String.Format(" Updating Software stop thresholds... New values: Lower = {0} , Upper = {1} ", double.Parse(LowerSWStopsLimitText.Text), double.Parse(UpperSWStopsLimitText.Text)));
+                logger.Info(Utilities.GetTimeStamp() + String.Format(" Updating Software stop thresholds... New values: Lower = {0} , Upper = {1} ", double.Parse(txtLowerSWStopsLimit.Text), double.Parse(txtUpperSWStopsLimit.Text)));
                 DatabaseOperations.UpdateTelescope(rtController.RadioTelescope);
             }
 
@@ -1374,13 +1374,13 @@ namespace ControlRoomApplication.GUI
         {
             ValidUpperSWStopLimit = false;
 
-            bool isNumeric = Double.TryParse(UpperSWStopsLimitText.Text, out double requestedUpperLimit);
+            bool isNumeric = Double.TryParse(txtUpperSWStopsLimit.Text, out double requestedUpperLimit);
 
             if (isNumeric)
             {
-                Double.TryParse(LowerSWStopsLimitText.Text, out double requestedLowerLimit);
+                Double.TryParse(txtLowerSWStopsLimit.Text, out double requestedLowerLimit);
 
-                double RequestedUpperLimit = double.Parse(UpperSWStopsLimitText.Text);
+                double RequestedUpperLimit = double.Parse(txtUpperSWStopsLimit.Text);
                 
                 if (!ValidUpperSWStopLimit)
                 {
@@ -1390,21 +1390,21 @@ namespace ControlRoomApplication.GUI
                 if (!Validator.IsBetween(RequestedUpperLimit, requestedLowerLimit, MiscellaneousConstants.MAX_SOFTWARE_STOP_EL_DEGREES))
                 {
 
-                    UpperLimitToolTip.Show(String.Format("Upper Software Stop limit must be between {0} and {1} degrees (inclusive)", requestedLowerLimit, MiscellaneousConstants.MAX_SOFTWARE_STOP_EL_DEGREES), UpperSWStopsLimitText);
-                    UpperSWStopsLimitText.BackColor = Color.Yellow;
+                    UpperLimitToolTip.Show(String.Format("Upper Software Stop limit must be between {0} and {1} degrees (inclusive)", requestedLowerLimit, MiscellaneousConstants.MAX_SOFTWARE_STOP_EL_DEGREES), txtUpperSWStopsLimit);
+                    txtUpperSWStopsLimit.BackColor = Color.Yellow;
                     ValidUpperSWStopLimit = false;
                 }
                 else
                 {
-                    UpperLimitToolTip.Hide(UpperSWStopsLimitText);
-                    UpperSWStopsLimitText.BackColor = Color.White;
+                    UpperLimitToolTip.Hide(txtUpperSWStopsLimit);
+                    txtUpperSWStopsLimit.BackColor = Color.White;
                     ValidUpperSWStopLimit = true;
                 }
             }
             else
             {
-                UpperLimitToolTip.Show("Upper Software Stop limit must be a number", UpperSWStopsLimitText);
-                UpperSWStopsLimitText.BackColor = Color.Yellow;
+                UpperLimitToolTip.Show("Upper Software Stop limit must be a number", txtUpperSWStopsLimit);
+                txtUpperSWStopsLimit.BackColor = Color.Yellow;
                 ValidUpperSWStopLimit = false;
             }
         }
@@ -1413,11 +1413,11 @@ namespace ControlRoomApplication.GUI
         {
             ValidLowerSWStopLimit = false;
 
-            bool isNumeric = Double.TryParse(LowerSWStopsLimitText.Text, out double requestedLowerLimit);
+            bool isNumeric = Double.TryParse(txtLowerSWStopsLimit.Text, out double requestedLowerLimit);
 
             if (isNumeric)
             {
-                Double.TryParse(UpperSWStopsLimitText.Text, out double requestedUpperLimit);
+                Double.TryParse(txtUpperSWStopsLimit.Text, out double requestedUpperLimit);
 
                 if (!ValidUpperSWStopLimit)
                 {
@@ -1426,22 +1426,22 @@ namespace ControlRoomApplication.GUI
 
                 if (!Validator.IsBetween(requestedLowerLimit, MiscellaneousConstants.MIN_SOFTWARE_STOP_EL_DEGREES, requestedUpperLimit))
                 {
-                    LowerLimitToolTip.Show(String.Format("Lower Software Stop limit must be between {0} and {1} degrees (inclusive)", MiscellaneousConstants.MIN_SOFTWARE_STOP_EL_DEGREES, requestedUpperLimit), LowerSWStopsLimitText);
-                    LowerSWStopsLimitText.BackColor = Color.Yellow;
+                    LowerLimitToolTip.Show(String.Format("Lower Software Stop limit must be between {0} and {1} degrees (inclusive)", MiscellaneousConstants.MIN_SOFTWARE_STOP_EL_DEGREES, requestedUpperLimit), txtLowerSWStopsLimit);
+                    txtLowerSWStopsLimit.BackColor = Color.Yellow;
                     ValidLowerSWStopLimit = false;
 
                 }
                 else
                 {
-                    LowerLimitToolTip.Hide(LowerSWStopsLimitText);
-                    LowerSWStopsLimitText.BackColor = Color.White;
+                    LowerLimitToolTip.Hide(txtLowerSWStopsLimit);
+                    txtLowerSWStopsLimit.BackColor = Color.White;
                     ValidLowerSWStopLimit = true;
                 }
             }
             else
             {
-                LowerLimitToolTip.Show("Lower Software Stop limit must be a number", LowerSWStopsLimitText);
-                LowerSWStopsLimitText.BackColor = Color.Yellow;
+                LowerLimitToolTip.Show("Lower Software Stop limit must be a number", txtLowerSWStopsLimit);
+                txtLowerSWStopsLimit.BackColor = Color.Yellow;
                 ValidLowerSWStopLimit = false;
             }
 

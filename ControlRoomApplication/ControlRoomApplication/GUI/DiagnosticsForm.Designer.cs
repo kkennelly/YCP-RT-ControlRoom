@@ -212,19 +212,22 @@
             this.AzimuthAccelerometer = new System.Windows.Forms.CheckBox();
             this.AzimuthTemperature1 = new System.Windows.Forms.CheckBox();
             this.ElevationTemperature1 = new System.Windows.Forms.CheckBox();
-            this.SoftwareStopsThresholdGroup = new System.Windows.Forms.GroupBox();
-            this.SWStopLowerLabel = new System.Windows.Forms.Label();
-            this.SWStopUpperLabel = new System.Windows.Forms.Label();
+            this.ThresholdsGroup = new System.Windows.Forms.GroupBox();
+            this.lblAmbHumid = new System.Windows.Forms.Label();
+            this.lblAmbTemp = new System.Windows.Forms.Label();
+            this.lblSWStop = new System.Windows.Forms.Label();
             this.UpdateSWStopsButton = new System.Windows.Forms.Button();
-            this.LowerSWStopsLimitText = new System.Windows.Forms.TextBox();
-            this.UpperSWStopsLimitText = new System.Windows.Forms.TextBox();
+            this.txtLowerSWStopsLimit = new System.Windows.Forms.TextBox();
+            this.txtUpperSWStopsLimit = new System.Windows.Forms.TextBox();
             this.grpProximitySensors = new System.Windows.Forms.GroupBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label21 = new System.Windows.Forms.Label();
             this.ElivationLimitSwitch0 = new System.Windows.Forms.Button();
             this.ElevationLimitSwitch90 = new System.Windows.Forms.Button();
             this.TemperatureSensors = new System.Windows.Forms.GroupBox();
+            this.AmbTempHumidSensOverride = new System.Windows.Forms.Button();
             this.ElMotTempSensOverride = new System.Windows.Forms.Button();
+            this.lblTempHumidOverride = new System.Windows.Forms.Label();
             this.label29 = new System.Windows.Forms.Label();
             this.AzMotTempSensOverride = new System.Windows.Forms.Button();
             this.label28 = new System.Windows.Forms.Label();
@@ -263,8 +266,12 @@
             this.InitTimeoutValidation = new System.Windows.Forms.ToolTip(this.components);
             this.UpperLimitToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.LowerLimitToolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.lblTempHumidOverride = new System.Windows.Forms.Label();
-            this.AmbTempHumidSensOverride = new System.Windows.Forms.Button();
+            this.lblUpper = new System.Windows.Forms.Label();
+            this.lblLower = new System.Windows.Forms.Label();
+            this.txtLowerTempLimit = new System.Windows.Forms.TextBox();
+            this.txtUpperTempLimit = new System.Windows.Forms.TextBox();
+            this.txtLowerHumidLimit = new System.Windows.Forms.TextBox();
+            this.txtUpperHumidLimit = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -298,7 +305,7 @@
             this.tabPage3.SuspendLayout();
             this.Encoders.SuspendLayout();
             this.SensorNetworkSensorInitialization.SuspendLayout();
-            this.SoftwareStopsThresholdGroup.SuspendLayout();
+            this.ThresholdsGroup.SuspendLayout();
             this.grpProximitySensors.SuspendLayout();
             this.TemperatureSensors.SuspendLayout();
             this.GatesSensors.SuspendLayout();
@@ -2013,7 +2020,7 @@
             this.tabPage3.BackColor = System.Drawing.Color.Gray;
             this.tabPage3.Controls.Add(this.Encoders);
             this.tabPage3.Controls.Add(this.SensorNetworkSensorInitialization);
-            this.tabPage3.Controls.Add(this.SoftwareStopsThresholdGroup);
+            this.tabPage3.Controls.Add(this.ThresholdsGroup);
             this.tabPage3.Controls.Add(this.grpProximitySensors);
             this.tabPage3.Controls.Add(this.TemperatureSensors);
             this.tabPage3.Controls.Add(this.GatesSensors);
@@ -2104,10 +2111,10 @@
             this.SensorNetworkSensorInitialization.Controls.Add(this.AzimuthAccelerometer);
             this.SensorNetworkSensorInitialization.Controls.Add(this.AzimuthTemperature1);
             this.SensorNetworkSensorInitialization.Controls.Add(this.ElevationTemperature1);
-            this.SensorNetworkSensorInitialization.Location = new System.Drawing.Point(344, 112);
+            this.SensorNetworkSensorInitialization.Location = new System.Drawing.Point(344, 136);
             this.SensorNetworkSensorInitialization.Name = "SensorNetworkSensorInitialization";
             this.SensorNetworkSensorInitialization.Padding = new System.Windows.Forms.Padding(2);
-            this.SensorNetworkSensorInitialization.Size = new System.Drawing.Size(296, 388);
+            this.SensorNetworkSensorInitialization.Size = new System.Drawing.Size(296, 364);
             this.SensorNetworkSensorInitialization.TabIndex = 17;
             this.SensorNetworkSensorInitialization.TabStop = false;
             this.SensorNetworkSensorInitialization.Text = "Sensor Network Sensor Initialization";
@@ -2115,7 +2122,7 @@
             // AmbientTempHumid
             // 
             this.AmbientTempHumid.AutoSize = true;
-            this.AmbientTempHumid.Location = new System.Drawing.Point(5, 246);
+            this.AmbientTempHumid.Location = new System.Drawing.Point(5, 220);
             this.AmbientTempHumid.Name = "AmbientTempHumid";
             this.AmbientTempHumid.Size = new System.Drawing.Size(191, 17);
             this.AmbientTempHumid.TabIndex = 79;
@@ -2126,7 +2133,7 @@
             // 
             this.lblInitTimeout.AutoSize = true;
             this.lblInitTimeout.ForeColor = System.Drawing.Color.Black;
-            this.lblInitTimeout.Location = new System.Drawing.Point(74, 340);
+            this.lblInitTimeout.Location = new System.Drawing.Point(74, 314);
             this.lblInitTimeout.Name = "lblInitTimeout";
             this.lblInitTimeout.Size = new System.Drawing.Size(154, 13);
             this.lblInitTimeout.TabIndex = 78;
@@ -2136,7 +2143,7 @@
             // 
             this.lblDataTimeout.AutoSize = true;
             this.lblDataTimeout.ForeColor = System.Drawing.Color.Black;
-            this.lblDataTimeout.Location = new System.Drawing.Point(60, 320);
+            this.lblDataTimeout.Location = new System.Drawing.Point(60, 294);
             this.lblDataTimeout.Name = "lblDataTimeout";
             this.lblDataTimeout.Size = new System.Drawing.Size(168, 13);
             this.lblDataTimeout.TabIndex = 77;
@@ -2144,7 +2151,7 @@
             // 
             // txtDataTimeout
             // 
-            this.txtDataTimeout.Location = new System.Drawing.Point(242, 317);
+            this.txtDataTimeout.Location = new System.Drawing.Point(242, 291);
             this.txtDataTimeout.Name = "txtDataTimeout";
             this.txtDataTimeout.Size = new System.Drawing.Size(44, 20);
             this.txtDataTimeout.TabIndex = 76;
@@ -2152,7 +2159,7 @@
             // 
             // txtInitTimeout
             // 
-            this.txtInitTimeout.Location = new System.Drawing.Point(242, 338);
+            this.txtInitTimeout.Location = new System.Drawing.Point(242, 312);
             this.txtInitTimeout.Name = "txtInitTimeout";
             this.txtInitTimeout.Size = new System.Drawing.Size(44, 20);
             this.txtInitTimeout.TabIndex = 75;
@@ -2162,7 +2169,7 @@
             // 
             this.lblSNStatus.AutoSize = true;
             this.lblSNStatus.ForeColor = System.Drawing.Color.Black;
-            this.lblSNStatus.Location = new System.Drawing.Point(10, 356);
+            this.lblSNStatus.Location = new System.Drawing.Point(10, 330);
             this.lblSNStatus.Name = "lblSNStatus";
             this.lblSNStatus.Size = new System.Drawing.Size(40, 13);
             this.lblSNStatus.TabIndex = 10;
@@ -2170,7 +2177,7 @@
             // 
             // UpdateSensorInitiliazation
             // 
-            this.UpdateSensorInitiliazation.Location = new System.Drawing.Point(123, 360);
+            this.UpdateSensorInitiliazation.Location = new System.Drawing.Point(123, 334);
             this.UpdateSensorInitiliazation.Name = "UpdateSensorInitiliazation";
             this.UpdateSensorInitiliazation.Size = new System.Drawing.Size(164, 23);
             this.UpdateSensorInitiliazation.TabIndex = 9;
@@ -2182,7 +2189,7 @@
             // 
             this.AzimuthEncoder.AutoSize = true;
             this.AzimuthEncoder.ForeColor = System.Drawing.Color.Red;
-            this.AzimuthEncoder.Location = new System.Drawing.Point(5, 195);
+            this.AzimuthEncoder.Location = new System.Drawing.Point(5, 169);
             this.AzimuthEncoder.Name = "AzimuthEncoder";
             this.AzimuthEncoder.Size = new System.Drawing.Size(106, 17);
             this.AzimuthEncoder.TabIndex = 8;
@@ -2193,7 +2200,7 @@
             // 
             this.ElevationEncoder.AutoSize = true;
             this.ElevationEncoder.ForeColor = System.Drawing.Color.Red;
-            this.ElevationEncoder.Location = new System.Drawing.Point(5, 177);
+            this.ElevationEncoder.Location = new System.Drawing.Point(5, 151);
             this.ElevationEncoder.Name = "ElevationEncoder";
             this.ElevationEncoder.Size = new System.Drawing.Size(113, 17);
             this.ElevationEncoder.TabIndex = 7;
@@ -2203,7 +2210,7 @@
             // CounterbalanceAccelerometer
             // 
             this.CounterbalanceAccelerometer.AutoSize = true;
-            this.CounterbalanceAccelerometer.Location = new System.Drawing.Point(5, 299);
+            this.CounterbalanceAccelerometer.Location = new System.Drawing.Point(5, 273);
             this.CounterbalanceAccelerometer.Name = "CounterbalanceAccelerometer";
             this.CounterbalanceAccelerometer.Size = new System.Drawing.Size(172, 17);
             this.CounterbalanceAccelerometer.TabIndex = 6;
@@ -2213,7 +2220,7 @@
             // ElevationAccelerometer
             // 
             this.ElevationAccelerometer.AutoSize = true;
-            this.ElevationAccelerometer.Location = new System.Drawing.Point(5, 281);
+            this.ElevationAccelerometer.Location = new System.Drawing.Point(5, 255);
             this.ElevationAccelerometer.Name = "ElevationAccelerometer";
             this.ElevationAccelerometer.Size = new System.Drawing.Size(141, 17);
             this.ElevationAccelerometer.TabIndex = 5;
@@ -2223,7 +2230,7 @@
             // AzimuthAccelerometer
             // 
             this.AzimuthAccelerometer.AutoSize = true;
-            this.AzimuthAccelerometer.Location = new System.Drawing.Point(5, 263);
+            this.AzimuthAccelerometer.Location = new System.Drawing.Point(5, 237);
             this.AzimuthAccelerometer.Name = "AzimuthAccelerometer";
             this.AzimuthAccelerometer.Size = new System.Drawing.Size(134, 17);
             this.AzimuthAccelerometer.TabIndex = 4;
@@ -2233,7 +2240,7 @@
             // AzimuthTemperature1
             // 
             this.AzimuthTemperature1.AutoSize = true;
-            this.AzimuthTemperature1.Location = new System.Drawing.Point(5, 229);
+            this.AzimuthTemperature1.Location = new System.Drawing.Point(5, 203);
             this.AzimuthTemperature1.Name = "AzimuthTemperature1";
             this.AzimuthTemperature1.Size = new System.Drawing.Size(156, 17);
             this.AzimuthTemperature1.TabIndex = 2;
@@ -2243,49 +2250,65 @@
             // ElevationTemperature1
             // 
             this.ElevationTemperature1.AutoSize = true;
-            this.ElevationTemperature1.Location = new System.Drawing.Point(5, 212);
+            this.ElevationTemperature1.Location = new System.Drawing.Point(5, 186);
             this.ElevationTemperature1.Name = "ElevationTemperature1";
             this.ElevationTemperature1.Size = new System.Drawing.Size(163, 17);
             this.ElevationTemperature1.TabIndex = 0;
             this.ElevationTemperature1.Text = "Elevation Motor Temperature";
             this.ElevationTemperature1.UseVisualStyleBackColor = true;
             // 
-            // SoftwareStopsThresholdGroup
+            // ThresholdsGroup
             // 
-            this.SoftwareStopsThresholdGroup.BackColor = System.Drawing.Color.Gainsboro;
-            this.SoftwareStopsThresholdGroup.Controls.Add(this.SWStopLowerLabel);
-            this.SoftwareStopsThresholdGroup.Controls.Add(this.SWStopUpperLabel);
-            this.SoftwareStopsThresholdGroup.Controls.Add(this.UpdateSWStopsButton);
-            this.SoftwareStopsThresholdGroup.Controls.Add(this.LowerSWStopsLimitText);
-            this.SoftwareStopsThresholdGroup.Controls.Add(this.UpperSWStopsLimitText);
-            this.SoftwareStopsThresholdGroup.Location = new System.Drawing.Point(344, 3);
-            this.SoftwareStopsThresholdGroup.Name = "SoftwareStopsThresholdGroup";
-            this.SoftwareStopsThresholdGroup.Size = new System.Drawing.Size(296, 106);
-            this.SoftwareStopsThresholdGroup.TabIndex = 0;
-            this.SoftwareStopsThresholdGroup.TabStop = false;
-            this.SoftwareStopsThresholdGroup.Text = "Software Stops Thresholds";
+            this.ThresholdsGroup.BackColor = System.Drawing.Color.Gainsboro;
+            this.ThresholdsGroup.Controls.Add(this.txtLowerHumidLimit);
+            this.ThresholdsGroup.Controls.Add(this.txtUpperHumidLimit);
+            this.ThresholdsGroup.Controls.Add(this.txtLowerTempLimit);
+            this.ThresholdsGroup.Controls.Add(this.txtUpperTempLimit);
+            this.ThresholdsGroup.Controls.Add(this.lblLower);
+            this.ThresholdsGroup.Controls.Add(this.lblUpper);
+            this.ThresholdsGroup.Controls.Add(this.lblAmbHumid);
+            this.ThresholdsGroup.Controls.Add(this.lblAmbTemp);
+            this.ThresholdsGroup.Controls.Add(this.lblSWStop);
+            this.ThresholdsGroup.Controls.Add(this.UpdateSWStopsButton);
+            this.ThresholdsGroup.Controls.Add(this.txtLowerSWStopsLimit);
+            this.ThresholdsGroup.Controls.Add(this.txtUpperSWStopsLimit);
+            this.ThresholdsGroup.Location = new System.Drawing.Point(344, 3);
+            this.ThresholdsGroup.Name = "ThresholdsGroup";
+            this.ThresholdsGroup.Size = new System.Drawing.Size(296, 130);
+            this.ThresholdsGroup.TabIndex = 0;
+            this.ThresholdsGroup.TabStop = false;
+            this.ThresholdsGroup.Text = "Thresholds";
             // 
-            // SWStopLowerLabel
+            // lblAmbHumid
             // 
-            this.SWStopLowerLabel.AutoSize = true;
-            this.SWStopLowerLabel.Location = new System.Drawing.Point(11, 54);
-            this.SWStopLowerLabel.Name = "SWStopLowerLabel";
-            this.SWStopLowerLabel.Size = new System.Drawing.Size(138, 13);
-            this.SWStopLowerLabel.TabIndex = 4;
-            this.SWStopLowerLabel.Text = "Software-Stops Lower Limit:";
+            this.lblAmbHumid.AutoSize = true;
+            this.lblAmbHumid.Location = new System.Drawing.Point(11, 76);
+            this.lblAmbHumid.Name = "lblAmbHumid";
+            this.lblAmbHumid.Size = new System.Drawing.Size(108, 13);
+            this.lblAmbHumid.TabIndex = 8;
+            this.lblAmbHumid.Text = "Ambient Humidity (%):";
             // 
-            // SWStopUpperLabel
+            // lblAmbTemp
             // 
-            this.SWStopUpperLabel.AutoSize = true;
-            this.SWStopUpperLabel.Location = new System.Drawing.Point(11, 22);
-            this.SWStopUpperLabel.Name = "SWStopUpperLabel";
-            this.SWStopUpperLabel.Size = new System.Drawing.Size(138, 13);
-            this.SWStopUpperLabel.TabIndex = 3;
-            this.SWStopUpperLabel.Text = "Software-Stops Upper Limit:";
+            this.lblAmbTemp.AutoSize = true;
+            this.lblAmbTemp.Location = new System.Drawing.Point(11, 49);
+            this.lblAmbTemp.Name = "lblAmbTemp";
+            this.lblAmbTemp.Size = new System.Drawing.Size(133, 13);
+            this.lblAmbTemp.TabIndex = 7;
+            this.lblAmbTemp.Text = "Ambient Temperature (°F ):";
+            // 
+            // lblSWStop
+            // 
+            this.lblSWStop.AutoSize = true;
+            this.lblSWStop.Location = new System.Drawing.Point(11, 22);
+            this.lblSWStop.Name = "lblSWStop";
+            this.lblSWStop.Size = new System.Drawing.Size(111, 13);
+            this.lblSWStop.TabIndex = 3;
+            this.lblSWStop.Text = "Software-Stops Limits:";
             // 
             // UpdateSWStopsButton
             // 
-            this.UpdateSWStopsButton.Location = new System.Drawing.Point(89, 80);
+            this.UpdateSWStopsButton.Location = new System.Drawing.Point(89, 103);
             this.UpdateSWStopsButton.Name = "UpdateSWStopsButton";
             this.UpdateSWStopsButton.Size = new System.Drawing.Size(116, 20);
             this.UpdateSWStopsButton.TabIndex = 2;
@@ -2293,23 +2316,23 @@
             this.UpdateSWStopsButton.UseVisualStyleBackColor = true;
             this.UpdateSWStopsButton.Click += new System.EventHandler(this.UpdateSWStopsButton_Click);
             // 
-            // LowerSWStopsLimitText
+            // txtLowerSWStopsLimit
             // 
-            this.LowerSWStopsLimitText.AccessibleName = "SoftwareStopLowerLimitText";
-            this.LowerSWStopsLimitText.Location = new System.Drawing.Point(157, 54);
-            this.LowerSWStopsLimitText.Name = "LowerSWStopsLimitText";
-            this.LowerSWStopsLimitText.Size = new System.Drawing.Size(71, 20);
-            this.LowerSWStopsLimitText.TabIndex = 1;
-            this.LowerSWStopsLimitText.TextChanged += new System.EventHandler(this.LowerSWStopsLimitText_TextChanged);
+            this.txtLowerSWStopsLimit.AccessibleName = "SoftwareStopLowerLimitText";
+            this.txtLowerSWStopsLimit.Location = new System.Drawing.Point(228, 22);
+            this.txtLowerSWStopsLimit.Name = "txtLowerSWStopsLimit";
+            this.txtLowerSWStopsLimit.Size = new System.Drawing.Size(60, 20);
+            this.txtLowerSWStopsLimit.TabIndex = 1;
+            this.txtLowerSWStopsLimit.TextChanged += new System.EventHandler(this.LowerSWStopsLimitText_TextChanged);
             // 
-            // UpperSWStopsLimitText
+            // txtUpperSWStopsLimit
             // 
-            this.UpperSWStopsLimitText.AccessibleName = "SoftwareStopUpperLimitText";
-            this.UpperSWStopsLimitText.Location = new System.Drawing.Point(157, 22);
-            this.UpperSWStopsLimitText.Name = "UpperSWStopsLimitText";
-            this.UpperSWStopsLimitText.Size = new System.Drawing.Size(71, 20);
-            this.UpperSWStopsLimitText.TabIndex = 0;
-            this.UpperSWStopsLimitText.TextChanged += new System.EventHandler(this.UpperSWStopsLimitText_TextChanged);
+            this.txtUpperSWStopsLimit.AccessibleName = "SoftwareStopUpperLimitText";
+            this.txtUpperSWStopsLimit.Location = new System.Drawing.Point(157, 22);
+            this.txtUpperSWStopsLimit.Name = "txtUpperSWStopsLimit";
+            this.txtUpperSWStopsLimit.Size = new System.Drawing.Size(60, 20);
+            this.txtUpperSWStopsLimit.TabIndex = 0;
+            this.txtUpperSWStopsLimit.TextChanged += new System.EventHandler(this.UpperSWStopsLimitText_TextChanged);
             // 
             // grpProximitySensors
             // 
@@ -2388,6 +2411,19 @@
             this.TemperatureSensors.TabStop = false;
             this.TemperatureSensors.Text = "Temperature Sensors";
             // 
+            // AmbTempHumidSensOverride
+            // 
+            this.AmbTempHumidSensOverride.BackColor = System.Drawing.Color.Yellow;
+            this.AmbTempHumidSensOverride.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.AmbTempHumidSensOverride.Location = new System.Drawing.Point(228, 82);
+            this.AmbTempHumidSensOverride.Margin = new System.Windows.Forms.Padding(2);
+            this.AmbTempHumidSensOverride.Name = "AmbTempHumidSensOverride";
+            this.AmbTempHumidSensOverride.Size = new System.Drawing.Size(89, 23);
+            this.AmbTempHumidSensOverride.TabIndex = 13;
+            this.AmbTempHumidSensOverride.Text = "NOT LOADED";
+            this.AmbTempHumidSensOverride.UseVisualStyleBackColor = false;
+            this.AmbTempHumidSensOverride.Click += new System.EventHandler(this.AmbTempHumidSensOverride_Click);
+            // 
             // ElMotTempSensOverride
             // 
             this.ElMotTempSensOverride.BackColor = System.Drawing.Color.Yellow;
@@ -2400,6 +2436,17 @@
             this.ElMotTempSensOverride.Text = "NOT LOADED";
             this.ElMotTempSensOverride.UseVisualStyleBackColor = false;
             this.ElMotTempSensOverride.Click += new System.EventHandler(this.ElMotTempSensOverride_Click);
+            // 
+            // lblTempHumidOverride
+            // 
+            this.lblTempHumidOverride.AutoSize = true;
+            this.lblTempHumidOverride.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTempHumidOverride.Location = new System.Drawing.Point(9, 86);
+            this.lblTempHumidOverride.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblTempHumidOverride.Name = "lblTempHumidOverride";
+            this.lblTempHumidOverride.Size = new System.Drawing.Size(222, 13);
+            this.lblTempHumidOverride.TabIndex = 12;
+            this.lblTempHumidOverride.Text = "Ambient Temperature Humidity Sensor";
             // 
             // label29
             // 
@@ -2803,29 +2850,55 @@
             this.consoleLogBox.Size = new System.Drawing.Size(631, 494);
             this.consoleLogBox.TabIndex = 0;
             // 
-            // lblTempHumidOverride
+            // lblUpper
             // 
-            this.lblTempHumidOverride.AutoSize = true;
-            this.lblTempHumidOverride.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTempHumidOverride.Location = new System.Drawing.Point(9, 86);
-            this.lblTempHumidOverride.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.lblTempHumidOverride.Name = "lblTempHumidOverride";
-            this.lblTempHumidOverride.Size = new System.Drawing.Size(222, 13);
-            this.lblTempHumidOverride.TabIndex = 12;
-            this.lblTempHumidOverride.Text = "Ambient Temperature Humidity Sensor";
+            this.lblUpper.AutoSize = true;
+            this.lblUpper.Location = new System.Drawing.Point(168, 6);
+            this.lblUpper.Name = "lblUpper";
+            this.lblUpper.Size = new System.Drawing.Size(36, 13);
+            this.lblUpper.TabIndex = 9;
+            this.lblUpper.Text = "Upper";
             // 
-            // AmbTempHumidSensOverride
+            // lblLower
             // 
-            this.AmbTempHumidSensOverride.BackColor = System.Drawing.Color.Yellow;
-            this.AmbTempHumidSensOverride.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.AmbTempHumidSensOverride.Location = new System.Drawing.Point(228, 82);
-            this.AmbTempHumidSensOverride.Margin = new System.Windows.Forms.Padding(2);
-            this.AmbTempHumidSensOverride.Name = "AmbTempHumidSensOverride";
-            this.AmbTempHumidSensOverride.Size = new System.Drawing.Size(89, 23);
-            this.AmbTempHumidSensOverride.TabIndex = 13;
-            this.AmbTempHumidSensOverride.Text = "NOT LOADED";
-            this.AmbTempHumidSensOverride.UseVisualStyleBackColor = false;
-            this.AmbTempHumidSensOverride.Click += new System.EventHandler(this.AmbTempHumidSensOverride_Click);
+            this.lblLower.AutoSize = true;
+            this.lblLower.Location = new System.Drawing.Point(239, 6);
+            this.lblLower.Name = "lblLower";
+            this.lblLower.Size = new System.Drawing.Size(36, 13);
+            this.lblLower.TabIndex = 10;
+            this.lblLower.Text = "Lower";
+            // 
+            // txtLowerTempLimit
+            // 
+            this.txtLowerTempLimit.AccessibleName = "SoftwareStopLowerLimitText";
+            this.txtLowerTempLimit.Location = new System.Drawing.Point(228, 49);
+            this.txtLowerTempLimit.Name = "txtLowerTempLimit";
+            this.txtLowerTempLimit.Size = new System.Drawing.Size(60, 20);
+            this.txtLowerTempLimit.TabIndex = 12;
+            // 
+            // txtUpperTempLimit
+            // 
+            this.txtUpperTempLimit.AccessibleName = "SoftwareStopUpperLimitText";
+            this.txtUpperTempLimit.Location = new System.Drawing.Point(157, 49);
+            this.txtUpperTempLimit.Name = "txtUpperTempLimit";
+            this.txtUpperTempLimit.Size = new System.Drawing.Size(60, 20);
+            this.txtUpperTempLimit.TabIndex = 11;
+            // 
+            // txtLowerHumidLimit
+            // 
+            this.txtLowerHumidLimit.AccessibleName = "SoftwareStopLowerLimitText";
+            this.txtLowerHumidLimit.Location = new System.Drawing.Point(228, 76);
+            this.txtLowerHumidLimit.Name = "txtLowerHumidLimit";
+            this.txtLowerHumidLimit.Size = new System.Drawing.Size(60, 20);
+            this.txtLowerHumidLimit.TabIndex = 14;
+            // 
+            // txtUpperHumidLimit
+            // 
+            this.txtUpperHumidLimit.AccessibleName = "SoftwareStopUpperLimitText";
+            this.txtUpperHumidLimit.Location = new System.Drawing.Point(157, 76);
+            this.txtUpperHumidLimit.Name = "txtUpperHumidLimit";
+            this.txtUpperHumidLimit.Size = new System.Drawing.Size(60, 20);
+            this.txtUpperHumidLimit.TabIndex = 13;
             // 
             // DiagnosticsForm
             // 
@@ -2890,8 +2963,8 @@
             this.Encoders.PerformLayout();
             this.SensorNetworkSensorInitialization.ResumeLayout(false);
             this.SensorNetworkSensorInitialization.PerformLayout();
-            this.SoftwareStopsThresholdGroup.ResumeLayout(false);
-            this.SoftwareStopsThresholdGroup.PerformLayout();
+            this.ThresholdsGroup.ResumeLayout(false);
+            this.ThresholdsGroup.PerformLayout();
             this.grpProximitySensors.ResumeLayout(false);
             this.grpProximitySensors.PerformLayout();
             this.TemperatureSensors.ResumeLayout(false);
@@ -3044,7 +3117,7 @@
         private System.Windows.Forms.Label lblModeType;
         private System.Windows.Forms.Label spectraModeTypeVal;
         private System.Windows.Forms.GroupBox SensorNetworkSensorInitialization;
-        private System.Windows.Forms.GroupBox SoftwareStopsThresholdGroup;
+        private System.Windows.Forms.GroupBox ThresholdsGroup;
         private System.Windows.Forms.GroupBox grpProximitySensors;
         private System.Windows.Forms.Button btnElevationMotorAccelerometerOverride;
         private System.Windows.Forms.Button btnAzimuthMotorAccelerometerOverride;
@@ -3111,11 +3184,10 @@
         private System.Windows.Forms.ToolTip InitTimeoutValidation;
         private System.Windows.Forms.Label label25;
         private System.Windows.Forms.Label label26;
-        private System.Windows.Forms.TextBox LowerSWStopsLimitText;
-        private System.Windows.Forms.TextBox UpperSWStopsLimitText;
+        private System.Windows.Forms.TextBox txtLowerSWStopsLimit;
+        private System.Windows.Forms.TextBox txtUpperSWStopsLimit;
         private System.Windows.Forms.Button UpdateSWStopsButton;
-        private System.Windows.Forms.Label SWStopLowerLabel;
-        private System.Windows.Forms.Label SWStopUpperLabel;
+        private System.Windows.Forms.Label lblSWStop;
         private System.Windows.Forms.ToolTip UpperLimitToolTip;
         private System.Windows.Forms.ToolTip LowerLimitToolTip;
         private System.Windows.Forms.GroupBox grpAmbTempHumid;
@@ -3131,5 +3203,13 @@
         private System.Windows.Forms.Label lblAmbientDewPoint;
         private System.Windows.Forms.Button AmbTempHumidSensOverride;
         private System.Windows.Forms.Label lblTempHumidOverride;
+        private System.Windows.Forms.Label lblAmbHumid;
+        private System.Windows.Forms.Label lblAmbTemp;
+        private System.Windows.Forms.TextBox txtLowerHumidLimit;
+        private System.Windows.Forms.TextBox txtUpperHumidLimit;
+        private System.Windows.Forms.TextBox txtLowerTempLimit;
+        private System.Windows.Forms.TextBox txtUpperTempLimit;
+        private System.Windows.Forms.Label lblLower;
+        private System.Windows.Forms.Label lblUpper;
     }
 }

@@ -775,7 +775,7 @@ namespace ControlRoomApplication.Database
         /// <summary>
         /// Grabs the current threshold value from the database for the specific sensor
         /// </summary>
-        public static double GetThresholdForSensor(SensorItemEnum item)
+        public static double GetThresholdForSensor(SensorItemEnum item, bool getMax = true)
         {
             double val;
             using (RTDbContext Context = InitializeDatabaseContext())
@@ -787,7 +787,14 @@ namespace ControlRoomApplication.Database
                     throw new InvalidOperationException();
                 }
 
-                val = Convert.ToDouble(thresholds[0].maxValue);
+                if (getMax)
+                {
+                    val = Convert.ToDouble(thresholds[0].maxValue);
+                }
+                else
+                {
+                    val = Convert.ToDouble(thresholds[0].minValue);
+                }
             }
 
             return val;

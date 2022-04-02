@@ -38,6 +38,11 @@ namespace ControlRoomApplication.Controllers
         private double MaxElTempThreshold;
         private double MaxAzTempThreshold;
 
+        private double MinAmbientTempThreshold;
+        private double MaxAmbientTempThreshold;
+        private double MinAmbientHumidityThreshold;
+        private double MaxAmbientHumidityThreshold;
+
         // Previous snow dump azimuth -- we need to keep track of this in order to add 45 degrees each time we dump
         private double previousSnowDumpAzimuth;
 
@@ -70,6 +75,11 @@ namespace ControlRoomApplication.Controllers
 
             MaxAzTempThreshold = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.AZ_MOTOR_TEMP);
             MaxElTempThreshold = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.ELEV_MOTOR_TEMP);
+
+            MinAmbientTempThreshold = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.AMBIENT_TEMP, false);
+            MaxAmbientTempThreshold = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.AMBIENT_TEMP);
+            MinAmbientHumidityThreshold = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.AMBIENT_HUMIDITY, false);
+            MaxAmbientHumidityThreshold = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.AMBIENT_HUMIDITY);
 
             previousSnowDumpAzimuth = 0;
 
@@ -806,6 +816,8 @@ namespace ControlRoomApplication.Controllers
 
                 // Run the software-stop routine
                 CheckAndRunSoftwareStops();
+
+                RadioTelescope.SensorNetworkServer.SetFanOnOrOff = DetermineFanState();
                 
                 Thread.Sleep(100);
             }
@@ -1116,6 +1128,44 @@ namespace ControlRoomApplication.Controllers
                     logger.Info(Utilities.GetTimeStamp() + ": Software-stop hit!");
                 }
             }
+        }
+
+        /// <summary>
+        /// This is the method that handles determining whether the ESS fan should be on or off.
+        /// </summary>
+        /// <returns>True to turn the fan on, false to turn the fan off.</returns>
+        private bool DetermineFanState()
+        {
+            SensorNetwork.SensorNetworkServer sn = RadioTelescope.SensorNetworkServer;
+
+            // If the fan is on, check to see if it needs to be turned off
+            if (sn.FanIsOn)
+            {
+                // Temp is below the lower threshold and either the humidity reached below its threshold or the outside is too
+                // dew point is higher than the inside temp, which means the telescope is warming up and humidity will lower.
+                // Bringing in hot air that has a dew point higher than the inside temp will cause condensation
+                if (sn.CurrentElevationAmbientTemp[0].temp < MinAmbientTempThreshold &&
+                    (sn.CurrentElevationAmbientHumidity[0].HumidityReading < MinAmbientHumidityThreshold ||
+                    sn.CurrentElevationAmbientTemp[0].temp <= RadioTelescope.WeatherStation.GetDewPoint()))
+                {
+                    return false;
+                }
+            }
+            // The fan is off, so check if it needs to be turned on
+            else
+            {
+                // Temp is passed the upper threshold, or the humiditity is passed the upper threshold and the outside air is cooler,
+                // which means the telescope is cooling down and outside air needs to be brought in to avoid condinsation
+                if (sn.CurrentElevationAmbientTemp[0].temp >= MaxAmbientTempThreshold ||
+                    sn.CurrentElevationAmbientHumidity[0].HumidityReading >= MaxAmbientHumidityThreshold &&
+                    sn.CurrentElevationAmbientTemp[0].temp >= RadioTelescope.WeatherStation.GetOutsideTemp())
+                {
+                    return true;
+                }
+            }
+
+            // Reaching this point means that the fan state doesn't need to be changed
+            return sn.FanIsOn;
         }
     }
 }

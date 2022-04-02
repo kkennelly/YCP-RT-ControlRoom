@@ -137,6 +137,19 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
         public double CurrentElevationAmbientDewPoint { get; set; }
 
         /// <summary>
+        /// Whether or not the fan needs to be set on or off the next time the fan control packet is sent.
+        /// True for setting the fan on, false for setting the fan off.
+        /// </summary>
+        public bool SetFanOnOrOff { get; set; }
+
+        /// <summary>
+        /// Whether or not the fan is on or off, coming from the ESS. The ESS could reset and we need to know if
+        /// the internal fan is on or off for display purposes.
+        /// True for the fan is on, false for the fan is off.
+        /// </summary>
+        public bool FanIsOn { get; set; }
+
+        /// <summary>
         /// The current orientation of the telescope based off of the absolute encoders. These
         /// are totally separate from the motor encoders' data that we get from the GetMotorEncoderPosition
         /// function in the PLC and MCU, and will provide more accurate data regarding the telescope's
@@ -506,6 +519,9 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
                         {
                             Timeout.Stop();
                         }
+
+                        // Send the fan state asap after recieving the packet
+                        Stream.WriteByte(Convert.ToByte(SetFanOnOrOff));
 
                         InterpretData(receivedData, receivedDataSize);
 

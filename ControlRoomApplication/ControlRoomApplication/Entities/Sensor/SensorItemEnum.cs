@@ -29,6 +29,10 @@ namespace ControlRoomApplication.Entities
         WIND,
         RAIN_AMOUNT,
         ELEVATION_ABS_ENCODER,
-        AZIMUTH_ABS_ENCODER
+        AZIMUTH_ABS_ENCODER,
+
+        // For thresholds only
+        AMBIENT_TEMP,
+        AMBIENT_HUMIDITY
     }
 }

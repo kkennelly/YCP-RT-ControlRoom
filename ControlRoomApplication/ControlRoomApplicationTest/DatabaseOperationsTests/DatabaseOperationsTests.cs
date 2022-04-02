@@ -332,6 +332,18 @@ namespace ControlRoomApplicationTest.DatabaseOperationsTests
 
             double counter_vibe = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.COUNTER_BALANCE_VIBRATION);
             Assert.IsTrue(counter_vibe > 0);
+
+            double amb_temp_high = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.AMBIENT_TEMP);
+            Assert.IsTrue(amb_temp_high > 0);
+
+            double amb_temp_low = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.AMBIENT_TEMP, false);
+            Assert.IsTrue(amb_temp_low > 0);
+
+            double amb_humid_high = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.AMBIENT_HUMIDITY);
+            Assert.IsTrue(amb_humid_high > 0);
+
+            double amb_humid_low = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.AMBIENT_HUMIDITY, false);
+            Assert.IsTrue(amb_humid_low > 0);
         }
 
         [TestMethod]

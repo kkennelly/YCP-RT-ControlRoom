@@ -485,9 +485,9 @@ namespace ControlRoomApplicationTest.EntityControllersTests
 
             // These should be the only populated values, based off of the pre-made
             // packet I made for them
-            Assert.AreEqual(Server.CurrentCounterbalanceAccl[0].x, 1);
-            Assert.AreEqual(Server.CurrentCounterbalanceAccl[0].y, 2);
-            Assert.AreEqual(Server.CurrentCounterbalanceAccl[0].z, 3);
+            Assert.AreEqual(Server.CurrentCounterbalanceAccl[0].x, 0);
+            Assert.AreEqual(Server.CurrentCounterbalanceAccl[0].y, 0);
+            Assert.AreEqual(Server.CurrentCounterbalanceAccl[0].z, 0);
 
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, 0);
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, 0);

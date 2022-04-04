@@ -1086,6 +1086,30 @@ namespace ControlRoomApplication.Database
             
         }
 
+        /// <summary>
+        /// Update a threshold with the specifed sensor name with a new set of threshold values.
+        /// </summary>
+        /// <param name="newThreshold">The new threshold, containing the sensor name and min/max values to update with</param>
+        public static void UpdateSensorThreshold(ThresholdValues newThreshold)
+        {
+            using (RTDbContext Context = InitializeDatabaseContext())
+            {
+                ThresholdValues outdated = Context.ThresholdValues
+                    .Where(t => t.sensor_name == newThreshold.sensor_name.ToString()).FirstOrDefault();
 
+                if (outdated == null)
+                {
+                    throw new InvalidOperationException($"Cannot update threshold; no threshold found with a sensor named {newThreshold.sensor_name.ToString()}");
+                }
+                else
+                {
+                    newThreshold.Id = outdated.Id;
+                    Context.ThresholdValues.AddOrUpdate(newThreshold);
+                    SaveContext(Context);
+
+                    logger.Info(Utilities.GetTimeStamp() + ": Updated threshold for sensor named " + newThreshold.sensor_name.ToString());
+                }
+            }
+        }
     }
 }

@@ -213,10 +213,16 @@
             this.AzimuthTemperature1 = new System.Windows.Forms.CheckBox();
             this.ElevationTemperature1 = new System.Windows.Forms.CheckBox();
             this.ThresholdsGroup = new System.Windows.Forms.GroupBox();
+            this.txtLowerHumidLimit = new System.Windows.Forms.TextBox();
+            this.txtUpperHumidLimit = new System.Windows.Forms.TextBox();
+            this.txtLowerTempLimit = new System.Windows.Forms.TextBox();
+            this.txtUpperTempLimit = new System.Windows.Forms.TextBox();
+            this.lblLower = new System.Windows.Forms.Label();
+            this.lblUpper = new System.Windows.Forms.Label();
             this.lblAmbHumid = new System.Windows.Forms.Label();
             this.lblAmbTemp = new System.Windows.Forms.Label();
             this.lblSWStop = new System.Windows.Forms.Label();
-            this.UpdateSWStopsButton = new System.Windows.Forms.Button();
+            this.UpdateThresholdsButton = new System.Windows.Forms.Button();
             this.txtLowerSWStopsLimit = new System.Windows.Forms.TextBox();
             this.txtUpperSWStopsLimit = new System.Windows.Forms.TextBox();
             this.grpProximitySensors = new System.Windows.Forms.GroupBox();
@@ -264,14 +270,10 @@
             this.consoleLogBox = new System.Windows.Forms.TextBox();
             this.DataTimeoutValidation = new System.Windows.Forms.ToolTip(this.components);
             this.InitTimeoutValidation = new System.Windows.Forms.ToolTip(this.components);
-            this.UpperLimitToolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.LowerLimitToolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.lblUpper = new System.Windows.Forms.Label();
-            this.lblLower = new System.Windows.Forms.Label();
-            this.txtLowerTempLimit = new System.Windows.Forms.TextBox();
-            this.txtUpperTempLimit = new System.Windows.Forms.TextBox();
-            this.txtLowerHumidLimit = new System.Windows.Forms.TextBox();
-            this.txtUpperHumidLimit = new System.Windows.Forms.TextBox();
+            this.UpperSWStopsValidation = new System.Windows.Forms.ToolTip(this.components);
+            this.LowerSWStopsValidation = new System.Windows.Forms.ToolTip(this.components);
+            this.AmbTempValidation = new System.Windows.Forms.ToolTip(this.components);
+            this.AmbHumidValidation = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -2269,7 +2271,7 @@
             this.ThresholdsGroup.Controls.Add(this.lblAmbHumid);
             this.ThresholdsGroup.Controls.Add(this.lblAmbTemp);
             this.ThresholdsGroup.Controls.Add(this.lblSWStop);
-            this.ThresholdsGroup.Controls.Add(this.UpdateSWStopsButton);
+            this.ThresholdsGroup.Controls.Add(this.UpdateThresholdsButton);
             this.ThresholdsGroup.Controls.Add(this.txtLowerSWStopsLimit);
             this.ThresholdsGroup.Controls.Add(this.txtUpperSWStopsLimit);
             this.ThresholdsGroup.Location = new System.Drawing.Point(344, 3);
@@ -2279,10 +2281,64 @@
             this.ThresholdsGroup.TabStop = false;
             this.ThresholdsGroup.Text = "Thresholds";
             // 
+            // txtLowerHumidLimit
+            // 
+            this.txtLowerHumidLimit.AccessibleName = "";
+            this.txtLowerHumidLimit.Location = new System.Drawing.Point(228, 78);
+            this.txtLowerHumidLimit.Name = "txtLowerHumidLimit";
+            this.txtLowerHumidLimit.Size = new System.Drawing.Size(60, 20);
+            this.txtLowerHumidLimit.TabIndex = 14;
+            this.txtLowerHumidLimit.TextChanged += new System.EventHandler(this.txtLowerHumidLimit_TextChanged);
+            // 
+            // txtUpperHumidLimit
+            // 
+            this.txtUpperHumidLimit.AccessibleName = "";
+            this.txtUpperHumidLimit.Location = new System.Drawing.Point(157, 78);
+            this.txtUpperHumidLimit.Name = "txtUpperHumidLimit";
+            this.txtUpperHumidLimit.Size = new System.Drawing.Size(60, 20);
+            this.txtUpperHumidLimit.TabIndex = 13;
+            this.txtUpperHumidLimit.TextChanged += new System.EventHandler(this.txtUpperHumidLimit_TextChanged);
+            // 
+            // txtLowerTempLimit
+            // 
+            this.txtLowerTempLimit.AccessibleName = "";
+            this.txtLowerTempLimit.Location = new System.Drawing.Point(228, 51);
+            this.txtLowerTempLimit.Name = "txtLowerTempLimit";
+            this.txtLowerTempLimit.Size = new System.Drawing.Size(60, 20);
+            this.txtLowerTempLimit.TabIndex = 12;
+            this.txtLowerTempLimit.TextChanged += new System.EventHandler(this.txtLowerTempLimit_TextChanged);
+            // 
+            // txtUpperTempLimit
+            // 
+            this.txtUpperTempLimit.AccessibleName = "";
+            this.txtUpperTempLimit.Location = new System.Drawing.Point(157, 51);
+            this.txtUpperTempLimit.Name = "txtUpperTempLimit";
+            this.txtUpperTempLimit.Size = new System.Drawing.Size(60, 20);
+            this.txtUpperTempLimit.TabIndex = 11;
+            this.txtUpperTempLimit.TextChanged += new System.EventHandler(this.txtUpperTempLimit_TextChanged);
+            // 
+            // lblLower
+            // 
+            this.lblLower.AutoSize = true;
+            this.lblLower.Location = new System.Drawing.Point(239, 6);
+            this.lblLower.Name = "lblLower";
+            this.lblLower.Size = new System.Drawing.Size(36, 13);
+            this.lblLower.TabIndex = 10;
+            this.lblLower.Text = "Lower";
+            // 
+            // lblUpper
+            // 
+            this.lblUpper.AutoSize = true;
+            this.lblUpper.Location = new System.Drawing.Point(168, 6);
+            this.lblUpper.Name = "lblUpper";
+            this.lblUpper.Size = new System.Drawing.Size(36, 13);
+            this.lblUpper.TabIndex = 9;
+            this.lblUpper.Text = "Upper";
+            // 
             // lblAmbHumid
             // 
             this.lblAmbHumid.AutoSize = true;
-            this.lblAmbHumid.Location = new System.Drawing.Point(11, 76);
+            this.lblAmbHumid.Location = new System.Drawing.Point(11, 78);
             this.lblAmbHumid.Name = "lblAmbHumid";
             this.lblAmbHumid.Size = new System.Drawing.Size(108, 13);
             this.lblAmbHumid.TabIndex = 8;
@@ -2291,7 +2347,7 @@
             // lblAmbTemp
             // 
             this.lblAmbTemp.AutoSize = true;
-            this.lblAmbTemp.Location = new System.Drawing.Point(11, 49);
+            this.lblAmbTemp.Location = new System.Drawing.Point(11, 51);
             this.lblAmbTemp.Name = "lblAmbTemp";
             this.lblAmbTemp.Size = new System.Drawing.Size(133, 13);
             this.lblAmbTemp.TabIndex = 7;
@@ -2300,26 +2356,26 @@
             // lblSWStop
             // 
             this.lblSWStop.AutoSize = true;
-            this.lblSWStop.Location = new System.Drawing.Point(11, 22);
+            this.lblSWStop.Location = new System.Drawing.Point(11, 24);
             this.lblSWStop.Name = "lblSWStop";
             this.lblSWStop.Size = new System.Drawing.Size(111, 13);
             this.lblSWStop.TabIndex = 3;
             this.lblSWStop.Text = "Software-Stops Limits:";
             // 
-            // UpdateSWStopsButton
+            // UpdateThresholdsButton
             // 
-            this.UpdateSWStopsButton.Location = new System.Drawing.Point(89, 103);
-            this.UpdateSWStopsButton.Name = "UpdateSWStopsButton";
-            this.UpdateSWStopsButton.Size = new System.Drawing.Size(116, 20);
-            this.UpdateSWStopsButton.TabIndex = 2;
-            this.UpdateSWStopsButton.Text = "Update Thresholds";
-            this.UpdateSWStopsButton.UseVisualStyleBackColor = true;
-            this.UpdateSWStopsButton.Click += new System.EventHandler(this.UpdateSWStopsButton_Click);
+            this.UpdateThresholdsButton.Location = new System.Drawing.Point(89, 103);
+            this.UpdateThresholdsButton.Name = "UpdateThresholdsButton";
+            this.UpdateThresholdsButton.Size = new System.Drawing.Size(116, 20);
+            this.UpdateThresholdsButton.TabIndex = 2;
+            this.UpdateThresholdsButton.Text = "Update Thresholds";
+            this.UpdateThresholdsButton.UseVisualStyleBackColor = true;
+            this.UpdateThresholdsButton.Click += new System.EventHandler(this.UpdateThresholdsButton_Click);
             // 
             // txtLowerSWStopsLimit
             // 
             this.txtLowerSWStopsLimit.AccessibleName = "SoftwareStopLowerLimitText";
-            this.txtLowerSWStopsLimit.Location = new System.Drawing.Point(228, 22);
+            this.txtLowerSWStopsLimit.Location = new System.Drawing.Point(228, 24);
             this.txtLowerSWStopsLimit.Name = "txtLowerSWStopsLimit";
             this.txtLowerSWStopsLimit.Size = new System.Drawing.Size(60, 20);
             this.txtLowerSWStopsLimit.TabIndex = 1;
@@ -2328,7 +2384,7 @@
             // txtUpperSWStopsLimit
             // 
             this.txtUpperSWStopsLimit.AccessibleName = "SoftwareStopUpperLimitText";
-            this.txtUpperSWStopsLimit.Location = new System.Drawing.Point(157, 22);
+            this.txtUpperSWStopsLimit.Location = new System.Drawing.Point(157, 24);
             this.txtUpperSWStopsLimit.Name = "txtUpperSWStopsLimit";
             this.txtUpperSWStopsLimit.Size = new System.Drawing.Size(60, 20);
             this.txtUpperSWStopsLimit.TabIndex = 0;
@@ -2850,56 +2906,6 @@
             this.consoleLogBox.Size = new System.Drawing.Size(631, 494);
             this.consoleLogBox.TabIndex = 0;
             // 
-            // lblUpper
-            // 
-            this.lblUpper.AutoSize = true;
-            this.lblUpper.Location = new System.Drawing.Point(168, 6);
-            this.lblUpper.Name = "lblUpper";
-            this.lblUpper.Size = new System.Drawing.Size(36, 13);
-            this.lblUpper.TabIndex = 9;
-            this.lblUpper.Text = "Upper";
-            // 
-            // lblLower
-            // 
-            this.lblLower.AutoSize = true;
-            this.lblLower.Location = new System.Drawing.Point(239, 6);
-            this.lblLower.Name = "lblLower";
-            this.lblLower.Size = new System.Drawing.Size(36, 13);
-            this.lblLower.TabIndex = 10;
-            this.lblLower.Text = "Lower";
-            // 
-            // txtLowerTempLimit
-            // 
-            this.txtLowerTempLimit.AccessibleName = "SoftwareStopLowerLimitText";
-            this.txtLowerTempLimit.Location = new System.Drawing.Point(228, 49);
-            this.txtLowerTempLimit.Name = "txtLowerTempLimit";
-            this.txtLowerTempLimit.Size = new System.Drawing.Size(60, 20);
-            this.txtLowerTempLimit.TabIndex = 12;
-            // 
-            // txtUpperTempLimit
-            // 
-            this.txtUpperTempLimit.AccessibleName = "SoftwareStopUpperLimitText";
-            this.txtUpperTempLimit.Location = new System.Drawing.Point(157, 49);
-            this.txtUpperTempLimit.Name = "txtUpperTempLimit";
-            this.txtUpperTempLimit.Size = new System.Drawing.Size(60, 20);
-            this.txtUpperTempLimit.TabIndex = 11;
-            // 
-            // txtLowerHumidLimit
-            // 
-            this.txtLowerHumidLimit.AccessibleName = "SoftwareStopLowerLimitText";
-            this.txtLowerHumidLimit.Location = new System.Drawing.Point(228, 76);
-            this.txtLowerHumidLimit.Name = "txtLowerHumidLimit";
-            this.txtLowerHumidLimit.Size = new System.Drawing.Size(60, 20);
-            this.txtLowerHumidLimit.TabIndex = 14;
-            // 
-            // txtUpperHumidLimit
-            // 
-            this.txtUpperHumidLimit.AccessibleName = "SoftwareStopUpperLimitText";
-            this.txtUpperHumidLimit.Location = new System.Drawing.Point(157, 76);
-            this.txtUpperHumidLimit.Name = "txtUpperHumidLimit";
-            this.txtUpperHumidLimit.Size = new System.Drawing.Size(60, 20);
-            this.txtUpperHumidLimit.TabIndex = 13;
-            // 
             // DiagnosticsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -3186,10 +3192,10 @@
         private System.Windows.Forms.Label label26;
         private System.Windows.Forms.TextBox txtLowerSWStopsLimit;
         private System.Windows.Forms.TextBox txtUpperSWStopsLimit;
-        private System.Windows.Forms.Button UpdateSWStopsButton;
+        private System.Windows.Forms.Button UpdateThresholdsButton;
         private System.Windows.Forms.Label lblSWStop;
-        private System.Windows.Forms.ToolTip UpperLimitToolTip;
-        private System.Windows.Forms.ToolTip LowerLimitToolTip;
+        private System.Windows.Forms.ToolTip UpperSWStopsValidation;
+        private System.Windows.Forms.ToolTip LowerSWStopsValidation;
         private System.Windows.Forms.GroupBox grpAmbTempHumid;
         private System.Windows.Forms.Label lblAmbientTempUnit;
         private System.Windows.Forms.Label lblAmbientHumidityUnit;
@@ -3211,5 +3217,7 @@
         private System.Windows.Forms.TextBox txtUpperTempLimit;
         private System.Windows.Forms.Label lblLower;
         private System.Windows.Forms.Label lblUpper;
+        private System.Windows.Forms.ToolTip AmbTempValidation;
+        private System.Windows.Forms.ToolTip AmbHumidValidation;
     }
 }

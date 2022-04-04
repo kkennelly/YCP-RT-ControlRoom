@@ -38,10 +38,10 @@ namespace ControlRoomApplication.Controllers
         private double MaxElTempThreshold;
         private double MaxAzTempThreshold;
 
-        private double MinAmbientTempThreshold;
-        private double MaxAmbientTempThreshold;
-        private double MinAmbientHumidityThreshold;
-        private double MaxAmbientHumidityThreshold;
+        public double MinAmbientTempThreshold { get; set; }
+        public double MaxAmbientTempThreshold { get; set; }
+        public double MinAmbientHumidityThreshold { get; set; }
+        public double MaxAmbientHumidityThreshold { get; set; }
 
         // Previous snow dump azimuth -- we need to keep track of this in order to add 45 degrees each time we dump
         private double previousSnowDumpAzimuth;

@@ -787,5 +787,46 @@ namespace ControlRoomApplicationTest.DatabaseOperationsTests
             status = DatabaseOperations.GetSensorStatusData();
             Assert.AreEqual(status.gate, (SByte)SensorStatusEnum.NORMAL);
         }
+
+        [TestMethod]
+        public void TestUpdateSensorThreshold_ChangeAllFields()
+        {
+            ThresholdValues original = new ThresholdValues();
+
+            // Save original threshold
+            double upper = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.AMBIENT_TEMP);
+            double lower = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.AMBIENT_TEMP, false);
+
+            original.minValue = (float)lower;
+            original.maxValue = (float)upper;
+            original.sensor_name = SensorItemEnum.AMBIENT_TEMP.ToString();
+
+            ThresholdValues changed = new ThresholdValues();
+            changed.minValue = 20;
+            changed.maxValue = 50;
+            changed.sensor_name = SensorItemEnum.AMBIENT_TEMP.ToString();
+
+            // Update threshold
+            DatabaseOperations.UpdateSensorThreshold(changed);
+
+            Assert.AreEqual(DatabaseOperations.GetThresholdForSensor(SensorItemEnum.AMBIENT_TEMP), changed.maxValue);
+            Assert.AreEqual(DatabaseOperations.GetThresholdForSensor(SensorItemEnum.AMBIENT_TEMP, false), changed.minValue);
+
+            // Revert threshold
+            DatabaseOperations.UpdateSensorThreshold(original);
+        }
+
+        [TestMethod]
+        public void TestUpdateSensorThreshold_IdDoesntExist()
+        {
+            ThresholdValues invalidThreshold = new ThresholdValues();
+            
+            // Give the threshold a sensor name that will never exist
+            invalidThreshold.sensor_name = SensorItemEnum.GATE.ToString();
+
+            Assert.ThrowsException<InvalidOperationException>(() =>
+                DatabaseOperations.UpdateSensorThreshold(invalidThreshold)
+            );
+        }
     }
 }

@@ -1208,29 +1208,33 @@ namespace ControlRoomApplication.Controllers
         {
             SensorNetwork.SensorNetworkServer sn = RadioTelescope.SensorNetworkServer;
 
-            // If the fan is on, check to see if it needs to be turned off
-            if (sn.FanIsOn)
+            // If ambient temperature and humidity are overriden, simply leave the fan state as is
+            if (!overrides.overrideAmbientTempHumidity)
             {
-                // Temp is below the lower threshold and either the humidity reached below its threshold or the outside is too
-                // dew point is higher than the inside temp, which means the telescope is warming up and humidity will lower.
-                // Bringing in hot air that has a dew point higher than the inside temp will cause condensation
-                if (sn.CurrentElevationAmbientTemp[0].temp < MinAmbientTempThreshold &&
-                    (sn.CurrentElevationAmbientHumidity[0].HumidityReading < MinAmbientHumidityThreshold ||
-                    sn.CurrentElevationAmbientTemp[0].temp <= RadioTelescope.WeatherStation.GetDewPoint()))
+                // If the fan is on, check to see if it needs to be turned off
+                if (sn.FanIsOn)
                 {
-                    return false;
+                    // Temp is below the lower threshold and either the humidity reached below its threshold or the outside is too
+                    // dew point is higher than the inside temp, which means the telescope is warming up and humidity will lower.
+                    // Bringing in hot air that has a dew point higher than the inside temp will cause condensation
+                    if (sn.CurrentElevationAmbientTemp[0].temp < MinAmbientTempThreshold &&
+                        (sn.CurrentElevationAmbientHumidity[0].HumidityReading < MinAmbientHumidityThreshold ||
+                        sn.CurrentElevationAmbientTemp[0].temp <= RadioTelescope.WeatherStation.GetDewPoint()))
+                    {
+                        return false;
+                    }
                 }
-            }
-            // The fan is off, so check if it needs to be turned on
-            else
-            {
-                // Temp is passed the upper threshold, or the humiditity is passed the upper threshold and the outside air is cooler,
-                // which means the telescope is cooling down and outside air needs to be brought in to avoid condinsation
-                if (sn.CurrentElevationAmbientTemp[0].temp >= MaxAmbientTempThreshold ||
-                    sn.CurrentElevationAmbientHumidity[0].HumidityReading >= MaxAmbientHumidityThreshold &&
-                    sn.CurrentElevationAmbientTemp[0].temp >= RadioTelescope.WeatherStation.GetOutsideTemp())
+                // The fan is off, so check if it needs to be turned on
+                else
                 {
-                    return true;
+                    // Temp is passed the upper threshold, or the humiditity is passed the upper threshold and the outside air is cooler,
+                    // which means the telescope is cooling down and outside air needs to be brought in to avoid condinsation
+                    if (sn.CurrentElevationAmbientTemp[0].temp >= MaxAmbientTempThreshold ||
+                        sn.CurrentElevationAmbientHumidity[0].HumidityReading >= MaxAmbientHumidityThreshold &&
+                        sn.CurrentElevationAmbientTemp[0].temp >= RadioTelescope.WeatherStation.GetOutsideTemp())
+                    {
+                        return true;
+                    }
                 }
             }
 

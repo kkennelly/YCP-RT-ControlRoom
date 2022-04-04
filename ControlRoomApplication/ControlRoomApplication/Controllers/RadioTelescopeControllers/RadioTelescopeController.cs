@@ -887,7 +887,11 @@ namespace ControlRoomApplication.Controllers
                 // Run the software-stop routine
                 CheckAndRunSoftwareStops();
 
-                RadioTelescope.SensorNetworkServer.SetFanOnOrOff = DetermineFanState();
+                // If ambient temperature and humidity are overriden, simply leave the fan state as is
+                if (!overrides.overrideAmbientTempHumidity)
+                {
+                    RadioTelescope.SensorNetworkServer.SetFanOnOrOff = DetermineFanState();
+                }
                 
                 Thread.Sleep(100);
             }
@@ -1208,33 +1212,29 @@ namespace ControlRoomApplication.Controllers
         {
             SensorNetwork.SensorNetworkServer sn = RadioTelescope.SensorNetworkServer;
 
-            // If ambient temperature and humidity are overriden, simply leave the fan state as is
-            if (!overrides.overrideAmbientTempHumidity)
+            // If the fan is on, check to see if it needs to be turned off
+            if (sn.FanIsOn)
             {
-                // If the fan is on, check to see if it needs to be turned off
-                if (sn.FanIsOn)
+                // Temp is below the lower threshold and either the humidity reached below its threshold or the outside is too
+                // dew point is higher than the inside temp, which means the telescope is warming up and humidity will lower.
+                // Bringing in hot air that has a dew point higher than the inside temp will cause condensation
+                if (sn.CurrentElevationAmbientTemp[0].temp < MinAmbientTempThreshold &&
+                    (sn.CurrentElevationAmbientHumidity[0].HumidityReading < MinAmbientHumidityThreshold ||
+                    sn.CurrentElevationAmbientTemp[0].temp <= RadioTelescope.WeatherStation.GetDewPoint()))
                 {
-                    // Temp is below the lower threshold and either the humidity reached below its threshold or the outside is too
-                    // dew point is higher than the inside temp, which means the telescope is warming up and humidity will lower.
-                    // Bringing in hot air that has a dew point higher than the inside temp will cause condensation
-                    if (sn.CurrentElevationAmbientTemp[0].temp < MinAmbientTempThreshold &&
-                        (sn.CurrentElevationAmbientHumidity[0].HumidityReading < MinAmbientHumidityThreshold ||
-                        sn.CurrentElevationAmbientTemp[0].temp <= RadioTelescope.WeatherStation.GetDewPoint()))
-                    {
-                        return false;
-                    }
+                    return false;
                 }
-                // The fan is off, so check if it needs to be turned on
-                else
+            }
+            // The fan is off, so check if it needs to be turned on
+            else
+            {
+                // Temp is passed the upper threshold, or the humiditity is passed the upper threshold and the outside air is cooler,
+                // which means the telescope is cooling down and outside air needs to be brought in to avoid condinsation
+                if (sn.CurrentElevationAmbientTemp[0].temp >= MaxAmbientTempThreshold ||
+                    sn.CurrentElevationAmbientHumidity[0].HumidityReading >= MaxAmbientHumidityThreshold &&
+                    sn.CurrentElevationAmbientTemp[0].temp >= RadioTelescope.WeatherStation.GetOutsideTemp())
                 {
-                    // Temp is passed the upper threshold, or the humiditity is passed the upper threshold and the outside air is cooler,
-                    // which means the telescope is cooling down and outside air needs to be brought in to avoid condinsation
-                    if (sn.CurrentElevationAmbientTemp[0].temp >= MaxAmbientTempThreshold ||
-                        sn.CurrentElevationAmbientHumidity[0].HumidityReading >= MaxAmbientHumidityThreshold &&
-                        sn.CurrentElevationAmbientTemp[0].temp >= RadioTelescope.WeatherStation.GetOutsideTemp())
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
 

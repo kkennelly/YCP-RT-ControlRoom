@@ -541,6 +541,17 @@ namespace ControlRoomApplication.GUI
             // Display errors
             lblMCUErrors.Text = errors;
 
+            // Fan state
+            if (rtController.RadioTelescope.SensorNetworkServer.FanIsOn)
+            {
+                lblFanStatus.Text = "On";
+
+            }
+            else
+            {
+                lblFanStatus.Text = "Off";
+            }
+
             // Console Log Output Update
             consoleLogBox.Text = mainF.log.loggerQueue;
 
@@ -1607,6 +1618,12 @@ namespace ControlRoomApplication.GUI
         private void txtLowerHumidLimit_TextChanged(object sender, EventArgs e)
         {
             ValidateAmbHumidityLimit();
+        }
+
+        private void btnToggleFan_Click(object sender, EventArgs e)
+        {
+            bool fanIsOn = rtController.RadioTelescope.SensorNetworkServer.FanIsOn;
+            rtController.RadioTelescope.SensorNetworkServer.SetFanOnOrOff = !fanIsOn;
         }
     }
 }

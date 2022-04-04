@@ -576,6 +576,9 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
                 // TODO: Parse errors here. You will need to add the errors to the SensorStatuses object (issue #353)
             };
 
+            // Update fan status
+            FanIsOn = statuses[9];
+
             return s;
         }
 

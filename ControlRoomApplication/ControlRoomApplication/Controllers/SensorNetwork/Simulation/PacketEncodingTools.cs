@@ -27,8 +27,9 @@ namespace EmbeddedSystemsTest.SensorNetworkSimulation
         /// <param name="ambHumidity">Array of ambient humidity samples.</param>
         /// <param name="statuses">All the sensor statuses and errors that come from the sensor network.</param>
         /// <param name="connectionTimeStamp">The time the sensor network connected to the control room. Used to generate simulated acceleration time captures</param>
+        /// <param name="FanIsOn">Whether or not the fan is on or off.</param>
         /// <returns></returns>
-        public static byte[] ConvertDataArraysToBytes(RawAccelerometerData[] elAccl, RawAccelerometerData[] azAccl, RawAccelerometerData[] cbAccl, double[] elTemps, double[] azTemps, double[] elEnc, double[] azEnc, float[] ambTemp, float[] ambHumidity, SensorStatuses statuses, long connectionTimeStamp)
+        public static byte[] ConvertDataArraysToBytes(RawAccelerometerData[] elAccl, RawAccelerometerData[] azAccl, RawAccelerometerData[] cbAccl, double[] elTemps, double[] azTemps, double[] elEnc, double[] azEnc, float[] ambTemp, float[] ambHumidity, SensorStatuses statuses, long connectionTimeStamp, bool FanIsOn)
         {
             uint dataSize = CalcDataSize(elAccl.Length, azAccl.Length, cbAccl.Length, elTemps.Length, azTemps.Length, elEnc.Length, azEnc.Length, ambTemp.Length, ambHumidity.Length);
 
@@ -73,6 +74,7 @@ namespace EmbeddedSystemsTest.SensorNetworkSimulation
                 statuses.AzimuthTemperature1Status == SensorNetworkSensorStatus.Okay,
                 statuses.AzimuthTemperature2Status == SensorNetworkSensorStatus.Okay,
                 statuses.AzimuthAbsoluteEncoderStatus == SensorNetworkSensorStatus.Okay,
+                FanIsOn,
                 statuses.ElevationAmbientStatus == SensorNetworkSensorStatus.Okay
             };
 

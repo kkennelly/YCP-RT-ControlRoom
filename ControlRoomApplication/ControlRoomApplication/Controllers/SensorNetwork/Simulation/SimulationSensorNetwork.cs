@@ -72,6 +72,8 @@ namespace ControlRoomApplication.Controllers.SensorNetwork.Simulation
 
         private long ConnectionTimeStamp { get; set; }
 
+        private bool FanOn { get; set; }
+
         /// <summary>
         /// This is used to start the simulation Sensor Network. Calling this is equivalent to powering on the Teensy.
         /// </summary>
@@ -160,7 +162,8 @@ namespace ControlRoomApplication.Controllers.SensorNetwork.Simulation
                     subArrays.AmbientTemps,
                     subArrays.AmbientHumidity,
                     statuses,
-                    ConnectionTimeStamp
+                    ConnectionTimeStamp,
+                    FanOn
                 );
 
                 // We have to check for CurrentlyRunning down here because we don't know when the connection is going to be terminated, and
@@ -171,6 +174,10 @@ namespace ControlRoomApplication.Controllers.SensorNetwork.Simulation
                     {
                         // Send arrays
                         ClientStream.Write(dataToSend, 0, dataToSend.Length);
+
+                        // Read fan byte
+                        FanOn = (ClientStream.ReadByte() != 0);
+
                         Thread.Sleep(SensorNetworkConstants.DataSendingInterval);
                     }
                     // This will be reached if the connection is unexpectedly terminated (like it is during sensor reinitialization)

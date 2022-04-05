@@ -186,9 +186,7 @@ namespace ControlRoomApplication.Controllers
 
                 if (NextAppointment != null)
                 {
-                    // HOME TELESCOPE HERE IF HASN'T BEEN HOMED
-
-                    // CALIBRATE HERE 
+                    // GET NEXT APPT DATA if < 5 minutes ago, then don't calibrate 
 
                     logger.Info(Utilities.GetTimeStamp() + ": Starting appointment...");
                     endAppt = false;

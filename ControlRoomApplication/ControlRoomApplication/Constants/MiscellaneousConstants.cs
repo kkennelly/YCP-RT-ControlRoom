@@ -59,11 +59,9 @@ namespace ControlRoomApplication.Constants
         /// </summary>
         public static readonly int MAX_ATTEMPTS = 9;
 
-
-
-
-
-
-
+        /// <summary>
+        /// The amount of time (ms) that we want to run the spectra cyber scan for during calibration 
+        /// </summary>
+        public static readonly int CALIBRATION_MS = 5000;
     }
 }

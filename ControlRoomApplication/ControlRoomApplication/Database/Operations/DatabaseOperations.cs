@@ -417,6 +417,18 @@ namespace ControlRoomApplication.Database
             }
         }
 
+        /// <summary>
+        /// Creates and stores the appointment calibration data (timestamps and when the calibration is performed in relation to the appointment)
+        /// </summary>
+        /// <param name="appointmentCalibration">Name of appointment calibration data to be stored in the db</param>
+        public static void AddAppointmentCalibrationData(AppointmentCalibration appointmentCalibration)
+        {
+            using (RTDbContext Context = InitializeDatabaseContext())
+            {
+                Context.AppointmentCalibrations.Add(appointmentCalibration);
+            }
+        }
+
         public static int GetTotalRFDataCount()
         {
             int count = -1;

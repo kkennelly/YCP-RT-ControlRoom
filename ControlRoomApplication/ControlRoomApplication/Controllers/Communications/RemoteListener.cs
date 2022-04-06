@@ -811,7 +811,7 @@ namespace ControlRoomApplication.Controllers
             }
             catch(Exception e)
             {
-                logger.Error("An error occured when attempting to write back to the client: " + e.Message);
+                logger.Error("An error occurred when attempting to write back to the client: " + e.Message);
             }
         }
 
@@ -922,7 +922,28 @@ namespace ControlRoomApplication.Controllers
             // Send back MCU data if TCP version is 1.1 or greater 
             if (versionNum >= 1.1)
             {
-                sendBack += " | BIT_FLIPPED: " + Convert.ToString(rtController.RadioTelescope.PLCDriver.CheckMCUErrors().Count > 0).ToUpper();
+                //Added priority to determine frequency of client requests 
+                string currentMovementPriority = rtController.RadioTelescope.PLCDriver.CurrentMovementPriority.ToString();
+
+                //Gathers all weather data to be append to a request string 
+                string windSpeed = rtController.RadioTelescope.WeatherStation.GetWindSpeed().ToString();
+                string windDirection = rtController.RadioTelescope.WeatherStation.GetWindDirection().ToString();
+                string dailyRain = rtController.RadioTelescope.WeatherStation.GetDailyRain().ToString();
+                string rainRate = rtController.RadioTelescope.WeatherStation.GetRainRate().ToString();
+                string outsideTemp = rtController.RadioTelescope.WeatherStation.GetOutsideTemp().ToString();
+                string insideTemp = rtController.RadioTelescope.WeatherStation.GetInsideTemp().ToString();
+                string baromPressure = rtController.RadioTelescope.WeatherStation.GetBarometricPressure().ToString();
+                string dewPoint = rtController.RadioTelescope.WeatherStation.GetDewPoint().ToString();
+                string windChill = rtController.RadioTelescope.WeatherStation.GetDewPoint().ToString();
+                string outsideHumidity = rtController.RadioTelescope.WeatherStation.GetHumidity().ToString();
+                string totalRain = rtController.RadioTelescope.WeatherStation.GetTotalRain().ToString();
+                string monthlyRain = rtController.RadioTelescope.WeatherStation.GetMonthlyRain().ToString();
+                string heatIndex = rtController.RadioTelescope.WeatherStation.GetHeatIndex().ToString();
+
+                //Concatenates all weather data together using ? as a elimination symbol to allow the client to split easily 
+                string weatherDataString = windSpeed + "?" + windDirection + "?" + dailyRain + "?" + rainRate + "?" + outsideTemp + "?" + insideTemp + "?" + baromPressure + "?" + dewPoint + "?" + windChill + "?" + outsideHumidity + "?" + totalRain + "?" + monthlyRain + "?" + heatIndex;
+
+                sendBack += " | BIT_FLIPPED: " + Convert.ToString(rtController.RadioTelescope.PLCDriver.CheckMCUErrors().Count > 0).ToUpper() + " | " + "PRIORITY: " + currentMovementPriority + " | " + "WEATHER: " + weatherDataString;
             }
 
             return sendBack;

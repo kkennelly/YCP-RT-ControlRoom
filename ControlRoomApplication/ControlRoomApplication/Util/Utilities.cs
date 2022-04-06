@@ -18,6 +18,9 @@ namespace ControlRoomApplication.Util
     {
         public static object timeZoneName;
 
+        private static readonly log4net.ILog logger =
+         log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         public static String GetTimeStamp()
         {
             string timeZone = string.Empty;
@@ -77,13 +80,22 @@ namespace ControlRoomApplication.Util
             bool encrypted = false;
             double versionNum;
 
-            if (Double.TryParse(data.Substring(0, data.IndexOf('|')), out versionNum) && versionNum >= 1.1)
+            try
             {
-                // Set the instances encrypted bool to true
-                encrypted = true;
+                if (Double.TryParse(data.Substring(0, data.IndexOf('|')), out versionNum) && versionNum >= 1.1)
+                {
+                    // Set the instances encrypted bool to true
+                    encrypted = true;
 
-                // Decrypt the command
-                data = AES.Decrypt(data.Substring(data.IndexOf('|') + 1), AESConstants.KEY, AESConstants.IV);
+                    // Decrypt the command
+                    data = AES.Decrypt(data.Substring(data.IndexOf('|') + 1), AESConstants.KEY, AESConstants.IV);
+                }
+            }
+            catch (Exception e)
+            {
+                // This exception will be thrown if data receievd is not a command (which is a possible security vulnerability) 
+                // In this case, if an exception is thrown, the data will be returned as is and will later be parsed as an invalid command 
+                logger.Debug(e.StackTrace);
             }
 
             return new Tuple<string, bool>(data, encrypted);

@@ -180,21 +180,25 @@ namespace ControlRoomApplication.Entities
         /// <summary>
         /// How often the ms timer will go off on the ESS.
         /// </summary>
+        [Column("timer_period")]
         public int TimerPeriod { get; set; }
 
         /// <summary>
         /// How often the ESS will send the main packet to us.
         /// </summary>
+        [Column("ethernet_period")]
         public int EthernetPeriod { get; set; }
 
         /// <summary>
         /// How often temperature data will be collected.
         /// </summary>
+        [Column("temperature_period")]
         public int TemperaturePeriod { get; set; }
 
         /// <summary>
         /// How often the absolute encoders will be read and data sent to us.
         /// </summary>
+        [Column("encoder_period")]
         public int EncoderPeriod { get; set; }
 
         [NotMapped]

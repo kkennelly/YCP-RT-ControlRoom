@@ -201,8 +201,8 @@ namespace ControlRoomApplication.Controllers
                     if (NextAppointment._Type != AppointmentTypeEnum.FREE_CONTROL)
                     {
                         logger.Info(Utilities.GetTimeStamp() + ": Thermal Calibrating RadioTelescope");
-
-                        RTController.ThermalCalibrateRadioTelescope(MovementPriority.Appointment);
+                        
+                        RTController.ThermalCalibrateRadioTelescope(MovementPriority.Appointment, NextAppointment);
 
                         // If the temperature is low and there's precipitation, dump the dish
                         if (RTController.RadioTelescope.WeatherStation.GetOutsideTemp() <= 40.00 && RTController.RadioTelescope.WeatherStation.GetTotalRain() > 0.00)

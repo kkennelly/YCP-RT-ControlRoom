@@ -84,7 +84,6 @@ namespace ControlRoomApplication.Controllers
             snowDumpTimer.Enabled = true;
 
             spectraCyberTimer = new System.Timers.Timer(MiscellaneousConstants.CALIBRATION_MS);
-            spectraCyberTimer.Elapsed += new ElapsedEventHandler(SpectraCyberTimerElapsed);
             spectraCyberTimerEnd = false;
         }
 
@@ -202,7 +201,7 @@ namespace ControlRoomApplication.Controllers
         /// in this may or may not work, it depends on if the derived
         /// AbstractRadioTelescope class has implemented it.
         /// </summary>
-        public MovementResult ThermalCalibrateRadioTelescope(MovementPriority priority)
+        public MovementResult ThermalCalibrateRadioTelescope(MovementPriority priority, Appointment appt)
         {
             MovementResult moveResult = MovementResult.None;
 
@@ -234,18 +233,11 @@ namespace ControlRoomApplication.Controllers
                 // temporarily set spectracyber mode to continuum
                 RadioTelescope.SpectraCyberController.SetSpectraCyberModeType(SpectraCyberModeTypeEnum.CONTINUUM);
 
-                // read data
-
-                SpectraCyberResponse response = RadioTelescope.SpectraCyberController.DoSpectraCyberScan();
-
-                spectraCyberTimer.Start();      // Start the timer for spectra cyber to scan for five seconds 
-
-                while (!spectraCyberTimerEnd)
-                {
-                    response = RadioTelescope.SpectraCyberController.DoSpectraCyberScan();
-                }
-
-                RFData rfResponse = RFData.GenerateFrom(response);
+                // Read the calibration data for the specified duration. The spectracyber scan runs in it's own thread, so calling Thread.Sleep() after
+                // starting the scan will allow us to read the data for as long as we specify 
+                RadioTelescope.SpectraCyberController.StartScan(appt);
+                Thread.Sleep(MiscellaneousConstants.CALIBRATION_MS);
+                RadioTelescope.SpectraCyberController.StopScan();
 
                 // move back to previous location
                 moveResult = RadioTelescope.PLCDriver.MoveToOrientation(current, MiscellaneousConstants.THERMAL_CALIBRATION_ORIENTATION);
@@ -257,6 +249,7 @@ namespace ControlRoomApplication.Controllers
                     return moveResult;
                 }
 
+                /*
                 // analyze data
                 // temperature (Kelvin) = (intensity * time * wein's displacement constant) / (Planck's constant * speed of light)
                 double weinConstant = 2.8977729;
@@ -283,6 +276,7 @@ namespace ControlRoomApplication.Controllers
 
                 RadioTelescope.SpectraCyberController.StopScan();
                 Monitor.Exit(MovementLock);
+                */
             }
             else
             {
@@ -1027,11 +1021,6 @@ namespace ControlRoomApplication.Controllers
                 }
 
             }
-        }
-
-        private void SpectraCyberTimerElapsed(Object sender, ElapsedEventArgs e)
-        {
-            spectraCyberTimerEnd = true;
         }
 
         /// <summary>

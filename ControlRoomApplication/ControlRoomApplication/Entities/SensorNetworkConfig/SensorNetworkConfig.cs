@@ -37,6 +37,15 @@ namespace ControlRoomApplication.Entities
             CounterbalanceAccelerometerInit = true;
             AzimuthEncoderInit = true;
             ElevationEncoderInit = true;
+
+            TimerPeriod = SensorNetworkConstants.DefaultTimerInterruptInterval;
+            EthernetPeriod = SensorNetworkConstants.DefaultDataSendingInterval;
+            TemperaturePeriod = SensorNetworkConstants.DefaultTemperaturereadingInterval;
+            EncoderPeriod = SensorNetworkConstants.DefaultEncoderSendingInterval;
+
+            ElAccelConfig = new AccelerometerConfig(Id, (int)SensorLocationEnum.EL_MOTOR);
+            AzAccelConfig = new AccelerometerConfig(Id, (int)SensorLocationEnum.AZ_MOTOR);
+            CbAccelConfig = new AccelerometerConfig(Id, (int)SensorLocationEnum.COUNTERBALANCE);
         }
 
         /// <summary>
@@ -58,6 +67,15 @@ namespace ControlRoomApplication.Entities
             CounterbalanceAccelerometerInit = false;
             AzimuthEncoderInit = false;
             ElevationEncoderInit = false;
+
+            TimerPeriod = 0;
+            EthernetPeriod = 0;
+            TemperaturePeriod = 0;
+            EncoderPeriod = 0;
+
+            ElAccelConfig = new AccelerometerConfig();
+            AzAccelConfig = new AccelerometerConfig();
+            CbAccelConfig = new AccelerometerConfig();
         }
 
         /// <summary>
@@ -160,6 +178,35 @@ namespace ControlRoomApplication.Entities
         public int TimeoutInitialization { get; set; }
 
         /// <summary>
+        /// How often the ms timer will go off on the ESS.
+        /// </summary>
+        public int TimerPeriod { get; set; }
+
+        /// <summary>
+        /// How often the ESS will send the main packet to us.
+        /// </summary>
+        public int EthernetPeriod { get; set; }
+
+        /// <summary>
+        /// How often temperature data will be collected.
+        /// </summary>
+        public int TemperaturePeriod { get; set; }
+
+        /// <summary>
+        /// How often the absolute encoders will be read and data sent to us.
+        /// </summary>
+        public int EncoderPeriod { get; set; }
+
+        [NotMapped]
+        public AccelerometerConfig ElAccelConfig { get; set; }
+
+        [NotMapped]
+        public AccelerometerConfig AzAccelConfig { get; set; }
+
+        [NotMapped]
+        public AccelerometerConfig CbAccelConfig { get; set; }
+
+        /// <summary>
         /// This will check if two SensorNetworkConfigs are identical or not
         /// </summary>
         /// <param name="other">The SensorNetworkConfig to compare against</param>
@@ -182,7 +229,11 @@ namespace ControlRoomApplication.Entities
                 this.AzimuthEncoderInit == other.AzimuthEncoderInit &&
                 this.ElevationEncoderInit == other.ElevationEncoderInit &&
                 this.TimeoutDataRetrieval == other.TimeoutDataRetrieval &&
-                this.TimeoutInitialization == other.TimeoutInitialization)
+                this.TimeoutInitialization == other.TimeoutInitialization &&
+                ElAccelConfig.Equals(other.ElAccelConfig) &&
+                AzAccelConfig.Equals(other.AzAccelConfig) &&
+                CbAccelConfig.Equals(other.CbAccelConfig)
+                )
             {
                 return true;
             }

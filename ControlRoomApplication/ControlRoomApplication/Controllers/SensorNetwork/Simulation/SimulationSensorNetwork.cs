@@ -178,7 +178,7 @@ namespace ControlRoomApplication.Controllers.SensorNetwork.Simulation
                         // Read fan byte
                         FanOn = (ClientStream.ReadByte() != 0);
 
-                        Thread.Sleep(SensorNetworkConstants.DataSendingInterval);
+                        Thread.Sleep(SensorNetworkConstants.DefaultDataSendingInterval);
                     }
                     // This will be reached if the connection is unexpectedly terminated (like it is during sensor reinitialization)
                     catch

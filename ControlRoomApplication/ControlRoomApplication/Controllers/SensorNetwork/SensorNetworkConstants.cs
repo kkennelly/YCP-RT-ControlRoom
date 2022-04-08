@@ -22,12 +22,27 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
         public const double AzimuthEncoderScaling = 2047;
         
         /// <summary>
-        /// This is the approximate interval at which the SensorNetworkServer expects to receive
+        /// This is the default approximate interval at which the SensorNetworkServer expects to receive
         /// data from the Sensor Network. Because the transfer isn't perfect, there will be an additional
         /// ~50ms delay. For example, a 250ms interval will yield about a 300ms receive interval.
         /// This is also used in the SensorNetworkSimulation.
         /// </summary>
-        public const int DataSendingInterval = 250; // in milliseconds
+        public const int DefaultDataSendingInterval = 250; // in milliseconds
+        
+        /// <summary>
+        /// The default interval at which temperature data will be sampled on the Sensor Network.
+        /// </summary>
+        public const int DefaultTemperaturereadingInterval = 1000; // in milliseconds
+
+        /// <summary>
+        /// The default interval at which the absolute encoders will be sampled and sent from the Sensor Network.
+        /// </summary>
+        public const int DefaultEncoderSendingInterval = 20; // in milliseconds
+
+        /// <summary>
+        /// The default interval at which the timer will interrupt and increment the Sensor Network counters.
+        /// </summary>
+        public const int DefaultTimerInterruptInterval = 1; // in milliseconds
 
         /// <summary>
         /// This is the default data retrieval timeout when the user has run the telescope for the first time,
@@ -70,6 +85,41 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
         /// This is where our simulation CSV files are located. These files can be swapped out with each other.
         /// </summary>
         public const string SimCSVDirectory = "../../Controllers/SensorNetwork/Simulation/SimulationCSVData/";
+
+        /// <summary>
+        /// The default sampling frequency to be used by our accelerometers.
+        /// </summary>
+        public const double DefaultAccelSamplingFrequency = 800; // in Hz
+
+        /// <summary>
+        /// The default FIFO size to be used by our accelerometers.
+        /// </summary>
+        public const int DefaultAccelFIFOSize = 32;
+
+        /// <summary>
+        /// The default G-range to be used by our accelerometers.
+        /// </summary>
+        public const int DefaultAccelGRange = 16; // in G's
+
+        /// <summary>
+        /// The default x-axis offset to apply to our accelerometers.
+        /// </summary>
+        public const int DefaultAccelXOffset = 0;
+
+        /// <summary>
+        /// The default y-axis offset to apply to our accelerometers.
+        /// </summary>
+        public const int DefaultAccelYOffset = 0;
+
+        /// <summary>
+        /// The default z-axis offset to apply to our accelerometers.
+        /// </summary>
+        public const int DefaultAccelZOffset = 0;
+
+        /// <summary>
+        /// The default Full Bit Resolution setting to be used by our accelerometers.
+        /// </summary>
+        public const bool DefaultAccelFullBitResolution = true;
 
         /// <summary>
         /// This is the FIFO size used by the azimuth motor accelerometer

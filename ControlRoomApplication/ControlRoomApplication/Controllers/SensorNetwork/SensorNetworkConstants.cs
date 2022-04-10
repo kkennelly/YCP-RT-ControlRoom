@@ -122,6 +122,16 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
         public const bool DefaultAccelFullBitResolution = true;
 
         /// <summary>
+        /// The maximum offset that can be applied to the accelerometers. The accelerometer offsets are 8-bit signed registers
+        /// </summary>
+        public const int MaxAccelOffset = 127;
+
+        /// <summary>
+        /// The minimum offset that can be applied to the accelerometers. The accelerometer offsets are 8-bit signed registers
+        /// </summary>
+        public const int MinAccelOffset = -128;
+
+        /// <summary>
         /// This is the FIFO size used by the azimuth motor accelerometer
         /// </summary>
         public const int AzAccelFIFOSize = 32;

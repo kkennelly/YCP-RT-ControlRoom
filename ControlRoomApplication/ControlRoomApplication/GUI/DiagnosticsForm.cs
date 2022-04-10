@@ -92,6 +92,12 @@ namespace ControlRoomApplication.GUI
         bool AmbTempLimitsValid;
         bool AmbHumidLimitsValid;
 
+        // Validation for sensor network configuration
+        bool XOffsetValid;
+        bool YOffsetValid;
+        bool ZOffsetValid;
+        bool PeriodValid;
+
         private int rtId;
 
         private Acceleration[] azOld;
@@ -178,7 +184,8 @@ namespace ControlRoomApplication.GUI
             comboAccelLocation.SelectedIndex = 0;
             comboTimingSelect.SelectedIndex = 0;
 
-            UpdateSensorNetworkConfigFields();
+            UpdateAccelConfigFields();
+            UpdatePeriodConfigField();
 
             AzimuthTemperature1.Checked = SensorNetworkConfig.AzimuthTemp1Init;
             ElevationTemperature1.Checked = SensorNetworkConfig.ElevationTemp1Init;
@@ -1448,7 +1455,7 @@ namespace ControlRoomApplication.GUI
                 InitTimeoutValidation.Hide(lblInitTimeout);
 
                 // If the other tooltip is not in error, the button may be clicked
-                if (DataTimeoutValid) UpdateSensorInitiliazation.Enabled = true;
+                if (DataTimeoutValid && XOffsetValid && YOffsetValid && ZOffsetValid && PeriodValid) UpdateSensorInitiliazation.Enabled = true;
             }
             else
             {
@@ -1700,7 +1707,7 @@ namespace ControlRoomApplication.GUI
             rtController.RadioTelescope.SensorNetworkServer.SetFanOnOrOff = !fanIsOn;
         }
 
-        private void UpdateSensorNetworkConfigFields()
+        private void UpdateAccelConfigFields()
         {
             int index = comboAccelLocation.SelectedIndex;
             AccelerometerConfig accelConfig;
@@ -1737,7 +1744,12 @@ namespace ControlRoomApplication.GUI
             txtZ.Text = accelConfig.ZOffset.ToString();
             chkBitResolution.Checked = accelConfig.FullBitResolution;
 
-            index = comboTimingSelect.SelectedIndex;
+            
+        }
+
+        private void UpdatePeriodConfigField()
+        {
+            int index = comboTimingSelect.SelectedIndex;
 
             // Get selected period and update 
             switch (index)
@@ -1803,75 +1815,11 @@ namespace ControlRoomApplication.GUI
             accelConfig.YOffset = int.Parse(txtY.Text);
             accelConfig.ZOffset = int.Parse(txtZ.Text);
             accelConfig.FullBitResolution = chkBitResolution.Checked;
-
-            index = comboTimingSelect.SelectedIndex;
-
-            // Get selected period and update 
-            switch (index)
-            {
-                // Timer
-                case 0:
-                    SensorNetworkConfig.TimerPeriod = int.Parse(txtPeriod.Text);
-                    break;
-
-                // Ethernet
-                case 1:
-                    SensorNetworkConfig.EthernetPeriod = int.Parse(txtPeriod.Text);
-                    break;
-
-                // Temperature
-                case 2:
-                    SensorNetworkConfig.TemperaturePeriod = int.Parse(txtPeriod.Text);
-                    break;
-
-                // Encoder
-                case 3:
-                    SensorNetworkConfig.EncoderPeriod = int.Parse(txtPeriod.Text);
-                    break;
-
-                // Invalid index
-                default:
-                    return;
-            }
         }
 
         private void comboTimingSelect_Click(object sender, EventArgs e)
         {
-            int index = comboAccelLocation.SelectedIndex;
-            AccelerometerConfig accelConfig;
-            // Pick selected accelerometer
-            switch (index)
-            {
-                // Counterbalance Accelerometer
-                case 0:
-                    accelConfig = SensorNetworkConfig.CbAccelConfig;
-                    break;
-
-                // Elevation Accelerometer
-                case 1:
-                    accelConfig = SensorNetworkConfig.ElAccelConfig;
-                    break;
-
-                // Azimuth Accelerometer
-                case 2:
-                    accelConfig = SensorNetworkConfig.AzAccelConfig;
-                    break;
-
-                // Invalid index
-                default:
-                    return;
-            }
-
-            // Update the accelerometer config for the active accelerometer (the other accelerometer configs would have already been updated at this point)
-            accelConfig.SamplingFrequency = double.Parse(comboSamplingSpeed.Text);
-            accelConfig.GRange = int.Parse(comboGRange.Text.Substring(1));
-            accelConfig.FIFOSize = (int)numFIFOSize.Value;
-            accelConfig.XOffset = int.Parse(txtX.Text);
-            accelConfig.YOffset = int.Parse(txtY.Text);
-            accelConfig.ZOffset = int.Parse(txtZ.Text);
-            accelConfig.FullBitResolution = chkBitResolution.Checked;
-
-            index = comboTimingSelect.SelectedIndex;
+            int index = comboTimingSelect.SelectedIndex;
 
             // Get selected period and update 
             switch (index)
@@ -1904,12 +1852,124 @@ namespace ControlRoomApplication.GUI
 
         private void comboAccelLocation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            UpdateSensorNetworkConfigFields();
+            UpdateAccelConfigFields();
         }
 
         private void comboTimingSelect_SelectedIndexChanged(object sender, EventArgs e)
         {
-            UpdateSensorNetworkConfigFields();
+            UpdatePeriodConfigField();
+        }
+
+        private void txtX_TextChanged(object sender, EventArgs e)
+        {
+            XOffsetValid = false;
+
+            if (int.TryParse(txtX.Text, out int result))
+            {
+                XOffsetValid = Validator.IsBetween(int.Parse(txtX.Text), SensorNetworkConstants.MinAccelOffset, SensorNetworkConstants.MaxAccelOffset);
+            }
+
+            if (XOffsetValid)
+            {
+                txtX.BackColor = Color.White;
+                AccelOffsetsValidation.Hide(txtX);
+
+                // If the other tooltip is not in error, the button may be clicked
+                if (InitTimeoutValid && DataTimeoutValid && YOffsetValid && ZOffsetValid && PeriodValid) UpdateSensorInitiliazation.Enabled = true;
+
+                if (YOffsetValid && ZOffsetValid) comboAccelLocation.Enabled = true;
+            }
+            else
+            {
+                txtX.BackColor = Color.Yellow;
+                AccelOffsetsValidation.Show($"Must be an integer between {SensorNetworkConstants.MinAccelOffset} and {SensorNetworkConstants.MaxAccelOffset}.", txtX, 2000);
+                UpdateSensorInitiliazation.Enabled = false;
+                comboAccelLocation.Enabled = false;
+            }
+        }
+
+        private void txtY_TextChanged(object sender, EventArgs e)
+        {
+            YOffsetValid = false;
+
+            if (int.TryParse(txtY.Text, out int result))
+            {
+                YOffsetValid = Validator.IsBetween(int.Parse(txtY.Text), SensorNetworkConstants.MinAccelOffset, SensorNetworkConstants.MaxAccelOffset);
+            }
+
+            if (YOffsetValid)
+            {
+                txtY.BackColor = Color.White;
+                AccelOffsetsValidation.Hide(txtY);
+
+                // If the other tooltip is not in error, the button may be clicked
+                if (InitTimeoutValid && DataTimeoutValid && XOffsetValid && ZOffsetValid && PeriodValid) UpdateSensorInitiliazation.Enabled = true;
+
+                if (XOffsetValid && ZOffsetValid) comboAccelLocation.Enabled = true;
+            }
+            else
+            {
+                txtY.BackColor = Color.Yellow;
+                AccelOffsetsValidation.Show($"Must be an integer between {SensorNetworkConstants.MinAccelOffset} and {SensorNetworkConstants.MaxAccelOffset}.", txtY, 2000);
+                UpdateSensorInitiliazation.Enabled = false;
+                comboAccelLocation.Enabled = false;
+            }
+        }
+
+        private void txtZ_TextChanged(object sender, EventArgs e)
+        {
+            ZOffsetValid = false;
+
+            if (int.TryParse(txtZ.Text, out int result))
+            {
+                ZOffsetValid = Validator.IsBetween(int.Parse(txtZ.Text), SensorNetworkConstants.MinAccelOffset, SensorNetworkConstants.MaxAccelOffset);
+            }
+
+            if (ZOffsetValid)
+            {
+                txtZ.BackColor = Color.White;
+                AccelOffsetsValidation.Hide(txtZ);
+
+                // If the other tooltip is not in error, the button may be clicked
+                if (InitTimeoutValid && DataTimeoutValid && YOffsetValid && XOffsetValid && PeriodValid) UpdateSensorInitiliazation.Enabled = true;
+
+                if (XOffsetValid && YOffsetValid) comboAccelLocation.Enabled = true;
+            }
+            else
+            {
+                txtZ.BackColor = Color.Yellow;
+                AccelOffsetsValidation.Show($"Must be an integer between {SensorNetworkConstants.MinAccelOffset} and {SensorNetworkConstants.MaxAccelOffset}.", txtZ, 2000);
+                UpdateSensorInitiliazation.Enabled = false;
+                comboAccelLocation.Enabled = false;
+            }
+        }
+
+        private void txtPeriod_TextChanged(object sender, EventArgs e)
+        {
+            PeriodValid = false;
+
+            if (int.TryParse(txtPeriod.Text, out int result))
+            {
+                PeriodValid = int.Parse(txtPeriod.Text) > 0;
+            }
+
+            if (PeriodValid)
+            {
+                txtPeriod.BackColor = Color.White;
+                AccelOffsetsValidation.Hide(txtPeriod);
+
+                // If the other tooltip is not in error, the button may be clicked
+                if (InitTimeoutValid && DataTimeoutValid && YOffsetValid && ZOffsetValid && XOffsetValid) UpdateSensorInitiliazation.Enabled = true;
+
+                comboTimingSelect.Enabled = true;
+            }
+            else
+            {
+                txtPeriod.BackColor = Color.Yellow;
+                AccelOffsetsValidation.Show($"Must be an integer greater than 0.", txtPeriod, 2000);
+                UpdateSensorInitiliazation.Enabled = false;
+                comboTimingSelect.Enabled = false;
+            }
         }
     }
 }

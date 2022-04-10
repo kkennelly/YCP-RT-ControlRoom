@@ -57,10 +57,9 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
         public const int DefaultInitializationTimeout = 10000; // in milliseconds
 
         /// <summary>
-        /// This is the total number of Sensor Network sensors that can be receiving data at a given time. 
-        /// This is used to determine the byte size of the initialization. 
+        /// This is the total number of bytes used for the initialization packet. 
         /// </summary>
-        public const int SensorNetworkSensorCount = 8;
+        public const int InitPacketSize = 45;
 
         /// <summary>
         /// If we receive this ID from the sensor network, it means that everything is going well, and we are about
@@ -89,32 +88,32 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
         /// <summary>
         /// The default sampling frequency to be used by our accelerometers.
         /// </summary>
-        public const double DefaultAccelSamplingFrequency = 800; // in Hz
+        public const short DefaultAccelSamplingFrequency = 800; // in Hz
 
         /// <summary>
         /// The default FIFO size to be used by our accelerometers.
         /// </summary>
-        public const int DefaultAccelFIFOSize = 32;
+        public const byte DefaultAccelFIFOSize = 32;
 
         /// <summary>
         /// The default G-range to be used by our accelerometers.
         /// </summary>
-        public const int DefaultAccelGRange = 16; // in G's
+        public const byte DefaultAccelGRange = 16; // in G's
 
         /// <summary>
         /// The default x-axis offset to apply to our accelerometers.
         /// </summary>
-        public const int DefaultAccelXOffset = 0;
+        public const byte DefaultAccelXOffset = 0;
 
         /// <summary>
         /// The default y-axis offset to apply to our accelerometers.
         /// </summary>
-        public const int DefaultAccelYOffset = 0;
+        public const byte DefaultAccelYOffset = 0;
 
         /// <summary>
         /// The default z-axis offset to apply to our accelerometers.
         /// </summary>
-        public const int DefaultAccelZOffset = 0;
+        public const byte DefaultAccelZOffset = 0;
 
         /// <summary>
         /// The default Full Bit Resolution setting to be used by our accelerometers.
@@ -145,21 +144,6 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
         /// This is the FIFO size used by the counterbalance accelerometer
         /// </summary>
         public const int CbAccelFIFOSize = 32;
-
-        /// <summary>
-        /// This is the sampling frequency used by the azimuth motor accelerometer
-        /// </summary>
-        public const double AzAccelSamplingFrequency = 800;
-
-        /// <summary>
-        /// This is the sampling frequency used by the elevation motor accelerometer
-        /// </summary>
-        public const double ElAccelSamplingFrequency = 800;
-
-        /// <summary>
-        /// This is the sampling frequency used by the counterbalance accelerometer
-        /// </summary>
-        public const double CbAccelSamplingFrequency = 800;
 
         /// <summary>
         /// This is the degrees offset manually applied to the counterbalance accelerometer position used for greater precision.

@@ -362,7 +362,7 @@ namespace ControlRoomApplication.Controllers.SensorNetwork.Simulation
 
             // Wait for the SensorNetworkClient to send the initialization
             TcpClient localClient;
-            byte[] receivedInit = new byte[SensorNetworkConstants.SensorNetworkSensorCount];
+            byte[] receivedInit = new byte[SensorNetworkConstants.InitPacketSize];
 
             // Once this line is passed, we have connected and received the initialization
             localClient = Server.AcceptTcpClient();

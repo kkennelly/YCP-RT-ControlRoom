@@ -23,27 +23,11 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
         /// <param name="data">This is the byte array that we are converting in to acceleration.</param>
         /// <param name="size">This is the size of the acceleration dumps that we expect to see in the byte array.</param>
         /// <param name="sensor">This is the sensor that the data is being created for.</param>
+        /// <param name="samplingFrequency">The is the frequency that the samples were taken at.</param>
         /// <param name="timeOffset">This is an offset applied to the incoming sensor data timestamps to get more accurate readings.</param>
         /// <returns></returns>
-        public static Acceleration[] GetAccelerationFromBytes(ref int currPointer, byte[] data, int size, SensorLocationEnum sensor, long timeOffset = 0)
+        public static Acceleration[] GetAccelerationFromBytes(ref int currPointer, byte[] data, int size, SensorLocationEnum sensor, double samplingFrequency, long timeOffset = 0)
         {
-            // Default sampling frequency for accelerometers is 800 Hz
-            double samplingFrequency = 800;
-
-            // Determine which frequency to use in time calculations based on sensor location
-            switch (sensor)
-            {
-                case SensorLocationEnum.AZ_MOTOR:
-                    samplingFrequency = SensorNetworkConstants.AzAccelSamplingFrequency;
-                    break;
-                case SensorLocationEnum.EL_MOTOR:
-                    samplingFrequency = SensorNetworkConstants.ElAccelSamplingFrequency;
-                    break;
-                case SensorLocationEnum.COUNTERBALANCE:
-                    samplingFrequency = SensorNetworkConstants.CbAccelSamplingFrequency;
-                    break;
-            }
-            
             // Parse acceleration data from packet
             List<Acceleration> acceleration = new List<Acceleration>();
             for (int j = 0; j < size; j++)

@@ -755,5 +755,23 @@ namespace ControlRoomApplicationTest.CommunicationTests
             Assert.AreEqual(ParseTCPCommandResultEnum.Success, result.parseTCPCommandResultEnum);
             Assert.AreEqual(MovementResult.Success, mvmtResult.movementResult);
         }
+
+        [TestMethod]
+        public void TestProcessMessage_NonCommandSent()
+        {
+            string definitelyACommandAndNotAMaliciousAttemptToBreachDataOrSomethingSoDontThinkThat = "lmao give me ip";
+
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", definitelyACommandAndNotAMaliciousAttemptToBreachDataOrSomethingSoDontThinkThat);
+            Assert.AreEqual(ParseTCPCommandResultEnum.MissingCommandArgs, result.parseTCPCommandResultEnum);
+        }
+
+        [TestMethod]
+        public void TestProcessMessage_NonCommandSentWithPipes()
+        {
+            string definitelyACommandAndNotAMaliciousAttemptToBreachDataOrSomethingSoDontThinkThat = "lmao|give|me|ip";
+
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", definitelyACommandAndNotAMaliciousAttemptToBreachDataOrSomethingSoDontThinkThat);
+            Assert.AreEqual(ParseTCPCommandResultEnum.InvalidVersion, result.parseTCPCommandResultEnum);
+        }
     }
 }

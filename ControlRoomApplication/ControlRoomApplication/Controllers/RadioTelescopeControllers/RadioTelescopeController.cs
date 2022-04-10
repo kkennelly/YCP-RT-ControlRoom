@@ -201,7 +201,7 @@ namespace ControlRoomApplication.Controllers
         /// in this may or may not work, it depends on if the derived
         /// AbstractRadioTelescope class has implemented it.
         /// </summary>
-        public MovementResult ThermalCalibrateRadioTelescope(MovementPriority priority, Appointment appt)
+        public MovementResult ThermalCalibrateRadioTelescope(MovementPriority priority)
         {
             MovementResult moveResult = MovementResult.None;
 
@@ -233,11 +233,21 @@ namespace ControlRoomApplication.Controllers
                 // temporarily set spectracyber mode to continuum
                 RadioTelescope.SpectraCyberController.SetSpectraCyberModeType(SpectraCyberModeTypeEnum.CONTINUUM);
 
-                // Read the calibration data for the specified duration. The spectracyber scan runs in it's own thread, so calling Thread.Sleep() after
-                // starting the scan will allow us to read the data for as long as we specify 
-                RadioTelescope.SpectraCyberController.StartScan(appt);
-                Thread.Sleep(MiscellaneousConstants.CALIBRATION_MS);
-                RadioTelescope.SpectraCyberController.StopScan();
+                // start a timer so we can have a time variable
+                Stopwatch stopWatch = new Stopwatch();
+                stopWatch.Start();
+
+                // temporarily set spectracyber mode to continuum
+                RadioTelescope.SpectraCyberController.SetSpectraCyberModeType(SpectraCyberModeTypeEnum.CONTINUUM);
+
+                // read data
+                SpectraCyberResponse response = RadioTelescope.SpectraCyberController.DoSpectraCyberScan();
+
+                // end the timer
+                stopWatch.Stop();
+                double time = stopWatch.Elapsed.TotalSeconds;
+
+                RFData rfResponse = RFData.GenerateFrom(response);
 
                 // move back to previous location
                 moveResult = RadioTelescope.PLCDriver.MoveToOrientation(current, MiscellaneousConstants.THERMAL_CALIBRATION_ORIENTATION);

@@ -10,6 +10,7 @@ using System.IO;
 using ControlRoomApplication.Util;
 using ControlRoomApplication.Controllers.PLCCommunication.PLCDrivers.MCUManager;
 using ControlRoomApplication.Controllers.PLCCommunication.PLCDrivers.MCUManager.Enumerations;
+using ControlRoomApplication.Constants;
 
 namespace ControlRoomApplication.Controllers
 {
@@ -186,8 +187,6 @@ namespace ControlRoomApplication.Controllers
 
                 if (NextAppointment != null)
                 {
-                    // GET NEXT APPT DATA if < 5 minutes ago, then don't calibrate 
-
                     logger.Info(Utilities.GetTimeStamp() + ": Starting appointment...");
                     endAppt = false;
 
@@ -201,8 +200,32 @@ namespace ControlRoomApplication.Controllers
                     if (NextAppointment._Type != AppointmentTypeEnum.FREE_CONTROL)
                     {
                         logger.Info(Utilities.GetTimeStamp() + ": Thermal Calibrating RadioTelescope");
+
+                        DateTime startTreeCalTime, endTreeCalTime, startZenithCalTime, endZenithCalTime;
+
+                        // Tree calibration 
+                        RTController.ThermalCalibrateRadioTelescope(MovementPriority.Appointment);
+
+                        startTreeCalTime = DateTime.Now;
+
+                        StartReadingData(NextAppointment);
+                        Thread.Sleep(MiscellaneousConstants.CALIBRATION_MS);
+                        StopReadingRFData();
+
+                        endTreeCalTime = DateTime.Now;
+
+                        // Zenith calibration
+                        RTController.MoveRadioTelescopeToOrientation(new Orientation(RTController.GetCurrentOrientation().Azimuth, 90), MovementPriority.Appointment);
+
+                        startZenithCalTime = DateTime.Now;
                         
-                        RTController.ThermalCalibrateRadioTelescope(MovementPriority.Appointment, NextAppointment);
+                        StartReadingData(NextAppointment);
+                        Thread.Sleep(MiscellaneousConstants.CALIBRATION_MS);
+                        StopReadingRFData();
+
+                        endZenithCalTime = DateTime.Now;
+
+                        AppointmentCalibration.Generate(NextAppointment.Id, AppointmentCalibrationTypeEnum.BEGINNING, startTreeCalTime, endTreeCalTime, startZenithCalTime, endZenithCalTime);
 
                         // If the temperature is low and there's precipitation, dump the dish
                         if (RTController.RadioTelescope.WeatherStation.GetOutsideTemp() <= 40.00 && RTController.RadioTelescope.WeatherStation.GetTotalRain() > 0.00)

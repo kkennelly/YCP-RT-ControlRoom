@@ -50,6 +50,7 @@ namespace ControlRoomApplication.Main
 
         public DbSet<CelestialBody> CelestialBodies { get; set; }
         public DbSet<SensorNetworkConfig> SensorNetworkConfig { get; set; }
+        public DbSet<AccelerometerConfig> AccelerometerConfig { get; set; }
         public DbSet<SpectraCyberConfig> SpectraCyberConfigs { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }

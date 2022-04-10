@@ -175,6 +175,10 @@ namespace ControlRoomApplication.GUI
 
             // Set sensor initialization checkboxes to reflect what is stored in the database
             SensorNetworkConfig = rtController.RadioTelescope.SensorNetworkServer.InitializationClient.SensorNetworkConfig;
+            comboAccelLocation.SelectedIndex = 0;
+            comboTimingSelect.SelectedIndex = 0;
+
+            UpdateSensorNetworkConfigFields();
 
             AzimuthTemperature1.Checked = SensorNetworkConfig.AzimuthTemp1Init;
             ElevationTemperature1.Checked = SensorNetworkConfig.ElevationTemp1Init;
@@ -1310,6 +1314,73 @@ namespace ControlRoomApplication.GUI
 
         private async void UpdateSensorInitiliazation_Click(object sender, EventArgs e)
         {
+            // First update the accel config with data that may not have been saved yet. Trying to do this inside the thread will
+            // cause a crash
+            int index = comboAccelLocation.SelectedIndex;
+            AccelerometerConfig accelConfig;
+
+            // Pick selected accelerometer
+            switch (index)
+            {
+                // Counterbalance Accelerometer
+                case 0:
+                    accelConfig = SensorNetworkConfig.CbAccelConfig;
+                    break;
+
+                // Elevation Accelerometer
+                case 1:
+                    accelConfig = SensorNetworkConfig.ElAccelConfig;
+                    break;
+
+                // Azimuth Accelerometer
+                case 2:
+                    accelConfig = SensorNetworkConfig.AzAccelConfig;
+                    break;
+
+                // Invalid index
+                default:
+                    return;
+            }
+
+            // Update the accelerometer config for the active accelerometer (the other accelerometer configs would have already been updated at this point)
+            accelConfig.SamplingFrequency = double.Parse(comboSamplingSpeed.Text);
+            accelConfig.GRange = int.Parse(comboGRange.Text.Substring(1));
+            accelConfig.FIFOSize = (int)numFIFOSize.Value;
+            accelConfig.XOffset = int.Parse(txtX.Text);
+            accelConfig.YOffset = int.Parse(txtY.Text);
+            accelConfig.ZOffset = int.Parse(txtZ.Text);
+            accelConfig.FullBitResolution = chkBitResolution.Checked;
+
+            index = comboTimingSelect.SelectedIndex;
+
+            // Get selected period and update 
+            switch (index)
+            {
+                // Timer
+                case 0:
+                    SensorNetworkConfig.TimerPeriod = int.Parse(txtPeriod.Text);
+                    break;
+
+                // Ethernet
+                case 1:
+                    SensorNetworkConfig.EthernetPeriod = int.Parse(txtPeriod.Text);
+                    break;
+
+                // Temperature
+                case 2:
+                    SensorNetworkConfig.TemperaturePeriod = int.Parse(txtPeriod.Text);
+                    break;
+
+                // Encoder
+                case 3:
+                    SensorNetworkConfig.EncoderPeriod = int.Parse(txtPeriod.Text);
+                    break;
+
+                // Invalid index
+                default:
+                    return;
+            }
+
             // This must be executed async so the status updates/timer keeps ticking
             await Task.Run(() => { 
                 // First set all the checkboxes equal to the sensor network config
@@ -1328,7 +1399,10 @@ namespace ControlRoomApplication.GUI
 
                 // Update the config in the DB
                 DatabaseOperations.UpdateSensorNetworkConfig(SensorNetworkConfig);
-            
+                DatabaseOperations.UpdateAccelerometerConfig(SensorNetworkConfig.ElAccelConfig);
+                DatabaseOperations.UpdateAccelerometerConfig(SensorNetworkConfig.AzAccelConfig);
+                DatabaseOperations.UpdateAccelerometerConfig(SensorNetworkConfig.CbAccelConfig);
+
                 // reboot
                 rtController.RadioTelescope.SensorNetworkServer.RebootSensorNetwork();
             });
@@ -1624,6 +1698,218 @@ namespace ControlRoomApplication.GUI
         {
             bool fanIsOn = rtController.RadioTelescope.SensorNetworkServer.FanIsOn;
             rtController.RadioTelescope.SensorNetworkServer.SetFanOnOrOff = !fanIsOn;
+        }
+
+        private void UpdateSensorNetworkConfigFields()
+        {
+            int index = comboAccelLocation.SelectedIndex;
+            AccelerometerConfig accelConfig;
+
+            // Pick selected accelerometer
+            switch (index)
+            {
+                // Counterbalance Accelerometer
+                case 0:
+                    accelConfig = SensorNetworkConfig.CbAccelConfig;
+                    break;
+    
+                // Elevation Accelerometer
+                case 1:
+                    accelConfig = SensorNetworkConfig.ElAccelConfig;
+                    break;
+
+                // Azimuth Accelerometer
+                case 2:
+                    accelConfig = SensorNetworkConfig.AzAccelConfig;
+                    break;
+
+                // Invalid index
+                default:
+                    return;
+            }
+
+            // Update fields with the selected accelerometer config
+            comboSamplingSpeed.Text = accelConfig.SamplingFrequency.ToString();
+            comboGRange.Text = "±" + accelConfig.GRange.ToString();
+            numFIFOSize.Value = accelConfig.FIFOSize;
+            txtX.Text = accelConfig.XOffset.ToString();
+            txtY.Text = accelConfig.YOffset.ToString();
+            txtZ.Text = accelConfig.ZOffset.ToString();
+            chkBitResolution.Checked = accelConfig.FullBitResolution;
+
+            index = comboTimingSelect.SelectedIndex;
+
+            // Get selected period and update 
+            switch (index)
+            {
+                // Timer
+                case 0:
+                    txtPeriod.Text = SensorNetworkConfig.TimerPeriod.ToString();
+                    break;
+
+                // Ethernet
+                case 1:
+                    txtPeriod.Text = SensorNetworkConfig.EthernetPeriod.ToString();
+                    break;
+
+                // Temperature
+                case 2:
+                    txtPeriod.Text = SensorNetworkConfig.TemperaturePeriod.ToString();
+                    break;
+
+                // Encoder
+                case 3:
+                    txtPeriod.Text = SensorNetworkConfig.EncoderPeriod.ToString();
+                    break;
+
+                // Invalid index
+                default:
+                    return;
+            }
+        }
+
+        private void comboAccelLocation_Click(object sender, EventArgs e)
+        {
+            int index = comboAccelLocation.SelectedIndex;
+            AccelerometerConfig accelConfig;
+            // Pick selected accelerometer
+            switch (index)
+            {
+                // Counterbalance Accelerometer
+                case 0:
+                    accelConfig = SensorNetworkConfig.CbAccelConfig;
+                    break;
+
+                // Elevation Accelerometer
+                case 1:
+                    accelConfig = SensorNetworkConfig.ElAccelConfig;
+                    break;
+
+                // Azimuth Accelerometer
+                case 2:
+                    accelConfig = SensorNetworkConfig.AzAccelConfig;
+                    break;
+
+                // Invalid index
+                default:
+                    return;
+            }
+
+            // Update the accelerometer config for the active accelerometer (the other accelerometer configs would have already been updated at this point)
+            accelConfig.SamplingFrequency = double.Parse(comboSamplingSpeed.Text);
+            accelConfig.GRange = int.Parse(comboGRange.Text.Substring(1));
+            accelConfig.FIFOSize = (int)numFIFOSize.Value;
+            accelConfig.XOffset = int.Parse(txtX.Text);
+            accelConfig.YOffset = int.Parse(txtY.Text);
+            accelConfig.ZOffset = int.Parse(txtZ.Text);
+            accelConfig.FullBitResolution = chkBitResolution.Checked;
+
+            index = comboTimingSelect.SelectedIndex;
+
+            // Get selected period and update 
+            switch (index)
+            {
+                // Timer
+                case 0:
+                    SensorNetworkConfig.TimerPeriod = int.Parse(txtPeriod.Text);
+                    break;
+
+                // Ethernet
+                case 1:
+                    SensorNetworkConfig.EthernetPeriod = int.Parse(txtPeriod.Text);
+                    break;
+
+                // Temperature
+                case 2:
+                    SensorNetworkConfig.TemperaturePeriod = int.Parse(txtPeriod.Text);
+                    break;
+
+                // Encoder
+                case 3:
+                    SensorNetworkConfig.EncoderPeriod = int.Parse(txtPeriod.Text);
+                    break;
+
+                // Invalid index
+                default:
+                    return;
+            }
+        }
+
+        private void comboTimingSelect_Click(object sender, EventArgs e)
+        {
+            int index = comboAccelLocation.SelectedIndex;
+            AccelerometerConfig accelConfig;
+            // Pick selected accelerometer
+            switch (index)
+            {
+                // Counterbalance Accelerometer
+                case 0:
+                    accelConfig = SensorNetworkConfig.CbAccelConfig;
+                    break;
+
+                // Elevation Accelerometer
+                case 1:
+                    accelConfig = SensorNetworkConfig.ElAccelConfig;
+                    break;
+
+                // Azimuth Accelerometer
+                case 2:
+                    accelConfig = SensorNetworkConfig.AzAccelConfig;
+                    break;
+
+                // Invalid index
+                default:
+                    return;
+            }
+
+            // Update the accelerometer config for the active accelerometer (the other accelerometer configs would have already been updated at this point)
+            accelConfig.SamplingFrequency = double.Parse(comboSamplingSpeed.Text);
+            accelConfig.GRange = int.Parse(comboGRange.Text.Substring(1));
+            accelConfig.FIFOSize = (int)numFIFOSize.Value;
+            accelConfig.XOffset = int.Parse(txtX.Text);
+            accelConfig.YOffset = int.Parse(txtY.Text);
+            accelConfig.ZOffset = int.Parse(txtZ.Text);
+            accelConfig.FullBitResolution = chkBitResolution.Checked;
+
+            index = comboTimingSelect.SelectedIndex;
+
+            // Get selected period and update 
+            switch (index)
+            {
+                // Timer
+                case 0:
+                    SensorNetworkConfig.TimerPeriod = int.Parse(txtPeriod.Text);
+                    break;
+
+                // Ethernet
+                case 1:
+                    SensorNetworkConfig.EthernetPeriod = int.Parse(txtPeriod.Text);
+                    break;
+
+                // Temperature
+                case 2:
+                    SensorNetworkConfig.TemperaturePeriod = int.Parse(txtPeriod.Text);
+                    break;
+
+                // Encoder
+                case 3:
+                    SensorNetworkConfig.EncoderPeriod = int.Parse(txtPeriod.Text);
+                    break;
+
+                // Invalid index
+                default:
+                    return;
+            }
+        }
+
+        private void comboAccelLocation_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateSensorNetworkConfigFields();
+        }
+
+        private void comboTimingSelect_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateSensorNetworkConfigFields();
         }
     }
 }

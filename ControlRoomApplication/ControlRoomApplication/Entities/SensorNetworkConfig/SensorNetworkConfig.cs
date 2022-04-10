@@ -1,4 +1,5 @@
 ﻿using ControlRoomApplication.Controllers.SensorNetwork;
+using ControlRoomApplication.Database;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -42,10 +43,6 @@ namespace ControlRoomApplication.Entities
             EthernetPeriod = SensorNetworkConstants.DefaultDataSendingInterval;
             TemperaturePeriod = SensorNetworkConstants.DefaultTemperaturereadingInterval;
             EncoderPeriod = SensorNetworkConstants.DefaultEncoderSendingInterval;
-
-            ElAccelConfig = new AccelerometerConfig(Id, (int)SensorLocationEnum.EL_MOTOR);
-            AzAccelConfig = new AccelerometerConfig(Id, (int)SensorLocationEnum.AZ_MOTOR);
-            CbAccelConfig = new AccelerometerConfig(Id, (int)SensorLocationEnum.COUNTERBALANCE);
         }
 
         /// <summary>

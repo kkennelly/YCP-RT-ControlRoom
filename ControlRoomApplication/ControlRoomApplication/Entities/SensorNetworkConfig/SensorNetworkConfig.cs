@@ -265,6 +265,16 @@ namespace ControlRoomApplication.Entities
                 ElevationAmbientInit ?              (byte)1 : (byte)0
             };
 
+            // Build rest of init packet
+            init = init.Concat(BitConverter.GetBytes(TimerPeriod))
+                .Concat(BitConverter.GetBytes(EthernetPeriod))
+                .Concat(BitConverter.GetBytes(TemperaturePeriod))
+                .Concat(BitConverter.GetBytes(EncoderPeriod))
+                .Concat(ElAccelConfig.GetAccelConfigAsBytes())
+                .Concat(AzAccelConfig.GetAccelConfigAsBytes())
+                .Concat(CbAccelConfig.GetAccelConfigAsBytes())
+                .ToArray();
+
             return init;
         }
     }

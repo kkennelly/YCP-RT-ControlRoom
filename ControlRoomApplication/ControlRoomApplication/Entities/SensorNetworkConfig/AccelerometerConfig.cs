@@ -148,5 +148,81 @@ namespace ControlRoomApplication.Entities
                 ZOffset == other.ZOffset &&
                 FullBitResolution == other.FullBitResolution;
         }
+
+        /// <summary>
+        /// This will get this accelerometer config's settings as a byte[], so that it can be sent with the sensor initialization packet.
+        /// </summary>
+        /// <returns>The accelerometer config in bytes</returns>
+        public byte[] GetAccelConfigAsBytes()
+        {
+            // Get sampling frequency bytes that correspond with the datasheet
+            byte samplingFrequency;
+            switch (SamplingFrequency)
+            {
+                case 800:
+                    samplingFrequency = 0xD;
+                    break;
+
+                case 400:
+                    samplingFrequency = 0xC;
+                    break;
+
+                case 200:
+                    samplingFrequency = 0xB;
+                    break;
+
+                case 100:
+                    samplingFrequency = 0xA;
+                    break;
+
+                case 50:
+                    samplingFrequency = 0x9;
+                    break;
+
+                case 25:
+                    samplingFrequency = 0x8;
+                    break;
+
+                default:
+                    samplingFrequency = 0xD;    // Should never reach here, if so, make default 800Hz
+                    break;
+            }
+
+            // Get the gRange bytes that correspond with the datasheet
+            byte gRange;
+            switch (GRange)
+            {
+                case 16:
+                    gRange = 0x3;
+                    break;
+
+                case 8:
+                    gRange = 0x2;
+                    break;
+
+                case 4:
+                    gRange = 0x1;
+                    break;
+
+                case 2:
+                    gRange = 0x0;
+                    break;
+
+                default:
+                    gRange = 0x3;   // Should never reach here, if so, make default 16g
+                    break;
+            }
+
+            return new byte[]
+            {
+                samplingFrequency,
+                gRange,
+                (byte)FIFOSize,
+                (byte)XOffset,
+                (byte)YOffset,
+                (byte)ZOffset,
+                BitConverter.GetBytes(FullBitResolution)[0]
+            };
+        }
     }
 }

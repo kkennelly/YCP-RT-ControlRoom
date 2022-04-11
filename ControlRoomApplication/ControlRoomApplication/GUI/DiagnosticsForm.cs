@@ -1348,12 +1348,12 @@ namespace ControlRoomApplication.GUI
             }
 
             // Update the accelerometer config for the active accelerometer (the other accelerometer configs would have already been updated at this point)
-            accelConfig.SamplingFrequency = short.Parse(comboSamplingSpeed.Text);
-            accelConfig.GRange = byte.Parse(comboGRange.Text.Substring(1));
-            accelConfig.FIFOSize = (byte)numFIFOSize.Value;
-            accelConfig.XOffset = byte.Parse(txtX.Text);
-            accelConfig.YOffset = byte.Parse(txtY.Text);
-            accelConfig.ZOffset = byte.Parse(txtZ.Text);
+            accelConfig.SamplingFrequency = double.Parse(comboSamplingSpeed.Text);
+            accelConfig.GRange = int.Parse(comboGRange.Text.Substring(1));
+            accelConfig.FIFOSize = (int)numFIFOSize.Value;
+            accelConfig.XOffset = int.Parse(txtX.Text);
+            accelConfig.YOffset = int.Parse(txtY.Text);
+            accelConfig.ZOffset = int.Parse(txtZ.Text);
             accelConfig.FullBitResolution = chkBitResolution.Checked;
 
             index = comboTimingSelect.SelectedIndex;
@@ -1806,12 +1806,12 @@ namespace ControlRoomApplication.GUI
             }
 
             // Update the accelerometer config for the active accelerometer (the other accelerometer configs would have already been updated at this point)
-            accelConfig.SamplingFrequency = short.Parse(comboSamplingSpeed.Text);
-            accelConfig.GRange = byte.Parse(comboGRange.Text.Substring(1));
-            accelConfig.FIFOSize = (byte)numFIFOSize.Value;
-            accelConfig.XOffset = byte.Parse(txtX.Text);
-            accelConfig.YOffset = byte.Parse(txtY.Text);
-            accelConfig.ZOffset = byte.Parse(txtZ.Text);
+            accelConfig.SamplingFrequency = double.Parse(comboSamplingSpeed.Text);
+            accelConfig.GRange = int.Parse(comboGRange.Text.Substring(1));
+            accelConfig.FIFOSize = (int)numFIFOSize.Value;
+            accelConfig.XOffset = int.Parse(txtX.Text);
+            accelConfig.YOffset = int.Parse(txtY.Text);
+            accelConfig.ZOffset = int.Parse(txtZ.Text);
             accelConfig.FullBitResolution = chkBitResolution.Checked;
         }
 

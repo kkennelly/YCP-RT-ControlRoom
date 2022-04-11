@@ -49,7 +49,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests
             // This is only used for the counter, becuase it needs a variable to be passed by reference
             int i = 0;
 
-            var result = PacketDecodingTools.GetAccelerationFromBytes(ref i, oneAcceleration, 1, SensorLocationEnum.COUNTERBALANCE);
+            var result = PacketDecodingTools.GetAccelerationFromBytes(ref i, oneAcceleration, 1, SensorLocationEnum.COUNTERBALANCE, 800);
 
             Assert.AreEqual(1, result.Length); // Only expecting one result
             Assert.AreEqual(expected[0].TimeCaptured, result[0].TimeCaptured);
@@ -95,13 +95,13 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests
             twoAcceleration[21] = 3;
 
             Acceleration[] expected = new Acceleration[2];
-            expected[0] = Acceleration.Generate(1 - (long)(1 / SensorNetworkConstants.CbAccelSamplingFrequency * 1000), 1, 2, 3, SensorLocationEnum.COUNTERBALANCE);
-            expected[1] = Acceleration.Generate(1, 1, 2, 3, SensorLocationEnum.COUNTERBALANCE); // Temporary, will change when the Control Room can configure accelerometers
+            expected[0] = Acceleration.Generate(1 - (long)(1 / 800.0 * 1000), 1, 2, 3, SensorLocationEnum.COUNTERBALANCE);
+            expected[1] = Acceleration.Generate(1, 1, 2, 3, SensorLocationEnum.COUNTERBALANCE);
 
             // This is only used for the counter, becuase it needs a variable to be passed by reference
             int i = 0;
 
-            var result = PacketDecodingTools.GetAccelerationFromBytes(ref i, twoAcceleration, 1, SensorLocationEnum.COUNTERBALANCE);
+            var result = PacketDecodingTools.GetAccelerationFromBytes(ref i, twoAcceleration, 1, SensorLocationEnum.COUNTERBALANCE, 800);
 
             Assert.AreEqual(2, result.Length); // Expecting two results
 

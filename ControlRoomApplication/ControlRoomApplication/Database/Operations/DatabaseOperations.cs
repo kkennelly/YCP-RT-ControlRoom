@@ -1066,6 +1066,21 @@ namespace ControlRoomApplication.Database
                     Context.SensorNetworkConfig.Remove(toDelete);
                     SaveContext(Context);
 
+                    if (config.ElAccelConfig.SensorNetworkConfigId > 0)
+                    {
+                        DeleteAccelerometerConfig(config.ElAccelConfig);
+                    }
+
+                    if (config.AzAccelConfig.SensorNetworkConfigId > 0)
+                    {
+                        DeleteAccelerometerConfig(config.AzAccelConfig);
+                    }
+
+                    if (config.CbAccelConfig.SensorNetworkConfigId > 0)
+                    {
+                        DeleteAccelerometerConfig(config.CbAccelConfig);
+                    }
+
                     logger.Info(Utilities.GetTimeStamp() + ": Deleted Sensor Network Configuration for Telescope ID " + config.TelescopeId);
                 }
             }

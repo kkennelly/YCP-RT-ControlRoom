@@ -971,7 +971,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             });
             expectConfThread.Start();
 
-            byte[] expected = Encoding.ASCII.GetBytes("12345678");
+            byte[] expected = new byte[SensorNetworkConstants.InitPacketSize];
             byte[] result = new byte[expected.Length];
 
             // This method has a blocking method, so we must run it in a separate thread

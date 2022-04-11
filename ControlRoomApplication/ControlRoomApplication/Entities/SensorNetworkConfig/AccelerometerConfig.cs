@@ -217,7 +217,7 @@ namespace ControlRoomApplication.Entities
             {
                 samplingFrequency,
                 gRange,
-                (byte)FIFOSize,
+                (byte)(FIFOSize - 1),
                 (byte)XOffset,
                 (byte)YOffset,
                 (byte)ZOffset,

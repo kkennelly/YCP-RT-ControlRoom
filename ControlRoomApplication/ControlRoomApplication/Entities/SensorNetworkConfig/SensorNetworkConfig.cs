@@ -43,6 +43,10 @@ namespace ControlRoomApplication.Entities
             EthernetPeriod = SensorNetworkConstants.DefaultDataSendingInterval;
             TemperaturePeriod = SensorNetworkConstants.DefaultTemperaturereadingInterval;
             EncoderPeriod = SensorNetworkConstants.DefaultEncoderSendingInterval;
+
+            ElAccelConfig = new AccelerometerConfig();
+            AzAccelConfig = new AccelerometerConfig();
+            CbAccelConfig = new AccelerometerConfig();
         }
 
         /// <summary>
@@ -231,9 +235,13 @@ namespace ControlRoomApplication.Entities
                 this.ElevationEncoderInit == other.ElevationEncoderInit &&
                 this.TimeoutDataRetrieval == other.TimeoutDataRetrieval &&
                 this.TimeoutInitialization == other.TimeoutInitialization &&
-                ElAccelConfig.Equals(other.ElAccelConfig) &&
-                AzAccelConfig.Equals(other.AzAccelConfig) &&
-                CbAccelConfig.Equals(other.CbAccelConfig)
+                this.TimerPeriod == other.TimerPeriod &&
+                this.EthernetPeriod == other.EthernetPeriod &&
+                this.TemperaturePeriod == other.TemperaturePeriod &&
+                this.EncoderPeriod == other.EncoderPeriod &&
+                this.ElAccelConfig.Equals(other.ElAccelConfig) &&
+                this.AzAccelConfig.Equals(other.AzAccelConfig) &&
+                this.CbAccelConfig.Equals(other.CbAccelConfig)
                 )
             {
                 return true;

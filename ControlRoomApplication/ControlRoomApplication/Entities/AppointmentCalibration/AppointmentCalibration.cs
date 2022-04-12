@@ -22,7 +22,7 @@ namespace ControlRoomApplication.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int appointment_id { get; set; }
         [ForeignKey("appointment_id")]
-        public virtual Appointment Appointment {get; set; }
+        public virtual Appointment Appointment { get; set; }
 
         [Required]
         [Column("calibration_type")]
@@ -44,11 +44,11 @@ namespace ControlRoomApplication.Entities
         [Column("tree_end_time")]
         public DateTime tree_end_time { get; set; }
 
-        public static AppointmentCalibration Generate(int appointmentId, AppointmentCalibrationTypeEnum calibrationType, DateTime zenithStart, DateTime zenithEnd, DateTime treeStart, DateTime treeEnd)
+        public static AppointmentCalibration Generate(AppointmentCalibrationTypeEnum calibrationType, DateTime zenithStart, DateTime zenithEnd, DateTime treeStart, DateTime treeEnd)
         {
             AppointmentCalibration apptCal = new AppointmentCalibration();
 
-            apptCal.appointment_id = appointmentId;
+            //apptCal.appointment_id = appointmentId;
             apptCal.CalibrationType = calibrationType;
             apptCal.zenith_start_time = zenithStart;
             apptCal.zenith_end_time = zenithEnd;

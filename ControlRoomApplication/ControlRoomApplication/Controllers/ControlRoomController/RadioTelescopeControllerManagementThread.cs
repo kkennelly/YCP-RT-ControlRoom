@@ -43,6 +43,9 @@ namespace ControlRoomApplication.Controllers
 
         private int timeoutCounter = 0;
 
+        // List to store attachment paths for sending the email containing all RFData CSV's for an appointment and it's calibration sequence
+        private List<string> attachmentPath = new List<string>();
+
         public Orientation NextObjectiveOrientation
         {
             get
@@ -196,10 +199,10 @@ namespace ControlRoomApplication.Controllers
                         RTController.HomeTelescope(MovementPriority.Appointment);
                     }
 
-                    // Calibrate telescope
+                    // Calibrate telescope before the appointment
                     if (NextAppointment._Type != AppointmentTypeEnum.FREE_CONTROL)
                     {
-                        logger.Info(Utilities.GetTimeStamp() + ": Thermal Calibrating RadioTelescope");
+                        logger.Info(Utilities.GetTimeStamp() + ": Thermal Calibrating RadioTelescope Before Appointment");
 
                         DateTime startTreeCalTime, endTreeCalTime, startZenithCalTime, endZenithCalTime;
 
@@ -225,13 +228,46 @@ namespace ControlRoomApplication.Controllers
 
                         endZenithCalTime = DateTime.Now;
 
-                        AppointmentCalibration.Generate(NextAppointment.Id, AppointmentCalibrationTypeEnum.BEGINNING, startTreeCalTime, endTreeCalTime, startZenithCalTime, endZenithCalTime);
+                        AppointmentCalibration apptCal = new AppointmentCalibration();
+                        apptCal.CalibrationType = AppointmentCalibrationTypeEnum.BEGINNING;
+                        apptCal.tree_start_time = startTreeCalTime;
+                        apptCal.tree_end_time = endTreeCalTime;
+                        apptCal.zenith_start_time = startZenithCalTime;
+                        apptCal.zenith_end_time = endZenithCalTime;
+                        apptCal.Appointment = NextAppointment;
+                        DatabaseOperations.AddAppointmentCalibrationData(apptCal);
 
                         // If the temperature is low and there's precipitation, dump the dish
                         if (RTController.RadioTelescope.WeatherStation.GetOutsideTemp() <= 40.00 && RTController.RadioTelescope.WeatherStation.GetTotalRain() > 0.00)
                         {
                             RTController.SnowDump(MovementPriority.Appointment);
                         }
+
+                        // Add the beginning appointment calibration data to the file
+                        string beginTreeAttachmentPath = "";
+                        string beginZenithAttachmentPath = "";
+
+                        string treeFname = System.DateTime.Now.ToString("yyyyMMddHHmmss") + ("beginningTreeReading");
+                        string zenithFname = System.DateTime.Now.ToString("yyyyMMddHHmmss") + ("beginningZenithReading");
+                        string currentPath = AppDomain.CurrentDomain.BaseDirectory;
+
+                        List<List<RFData>> data = DatabaseOperations.getAppointmentCalibrationData(startTreeCalTime, endTreeCalTime, startZenithCalTime, endZenithCalTime);
+                        try
+                        {
+                            beginTreeAttachmentPath = Path.Combine(currentPath, $"{treeFname}.csv");
+                            DataToCSV.ExportToCSV(data[0], treeFname);
+
+                            beginTreeAttachmentPath = Path.Combine(currentPath, $"{zenithFname}.csv");
+                            DataToCSV.ExportToCSV(data[1], zenithFname);
+                        }
+                        catch (Exception e)
+                        {
+                            Console.Out.WriteLine($"Could not write data! Error: {e}");
+                        }
+                        // attach the ending calibration data to the email
+                        attachmentPath.Add(beginTreeAttachmentPath);
+                        attachmentPath.Add(beginZenithAttachmentPath);
+
                     }
 
                     // Create movement thread
@@ -255,6 +291,92 @@ namespace ControlRoomApplication.Controllers
                         StopReadingRFData();
                         // Stow Telescope
                         EndAppointment();
+
+                        // Calibrate at the end of the appointment
+                        logger.Info(Utilities.GetTimeStamp() + ": Thermal Calibrating RadioTelescope After Appointment");
+
+                        DateTime startTreeCalTime, endTreeCalTime, startZenithCalTime, endZenithCalTime;
+
+                        // Tree calibration 
+                        RTController.ThermalCalibrateRadioTelescope(MovementPriority.Appointment);
+
+                        startTreeCalTime = DateTime.Now;
+
+                        StartReadingData(NextAppointment);
+                        Thread.Sleep(MiscellaneousConstants.CALIBRATION_MS);
+                        StopReadingRFData();
+
+                        endTreeCalTime = DateTime.Now;
+
+                        // Zenith calibration
+                        RTController.MoveRadioTelescopeToOrientation(new Orientation(RTController.GetCurrentOrientation().Azimuth, 90), MovementPriority.Appointment);
+
+                        startZenithCalTime = DateTime.Now;
+
+                        StartReadingData(NextAppointment);
+                        Thread.Sleep(MiscellaneousConstants.CALIBRATION_MS);
+                        StopReadingRFData();
+
+                        endZenithCalTime = DateTime.Now;
+
+                        AppointmentCalibration endCal = new AppointmentCalibration();
+                        endCal.CalibrationType = AppointmentCalibrationTypeEnum.END;
+                        endCal.tree_start_time = startTreeCalTime;
+                        endCal.tree_end_time = endTreeCalTime;
+                        endCal.zenith_start_time = startZenithCalTime;
+                        endCal.zenith_end_time = endZenithCalTime;
+                        endCal.Appointment = NextAppointment;
+                        DatabaseOperations.AddAppointmentCalibrationData(endCal);
+
+                        // If the temperature is low and there's precipitation, dump the dish
+                        if (RTController.RadioTelescope.WeatherStation.GetOutsideTemp() <= 40.00 && RTController.RadioTelescope.WeatherStation.GetTotalRain() > 0.00)
+                        {
+                            RTController.SnowDump(MovementPriority.Appointment);
+                        }
+
+                        // Send the user a message containing the data from the RT end calibration
+
+                        // Set email sender
+                        string emailSender = "noreply@ycpradiotelescope.com";
+
+                        // send message to appointment's user
+                        SNSMessage.sendMessage(NextAppointment.User, MessageTypeEnum.APPOINTMENT_COMPLETION);
+
+                        // Gather up email data
+                        string subject = MessageTypeExtension.GetDescription(MessageTypeEnum.END_CALIBRATION_COMPLETION);
+                        string text = MessageTypeExtension.GetDescription(MessageTypeEnum.END_CALIBRATION_COMPLETION);
+                        string endTreeAttachmentPath = "";
+                        string endZenithAttachmentPath = "";
+
+                        string treeFname = System.DateTime.Now.ToString("yyyyMMddHHmmss") + ("endTreeReading");
+                        string zenithFname = System.DateTime.Now.ToString("yyyyMMddHHmmss") + ("endZenithReading");
+                        string currentPath = AppDomain.CurrentDomain.BaseDirectory;
+
+                        List<List<RFData>> data = DatabaseOperations.getAppointmentCalibrationData(startTreeCalTime, endTreeCalTime, startZenithCalTime, endZenithCalTime);
+                        try
+                        {
+                            endTreeAttachmentPath = Path.Combine(currentPath, $"{treeFname}.csv");
+                            DataToCSV.ExportToCSV(data[0], treeFname);
+
+                            endZenithAttachmentPath = Path.Combine(currentPath, $"{zenithFname}.csv");
+                            DataToCSV.ExportToCSV(data[1], zenithFname);
+                        }
+                        catch (Exception e)
+                        {
+                            Console.Out.WriteLine($"Could not write data! Error: {e}");
+                        }
+                        // attach the ending calibration data to the email
+                        attachmentPath.Add(endTreeAttachmentPath);
+                        attachmentPath.Add(endZenithAttachmentPath);
+
+                        // Send email with attachments
+                        EmailNotifications.sendToUser(NextAppointment.User, subject, text, emailSender, attachmentPath, true);
+
+                        // Clean up after yourself, otherwise you'll just fill up our storage space
+                        for (int i = 0; i < attachmentPath.Count; i++)
+                        {
+                            DataToCSV.DeleteCSVFileWhenDone(attachmentPath[i]);
+                        }
                     }
                     else
                     {
@@ -426,6 +548,7 @@ namespace ControlRoomApplication.Controllers
                 }
             }
 
+            // Modify this so that it sends an email if there is an error, otherwise adds the data from a CSV into the list to all be sent after the ending calibration occurs
             // Set email sender
             string emailSender = "noreply@ycpradiotelescope.com";
 
@@ -450,32 +573,39 @@ namespace ControlRoomApplication.Controllers
                 NextAppointment._Status = AppointmentStatusEnum.COMPLETED;
                 DatabaseOperations.UpdateAppointment(NextAppointment);
 
-                // send message to appointment's user
+                // send message to appointment's user that appointment was completed
                 SNSMessage.sendMessage(NextAppointment.User, MessageTypeEnum.APPOINTMENT_COMPLETION);
 
+                /* REMOVE, old code for sending emails previously
                 // Gather up email data
                 string subject = MessageTypeExtension.GetDescription(MessageTypeEnum.APPOINTMENT_COMPLETION);
                 string text = MessageTypeExtension.GetDescription(MessageTypeEnum.APPOINTMENT_COMPLETION);
-                string attachmentPath = "";
+                */
 
-                string fname = System.DateTime.Now.ToString("yyyyMMddHHmmss");
+                string appDataAttachmentPath = "";
+
+                string fname = System.DateTime.Now.ToString("yyyyMMddHHmmss" + "appointmentData");
                 string currentPath = AppDomain.CurrentDomain.BaseDirectory;
 
                 List<RFData> data = (List<RFData>)NextAppointment.RFDatas;
                 try
                 {
-                    attachmentPath = Path.Combine(currentPath, $"{fname}.csv");
+                    appDataAttachmentPath = Path.Combine(currentPath, $"{fname}.csv");
                     DataToCSV.ExportToCSV(data, fname);
                 }
                 catch (Exception e)
                 {
                     Console.Out.WriteLine($"Could not write data! Error: {e}");
                 }
-
-                EmailNotifications.sendToUser(NextAppointment.User, subject, text, emailSender, attachmentPath, true);
+                attachmentPath.Add(appDataAttachmentPath);
+                /* To be removed, old code to send the email once appointment completion, now instead adds the CSV to an email with the other CSV files for appointment calibration
+                List<string> attachments = new List<string>();
+                attachments.Add(attachmentPath);
+                EmailNotifications.sendToUser(NextAppointment.User, subject, text, emailSender, attachments, true);
 
                 // Clean up after yourself, otherwise you'll just fill up our storage space
                 DataToCSV.DeleteCSVFileWhenDone(attachmentPath);
+                */
             }
         }
 

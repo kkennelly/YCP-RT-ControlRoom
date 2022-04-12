@@ -426,6 +426,7 @@ namespace ControlRoomApplication.Database
             using (RTDbContext Context = InitializeDatabaseContext())
             {
                 Context.AppointmentCalibrations.Add(appointmentCalibration);
+                SaveContext(Context);
             }
         }
 
@@ -439,6 +440,31 @@ namespace ControlRoomApplication.Database
             }
 
             return count;
+        }
+
+        /// <summary>
+        /// Gets appointment calibration data stored in the database
+        /// </summary>
+        /// <param 
+        /// name="treeStart, treeEnd, elStart, elEnd, type">Name of starting and stopping times of both calibrations 
+        /// for any appointment, type is whether the appointment calibration data to be returned is for the beginning or end calibration
+        /// </param>
+        /// <returns>
+        /// List of 2 RFData lists collected within the timeframe, tree calibration indexed at 0, elevation at 1
+        /// </returns>
+        
+        public static List<List<RFData>> getAppointmentCalibrationData(DateTime treeStart, DateTime treeEnd, DateTime elStart, DateTime elEnd)
+        {
+            List<List<RFData>> fullCalibration = new List<List<RFData>>();
+
+            using (RTDbContext Context = InitializeDatabaseContext())
+            {
+                // Add the RFData from the calibration timeline, first add tree then add elevation
+                fullCalibration.Add(Context.RFDatas.SqlQuery("SELECT * FROM rf_data WHERE 'time_captured' BETWEEN " + treeStart + " AND " + treeEnd).ToList<RFData>());
+                fullCalibration.Add(Context.RFDatas.SqlQuery("SELECT * FROM rf_data WHERE 'time_captured' BETWEEN " + elStart + " AND " + elEnd).ToList<RFData>());
+            }
+
+            return fullCalibration;
         }
 
         /// <summary>

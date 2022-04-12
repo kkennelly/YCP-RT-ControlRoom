@@ -20,6 +20,10 @@ namespace ControlRoomApplicationTest.DatabaseOperationsTests
         private RFData data3;
         private RFData data4;
 
+        // Test Appointment Calibration objects
+        private AppointmentCalibration apptCal1;
+        private AppointmentCalibration apptCal2;
+
         // Test Appointment objects
         private Appointment appt;
         private int NumRTInstances = 1;
@@ -75,6 +79,25 @@ namespace ControlRoomApplicationTest.DatabaseOperationsTests
             data4.Intensity = 12987;
             data4.TimeCaptured = date.AddSeconds(5);
             data4.Appointment = RFappt;
+
+            // Appointment Calibration initialization
+            apptCal1 = new AppointmentCalibration();
+            apptCal2 = new AppointmentCalibration();
+
+            Appointment calAppt = appt;
+            apptCal1.Appointment = calAppt;
+            apptCal1.CalibrationType = AppointmentCalibrationTypeEnum.BEGINNING;
+            apptCal1.tree_start_time = date;
+            apptCal1.tree_end_time = date;
+            apptCal1.zenith_start_time = date;
+            apptCal1.zenith_end_time = date;
+
+            apptCal2.Appointment = calAppt;
+            apptCal2.CalibrationType = AppointmentCalibrationTypeEnum.END;
+            apptCal2.tree_start_time = date;
+            apptCal2.tree_end_time = date;
+            apptCal2.zenith_start_time = date;
+            apptCal2.zenith_end_time = date;
 
             NumAppointments++;
             NumRTInstances++;
@@ -703,6 +726,14 @@ namespace ControlRoomApplicationTest.DatabaseOperationsTests
             DatabaseOperations.AddWeatherThreshold(testThreshold);
             int time = DatabaseOperations.FetchWeatherThreshold().SnowDumpTime;
             Assert.AreEqual(120, time);
+
+        }
+
+        [TestMethod]
+        public void testAddAppointmentCalibration()
+        {
+            DatabaseOperations.AddAppointmentCalibrationData(apptCal1);
+            DatabaseOperations.AddAppointmentCalibrationData(apptCal2);
 
         }
     }

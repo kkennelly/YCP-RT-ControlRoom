@@ -15,7 +15,13 @@ namespace ControlRoomApplication.Controllers
         [Description("Your YCAS Radio Telescope appointment has been cancelled.")]
         APPOINTMENT_CANCELLED,
         [Description("Your YCAS Radio Telescope appointment has started.")]
-        APPOINTMENT_STARTED
+        APPOINTMENT_STARTED,
+        [Description("Starting Calibration has completed successfully.")]
+        START_CALIBRATION_COMPLETION,
+        [Description("Ending Calibration has completed successfully/")]
+        END_CALIBRATION_COMPLETION,
+        [Description("Appointment Calibration has failed.")]
+        CALIBRATION_FAILURE
     }
 
     public static class MessageTypeExtension

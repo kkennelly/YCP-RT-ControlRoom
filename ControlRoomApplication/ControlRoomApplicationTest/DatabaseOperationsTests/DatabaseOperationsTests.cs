@@ -795,5 +795,17 @@ namespace ControlRoomApplicationTest.DatabaseOperationsTests
             DatabaseOperations.AddAppointmentCalibrationData(apptCal1);
             DatabaseOperations.AddAppointmentCalibrationData(apptCal2);
         }
+
+        [TestMethod]
+        public void testGetSensorStatus()
+        {
+            DatabaseOperations.AddSensorStatusData(SensorStatus.Generate(SensorStatusEnum.NORMAL, SensorStatusEnum.ALARM,
+                SensorStatusEnum.ALARM, SensorStatusEnum.ALARM, SensorStatusEnum.ALARM, SensorStatusEnum.ALARM, SensorStatusEnum.ALARM,
+                SensorStatusEnum.ALARM, SensorStatusEnum.ALARM, SensorStatusEnum.ALARM, SensorStatusEnum.ALARM, SensorStatusEnum.ALARM,
+                SensorStatusEnum.ALARM, SensorStatusEnum.ALARM));
+            SensorStatus status = null;
+            status = DatabaseOperations.GetSensorStatusData();
+            Assert.AreEqual(status.gate, (SByte)SensorStatusEnum.NORMAL);
+        }
     }
 }

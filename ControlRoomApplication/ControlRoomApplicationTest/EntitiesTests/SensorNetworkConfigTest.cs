@@ -35,6 +35,7 @@ namespace ControlRoomApplicationTest.EntitiesTests
             Assert.AreEqual(config.CounterbalanceAccelerometerInit, true);
             Assert.AreEqual(config.ElevationEncoderInit, true);
             Assert.AreEqual(config.AzimuthEncoderInit, true);
+            Assert.AreEqual(config.ElevationAmbientInit, true);
         }
 
         [TestMethod]
@@ -56,6 +57,7 @@ namespace ControlRoomApplicationTest.EntitiesTests
             Assert.AreEqual(config.CounterbalanceAccelerometerInit, false);
             Assert.AreEqual(config.ElevationEncoderInit, false);
             Assert.AreEqual(config.AzimuthEncoderInit, false);
+            Assert.AreEqual(config.ElevationAmbientInit, false);
         }
 
         [TestMethod]
@@ -171,6 +173,19 @@ namespace ControlRoomApplicationTest.EntitiesTests
         }
 
         [TestMethod]
+        public void TestEquals_AmbTempHumidityInitDifferent_NotEqual()
+        {
+            int telescopeId = 5;
+
+            SensorNetworkConfig config = new SensorNetworkConfig(telescopeId);
+            SensorNetworkConfig other = new SensorNetworkConfig(telescopeId);
+
+            other.ElevationAmbientInit = false;
+
+            Assert.IsFalse(config.Equals(other));
+        }
+
+        [TestMethod]
         public void TestEquals_TimeoutDataRetrievalDifferent_NotEqual()
         {
             int telescopeId = 5;
@@ -219,6 +234,7 @@ namespace ControlRoomApplicationTest.EntitiesTests
             config.CounterbalanceAccelerometerInit = false;
             config.ElevationEncoderInit = false;
             config.AzimuthEncoderInit = false;
+            config.ElevationAmbientInit = false;
 
             var bytes = config.GetSensorInitAsBytes();
 

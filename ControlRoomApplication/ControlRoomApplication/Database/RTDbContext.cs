@@ -2,6 +2,7 @@
 using System.Data.Entity;
 using ControlRoomApplication.Constants;
 using ControlRoomApplication.Entities;
+using ControlRoomApplication.Entities.DiagnosticData;
 
 namespace ControlRoomApplication.Main
 {
@@ -42,6 +43,7 @@ namespace ControlRoomApplication.Main
         public DbSet<Location> Location { get; set; }
         public DbSet<Log> Logs { get; set; }
         public DbSet<Temperature> Temperatures { get; set; }
+        public DbSet<Humidity> Humidity { get; set; }
         public DbSet<Acceleration> Accelerations { get; set; }
         public DbSet<AzimuthAccelerationBlob> AzimuthAccelerationBlobs { get; set; }
         public DbSet<ElevationAccelerationBlob> ElevationAccelerationBlobs { get; set; }

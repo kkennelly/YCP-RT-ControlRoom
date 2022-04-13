@@ -14,6 +14,7 @@ using System.Data.Entity.Core.Objects;
 using ControlRoomApplication.Util;
 using System.Threading;
 using System.Text;
+using ControlRoomApplication.Entities.DiagnosticData;
 
 namespace ControlRoomApplication.Database
 {
@@ -626,6 +627,31 @@ namespace ControlRoomApplication.Database
 
             if (testflag) t.Join();
         }
+
+        /// <summary>
+        /// Add an array of sensor data to the appropriate table.
+        /// </summary>
+        /// <param name="humidity">The humidity data to add.</param>
+        public static void AddSensorData(Humidity[] humidity, bool testflag = false)
+        {
+            Thread t = new Thread(() =>
+            {
+                if (humidity.Length <= 0) { return; }
+                if (!USING_REMOTE_DATABASE)
+                {
+                    using (RTDbContext Context = InitializeDatabaseContext())
+                    {
+                        Context.Humidity.AddRange(humidity);
+                        SaveContext(Context);
+                    }
+                }
+            });
+
+            t.Start();
+
+            if (testflag) t.Join();
+        }
+
         /// <summary>
         /// add an array of sensor data to the apropriat table
         /// </summary>
@@ -742,6 +768,21 @@ namespace ControlRoomApplication.Database
         public static List<Temperature> GetTEMPData( long starttime , long endTime, SensorLocationEnum loc ) {
             using(RTDbContext Context = InitializeDatabaseContext()) {// && x.TimeCaptured < endTime) )   && x.TimeCaptured.Ticks < endTime.Ticks
                 return Context.Temperatures.Where( x => x.TimeCapturedUTC > starttime && x.location_ID == (int)loc ).ToList();
+            }
+        }
+
+        /// <summary>
+        /// Get humidity between start time and now from sensor location loc
+        /// </summary>
+        /// <param name="startTime"></param>
+        /// <param name="endTime"></param>
+        /// <param name="loc"></param>
+        /// <returns></returns>
+        public static List<Humidity> GetHumidityData(long startTime, long endTime, SensorLocationEnum loc)
+        {
+            using (RTDbContext Context = InitializeDatabaseContext())
+            {
+                return Context.Humidity.Where(x => x.TimeCapturedUTC > startTime && x.LocationID == (int)loc).ToList();
             }
         }
 

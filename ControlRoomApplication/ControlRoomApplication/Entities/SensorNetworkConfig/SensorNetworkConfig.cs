@@ -31,6 +31,7 @@ namespace ControlRoomApplication.Entities
             // Initialize all sensors to enabled by default
             ElevationTemp1Init = true;
             AzimuthTemp1Init = true;
+            ElevationAmbientInit = true;
             AzimuthAccelerometerInit = true;
             ElevationAccelerometerInit = true;
             CounterbalanceAccelerometerInit = true;
@@ -51,6 +52,7 @@ namespace ControlRoomApplication.Entities
             // Initialize all sensors to be disabled
             ElevationTemp1Init = false;
             AzimuthTemp1Init = false;
+            ElevationAmbientInit = false;
             AzimuthAccelerometerInit = false;
             ElevationAccelerometerInit = false;
             CounterbalanceAccelerometerInit = false;
@@ -90,6 +92,15 @@ namespace ControlRoomApplication.Entities
         /// </summary>
         [Column("azimuth_temp_1_init")]
         public bool AzimuthTemp1Init { get; set; }
+
+        /// <summary>
+        /// This will tell the Sensor Network whether or not to initialize the DHT22 ambient temp and humidity sensor.
+        /// We will not receive data for this sensor if it is not initialized.
+        /// true = initialize;
+        /// false = do not initialize
+        /// </summary>
+        [Column("elevation_ambient_init")]
+        public bool ElevationAmbientInit { get; set; }
 
         /// <summary>
         /// This will tell the Sensor Network whether or not to initialize the azimuth accelerometer.
@@ -164,6 +175,7 @@ namespace ControlRoomApplication.Entities
                 this.TelescopeId == other.TelescopeId &&
                 this.ElevationTemp1Init == other.ElevationTemp1Init &&
                 this.AzimuthTemp1Init == other.AzimuthTemp1Init &&
+                this.ElevationAmbientInit == other.ElevationAmbientInit &&
                 this.AzimuthAccelerometerInit == other.AzimuthAccelerometerInit &&
                 this.ElevationAccelerometerInit == other.ElevationAccelerometerInit &&
                 this.CounterbalanceAccelerometerInit == other.CounterbalanceAccelerometerInit &&
@@ -197,7 +209,8 @@ namespace ControlRoomApplication.Entities
                 AzimuthEncoderInit ?                (byte)1 : (byte)0,
                 AzimuthAccelerometerInit ?          (byte)1 : (byte)0,
                 ElevationAccelerometerInit ?        (byte)1 : (byte)0,
-                CounterbalanceAccelerometerInit ?   (byte)1 : (byte)0
+                CounterbalanceAccelerometerInit ?   (byte)1 : (byte)0,
+                ElevationAmbientInit ?              (byte)1 : (byte)0
             };
 
             return init;

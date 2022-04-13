@@ -20,6 +20,7 @@ namespace ControlRoomApplication.Entities
         // specific
         AZ_MOTOR_TEMP,
         ELEV_MOTOR_TEMP,
+        AMBIENT_TEMP_HUMIDITY,
         AZ_MOTOR_VIBRATION,
         ELEV_MOTOR_VIBRATION,
         AZ_MOTOR_CURRENT,

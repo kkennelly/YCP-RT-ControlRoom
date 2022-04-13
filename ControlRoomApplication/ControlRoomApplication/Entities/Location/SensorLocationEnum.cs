@@ -11,8 +11,8 @@ namespace ControlRoomApplication.Entities {
         EL_MOTOR,
         COUNTERBALANCE,
         MICRO_CTRL,
-        MICRO_CTRL_BOX
-        
+        MICRO_CTRL_BOX,
+        EL_FRAME
     }
 
     public class SensorLocationEnumTypeConversionHelper {

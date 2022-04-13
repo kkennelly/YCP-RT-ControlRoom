@@ -23,7 +23,7 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
         /// sensor initialization byte array.
         /// </summary>
         AzimuthTemp,
-        
+
         /// <summary>
         /// Elevation encoder initialization. This corresponds to the index of this sensor in the
         /// sensor initialization byte array.
@@ -52,6 +52,12 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
         /// Counterbalance accelerometer initialization. This corresponds to the index of this sensor in the
         /// sensor initialization byte array.
         /// </summary>
-        CounterbalanceAccelerometer
+        CounterbalanceAccelerometer,
+
+        /// <summary>
+        /// Ambient temperature and humidity initialization. This corresponds to the index of this sensor in the
+        /// sensor initialization byte array.
+        /// </summary>
+        AmbientTempHumidity
     }
 }

@@ -439,7 +439,7 @@ namespace ControlRoomApplication.Controllers
                         case "ELEVATION_MOT_TEMP":
                             rtController.setOverride("elevation motor temperature", doOverride);
                             break;
-                        
+
                         // If no case is reached, the sensor is not valid. Return appropriately
                         default: 
                             return new ExecuteTCPCommandResult(MovementResult.InvalidCommand, TCPCommunicationConstants.INVALID_SENSOR_OVERRIDE + sensorToOverride);
@@ -943,7 +943,7 @@ namespace ControlRoomApplication.Controllers
                 //Concatenates all weather data together using ? as a elimination symbol to allow the client to split easily 
                 string weatherDataString = windSpeed + "?" + windDirection + "?" + dailyRain + "?" + rainRate + "?" + outsideTemp + "?" + insideTemp + "?" + baromPressure + "?" + dewPoint + "?" + windChill + "?" + outsideHumidity + "?" + totalRain + "?" + monthlyRain + "?" + heatIndex;
 
-                sendBack += " | BIT_FLIPPED: " + Convert.ToString(rtController.RadioTelescope.PLCDriver.CheckMCUErrors().Count > 0).ToUpper() + " | " + "PRIORITY: " + currentMovementPriority + " | " + "WEATHER: " + weatherDataString;
+                sendBack += " | BIT_FLIPPED: " + Convert.ToString(rtController.RadioTelescope.PLCDriver.CheckMCUErrors().Count > 0).ToUpper() + " | " + "PRIORITY: " + currentMovementPriority + " | " + weatherDataString;
             }
 
             return sendBack;

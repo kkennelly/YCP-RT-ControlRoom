@@ -461,8 +461,8 @@ namespace ControlRoomApplication.Database
             using (RTDbContext Context = InitializeDatabaseContext())
             {
                 // Add the RFData from the calibration timeline, first add tree then add elevation
-                fullCalibration.Add(Context.RFDatas.SqlQuery("SELECT * FROM rf_data WHERE 'time_captured' BETWEEN " + treeStart + " AND " + treeEnd).ToList<RFData>());
-                fullCalibration.Add(Context.RFDatas.SqlQuery("SELECT * FROM rf_data WHERE 'time_captured' BETWEEN " + elStart + " AND " + elEnd).ToList<RFData>());
+                fullCalibration.Add(Context.RFDatas.SqlQuery("SELECT * FROM rf_data WHERE time_captured BETWEEN " + treeStart + " AND " + treeEnd).ToList<RFData>());
+                fullCalibration.Add(Context.RFDatas.SqlQuery("SELECT * FROM rf_data WHERE time_captured BETWEEN " + elStart + " AND " + elEnd).ToList<RFData>());
             }
 
             return fullCalibration;

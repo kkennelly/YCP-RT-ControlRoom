@@ -86,7 +86,7 @@ namespace ControlRoomApplicationTest.DatabaseOperationsTests
             apptCal2 = new AppointmentCalibration();
 
             //Appointment calAppt = appt;
-            apptCal1.Appointment = appt;
+            //apptCal1.Appointment = appt;
             apptCal1.appointment_id = appt.Id;
             apptCal1.CalibrationType = AppointmentCalibrationTypeEnum.BEGINNING;
             apptCal1.tree_start_time = date;
@@ -94,7 +94,7 @@ namespace ControlRoomApplicationTest.DatabaseOperationsTests
             apptCal1.zenith_start_time = date;
             apptCal1.zenith_end_time = date;
 
-            apptCal2.Appointment = appt;
+            //apptCal2.Appointment = appt;
             apptCal2.appointment_id = appt.Id;
             apptCal2.CalibrationType = AppointmentCalibrationTypeEnum.END;
             apptCal2.tree_start_time = date;

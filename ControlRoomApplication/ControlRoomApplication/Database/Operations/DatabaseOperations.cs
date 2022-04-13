@@ -426,23 +426,6 @@ namespace ControlRoomApplication.Database
         {
             using (RTDbContext Context = InitializeDatabaseContext())
             {
-                if (appointmentCalibration.Appointment != null)
-                    Context.Entry(appointmentCalibration.Appointment).State = EntityState.Unchanged;
-
-                //Context.Entry((appointmentCalibration.CalibrationType)).State = EntityState.Unchanged;
-
-                if (appointmentCalibration.zenith_start_time != null) 
-                    Context.Entry(appointmentCalibration.zenith_start_time).State = EntityState.Unchanged;
-
-                if (appointmentCalibration.zenith_end_time != null)
-                    Context.Entry(appointmentCalibration.zenith_end_time).State = EntityState.Unchanged;
-
-                if (appointmentCalibration.tree_start_time != null) 
-                    Context.Entry(appointmentCalibration.tree_start_time).State = EntityState.Unchanged;
-
-                if (appointmentCalibration.tree_end_time != null)
-                    Context.Entry(appointmentCalibration.tree_end_time).State = EntityState.Unchanged;
-
                 Context.AppointmentCalibrations.Add(appointmentCalibration);
                 SaveContext(Context);
             }

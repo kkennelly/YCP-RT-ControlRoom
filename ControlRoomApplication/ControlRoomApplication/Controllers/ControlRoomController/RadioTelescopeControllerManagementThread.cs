@@ -229,12 +229,12 @@ namespace ControlRoomApplication.Controllers
                         endZenithCalTime = DateTime.Now;
 
                         AppointmentCalibration apptCal = new AppointmentCalibration();
+                        apptCal.appointment_id = NextAppointment.Id;
                         apptCal.CalibrationType = AppointmentCalibrationTypeEnum.BEGINNING;
                         apptCal.tree_start_time = startTreeCalTime;
                         apptCal.tree_end_time = endTreeCalTime;
                         apptCal.zenith_start_time = startZenithCalTime;
                         apptCal.zenith_end_time = endZenithCalTime;
-                        apptCal.Appointment = NextAppointment;
                         DatabaseOperations.AddAppointmentCalibrationData(apptCal);
 
                         // If the temperature is low and there's precipitation, dump the dish
@@ -320,12 +320,12 @@ namespace ControlRoomApplication.Controllers
                         endZenithCalTime = DateTime.Now;
 
                         AppointmentCalibration endCal = new AppointmentCalibration();
+                        endCal.appointment_id = NextAppointment.Id;
                         endCal.CalibrationType = AppointmentCalibrationTypeEnum.END;
                         endCal.tree_start_time = startTreeCalTime;
                         endCal.tree_end_time = endTreeCalTime;
                         endCal.zenith_start_time = startZenithCalTime;
                         endCal.zenith_end_time = endZenithCalTime;
-                        endCal.Appointment = NextAppointment;
                         DatabaseOperations.AddAppointmentCalibrationData(endCal);
 
                         // If the temperature is low and there's precipitation, dump the dish

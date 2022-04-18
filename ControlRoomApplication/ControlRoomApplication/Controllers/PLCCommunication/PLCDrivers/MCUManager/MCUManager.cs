@@ -1170,5 +1170,26 @@ namespace ControlRoomApplication.Controllers {
         {
             telescopeType = type;
         }
+
+        /// <summary>
+        /// Compute the deceleration to be used for MCU movements. Takes in an input speed and computes the deceleration needed to stop
+        /// within the target stop distance constant.
+        /// </summary>
+        /// <param name="inputSpeed">The speed in ticks/s the motor will be running at.</param>
+        /// <returns>The deceleration value ticks/s/ms to slow the motor down within the stopping distance constant.</returns>
+        private int GetDeceleration(double inputSpeed)
+        {
+            // Time it takes to stop is t = distance/velocity
+            // Acceleration is change in velocity over time: (v1-v0)/t => (v1-0)/t => v1/distance/v1 => v1*v1/distance
+            int deceleration = (int)Math.Ceiling(inputSpeed * inputSpeed / MCUConstants.TARGET_STOP_DISTANCE / 1000);
+
+            // If deceleration is less than the default, use the default because telesope will stop within target distance and won't take as long
+            if (deceleration < MCUConstants.ACTUAL_MCU_MOVE_ACCELERATION_WITH_GEARING)
+            {
+                deceleration = MCUConstants.ACTUAL_MCU_MOVE_ACCELERATION_WITH_GEARING;
+            }
+
+            return deceleration;
+        }
     }
 }

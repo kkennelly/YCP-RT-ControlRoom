@@ -708,7 +708,7 @@ namespace ControlRoomApplication.Controllers {
                 (ushort)((AZ_Speed & 0xFFFF0000)>>16),
                 (ushort)(AZ_Speed & 0xFFFF),
                 ACTUAL_MCU_MOVE_ACCELERATION_WITH_GEARING,
-                ACTUAL_MCU_MOVE_ACCELERATION_WITH_GEARING,
+                GetDeceleration(AZ_Speed),
                 (ushort)MCUCommandType.EmptyData,
                 (ushort)MCUCommandType.EmptyData,
 
@@ -720,7 +720,7 @@ namespace ControlRoomApplication.Controllers {
                 (ushort)((EL_Speed & 0xFFFF0000)>>16),
                 (ushort)(EL_Speed & 0xFFFF),
                 ACTUAL_MCU_MOVE_ACCELERATION_WITH_GEARING,
-                ACTUAL_MCU_MOVE_ACCELERATION_WITH_GEARING,
+                GetDeceleration(EL_Speed),
                 (ushort)MCUCommandType.EmptyData,
                 (ushort)MCUCommandType.EmptyData
             };
@@ -774,7 +774,7 @@ namespace ControlRoomApplication.Controllers {
                 (ushort)((command.AzimuthSpeed & 0xFFFF0000)>>16),
                 (ushort)(command.AzimuthSpeed & 0xFFFF),
                 ACTUAL_MCU_MOVE_ACCELERATION_WITH_GEARING,
-                ACTUAL_MCU_MOVE_ACCELERATION_WITH_GEARING,
+                GetDeceleration(command.AzimuthSpeed),
                 (ushort)MCUCommandType.EmptyData,
                 (ushort)MCUCommandType.EmptyData,
 
@@ -786,7 +786,7 @@ namespace ControlRoomApplication.Controllers {
                 (ushort)((command.ElevationSpeed & 0xFFFF0000)>>16),
                 (ushort)(command.ElevationSpeed & 0xFFFF),
                 ACTUAL_MCU_MOVE_ACCELERATION_WITH_GEARING,
-                ACTUAL_MCU_MOVE_ACCELERATION_WITH_GEARING,
+                GetDeceleration(command.ElevationSpeed),
                 (ushort)MCUCommandType.EmptyData,
                 (ushort)MCUCommandType.EmptyData
             };
@@ -1038,7 +1038,7 @@ namespace ControlRoomApplication.Controllers {
 
             int AZstepSpeed = ConversionHelper.RPMToSPS( AZspeed , MotorConstants.GEARING_RATIO_AZIMUTH );
             int ELstepSpeed = ConversionHelper.RPMToSPS( ELspeed , MotorConstants.GEARING_RATIO_ELEVATION );
-            ushort[] data = new ushort[10] { (ushort)azDirection , 0x0003 , 0x0 , 0x0 , (ushort)(AZstepSpeed >> 16) , (ushort)(AZstepSpeed & 0xffff) , MCUConstants.ACTUAL_MCU_MOVE_ACCELERATION_WITH_GEARING , MCUConstants.ACTUAL_MCU_MOVE_ACCELERATION_WITH_GEARING , 0x0 , 0x0 , };
+            ushort[] data = new ushort[10] { (ushort)azDirection , 0x0003 , 0x0 , 0x0 , (ushort)(AZstepSpeed >> 16) , (ushort)(AZstepSpeed & 0xffff) , MCUConstants.ACTUAL_MCU_MOVE_ACCELERATION_WITH_GEARING , GetDeceleration(AZstepSpeed), 0x0 , 0x0 , };
             ushort[] data2 = new ushort[20];
 
             if(AZstepSpeed > AZStartSpeed) {
@@ -1135,7 +1135,7 @@ namespace ControlRoomApplication.Controllers {
                 (ushort)(stepSpeed >> 16),
                 (ushort)(stepSpeed & 0xffff),
                 MCUConstants.ACTUAL_MCU_MOVE_ACCELERATION_WITH_GEARING,
-                MCUConstants.ACTUAL_MCU_MOVE_ACCELERATION_WITH_GEARING,
+                GetDeceleration(stepSpeed),
                 (ushort)MCUCommandType.EmptyData,
                 (ushort)MCUCommandType.EmptyData
             };
@@ -1177,16 +1177,21 @@ namespace ControlRoomApplication.Controllers {
         /// </summary>
         /// <param name="inputSpeed">The speed in ticks/s the motor will be running at.</param>
         /// <returns>The deceleration value ticks/s/ms to slow the motor down within the stopping distance constant.</returns>
-        private int GetDeceleration(double inputSpeed)
+        private ushort GetDeceleration(double inputSpeed)
         {
             // Time it takes to stop is t = distance/velocity
             // Acceleration is change in velocity over time: (v1-v0)/t => (v1-0)/t => v1/distance/v1 => v1*v1/distance
-            int deceleration = (int)Math.Ceiling(inputSpeed * inputSpeed / MCUConstants.TARGET_STOP_DISTANCE / 1000);
+            ushort deceleration = (ushort)Math.Ceiling(inputSpeed * inputSpeed / MCUConstants.TARGET_STOP_DISTANCE / 1000);
 
             // If deceleration is less than the default, use the default because telesope will stop within target distance and won't take as long
             if (deceleration < MCUConstants.ACTUAL_MCU_MOVE_ACCELERATION_WITH_GEARING)
             {
                 deceleration = MCUConstants.ACTUAL_MCU_MOVE_ACCELERATION_WITH_GEARING;
+            }
+            // If the deceleration is greater than the allowed amount, set it to the allowed amount
+            else if (deceleration > MCUConstants.ACTUAL_MCU_PEAK_ACCELERATION)
+            {
+                deceleration = MCUConstants.ACTUAL_MCU_PEAK_ACCELERATION;
             }
 
             return deceleration;

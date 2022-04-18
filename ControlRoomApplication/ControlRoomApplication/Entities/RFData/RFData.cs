@@ -23,7 +23,7 @@ namespace ControlRoomApplication.Entities
 
         [Required]
         [Column("time_captured")]
-        public DateTime TimeCaptured { get; set; }
+        public DateTime time_captured { get; set; }
 
         [Required]
         [Column("intensity")]
@@ -34,7 +34,7 @@ namespace ControlRoomApplication.Entities
         public static RFData GenerateFrom(SpectraCyberResponse response)
         {
             RFData rfData = new RFData();
-            rfData.TimeCaptured = response.DateTimeCaptured;
+            rfData.time_captured = response.DateTimeCaptured;
             rfData.Intensity = response.DecimalData;
             return rfData;
         }

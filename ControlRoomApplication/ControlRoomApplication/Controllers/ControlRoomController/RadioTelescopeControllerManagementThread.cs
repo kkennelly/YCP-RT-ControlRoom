@@ -230,7 +230,7 @@ namespace ControlRoomApplication.Controllers
 
                         AppointmentCalibration apptCal = new AppointmentCalibration();
                         apptCal.appointment_id = NextAppointment.Id;
-                        apptCal.CalibrationType = AppointmentCalibrationTypeEnum.BEGINNING;
+                        apptCal.calibration_type = AppointmentCalibrationTypeEnum.BEGINNING;
                         apptCal.tree_start_time = startTreeCalTime;
                         apptCal.tree_end_time = endTreeCalTime;
                         apptCal.zenith_start_time = startZenithCalTime;
@@ -321,7 +321,7 @@ namespace ControlRoomApplication.Controllers
 
                         AppointmentCalibration endCal = new AppointmentCalibration();
                         endCal.appointment_id = NextAppointment.Id;
-                        endCal.CalibrationType = AppointmentCalibrationTypeEnum.END;
+                        endCal.calibration_type = AppointmentCalibrationTypeEnum.END;
                         endCal.tree_start_time = startTreeCalTime;
                         endCal.tree_end_time = endTreeCalTime;
                         endCal.zenith_start_time = startZenithCalTime;

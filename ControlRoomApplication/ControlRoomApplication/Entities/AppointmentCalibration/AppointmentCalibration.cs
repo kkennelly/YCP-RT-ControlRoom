@@ -30,7 +30,7 @@ namespace ControlRoomApplication.Entities
 
         [Required]
         [Column("calibration_type")]
-        public AppointmentCalibrationTypeEnum CalibrationType { get; set; }
+        public AppointmentCalibrationTypeEnum calibration_type { get; set; }
 
         [Required]
         [Column("zenith_start_time")]

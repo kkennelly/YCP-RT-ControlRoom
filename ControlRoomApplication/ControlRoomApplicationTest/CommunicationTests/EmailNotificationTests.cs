@@ -76,7 +76,7 @@ namespace ControlRoomApplicationTest.CommunicationTests
             RFData junkdata = new RFData();
             junkdata.Id = 0;
             junkdata.appointment_id = 0;
-            junkdata.TimeCaptured = System.DateTime.Now;
+            junkdata.time_captured = System.DateTime.Now;
             junkdata.Intensity = 8675309;
 
             List<RFData> JunkRFData = new List<RFData>();

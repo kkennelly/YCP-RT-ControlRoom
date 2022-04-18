@@ -15,6 +15,7 @@ using ControlRoomApplication.Util;
 using System.Threading;
 using System.Text;
 using ControlRoomApplication.Entities.DiagnosticData;
+using MySql.Data.MySqlClient;
 
 namespace ControlRoomApplication.Database
 {
@@ -444,7 +445,31 @@ namespace ControlRoomApplication.Database
         }
 
         /// <summary>
-        /// Gets appointment calibration data stored in the database
+        /// Gets all the appointment calibration data from an appointment
+        /// </summary>
+        /// <param name="appointmentId">
+        /// Appointment number you wish to grab calibration data for
+        /// </param>
+        /// <returns>
+        /// <list type=">appointmentCalibration">
+        /// Returns an appointment calibration type list of the calibrations for discerning times when RF data collection occured
+        /// </list>
+        /// </returns>
+        public static List<AppointmentCalibration> getAppointmentCalibrationsFromAppointment(int appointmentId)
+        {
+            List<AppointmentCalibration> apptCals = new List<AppointmentCalibration>();
+
+            using (RTDbContext Context = InitializeDatabaseContext())
+            {
+                // Set the appointment calibration data to return from an appointment
+                apptCals = Context.AppointmentCalibrations.SqlQuery("SELECT * FROM appointment_calibration WHERE appointment_id=@appointment_id", new MySqlParameter("appointment_id", appointmentId)).ToList<AppointmentCalibration>();
+            }
+
+            return apptCals;
+        }
+
+        /// <summary>
+        /// Gets rf data for appointment calibration stored in the database
         /// </summary>
         /// <param 
         /// name="treeStart, treeEnd, elStart, elEnd, type">Name of starting and stopping times of both calibrations 
@@ -457,12 +482,12 @@ namespace ControlRoomApplication.Database
         public static List<List<RFData>> getAppointmentCalibrationData(DateTime treeStart, DateTime treeEnd, DateTime elStart, DateTime elEnd)
         {
             List<List<RFData>> fullCalibration = new List<List<RFData>>();
-
+            
             using (RTDbContext Context = InitializeDatabaseContext())
             {
-                // Add the RFData from the calibration timeline, first add tree then add elevation
-                fullCalibration.Add(Context.RFDatas.SqlQuery("SELECT * FROM rf_data WHERE time_captured BETWEEN " + treeStart + " AND " + treeEnd).ToList<RFData>());
-                fullCalibration.Add(Context.RFDatas.SqlQuery("SELECT * FROM rf_data WHERE time_captured BETWEEN " + elStart + " AND " + elEnd).ToList<RFData>());
+                // Add the RFData from the calibration timeline, first add tree then add elevation               
+                fullCalibration.Add(Context.RFDatas.SqlQuery("SELECT * FROM rf_data WHERE time_captured BETWEEN @treeStart AND @treeEnd", new MySqlParameter("treeStart", treeStart), new MySqlParameter("treeEnd", treeEnd)).ToList<RFData>());
+                fullCalibration.Add(Context.RFDatas.SqlQuery("SELECT * FROM rf_data WHERE time_captured BETWEEN @elStart AND @elEnd", new MySqlParameter("elStart", elStart), new MySqlParameter("elEnd", elEnd)).ToList<RFData>());
             }
 
             return fullCalibration;
@@ -563,7 +588,7 @@ namespace ControlRoomApplication.Database
             {
                 return false;
             }
-            else if (data.TimeCaptured > DateTime.UtcNow.AddMinutes(1))
+            else if (data.time_captured > DateTime.UtcNow.AddMinutes(1))
             {
                 return false;
             }

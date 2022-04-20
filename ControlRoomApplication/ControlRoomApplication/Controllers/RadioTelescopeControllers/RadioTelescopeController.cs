@@ -781,13 +781,14 @@ namespace ControlRoomApplication.Controllers
             // Current Elevation Position, used to compare to see if the elevation changes when motors move
             double prevElevation = GetCurrentOrientation().Elevation;
 
-            // Set the timeout count to 0, the threshold will be how many 100 milliseconds of no updated data we need to consider timeout, ie 50 is 5 seconds
+            // Set the timeout count to 0. threshold is a constant, these will be in MS
             int elevationTimeoutCount = 0;
-            int elevationTimeoutThreshold = 50;
 
             // Sensor overrides must be taken into account
             bool currentAZOveride = overrides.overrideAzimuthMotTemp;
             bool currentELOveride = overrides.overrideElevatMotTemp;
+
+            SensorStatus sensors = new SensorStatus();
 
             // Loop through every one second to get new sensor data
             while (MonitoringSensors)
@@ -800,33 +801,57 @@ namespace ControlRoomApplication.Controllers
 
                 // Sensor status routine, checks for each sensor to update the status in the DB
                 // Check Gate
-                SensorStatusEnum gate = SensorStatusEnum.NORMAL;
+                sensors.gate = (SByte)SensorStatusEnum.NORMAL;
 
                 // Check azimuth temp 1
-                SensorStatusEnum azTemp1 = SensorStatusEnum.NORMAL;
+                sensors.az_motor_temp_1 = (SByte)SensorStatusEnum.NORMAL;
 
                 // Check azimuth temp 2
-                SensorStatusEnum azTemp2 = SensorStatusEnum.NORMAL;
+                sensors.az_motor_temp_2 = (SByte)SensorStatusEnum.NORMAL;
 
                 // Check elevation temp 1
-                SensorStatusEnum elTemp1 = SensorStatusEnum.NORMAL;
+                sensors.el_motor_temp_1 = (SByte)SensorStatusEnum.NORMAL;
 
                 // Check elevation temp 2
-                SensorStatusEnum elTemp2 = SensorStatusEnum.NORMAL;
+                sensors.el_motor_temp_2 = (SByte)SensorStatusEnum.NORMAL;
 
                 // Check weather
-                SensorStatusEnum weather = SensorStatusEnum.NORMAL;
+                int windSpeedStatus = RadioTelescope.WeatherStation.CurrentWindSpeedStatus;
+                sensors.weather_station = (SByte)SensorStatusEnum.NORMAL;
 
+                // Tragic wind speed
+                if (windSpeedStatus == 2)
+                {
+                    logger.Info(Utilities.GetTimeStamp() + ": [ControlRoomController] Wind speeds were too high: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
+                    // Might want to consider weather station overrides
+                    sensors.weather_station = (SByte)SensorStatusEnum.ALARM;
+
+                    pushNotification.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are too high: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
+                    EmailNotifications.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are too high: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
+                }
+                // Slightly potentially tragic wind speed
+                else if (windSpeedStatus == 1)
+                {
+                    logger.Info(Utilities.GetTimeStamp() + ": [ControlRoomController] Wind speeds are in Warning Range: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
+                    // Might want to consider weather station overrides
+                    sensors.weather_station = (SByte)SensorStatusEnum.WARNING;
+
+                    pushNotification.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are in Warning Range: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
+                    EmailNotifications.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are in Warning Range: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
+                    
+                }
+                
                 // Check elevation absolute encoder, set to ALERT if timed out
-                SensorStatusEnum elAbsEncoder = SensorStatusEnum.NORMAL;
+                sensors.elevation_abs_encoder = (SByte)SensorStatusEnum.NORMAL;
                 if (RadioTelescope.PLCDriver.MotorsCurrentlyMoving())
                 {
                     if (prevElevation == GetCurrentOrientation().Elevation)
                     {
                         elevationTimeoutCount++;
-                        if (elevationTimeoutCount >= elevationTimeoutThreshold)
+                        if (elevationTimeoutCount >= SensorNetwork.SensorNetworkConstants.ElevationTimeoutThreshold)
                         {
-                            elAbsEncoder = SensorStatusEnum.ALARM;
+                            sensors.elevation_abs_encoder = (SByte)SensorStatusEnum.ALARM;
+                            RadioTelescope.SensorNetworkServer.SensorStatuses.ElevationAbsoluteEncoderStatus = Entities.DiagnosticData.SensorNetworkSensorStatus.Error;
                         }
                     }
                     else
@@ -837,29 +862,28 @@ namespace ControlRoomApplication.Controllers
                 prevElevation = GetCurrentOrientation().Elevation;
 
                 // Check azimuth absolute encoder
-                SensorStatusEnum azAbsEncoder = SensorStatusEnum.NORMAL;
+                sensors.azimuth_abs_encoder = (SByte)SensorStatusEnum.NORMAL;
 
                 // Check proximity 0
-                SensorStatusEnum prox0 = SensorStatusEnum.NORMAL;
+                sensors.el_proximity_0 = (SByte)SensorStatusEnum.NORMAL;
 
                 // Check proximity 90
-                SensorStatusEnum prox90 = SensorStatusEnum.NORMAL;
+                sensors.el_proximity_90 = (SByte)SensorStatusEnum.NORMAL;
 
                 // Check azimuth acceleration
-                SensorStatusEnum azAccel = SensorStatusEnum.NORMAL;
+                sensors.az_accel = (SByte)SensorStatusEnum.NORMAL;
 
                 // Check elevation acceleration
-                SensorStatusEnum elAccel = SensorStatusEnum.NORMAL;
+                sensors.el_accel = (SByte)SensorStatusEnum.NORMAL;
 
                 // Check CB acceleration
-                SensorStatusEnum cbAccel = SensorStatusEnum.NORMAL;
+                sensors.counter_balance_accel = (SByte)SensorStatusEnum.NORMAL;
 
                 // Check ambient temp humidity
-                SensorStatusEnum ambientTempHumidity = SensorStatusEnum.NORMAL;
+                sensors.ambient_temp_humidity = (SByte)SensorStatusEnum.NORMAL;
 
                 // Take all updated statuses and add them to the DB
-                DatabaseOperations.AddSensorStatusData(SensorStatus.Generate(gate, azTemp1, azTemp2, elTemp1, elTemp2,
-                    weather, elAbsEncoder, azAbsEncoder, prox0, prox90, azAccel, elAccel, cbAccel, ambientTempHumidity));
+                DatabaseOperations.AddSensorStatusData(sensors);
 
                 // Determines if the telescope is in a safe state
                 if (azTempSafe && elTempSafe) AllSensorsSafe = true;

@@ -281,7 +281,7 @@ namespace ControlRoomApplication.GUI
             lblAzAbsPos.Text = Math.Round(_azEncoderDegrees, 2).ToString();
 
             // Check if elevation encoder is timed out, output ERR if so, otherwise output current position
-            if (DatabaseOperations.GetSensorStatusData().elevation_abs_encoder.Equals((SByte)SensorStatusEnum.ALARM))
+            if (rtController.RadioTelescope.SensorNetworkServer.SensorStatuses.ElevationAbsoluteEncoderStatus.Equals(Entities.DiagnosticData.SensorNetworkSensorStatus.Error))
             {
                 lblElAbsPos.Text = "ERR";
             }

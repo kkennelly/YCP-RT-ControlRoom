@@ -53,6 +53,12 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
             CurrentAzimuthMotorTemp = new Temperature[1];
             CurrentAzimuthMotorTemp[0] = new Temperature();
 
+            CurrentElevationAmbientTemp = new Temperature[1];
+            CurrentElevationAmbientTemp[0] = new Temperature();
+
+            CurrentElevationAmbientHumidity = new Humidity[1];
+            CurrentElevationAmbientHumidity[0] = new Humidity();
+
             CurrentAbsoluteOrientation = new Orientation();
 
             CurrentElevationMotorAccl = new Acceleration[1];
@@ -74,6 +80,7 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
             SensorStatuses.AzimuthTemperature2Status = SensorNetworkSensorStatus.Okay;
             SensorStatuses.ElevationTemperature1Status = SensorNetworkSensorStatus.Okay;
             SensorStatuses.ElevationTemperature2Status = SensorNetworkSensorStatus.Okay;
+            SensorStatuses.ElevationAmbientStatus = SensorNetworkSensorStatus.Okay;
             SensorStatuses.AzimuthAccelerometerStatus = SensorNetworkSensorStatus.Okay;
             SensorStatuses.ElevationAccelerometerStatus = SensorNetworkSensorStatus.Okay;
             SensorStatuses.CounterbalanceAccelerometerStatus = SensorNetworkSensorStatus.Okay;
@@ -112,6 +119,22 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
         /// The current azimuth motor temperature received from the sensor network. 
         /// </summary>
         public Temperature[] CurrentAzimuthMotorTemp { get; set; }
+
+        /// <summary>
+        /// The current elevation ambient temperature received from the sensor network. 
+        /// </summary>
+        public Temperature[] CurrentElevationAmbientTemp { get; set; }
+
+        /// <summary>
+        /// The current elevation ambient humidity received from the sensor network. 
+        /// </summary>
+        public Humidity[] CurrentElevationAmbientHumidity { get; set; }
+
+        /// <summary>
+        /// The current elevation ambient dew point calculated from the ambient humidity and 
+        /// temperature recieved from the sensor network.
+        /// </summary>
+        public double CurrentElevationAmbientDewPoint { get; set; }
 
         /// <summary>
         /// The current orientation of the telescope based off of the absolute encoders. These
@@ -341,24 +364,26 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
                         // At this point, we may begin parsing the data
 
                         // Sensor statuses and error codes
-                        BitArray sensorStatus = new BitArray(new byte[] { data[5] }); // sensor statuses 
-                        UInt32 sensorErrors = (UInt32)(data[6] << 16 | data[7] << 8 | data[8]); // sensor self-tests | adxl error codes and azimuth encoder error code | temp sensor error codes
+                        BitArray sensorStatus = new BitArray(new byte[] { data[5], data[6] }); // sensor statuses 
+                        UInt32 sensorErrors = (UInt32)(data[7] << 16 | data[8] << 8 | data[9]); // sensor self-tests | adxl error codes and azimuth encoder error code | temp sensor error codes
 
                         // Acquire the sample sizes for each sensor
-                        UInt16 elAcclSize = (UInt16)(data[9] << 8 | data[10]);
-                        UInt16 azAcclSize = (UInt16)(data[11] << 8 | data[12]);
-                        UInt16 cbAcclSize = (UInt16)(data[13] << 8 | data[14]);
-                        UInt16 elTempSensorSize = (UInt16)(data[15] << 8 | data[16]);
-                        UInt16 azTempSensorSize = (UInt16)(data[17] << 8 | data[18]);
-                        UInt16 elEncoderSize = (UInt16)(data[19] << 8 | data[20]);
-                        UInt16 azEncoderSize = (UInt16)(data[21] << 8 | data[22]);
+                        UInt16 elAcclSize = (UInt16)(data[10] << 8 | data[11]);
+                        UInt16 azAcclSize = (UInt16)(data[12] << 8 | data[13]);
+                        UInt16 cbAcclSize = (UInt16)(data[14] << 8 | data[15]);
+                        UInt16 elTempSensorSize = (UInt16)(data[16] << 8 | data[17]);
+                        UInt16 azTempSensorSize = (UInt16)(data[18] << 8 | data[19]);
+                        UInt16 elEncoderSize = (UInt16)(data[20] << 8 | data[21]);
+                        UInt16 azEncoderSize = (UInt16)(data[22] << 8 | data[23]);
+                        UInt16 ambientTempSize = (UInt16)(data[24] << 8 | data[25]);
+                        UInt16 ambientHumiditySize = (UInt16)(data[26] << 8 | data[27]);
 
                         // TODO: Outside of right here, we aren't doing anything with the sensor statuses. These should
                         // be updated along with the sensor data on the diagnostics form. How this looks is up to you. (issue #353)
                         SensorStatuses = ParseSensorStatuses(sensorStatus, sensorErrors);
 
                         // This is the index we start reading sensor data
-                        int k = 23;
+                        int k = 28;
 
                         // If no data comes through for a sensor (i.e. the size is 0), then it will not be updated,
                         // otherwise the UI value would temporarily be set to 0, which would be inaccurate
@@ -391,14 +416,14 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
                         // Elevation temperature
                         if (elTempSensorSize > 0)
                         {
-                            CurrentElevationMotorTemp = GetTemperatureFromBytes(ref k, data, elTempSensorSize, SensorLocationEnum.EL_MOTOR);
+                            CurrentElevationMotorTemp = GetMotorTemperatureFromBytes(ref k, data, elTempSensorSize, SensorLocationEnum.EL_MOTOR);
                             Database.DatabaseOperations.AddSensorData(CurrentElevationMotorTemp);
                         }
 
                         // Azimuth temperature
                         if (azTempSensorSize > 0)
                         {
-                            CurrentAzimuthMotorTemp = GetTemperatureFromBytes(ref k, data, azTempSensorSize, SensorLocationEnum.AZ_MOTOR);
+                            CurrentAzimuthMotorTemp = GetMotorTemperatureFromBytes(ref k, data, azTempSensorSize, SensorLocationEnum.AZ_MOTOR);
                             Database.DatabaseOperations.AddSensorData(CurrentAzimuthMotorTemp);
                         }
 
@@ -412,6 +437,22 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
                         if (azEncoderSize > 0)
                         {
                             CurrentAbsoluteOrientation.Azimuth = GetAzimuthAxisPositionFromBytes(ref k, data, AbsoluteOrientationOffset.Azimuth, CurrentAbsoluteOrientation.Azimuth);
+                        }
+
+                        // Elevation Ambient Temperature
+                        if (ambientTempSize > 0)
+                        {
+                            CurrentElevationAmbientTemp = GetAmbientTemperatureFromBytes(ref k, data, ambientTempSize, SensorLocationEnum.EL_FRAME);
+                            UpdateAmbientDewPoint();
+                            Database.DatabaseOperations.AddSensorData(CurrentElevationAmbientTemp);
+                        }
+
+                        // Elevation Ambient Temperature
+                        if (ambientHumiditySize > 0)
+                        {
+                            CurrentElevationAmbientHumidity = GetAmbientHumidityFromBytes(ref k, data, ambientHumiditySize, SensorLocationEnum.EL_FRAME);
+                            UpdateAmbientDewPoint();
+                            Database.DatabaseOperations.AddSensorData(CurrentElevationAmbientHumidity);
                         }
 
                         success = true;
@@ -514,6 +555,7 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
                 AzimuthAccelerometerStatus = statuses[6] ? SensorNetworkSensorStatus.Okay : SensorNetworkSensorStatus.Error,
                 ElevationAccelerometerStatus = statuses[7] ? SensorNetworkSensorStatus.Okay : SensorNetworkSensorStatus.Error,
                 CounterbalanceAccelerometerStatus = statuses[5] ? SensorNetworkSensorStatus.Okay : SensorNetworkSensorStatus.Error,
+                ElevationAmbientStatus = statuses[8] ? SensorNetworkSensorStatus.Okay : SensorNetworkSensorStatus.Error
 
                 // TODO: Parse errors here. You will need to add the errors to the SensorStatuses object (issue #353)
             };
@@ -577,6 +619,33 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
             //Console.WriteLine(Math.Atan2(Y_out, -Z_out) * 180.0 / Math.PI + SensorNetworkConstants.CBAccelPositionOffset);
             // Calculate roll orientation
             CurrentCBAccelElevationPosition = Math.Atan2(Y_out, -Z_out) * 180.0 / Math.PI + SensorNetworkConstants.CBAccelPositionOffset;
+        }
+
+        /// <summary>
+        /// A method to update the current ambient dew point.
+        /// Code was taken/modeled from https://www.best-microcontroller-projects.com/dht22.html
+        /// reference (1) : http://wahiduddin.net/calc/density_algorithms.htm
+        /// reference (2) : http://www.colorado.edu/geography/weather_station/Geog_site/about.htm
+        /// </summary>
+        private void UpdateAmbientDewPoint()
+        {
+            double currentTempC = (CurrentElevationAmbientTemp[CurrentElevationAmbientTemp.Length - 1].temp - 32) * 5.0 / 9.0;
+            // (1) Saturation Vapor Pressure = ESGG(T)
+            double ratio = 373.15 / (273.15 + currentTempC);
+            double rhs = -7.90298 * (ratio - 1);
+            rhs += 5.02808 * Math.Log10(ratio);
+            rhs += -1.3816e-7 * (Math.Pow(10, (11.344 * (1 - 1 / ratio))) - 1);
+            rhs += 8.1328e-3 * (Math.Pow(10, (-3.49149 * (ratio - 1))) - 1);
+            rhs += Math.Log10(1013.246);
+
+            // factor -3 is to adjust units -Vapor Pressure SVP * humidity
+            double vp = Math.Pow(10, rhs - 3) * CurrentElevationAmbientHumidity[CurrentElevationAmbientHumidity.Length - 1].HumidityReading;
+
+            // (2) DEWPOINT = F(Vapor Pressure)
+            double t = Math.Log(vp / 0.61078);
+            double dewPointC = (241.88 * t) / (17.558 - t);
+
+            CurrentElevationAmbientDewPoint = 9.0 / 5.0 * dewPointC + 32;
         }
     }
 }

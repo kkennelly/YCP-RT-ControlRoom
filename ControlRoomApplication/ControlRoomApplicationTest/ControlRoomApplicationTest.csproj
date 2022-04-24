@@ -105,6 +105,7 @@
     <Compile Include="DatabaseOperationsTests\DatabaseOperationsTests.cs" />
     <Compile Include="EntitiesTests\AccelerationBlobTest.cs" />
     <Compile Include="EntitiesTests\AccelerationTest.cs" />
+    <Compile Include="EntitiesTests\HumidityTest.cs" />
     <Compile Include="EntitiesTests\TemperatureTest.cs" />
     <Compile Include="EntitiesTests\SensorNetworkConfigTest.cs" />
     <Compile Include="EntitiesTests\SpectraCyberConfigTest.cs" />
@@ -147,6 +148,7 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="EntityControllersTests\SensorNetworkTests\SensorNetworkTestPackets\AllData50.snp" />
+    <None Include="EntityControllersTests\SensorNetworkTests\SensorNetworkTestPackets\OnlyAmbTempHumidity50.snp" />
     <None Include="EntityControllersTests\SensorNetworkTests\SensorNetworkTestPackets\OnlyAzAccl123.snp" />
     <None Include="EntityControllersTests\SensorNetworkTests\SensorNetworkTestPackets\OnlyAzEnc50.snp" />
     <None Include="EntityControllersTests\SensorNetworkTests\SensorNetworkTestPackets\OnlyAzTemp50C.snp" />
@@ -159,6 +161,8 @@
     <None Include="EntityControllersTests\SensorNetworkTests\Simulation\TestCSVData\TestAzAccY.csv" />
     <None Include="EntityControllersTests\SensorNetworkTests\Simulation\TestCSVData\TestAzAccZ.csv" />
     <None Include="EntityControllersTests\SensorNetworkTests\Simulation\TestCSVData\TestAzEnc.csv" />
+    <None Include="EntityControllersTests\SensorNetworkTests\Simulation\TestCSVData\TestAmbTemp.csv" />
+    <None Include="EntityControllersTests\SensorNetworkTests\Simulation\TestCSVData\TestAmbHumidity.csv" />
     <None Include="EntityControllersTests\SensorNetworkTests\Simulation\TestCSVData\TestAzTemp.csv" />
     <None Include="EntityControllersTests\SensorNetworkTests\Simulation\TestCSVData\TestCbAccX.csv" />
     <None Include="EntityControllersTests\SensorNetworkTests\Simulation\TestCSVData\TestCbAccY.csv" />

@@ -892,6 +892,7 @@ namespace ControlRoomApplication.Controllers
         {
             if      (sensor.Equals("azimuth motor temperature"))    overrides.setAzimuthMotTemp(set);
             else if (sensor.Equals("elevation motor temperature"))  overrides.setElevationMotTemp(set);
+            else if (sensor.Equals("ambient temperature and humidity")) overrides.setAmbientTempHumidity(set);
             else if (sensor.Equals("main gate"))                    overrides.setGatesOverride(set);
             else if (sensor.Equals("elevation proximity (1)"))      overrides.setElProx0Override(set);
             else if (sensor.Equals("elevation proximity (2)"))      overrides.setElProx90Override(set);

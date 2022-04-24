@@ -76,15 +76,15 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
         }
 
         /// <summary>
-        /// This is a helper function to get the temperature data from the byte array we receive from the Sensor Network.
+        /// This is a helper function to get the motor temperature data from the byte array we receive from the Sensor Network.
         /// </summary>
         /// <param name="currPointer">This is the current place we are in the byte array. We want to pass this by reference
         /// so that future functions know where to begin.</param>
-        /// <param name="data">This is the byte array that we are converting in to acceleration.</param>
-        /// <param name="size">This is the size of the acceleration data that we expect to see in the byte array.</param>
+        /// <param name="data">This is the byte array that we are converting into temperature.</param>
+        /// <param name="size">This is the size of the temperature data that we expect to see in the byte array.</param>
         /// <param name="sensor">This is the sensor that the data is being created for.</param>
-        /// <returns></returns>
-        public static Temperature[] GetTemperatureFromBytes(ref int currPointer, byte[] data, int size, SensorLocationEnum sensor)
+        /// <returns>The parsed temperature values in a temperature array.</returns>
+        public static Temperature[] GetMotorTemperatureFromBytes(ref int currPointer, byte[] data, int size, SensorLocationEnum sensor)
         {
 
             Temperature[] temperature = new Temperature[size];
@@ -98,6 +98,56 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
             }
 
             return temperature;
+        }
+
+        /// <summary>
+        /// This is a helper function to get the ambient temperature data from the byte array we receive from the Sensor Network.
+        /// </summary>
+        /// <param name="currPointer">This is the current place we are in the byte array. We want to pass this by reference
+        /// so that future functions know where to begin.</param>
+        /// <param name="data">This is the byte array that we are converting into temperature.</param>
+        /// <param name="size">This is the size of the temperature data that we expect to see in the byte array.</param>
+        /// <param name="sensor">This is the sensor that the data is being created for.</param>
+        /// <returns>The parsed temperature values in a temperature array.</returns>
+        public static Temperature[] GetAmbientTemperatureFromBytes(ref int currPointer, byte[] data, int size, SensorLocationEnum sensor)
+        {
+            Temperature[] temperature = new Temperature[size];
+            for (int j = 0; j < size; j++)
+            {
+                temperature[j] = Temperature.Generate(
+                    DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                    BitConverter.ToSingle(data, currPointer),  // Comes in as fahrenheit float
+                    sensor
+                );
+                currPointer += 4;
+            }
+
+            return temperature;
+        }
+
+        /// <summary>
+        /// This is a helper function to get the ambient humidity data from the byte array we receive from the Sensor Network.
+        /// </summary>
+        /// <param name="currPointer">This is the current place we are in the byte array. We want to pass this by reference
+        /// so that future functions know where to begin.</param>
+        /// <param name="data">This is the byte array that we are converting into humidity.</param>
+        /// <param name="size">This is the size of the humidity data that we expect to see in the byte array.</param>
+        /// <param name="sensor">This is the sensor that the data is being created for.</param>
+        /// <returns>The parsed humidity values in a temperature array.</returns>
+        public static Humidity[] GetAmbientHumidityFromBytes(ref int currPointer, byte[] data, int size, SensorLocationEnum sensor)
+        {
+            Humidity[] humidity = new Humidity[size];
+            for (int j = 0; j < size; j++)
+            {
+                humidity[j] = Humidity.Generate(
+                    DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                    BitConverter.ToSingle(data, currPointer),  // Comes in as percent humidity float
+                    sensor
+                );
+                currPointer += 4;
+            }
+
+            return humidity;
         }
 
         /// <summary>

@@ -21,6 +21,7 @@ using System.Drawing.Printing;
 using System.Threading.Tasks;
 using ControlRoomApplication.Validation;
 using ControlRoomApplication.Controllers.PLCCommunication.PLCDrivers.MCUManager;
+using ControlRoomApplication.Entities.DiagnosticData;
 
 namespace ControlRoomApplication.GUI
 {
@@ -148,6 +149,7 @@ namespace ControlRoomApplication.GUI
             bool currWS = controlRoom.weatherStationOverride;
             bool currAZ = rtController.overrides.overrideAzimuthMotTemp;
             bool currEL = rtController.overrides.overrideElevatMotTemp;
+            bool currAmbTempHumidity = rtController.overrides.overrideAmbientTempHumidity;
             bool currElProx0 = rtController.overrides.overrideElevatProx0;
             bool currElProx90 = rtController.overrides.overrideElevatProx90;
             bool currAzimuthAbsEncoder = rtController.overrides.overrideAzimuthAbsEncoder;
@@ -155,7 +157,7 @@ namespace ControlRoomApplication.GUI
             bool currAzimuthAccelerometer = rtController.overrides.overrideAzimuthAccelerometer;
             bool currElevationAccelerometer = rtController.overrides.overrideElevationAccelerometer;
             bool currCounterbalanceAccelerometer = rtController.overrides.overrideCounterbalanceAccelerometer;
-            UpdateOverrideButtons(currMain, currWS, currAZ, currEL, currElProx0, currElProx90, 
+            UpdateOverrideButtons(currMain, currWS, currAZ, currEL, currAmbTempHumidity, currElProx0, currElProx90, 
                 currAzimuthAbsEncoder, currElevationAbsEncoder, currAzimuthAccelerometer, currElevationAccelerometer, currCounterbalanceAccelerometer);
 
             SensorSettingsThread = new BackgroundWorker();
@@ -173,6 +175,7 @@ namespace ControlRoomApplication.GUI
 
             AzimuthTemperature1.Checked = SensorNetworkConfig.AzimuthTemp1Init;
             ElevationTemperature1.Checked = SensorNetworkConfig.ElevationTemp1Init;
+            AmbientTempHumid.Checked = SensorNetworkConfig.ElevationAmbientInit;
             AzimuthAccelerometer.Checked = SensorNetworkConfig.AzimuthAccelerometerInit;
             ElevationAccelerometer.Checked = SensorNetworkConfig.ElevationAccelerometerInit;
             CounterbalanceAccelerometer.Checked = SensorNetworkConfig.CounterbalanceAccelerometerInit;
@@ -286,6 +289,10 @@ namespace ControlRoomApplication.GUI
             Temperature[] ElMotTemps = rtController.RadioTelescope.SensorNetworkServer.CurrentElevationMotorTemp;
             Temperature[] AzMotTemps = rtController.RadioTelescope.SensorNetworkServer.CurrentAzimuthMotorTemp;
 
+            Temperature[] ElAmbTemps = rtController.RadioTelescope.SensorNetworkServer.CurrentElevationAmbientTemp;
+            Humidity[] ElAmbHumidity = rtController.RadioTelescope.SensorNetworkServer.CurrentElevationAmbientHumidity;
+            double ElAmbDewPoint = rtController.RadioTelescope.SensorNetworkServer.CurrentElevationAmbientDewPoint;
+
             // these come in as celsius
             double ElMotTemp = ElMotTemps[ElMotTemps.Length - 1].temp;
             double AzMotTemp = AzMotTemps[AzMotTemps.Length - 1].temp;
@@ -300,6 +307,11 @@ namespace ControlRoomApplication.GUI
             double ElMotTempFahrenheit = (ElMotTemp * (9.0 / 5.0)) + 32;
             double AzMotTempFahrenheit = (AzMotTemp * (9.0 / 5.0)) + 32;
 
+            // Ambient temp comes in as fahrenheit
+            double ElAmbTemp = ElAmbTemps[ElAmbTemps.Length - 1].temp;
+            double ElAmbHumid = ElAmbHumidity[ElAmbHumidity.Length - 1].HumidityReading;
+            double ElAmbTempCelsius = (ElAmbTemp - 32) * (5.0 / 9.0);
+            double ElAmbDewPointCelsius = (ElAmbDewPoint - 32) * (5.0 / 9.0);
 
             if (controlRoom.RTControllerManagementThreads.Count > 0 && controlRoom.RTControllerManagementThreads[0].AppointmentToDisplay != null)
             {
@@ -322,6 +334,8 @@ namespace ControlRoomApplication.GUI
                 outTempUnits.Text = "Celsius";
                 AZTempUnitLabel.Text = "Celsius";
                 ElTempUnitLabel.Text = "Celsius";
+                lblAmbientTempUnit.Text = "Celsius";
+                lblAmbientDewPointUnit.Text = "Celsius";
                 outsideTempLabel.Text = Math.Round(insideTempCel, 2).ToString();
                 insideTempLabel.Text = Math.Round(outsideTempCel, 2).ToString();
 
@@ -342,6 +356,19 @@ namespace ControlRoomApplication.GUI
                 {
                     fldAzTemp.Text = "--";
                 }
+
+                if (SensorNetworkConfig.ElevationAmbientInit)
+                {
+                    fldAmbientTemp.Text = Math.Round(ElAmbTempCelsius, 2).ToString();
+                    fldAmbientHumidity.Text = Math.Round(ElAmbHumid, 2).ToString();
+                    fldAmbientDewPoint.Text = Math.Round(ElAmbDewPointCelsius, 2).ToString();
+                }
+                else
+                {
+                    fldAmbientTemp.Text = "--";
+                    fldAmbientHumidity.Text = "--";
+                    fldAmbientDewPoint.Text = "--";
+                }
             }
             //fahrenheit
             else if (fahrenheit == true)
@@ -350,6 +377,8 @@ namespace ControlRoomApplication.GUI
                 outTempUnits.Text = "Fahrenheit";
                 AZTempUnitLabel.Text = "Fahrenheit";
                 ElTempUnitLabel.Text = "Fahrenheit";
+                lblAmbientTempUnit.Text = "Fahrenheit";
+                lblAmbientDewPointUnit.Text = "Fahrenheit";
                 outsideTempLabel.Text = Math.Round(controlRoom.WeatherStation.GetOutsideTemp(), 2).ToString();
                 insideTempLabel.Text = Math.Round(controlRoom.WeatherStation.GetInsideTemp(), 2).ToString();
 
@@ -369,6 +398,19 @@ namespace ControlRoomApplication.GUI
                 else
                 {
                     fldAzTemp.Text = "--";
+                }
+
+                if (SensorNetworkConfig.ElevationAmbientInit)
+                {
+                    fldAmbientTemp.Text = Math.Round(ElAmbTemp, 2).ToString();
+                    fldAmbientHumidity.Text = Math.Round(ElAmbHumid, 2).ToString();
+                    fldAmbientDewPoint.Text = Math.Round(ElAmbDewPoint, 2).ToString();
+                }
+                else
+                {
+                    fldAmbientTemp.Text = "--";
+                    fldAmbientHumidity.Text = "--";
+                    fldAmbientDewPoint.Text = "--";
                 }
             }
 
@@ -924,6 +966,7 @@ namespace ControlRoomApplication.GUI
             bool currWS = controlRoom.weatherStationOverride;
             bool currAZ = rtController.overrides.overrideAzimuthMotTemp;
             bool currEL = rtController.overrides.overrideElevatMotTemp;
+            bool currAmbTempHumidity = rtController.overrides.overrideAmbientTempHumidity;
             bool currElProx0 = rtController.overrides.overrideElevatProx0;
             bool currElProx90 = rtController.overrides.overrideElevatProx90;
             bool currAzimuthAbsEncoder = rtController.overrides.overrideAzimuthAbsEncoder;
@@ -932,7 +975,7 @@ namespace ControlRoomApplication.GUI
             bool currElevationAccelerometer = rtController.overrides.overrideElevationAccelerometer;
             bool currCounterbalanceAccelerometer = rtController.overrides.overrideCounterbalanceAccelerometer;
 
-            bool newMain, newWS, newAZ, newEL, newElProx0, newElProx90, 
+            bool newMain, newWS, newAZ, newEL, newAmbTempHumidity, newElProx0, newElProx90, 
                 newAzimuthAbsEncoder, newElevationAbsEncoder, newAzimuthAccelerometer, newElevationAccelerometer, newCounterbalanceAccelerometer;
 
             // Only keep running this loop while the Radio Telescope is online
@@ -942,6 +985,7 @@ namespace ControlRoomApplication.GUI
                 newWS = controlRoom.weatherStationOverride;
                 newAZ = rtController.overrides.overrideAzimuthMotTemp;
                 newEL = rtController.overrides.overrideElevatMotTemp;
+                newAmbTempHumidity = rtController.overrides.overrideAmbientTempHumidity;
                 newElProx0 = rtController.overrides.overrideElevatProx0;
                 newElProx90 = rtController.overrides.overrideElevatProx90;
                 newAzimuthAbsEncoder = rtController.overrides.overrideAzimuthAbsEncoder;
@@ -954,6 +998,7 @@ namespace ControlRoomApplication.GUI
                     currMain != newMain || 
                     currAZ != newAZ || 
                     currEL != newEL ||
+                    currAmbTempHumidity != newAmbTempHumidity ||
                     currElProx0 != newElProx0 ||
                     currElProx90 != newElProx90 ||
                     currAzimuthAbsEncoder != newAzimuthAbsEncoder ||
@@ -966,6 +1011,7 @@ namespace ControlRoomApplication.GUI
                     currWS = newWS;
                     currAZ = newAZ;
                     currEL = newEL;
+                    currAmbTempHumidity = newAmbTempHumidity;
                     currElProx0 = newElProx0;
                     currElProx90 = newElProx90;
                     currAzimuthAbsEncoder = newAzimuthAbsEncoder;
@@ -975,7 +1021,7 @@ namespace ControlRoomApplication.GUI
                     currCounterbalanceAccelerometer = newCounterbalanceAccelerometer;
 
                     Utilities.WriteToGUIFromThread(this, () => {
-                        UpdateOverrideButtons(currMain, currWS, currAZ, currEL, currElProx0, currElProx90,
+                        UpdateOverrideButtons(currMain, currWS, currAZ, currEL, currAmbTempHumidity, currElProx0, currElProx90,
                             currAzimuthAbsEncoder, currElevationAbsEncoder, currAzimuthAccelerometer, currElevationAccelerometer, currCounterbalanceAccelerometer);
                     });
                 }
@@ -984,7 +1030,7 @@ namespace ControlRoomApplication.GUI
         }
 
         // Loads the override buttons
-        public void UpdateOverrideButtons(bool currMain, bool currWS, bool currAZ, bool currEL, bool currElProx0, bool currElProx90,
+        public void UpdateOverrideButtons(bool currMain, bool currWS, bool currAZ, bool currEL, bool currAmbTempHumidity, bool currElProx0, bool currElProx90,
             bool azimuthAbsEncoder, bool elevationAbsEncoder, bool azimuthAccelerometer, bool elevationAccelerometer, bool counterbalanceAccelerometer)
         {
             // Weather Station Override
@@ -1033,6 +1079,18 @@ namespace ControlRoomApplication.GUI
             {
                 ElMotTempSensOverride.Text = "ENABLED";
                 ElMotTempSensOverride.BackColor = System.Drawing.Color.LimeGreen;
+            }
+
+            // Ambient Temperature and Humidity Override
+            if (currAmbTempHumidity)
+            {
+                AmbTempHumidSensOverride.Text = "OVERRIDING";
+                AmbTempHumidSensOverride.BackColor = System.Drawing.Color.Red;
+            }
+            else
+            {
+                AmbTempHumidSensOverride.Text = "ENABLED";
+                AmbTempHumidSensOverride.BackColor = System.Drawing.Color.LimeGreen;
             }
 
             // Elevation Limit Switch 0 Degrees Override
@@ -1229,6 +1287,7 @@ namespace ControlRoomApplication.GUI
                 // First set all the checkboxes equal to the sensor network config
                 SensorNetworkConfig.AzimuthTemp1Init = AzimuthTemperature1.Checked;
                 SensorNetworkConfig.ElevationTemp1Init = ElevationTemperature1.Checked;
+                SensorNetworkConfig.ElevationAmbientInit = AmbientTempHumid.Checked;
                 SensorNetworkConfig.AzimuthAccelerometerInit = AzimuthAccelerometer.Checked;
                 SensorNetworkConfig.ElevationAccelerometerInit = ElevationAccelerometer.Checked;
                 SensorNetworkConfig.CounterbalanceAccelerometerInit = CounterbalanceAccelerometer.Checked;
@@ -1401,5 +1460,22 @@ namespace ControlRoomApplication.GUI
 
         }
 
+        private void AmbTempHumidSensOverride_Click(object sender, EventArgs e)
+        {
+            if (!rtController.overrides.overrideAmbientTempHumidity)
+            {
+                AmbTempHumidSensOverride.Text = "OVERRIDING";
+                AmbTempHumidSensOverride.BackColor = System.Drawing.Color.Red;
+
+                rtController.setOverride("ambient temperature and humidity", true);
+            }
+            else if (rtController.overrides.overrideAmbientTempHumidity)
+            {
+                AmbTempHumidSensOverride.Text = "ENABLED";
+                AmbTempHumidSensOverride.BackColor = System.Drawing.Color.LimeGreen;
+
+                rtController.setOverride("ambient temperature and humidity", false);
+            }
+        }
     }
 }

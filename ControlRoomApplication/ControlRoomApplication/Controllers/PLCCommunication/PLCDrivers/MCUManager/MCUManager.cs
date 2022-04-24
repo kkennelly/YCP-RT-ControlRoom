@@ -343,10 +343,6 @@ namespace ControlRoomApplication.Controllers {
             if (!SendGenericCommand(new MCUCommand(MCUMessages.ImmediateStop, MCUCommandType.ImmediateStop) { completed = true }))
                 return MovementResult.CouldNotSendCommand;
 
-            // If the motors are still moving after sending the command, it failed
-            Thread.Sleep(100);
-            if (MotorsCurrentlyMoving()) return MovementResult.TimedOut;
-
             return MovementResult.Success;
         }
 
@@ -1112,7 +1108,7 @@ namespace ControlRoomApplication.Controllers {
             }
 
             if (!SendGenericCommand(new MCUCommand(data2, MCUCommandType.Jog, azDirection, elDirection, AZstepSpeed, ELstepSpeed)
-            {//send the portion of the jog move that was previously replaced with a contoroled stop
+            {//send the portion of the jog move that was previously replaced with a controlled stop
                 EL_ACC = MCUConstants.ACTUAL_MCU_MOVE_ACCELERATION_WITH_GEARING,
                 AZ_ACC = MCUConstants.ACTUAL_MCU_MOVE_ACCELERATION_WITH_GEARING,
             })) return MovementResult.CouldNotSendCommand;

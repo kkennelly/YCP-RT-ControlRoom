@@ -46,5 +46,15 @@ namespace ControlRoomApplication.Controllers.SensorNetwork.Simulation
         /// Sub array of azimuth encoder data.
         /// </summary>
         public double[] AzimuthEnc { get; set; }
+
+        /// <summary>
+        /// Sub array of ambient temperatures.
+        /// </summary>
+        public float[] AmbientTemps { get; set; }
+
+        /// <summary>
+        /// Sub array of ambient temperatures.
+        /// </summary>
+        public float[] AmbientHumidity { get; set; }
     }
 }

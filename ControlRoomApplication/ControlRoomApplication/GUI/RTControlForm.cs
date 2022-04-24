@@ -619,9 +619,9 @@ namespace ControlRoomApplication.Main
                         logger.Info($"{Utilities.GetTimeStamp()}: Azimuth counterclockwise jog BLOCKED. Another manual script is already running.");
                     else
                     {
-                        logger.Info($"{Utilities.GetTimeStamp()}: An error occurred trying to jog az clockwise: {result.ToString()}");
-                        pushNotification.sendToAllAdmins("Jog Error", $"An error occurred trying to jog az clockwise: {result.ToString()}");
-                        EmailNotifications.sendToAllAdmins("Jog Error", $"An error occurred trying to jog az clockwise: {result.ToString()}");
+                        logger.Info($"{Utilities.GetTimeStamp()}: An error occurred trying to jog az counterclockwise: {result.ToString()}");
+                        pushNotification.sendToAllAdmins("Jog Error", $"An error occurred trying to jog az counterclockwise: {result.ToString()}");
+                        EmailNotifications.sendToAllAdmins("Jog Error", $"An error occurred trying to jog az counterclockwise: {result.ToString()}");
                     }
                 }
                 else

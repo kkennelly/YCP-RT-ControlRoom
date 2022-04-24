@@ -12,6 +12,7 @@ using System.Timers;
 using System.Diagnostics;
 using ControlRoomApplication.Controllers.PLCCommunication.PLCDrivers.MCUManager;
 using ControlRoomApplication.Controllers.PLCCommunication.PLCDrivers.MCUManager.Enumerations;
+using ControlRoomApplication.Entities.DiagnosticData;
 
 namespace ControlRoomApplication.Controllers
 {
@@ -806,40 +807,16 @@ namespace ControlRoomApplication.Controllers
                 // sensors.gate = (SByte)SensorStatusEnum.ALARM;
 
                 // Check azimuth temp 1
-                sensors.az_motor_temp_1 = (SByte)SensorStatusEnum.NORMAL;
-                
-                // Will further implement these later, setting to not execute for the moment
-                /*
-                if (false)
-                {
-                    // High temperature threshold
-                    sensors.az_motor_temp_1 = (SByte)SensorStatusEnum.WARNING;
-                }
-                else if (false)
-                {
-                    // Dangerous temperatures
-                    sensors.az_motor_temp_1 = (SByte)SensorStatusEnum.ALARM;
-                }
-                */
+                sensors.az_motor_temp_1 = (SByte)RadioTelescope.SensorNetworkServer.SensorStatuses.AzimuthTemperature1Status;
+
                 // Check azimuth temp 2
-                sensors.az_motor_temp_2 = (SByte)SensorStatusEnum.NORMAL;
-                /*
-                if (false)
-                {
-                    // High temperature threshold
-                    sensors.az_motor_temp_2 = (SByte)SensorStatusEnum.WARNING;
-                }
-                else if (false)
-                {
-                    // Dangerous temperatures
-                    sensors.az_motor_temp_2 = (SByte)SensorStatusEnum.ALARM;
-                }
-                */
+                sensors.az_motor_temp_2 = (SByte)RadioTelescope.SensorNetworkServer.SensorStatuses.AzimuthTemperature2Status;
+
                 // Check elevation temp 1
-                sensors.el_motor_temp_1 = (SByte)SensorStatusEnum.NORMAL;
+                sensors.el_motor_temp_1 = (SByte)RadioTelescope.SensorNetworkServer.SensorStatuses.ElevationTemperature1Status;
 
                 // Check elevation temp 2
-                sensors.el_motor_temp_2 = (SByte)SensorStatusEnum.NORMAL;
+                sensors.el_motor_temp_2 = (SByte)RadioTelescope.SensorNetworkServer.SensorStatuses.ElevationTemperature2Status;
 
                 // Check weather
                 int windSpeedStatus = RadioTelescope.WeatherStation.CurrentWindSpeedStatus;
@@ -887,8 +864,10 @@ namespace ControlRoomApplication.Controllers
                 }
                 prevElevation = GetCurrentOrientation().Elevation;
 
+                //sensors.elevation_abs_encoder = (SByte)RadioTelescope.SensorNetworkServer.SensorStatuses.ElevationAbsoluteEncoderStatus;
+
                 // Check azimuth absolute encoder
-                sensors.azimuth_abs_encoder = (SByte)SensorStatusEnum.NORMAL;
+                sensors.azimuth_abs_encoder = (SByte)RadioTelescope.SensorNetworkServer.SensorStatuses.AzimuthAbsoluteEncoderStatus;
 
                 // Check proximity 0
                 sensors.el_proximity_0 = (SByte)SensorStatusEnum.NORMAL;
@@ -897,13 +876,13 @@ namespace ControlRoomApplication.Controllers
                 sensors.el_proximity_90 = (SByte)SensorStatusEnum.NORMAL;
 
                 // Check azimuth acceleration
-                sensors.az_accel = (SByte)SensorStatusEnum.NORMAL;
+                sensors.az_accel = (SByte)RadioTelescope.SensorNetworkServer.SensorStatuses.AzimuthAccelerometerStatus;
 
                 // Check elevation acceleration
-                sensors.el_accel = (SByte)SensorStatusEnum.NORMAL;
+                sensors.el_accel = (SByte)RadioTelescope.SensorNetworkServer.SensorStatuses.ElevationAccelerometerStatus;
 
                 // Check CB acceleration
-                sensors.counter_balance_accel = (SByte)SensorStatusEnum.NORMAL;
+                sensors.counter_balance_accel = (SByte)RadioTelescope.SensorNetworkServer.SensorStatuses.CounterbalanceAccelerometerStatus;
 
                 // Check ambient temp humidity
                 sensors.ambient_temp_humidity = (SByte)SensorStatusEnum.NORMAL;

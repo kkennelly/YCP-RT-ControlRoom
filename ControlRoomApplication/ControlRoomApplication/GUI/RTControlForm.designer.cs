@@ -53,6 +53,7 @@ namespace ControlRoomApplication.Main
             this.editButton = new System.Windows.Forms.Button();
             this.errorLabel = new System.Windows.Forms.Label();
             this.overRideGroupbox = new System.Windows.Forms.GroupBox();
+            this.stopRT = new System.Windows.Forms.Button();
             this.SoftwareStopsCheckBox = new System.Windows.Forms.CheckBox();
             this.label8 = new System.Windows.Forms.Label();
             this.statusTextBox = new System.Windows.Forms.TextBox();
@@ -63,7 +64,6 @@ namespace ControlRoomApplication.Main
             this.oneButtonDec = new System.Windows.Forms.Button();
             this.oneForthButtonDec = new System.Windows.Forms.Button();
             this.freeControlGroupbox = new System.Windows.Forms.GroupBox();
-            this.stopRT = new System.Windows.Forms.Button();
             this.controlScriptsCombo = new System.Windows.Forms.ComboBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.runControlScriptButton = new System.Windows.Forms.Button();
@@ -389,7 +389,6 @@ namespace ControlRoomApplication.Main
             this.stopRT.Text = "STOP Telescope";
             this.stopRT.UseVisualStyleBackColor = false;
             this.stopRT.Click += new System.EventHandler(this.stopRT_click);
-            this.stopRT.Enabled = true;
             // 
             // SoftwareStopsCheckBox
             // 
@@ -597,7 +596,6 @@ namespace ControlRoomApplication.Main
             // speedTrackBar
             // 
             this.speedTrackBar.Location = new System.Drawing.Point(108, 145);
-            this.speedTrackBar.Maximum = 20;
             this.speedTrackBar.Name = "speedTrackBar";
             this.speedTrackBar.Size = new System.Drawing.Size(150, 45);
             this.speedTrackBar.SmallChange = 3;

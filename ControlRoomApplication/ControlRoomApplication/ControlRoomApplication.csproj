@@ -289,6 +289,7 @@
     <Compile Include="Entities\RadioTelescope\RadioTelescopeDirectionEnum.cs" />
     <Compile Include="Entities\RadioTelescope\RadioTelescopeTypeEnum.cs" />
     <Compile Include="Entities\RadioTelescope\RadioTelescopeConfig.cs" />
+    <Compile Include="Entities\SensorNetworkConfig\AccelerometerConfig.cs" />
     <Compile Include="Entities\SensorNetworkConfig\SensorNetworkConfig.cs" />
     <Compile Include="Entities\Sensor\Sensor.cs" />
     <Compile Include="Entities\Sensor\SensorItemEnum.cs" />
@@ -339,6 +340,9 @@
     <Compile Include="Entities\WeatherStation\WeatherThreshold.cs" />
     <Compile Include="Entities\WeatherStation\WeatherData.cs" />
     <Compile Include="Entities\WeatherStation\WeatherStation.cs" />
+    <Compile Include="GUI\DropDownEnums\PLCDropdown.cs" />
+    <Compile Include="GUI\DropDownEnums\SpectraCyberDropdown.cs" />
+    <Compile Include="GUI\DropDownEnums\WeatherStationDropdown.cs" />
     <Compile Include="GUI\InputDialogs\CustomOrientationInputDialog.cs">
       <SubType>Form</SubType>
     </Compile>

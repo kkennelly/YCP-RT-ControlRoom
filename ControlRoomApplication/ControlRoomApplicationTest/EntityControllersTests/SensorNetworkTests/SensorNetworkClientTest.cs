@@ -96,7 +96,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests
                 NetworkStream stream = localClient.GetStream();
 
                 // This will hold our sensor initialization
-                byte[] bytes = new byte[SensorNetworkConstants.SensorNetworkSensorCount];
+                byte[] bytes = new byte[SensorNetworkConstants.InitPacketSize];
 
                 // Wait for initialization
                 stream.Read(bytes, 0, bytes.Length);
@@ -143,7 +143,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests
                 NetworkStream stream = localClient.GetStream();
 
                 // This will hold our sensor initialization
-                byte[] bytes = new byte[SensorNetworkConstants.SensorNetworkSensorCount];
+                byte[] bytes = new byte[SensorNetworkConstants.InitPacketSize];
 
                 // Wait for initialization
                 stream.Read(bytes, 0, bytes.Length);

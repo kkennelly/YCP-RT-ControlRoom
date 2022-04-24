@@ -512,9 +512,9 @@ namespace ControlRoomApplication.Controllers
                 }
                 else if (command=="STOP_RT")
                 {
-                    rtController.RadioTelescope.PLCDriver.InterruptMovementAndWaitUntilStopped();
+                    MovementResult result = rtController.InterruptRadioTelescope();
 
-                    return new ExecuteTCPCommandResult(MovementResult.Success, TCPCommunicationConstants.ALL_STOP_ERR);
+                    return new ExecuteTCPCommandResult(result, TCPCommunicationConstants.ALL_STOP_ERR);
 
                 }
                 else if (command=="SENSOR_INIT")

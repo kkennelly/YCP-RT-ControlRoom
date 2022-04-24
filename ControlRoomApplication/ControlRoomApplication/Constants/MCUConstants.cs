@@ -17,6 +17,16 @@
         public const int ACTUAL_MCU_MOVE_PEAK_VELOCITY_WITH_GEARING = 100_000;
         public const ushort ACTUAL_MCU_MOVE_ACCELERATION_WITH_GEARING = 50;
 
+        /// <summary>
+        /// The target number of degrees to stop within
+        /// </summary>
+        public const double TARGET_STOP_DISTANCE = 5;   // Degrees
+
+        /// <summary>
+        /// The maximum allowed acceleration/deceleration value in the MCU
+        /// </summary>
+        public const ushort ACTUAL_MCU_PEAK_ACCELERATION = 5000;   // steps/s/ms
+
 
         /// <summary>
         /// this enum represents the data that comes out of the MCU starting in position <see cref="ACTUAL_MCU_READ_INPUT_REGISTER_START_ADDRESS"/> = 0  of its registers

@@ -367,6 +367,18 @@ namespace ControlRoomApplicationTest.DatabaseOperationsTests
 
             double counter_vibe = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.COUNTER_BALANCE_VIBRATION);
             Assert.IsTrue(counter_vibe > 0);
+
+            double amb_temp_high = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.AMBIENT_TEMP);
+            Assert.IsTrue(amb_temp_high > 0);
+
+            double amb_temp_low = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.AMBIENT_TEMP, false);
+            Assert.IsTrue(amb_temp_low > 0);
+
+            double amb_humid_high = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.AMBIENT_HUMIDITY);
+            Assert.IsTrue(amb_humid_high > 0);
+
+            double amb_humid_low = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.AMBIENT_HUMIDITY, false);
+            Assert.IsTrue(amb_humid_low > 0);
         }
 
         [TestMethod]
@@ -714,6 +726,11 @@ namespace ControlRoomApplicationTest.DatabaseOperationsTests
 
             var retrieved = DatabaseOperations.RetrieveSensorNetworkConfigByTelescopeId(telescopeId);
 
+            // Adding a config creates new accel configs, so we have to assign them for the .Equals() to work
+            original.ElAccelConfig = retrieved.ElAccelConfig;
+            original.AzAccelConfig = retrieved.AzAccelConfig;
+            original.CbAccelConfig = retrieved.CbAccelConfig;
+
             Assert.IsTrue(original.Equals(retrieved));
 
             // Delete config
@@ -739,11 +756,20 @@ namespace ControlRoomApplicationTest.DatabaseOperationsTests
             original.AzimuthEncoderInit = false;
             original.TimeoutDataRetrieval = 5;
             original.TimeoutInitialization = 5;
+            original.TimerPeriod = 1;
+            original.EthernetPeriod = 1;
+            original.TemperaturePeriod = 1;
+            original.EncoderPeriod = 1;
 
             // Update config
             DatabaseOperations.UpdateSensorNetworkConfig(original);
 
             var retrieved = DatabaseOperations.RetrieveSensorNetworkConfigByTelescopeId(telescopeId);
+
+            // Adding a config creates new accel configs, so we have to assign them for the .Equals() to work
+            original.ElAccelConfig = retrieved.ElAccelConfig;
+            original.AzAccelConfig = retrieved.AzAccelConfig;
+            original.CbAccelConfig = retrieved.CbAccelConfig;
 
             Assert.IsTrue(original.Equals(retrieved));
 
@@ -845,6 +871,134 @@ namespace ControlRoomApplicationTest.DatabaseOperationsTests
             SensorStatus status = null;
             status = DatabaseOperations.GetSensorStatusData();
             Assert.AreEqual(status.gate, (SByte)SensorStatusEnum.NORMAL);
+        }
+
+        [TestMethod]
+        public void TestUpdateSensorThreshold_ChangeAllFields()
+        {
+            ThresholdValues original = new ThresholdValues();
+
+            // Save original threshold
+            double upper = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.AMBIENT_TEMP);
+            double lower = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.AMBIENT_TEMP, false);
+
+            original.minValue = (float)lower;
+            original.maxValue = (float)upper;
+            original.sensor_name = SensorItemEnum.AMBIENT_TEMP.ToString();
+
+            ThresholdValues changed = new ThresholdValues();
+            changed.minValue = 20;
+            changed.maxValue = 50;
+            changed.sensor_name = SensorItemEnum.AMBIENT_TEMP.ToString();
+
+            // Update threshold
+            DatabaseOperations.UpdateSensorThreshold(changed);
+
+            Assert.AreEqual(DatabaseOperations.GetThresholdForSensor(SensorItemEnum.AMBIENT_TEMP), changed.maxValue);
+            Assert.AreEqual(DatabaseOperations.GetThresholdForSensor(SensorItemEnum.AMBIENT_TEMP, false), changed.minValue);
+
+            // Revert threshold
+            DatabaseOperations.UpdateSensorThreshold(original);
+        }
+
+        [TestMethod]
+        public void TestUpdateSensorThreshold_IdDoesntExist()
+        {
+            ThresholdValues invalidThreshold = new ThresholdValues();
+            
+            // Give the threshold a sensor name that will never exist
+            invalidThreshold.sensor_name = SensorItemEnum.GATE.ToString();
+
+            Assert.ThrowsException<InvalidOperationException>(() =>
+                DatabaseOperations.UpdateSensorThreshold(invalidThreshold)
+            );
+        }
+
+        [TestMethod]
+        public void TestAddAndRetrieveAccelerometerConfig_Valid_CreatesConfig()
+        {
+            int sensorNetworkConfigId = -1;
+
+            // Create new AccelerometerConfig with a SensorNetworkConfig ID of -1
+            AccelerometerConfig original = new AccelerometerConfig(sensorNetworkConfigId, 0);
+
+            DatabaseOperations.AddAccelerometerConfig(original);
+
+            var retrieved = DatabaseOperations.RetrieveAccelerometerConfigBySensorNetworkConfigIdAndType(sensorNetworkConfigId, 0);
+
+            Assert.IsTrue(original.Equals(retrieved));
+
+            // Delete config
+            DatabaseOperations.DeleteAccelerometerConfig(original);
+        }
+
+        [TestMethod]
+        public void TestUpdateAccelerometerConfig_ChangeAllFields_UpdatesConfig()
+        {
+            int sensorNetworkConfigId = -1;
+
+            // Create new AccelerometerConfig with a SensorNetworkConfig ID of -1
+            AccelerometerConfig original = new AccelerometerConfig(sensorNetworkConfigId, 0);
+
+            // Save original config
+            DatabaseOperations.AddAccelerometerConfig(original);
+
+            // Change values so the updated one is different
+            original.SamplingFrequency = 1;
+            original.GRange = 1;
+            original.FIFOSize = 1;
+            original.XOffset = 1;
+            original.YOffset = 1;
+            original.ZOffset = 1;
+            original.FullBitResolution = false;
+
+            // Update config
+            DatabaseOperations.UpdateAccelerometerConfig(original);
+
+            var retrieved = DatabaseOperations.RetrieveAccelerometerConfigBySensorNetworkConfigIdAndType(sensorNetworkConfigId, 0);
+
+            Assert.IsTrue(original.Equals(retrieved));
+
+            // Delete config
+            DatabaseOperations.DeleteAccelerometerConfig(original);
+        }
+
+        [TestMethod]
+        public void TestUpdateAccelerometerConfig_SensorNetworkConfigDoesntExist_ShouldThrowInvalidOperationException()
+        {
+            AccelerometerConfig invalidConfig = new AccelerometerConfig(-1, -1);
+
+            Assert.ThrowsException<InvalidOperationException>(() =>
+                DatabaseOperations.UpdateAccelerometerConfig(invalidConfig)
+            );
+        }
+
+        [TestMethod]
+        public void TestDeleteAccelerometerConfig_ConfigExists_DeletesConfig()
+        {
+            int sensorNetworkConfigId = -1;
+            AccelerometerConfig config = new AccelerometerConfig(sensorNetworkConfigId, 0);
+
+            // Save config
+            DatabaseOperations.AddAccelerometerConfig(config);
+
+            // Delete config
+            DatabaseOperations.DeleteAccelerometerConfig(config);
+
+            // Attempt to find config
+            AccelerometerConfig result = DatabaseOperations.RetrieveAccelerometerConfigBySensorNetworkConfigIdAndType(sensorNetworkConfigId, 0);
+
+            Assert.IsTrue(result == null);
+        }
+
+        [TestMethod]
+        public void TestDeleteAccelerometerConfig_SensorNetworkConfigDoesntExist_ShouldThrowInvalidOperationException()
+        {
+            AccelerometerConfig invalidConfig = new AccelerometerConfig(-1, -1);
+
+            Assert.ThrowsException<InvalidOperationException>(() =>
+                DatabaseOperations.DeleteAccelerometerConfig(invalidConfig)
+            );
         }
     }
 }

@@ -35,6 +35,14 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
             {
                 SensorNetworkConfig = new SensorNetworkConfig(telescopeId);
                 DatabaseOperations.AddSensorNetworkConfig(SensorNetworkConfig);
+
+                SensorNetworkConfig.ElAccelConfig = new AccelerometerConfig(SensorNetworkConfig.Id, (int)SensorLocationEnum.EL_MOTOR);
+                SensorNetworkConfig.AzAccelConfig = new AccelerometerConfig(SensorNetworkConfig.Id, (int)SensorLocationEnum.AZ_MOTOR);
+                SensorNetworkConfig.CbAccelConfig = new AccelerometerConfig(SensorNetworkConfig.Id, (int)SensorLocationEnum.COUNTERBALANCE);
+
+                DatabaseOperations.AddAccelerometerConfig(SensorNetworkConfig.ElAccelConfig);
+                DatabaseOperations.AddAccelerometerConfig(SensorNetworkConfig.AzAccelConfig);
+                DatabaseOperations.AddAccelerometerConfig(SensorNetworkConfig.CbAccelConfig);
             }
         }
 
@@ -84,6 +92,5 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
 
             return success;
         }
-
     }
 }

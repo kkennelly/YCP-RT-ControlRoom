@@ -21,6 +21,7 @@ using System.Drawing.Printing;
 using System.Threading.Tasks;
 using ControlRoomApplication.Validation;
 using ControlRoomApplication.Controllers.PLCCommunication.PLCDrivers.MCUManager;
+using ControlRoomApplication.Entities.DiagnosticData;
 
 namespace ControlRoomApplication.GUI
 {
@@ -281,7 +282,7 @@ namespace ControlRoomApplication.GUI
             lblAzAbsPos.Text = Math.Round(_azEncoderDegrees, 2).ToString();
 
             // Check if elevation encoder is timed out, output ERR if so, otherwise output current position
-            if (rtController.RadioTelescope.SensorNetworkServer.SensorStatuses.ElevationAbsoluteEncoderStatus.Equals(Entities.DiagnosticData.SensorNetworkSensorStatus.Error))
+            if (rtController.RadioTelescope.SensorNetworkServer.SensorStatuses.ElevationAbsoluteEncoderStatus.Equals(SensorNetworkSensorStatus.Error))
             {
                 lblElAbsPos.Text = "ERR";
             }

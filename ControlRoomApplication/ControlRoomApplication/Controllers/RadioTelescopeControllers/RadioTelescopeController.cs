@@ -802,13 +802,39 @@ namespace ControlRoomApplication.Controllers
                 // Sensor status routine, checks for each sensor to update the status in the DB
                 // Check Gate
                 sensors.gate = (SByte)SensorStatusEnum.NORMAL;
+                // if gate open
+                // sensors.gate = (SByte)SensorStatusEnum.ALARM;
 
                 // Check azimuth temp 1
                 sensors.az_motor_temp_1 = (SByte)SensorStatusEnum.NORMAL;
-
+                
+                // Will further implement these later, setting to not execute for the moment
+                /*
+                if (false)
+                {
+                    // High temperature threshold
+                    sensors.az_motor_temp_1 = (SByte)SensorStatusEnum.WARNING;
+                }
+                else if (false)
+                {
+                    // Dangerous temperatures
+                    sensors.az_motor_temp_1 = (SByte)SensorStatusEnum.ALARM;
+                }
+                */
                 // Check azimuth temp 2
                 sensors.az_motor_temp_2 = (SByte)SensorStatusEnum.NORMAL;
-
+                /*
+                if (false)
+                {
+                    // High temperature threshold
+                    sensors.az_motor_temp_2 = (SByte)SensorStatusEnum.WARNING;
+                }
+                else if (false)
+                {
+                    // Dangerous temperatures
+                    sensors.az_motor_temp_2 = (SByte)SensorStatusEnum.ALARM;
+                }
+                */
                 // Check elevation temp 1
                 sensors.el_motor_temp_1 = (SByte)SensorStatusEnum.NORMAL;
 

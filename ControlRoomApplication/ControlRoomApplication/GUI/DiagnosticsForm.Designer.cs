@@ -29,25 +29,25 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea9 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Series series27 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series28 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series29 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series30 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea10 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Series series31 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series32 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series33 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series34 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea11 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Series series35 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series36 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series37 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series38 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea12 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series39 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series7 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series8 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Series series9 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series10 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series11 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series12 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series13 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.windSpeedLabel = new System.Windows.Forms.Label();
             this.windDirLabel = new System.Windows.Forms.Label();
@@ -110,6 +110,9 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.grpAmbTempHumid = new System.Windows.Forms.GroupBox();
+            this.btnToggleFan = new System.Windows.Forms.Button();
+            this.lblFanStatus = new System.Windows.Forms.Label();
+            this.lblFanStatusText = new System.Windows.Forms.Label();
             this.lblAmbientDewPoint = new System.Windows.Forms.Label();
             this.lblAmbientDewPointUnit = new System.Windows.Forms.Label();
             this.fldAmbientDewPoint = new System.Windows.Forms.Label();
@@ -198,6 +201,26 @@
             this.btnAzimuthAbsoluteEncoder = new System.Windows.Forms.Button();
             this.AzimuthAbsoluteEncoder_lbl = new System.Windows.Forms.Label();
             this.SensorNetworkSensorInitialization = new System.Windows.Forms.GroupBox();
+            this.txtPeriod = new System.Windows.Forms.TextBox();
+            this.lblPeriod = new System.Windows.Forms.Label();
+            this.comboTimingSelect = new System.Windows.Forms.ComboBox();
+            this.lblTimerSettings = new System.Windows.Forms.Label();
+            this.txtZ = new System.Windows.Forms.TextBox();
+            this.txtY = new System.Windows.Forms.TextBox();
+            this.txtX = new System.Windows.Forms.TextBox();
+            this.lblZ = new System.Windows.Forms.Label();
+            this.lblY = new System.Windows.Forms.Label();
+            this.lblX = new System.Windows.Forms.Label();
+            this.lblOffsets = new System.Windows.Forms.Label();
+            this.chkBitResolution = new System.Windows.Forms.CheckBox();
+            this.numFIFOSize = new System.Windows.Forms.NumericUpDown();
+            this.lblFIFOSize = new System.Windows.Forms.Label();
+            this.lblGRange = new System.Windows.Forms.Label();
+            this.comboGRange = new System.Windows.Forms.ComboBox();
+            this.lblSamplingSpeed = new System.Windows.Forms.Label();
+            this.comboSamplingSpeed = new System.Windows.Forms.ComboBox();
+            this.comboAccelLocation = new System.Windows.Forms.ComboBox();
+            this.lblAccelSettings = new System.Windows.Forms.Label();
             this.AmbientTempHumid = new System.Windows.Forms.CheckBox();
             this.lblInitTimeout = new System.Windows.Forms.Label();
             this.lblDataTimeout = new System.Windows.Forms.Label();
@@ -274,9 +297,8 @@
             this.LowerSWStopsValidation = new System.Windows.Forms.ToolTip(this.components);
             this.AmbTempValidation = new System.Windows.Forms.ToolTip(this.components);
             this.AmbHumidValidation = new System.Windows.Forms.ToolTip(this.components);
-            this.lblFanStatus = new System.Windows.Forms.Label();
-            this.lblFanStatusText = new System.Windows.Forms.Label();
-            this.btnToggleFan = new System.Windows.Forms.Button();
+            this.AccelOffsetsValidation = new System.Windows.Forms.ToolTip(this.components);
+            this.SensorNetworkPeriodValidation = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -310,6 +332,7 @@
             this.tabPage3.SuspendLayout();
             this.Encoders.SuspendLayout();
             this.SensorNetworkSensorInitialization.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numFIFOSize)).BeginInit();
             this.ThresholdsGroup.SuspendLayout();
             this.grpProximitySensors.SuspendLayout();
             this.TemperatureSensors.SuspendLayout();
@@ -327,14 +350,14 @@
             this.dataGridView1.AllowUserToDeleteRows = false;
             this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle1;
             this.dataGridView1.Location = new System.Drawing.Point(3, 6);
             this.dataGridView1.Margin = new System.Windows.Forms.Padding(2);
             this.dataGridView1.Name = "dataGridView1";
@@ -424,6 +447,7 @@
             // timer1
             // 
             this.timer1.Enabled = true;
+            this.timer1.Interval = 200;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // lblAzimuthTemp
@@ -1038,6 +1062,38 @@
             this.grpAmbTempHumid.TabStop = false;
             this.grpAmbTempHumid.Text = "Elevation Ambient Temperature and Humidity";
             // 
+            // btnToggleFan
+            // 
+            this.btnToggleFan.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnToggleFan.Location = new System.Drawing.Point(210, 70);
+            this.btnToggleFan.Name = "btnToggleFan";
+            this.btnToggleFan.Size = new System.Drawing.Size(110, 23);
+            this.btnToggleFan.TabIndex = 79;
+            this.btnToggleFan.Text = "Toggle Fan On/Off";
+            this.btnToggleFan.UseVisualStyleBackColor = true;
+            this.btnToggleFan.Click += new System.EventHandler(this.btnToggleFan_Click);
+            // 
+            // lblFanStatus
+            // 
+            this.lblFanStatus.AutoSize = true;
+            this.lblFanStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblFanStatus.ForeColor = System.Drawing.Color.Black;
+            this.lblFanStatus.Location = new System.Drawing.Point(89, 71);
+            this.lblFanStatus.Name = "lblFanStatus";
+            this.lblFanStatus.Size = new System.Drawing.Size(34, 16);
+            this.lblFanStatus.TabIndex = 78;
+            this.lblFanStatus.Text = "N/A";
+            // 
+            // lblFanStatusText
+            // 
+            this.lblFanStatusText.AutoSize = true;
+            this.lblFanStatusText.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblFanStatusText.Location = new System.Drawing.Point(6, 71);
+            this.lblFanStatusText.Name = "lblFanStatusText";
+            this.lblFanStatusText.Size = new System.Drawing.Size(85, 16);
+            this.lblFanStatusText.TabIndex = 77;
+            this.lblFanStatusText.Text = "Fan Status:";
+            // 
             // lblAmbientDewPoint
             // 
             this.lblAmbientDewPoint.AutoSize = true;
@@ -1229,37 +1285,37 @@
             // counterBalanceAccChart
             // 
             this.counterBalanceAccChart.BackColor = System.Drawing.Color.Gainsboro;
-            chartArea9.AxisX.IsLabelAutoFit = false;
-            chartArea9.AxisX.LabelStyle.Enabled = false;
-            chartArea9.AxisX.MajorGrid.Enabled = false;
-            chartArea9.AxisY.MajorGrid.Enabled = false;
-            chartArea9.BackColor = System.Drawing.Color.Gainsboro;
-            chartArea9.Name = "ChartArea1";
-            this.counterBalanceAccChart.ChartAreas.Add(chartArea9);
+            chartArea1.AxisX.IsLabelAutoFit = false;
+            chartArea1.AxisX.LabelStyle.Enabled = false;
+            chartArea1.AxisX.MajorGrid.Enabled = false;
+            chartArea1.AxisY.MajorGrid.Enabled = false;
+            chartArea1.BackColor = System.Drawing.Color.Gainsboro;
+            chartArea1.Name = "ChartArea1";
+            this.counterBalanceAccChart.ChartAreas.Add(chartArea1);
             this.counterBalanceAccChart.Location = new System.Drawing.Point(-20, 0);
             this.counterBalanceAccChart.Name = "counterBalanceAccChart";
-            series27.ChartArea = "ChartArea1";
-            series27.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series27.Color = System.Drawing.Color.Blue;
-            series27.Name = "x";
-            series27.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
-            series27.YValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
-            series28.ChartArea = "ChartArea1";
-            series28.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series28.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
-            series28.Name = "y";
-            series29.ChartArea = "ChartArea1";
-            series29.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series29.Color = System.Drawing.Color.Red;
-            series29.Name = "z";
-            series30.ChartArea = "ChartArea1";
-            series30.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series30.Color = System.Drawing.Color.Black;
-            series30.Name = "accel";
-            this.counterBalanceAccChart.Series.Add(series27);
-            this.counterBalanceAccChart.Series.Add(series28);
-            this.counterBalanceAccChart.Series.Add(series29);
-            this.counterBalanceAccChart.Series.Add(series30);
+            series1.ChartArea = "ChartArea1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series1.Color = System.Drawing.Color.Blue;
+            series1.Name = "x";
+            series1.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
+            series1.YValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
+            series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series2.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            series2.Name = "y";
+            series3.ChartArea = "ChartArea1";
+            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series3.Color = System.Drawing.Color.Red;
+            series3.Name = "z";
+            series4.ChartArea = "ChartArea1";
+            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series4.Color = System.Drawing.Color.Black;
+            series4.Name = "accel";
+            this.counterBalanceAccChart.Series.Add(series1);
+            this.counterBalanceAccChart.Series.Add(series2);
+            this.counterBalanceAccChart.Series.Add(series3);
+            this.counterBalanceAccChart.Series.Add(series4);
             this.counterBalanceAccChart.Size = new System.Drawing.Size(315, 98);
             this.counterBalanceAccChart.TabIndex = 0;
             this.counterBalanceAccChart.Text = "chart1";
@@ -1316,38 +1372,38 @@
             this.elevationAccChart.BackColor = System.Drawing.Color.Gainsboro;
             this.elevationAccChart.BorderlineColor = System.Drawing.Color.Gainsboro;
             this.elevationAccChart.BorderSkin.PageColor = System.Drawing.Color.Gainsboro;
-            chartArea10.AxisX.IsLabelAutoFit = false;
-            chartArea10.AxisX.LabelStyle.Enabled = false;
-            chartArea10.AxisX.MajorGrid.Enabled = false;
-            chartArea10.AxisY.IsLabelAutoFit = false;
-            chartArea10.AxisY.MajorGrid.Enabled = false;
-            chartArea10.BackColor = System.Drawing.Color.Gainsboro;
-            chartArea10.Name = "ChartArea1";
-            this.elevationAccChart.ChartAreas.Add(chartArea10);
+            chartArea2.AxisX.IsLabelAutoFit = false;
+            chartArea2.AxisX.LabelStyle.Enabled = false;
+            chartArea2.AxisX.MajorGrid.Enabled = false;
+            chartArea2.AxisY.IsLabelAutoFit = false;
+            chartArea2.AxisY.MajorGrid.Enabled = false;
+            chartArea2.BackColor = System.Drawing.Color.Gainsboro;
+            chartArea2.Name = "ChartArea1";
+            this.elevationAccChart.ChartAreas.Add(chartArea2);
             this.elevationAccChart.Location = new System.Drawing.Point(-10, 0);
             this.elevationAccChart.Name = "elevationAccChart";
-            series31.ChartArea = "ChartArea1";
-            series31.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series31.Color = System.Drawing.Color.Blue;
-            series31.Name = "x";
-            series31.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
-            series31.YValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
-            series32.ChartArea = "ChartArea1";
-            series32.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series32.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
-            series32.Name = "y";
-            series33.ChartArea = "ChartArea1";
-            series33.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series33.Color = System.Drawing.Color.Red;
-            series33.Name = "z";
-            series34.ChartArea = "ChartArea1";
-            series34.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series34.Color = System.Drawing.Color.Black;
-            series34.Name = "accel";
-            this.elevationAccChart.Series.Add(series31);
-            this.elevationAccChart.Series.Add(series32);
-            this.elevationAccChart.Series.Add(series33);
-            this.elevationAccChart.Series.Add(series34);
+            series5.ChartArea = "ChartArea1";
+            series5.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series5.Color = System.Drawing.Color.Blue;
+            series5.Name = "x";
+            series5.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
+            series5.YValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
+            series6.ChartArea = "ChartArea1";
+            series6.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series6.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            series6.Name = "y";
+            series7.ChartArea = "ChartArea1";
+            series7.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series7.Color = System.Drawing.Color.Red;
+            series7.Name = "z";
+            series8.ChartArea = "ChartArea1";
+            series8.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series8.Color = System.Drawing.Color.Black;
+            series8.Name = "accel";
+            this.elevationAccChart.Series.Add(series5);
+            this.elevationAccChart.Series.Add(series6);
+            this.elevationAccChart.Series.Add(series7);
+            this.elevationAccChart.Series.Add(series8);
             this.elevationAccChart.Size = new System.Drawing.Size(308, 101);
             this.elevationAccChart.TabIndex = 0;
             this.elevationAccChart.Text = "elevationAccChart";
@@ -1394,38 +1450,38 @@
             // 
             this.azimuthAccChart.BackColor = System.Drawing.Color.Gainsboro;
             this.azimuthAccChart.BorderlineColor = System.Drawing.Color.Gainsboro;
-            chartArea11.AxisX.IsLabelAutoFit = false;
-            chartArea11.AxisX.LabelStyle.Enabled = false;
-            chartArea11.AxisX.MajorGrid.Enabled = false;
-            chartArea11.AxisY.IsLabelAutoFit = false;
-            chartArea11.AxisY.MajorGrid.Enabled = false;
-            chartArea11.BackColor = System.Drawing.Color.Gainsboro;
-            chartArea11.Name = "ChartArea1";
-            this.azimuthAccChart.ChartAreas.Add(chartArea11);
+            chartArea3.AxisX.IsLabelAutoFit = false;
+            chartArea3.AxisX.LabelStyle.Enabled = false;
+            chartArea3.AxisX.MajorGrid.Enabled = false;
+            chartArea3.AxisY.IsLabelAutoFit = false;
+            chartArea3.AxisY.MajorGrid.Enabled = false;
+            chartArea3.BackColor = System.Drawing.Color.Gainsboro;
+            chartArea3.Name = "ChartArea1";
+            this.azimuthAccChart.ChartAreas.Add(chartArea3);
             this.azimuthAccChart.Location = new System.Drawing.Point(-9, 0);
             this.azimuthAccChart.Name = "azimuthAccChart";
-            series35.ChartArea = "ChartArea1";
-            series35.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series35.Color = System.Drawing.Color.Blue;
-            series35.Name = "x";
-            series35.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
-            series35.YValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
-            series36.ChartArea = "ChartArea1";
-            series36.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series36.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
-            series36.Name = "y";
-            series37.ChartArea = "ChartArea1";
-            series37.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series37.Color = System.Drawing.Color.Red;
-            series37.Name = "z";
-            series38.ChartArea = "ChartArea1";
-            series38.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series38.Color = System.Drawing.Color.Black;
-            series38.Name = "accel";
-            this.azimuthAccChart.Series.Add(series35);
-            this.azimuthAccChart.Series.Add(series36);
-            this.azimuthAccChart.Series.Add(series37);
-            this.azimuthAccChart.Series.Add(series38);
+            series9.ChartArea = "ChartArea1";
+            series9.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series9.Color = System.Drawing.Color.Blue;
+            series9.Name = "x";
+            series9.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
+            series9.YValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
+            series10.ChartArea = "ChartArea1";
+            series10.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series10.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            series10.Name = "y";
+            series11.ChartArea = "ChartArea1";
+            series11.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series11.Color = System.Drawing.Color.Red;
+            series11.Name = "z";
+            series12.ChartArea = "ChartArea1";
+            series12.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series12.Color = System.Drawing.Color.Black;
+            series12.Name = "accel";
+            this.azimuthAccChart.Series.Add(series9);
+            this.azimuthAccChart.Series.Add(series10);
+            this.azimuthAccChart.Series.Add(series11);
+            this.azimuthAccChart.Series.Add(series12);
             this.azimuthAccChart.Size = new System.Drawing.Size(308, 86);
             this.azimuthAccChart.TabIndex = 0;
             this.azimuthAccChart.Text = "chart1";
@@ -2105,6 +2161,26 @@
             // SensorNetworkSensorInitialization
             // 
             this.SensorNetworkSensorInitialization.BackColor = System.Drawing.Color.Gainsboro;
+            this.SensorNetworkSensorInitialization.Controls.Add(this.txtPeriod);
+            this.SensorNetworkSensorInitialization.Controls.Add(this.lblPeriod);
+            this.SensorNetworkSensorInitialization.Controls.Add(this.comboTimingSelect);
+            this.SensorNetworkSensorInitialization.Controls.Add(this.lblTimerSettings);
+            this.SensorNetworkSensorInitialization.Controls.Add(this.txtZ);
+            this.SensorNetworkSensorInitialization.Controls.Add(this.txtY);
+            this.SensorNetworkSensorInitialization.Controls.Add(this.txtX);
+            this.SensorNetworkSensorInitialization.Controls.Add(this.lblZ);
+            this.SensorNetworkSensorInitialization.Controls.Add(this.lblY);
+            this.SensorNetworkSensorInitialization.Controls.Add(this.lblX);
+            this.SensorNetworkSensorInitialization.Controls.Add(this.lblOffsets);
+            this.SensorNetworkSensorInitialization.Controls.Add(this.chkBitResolution);
+            this.SensorNetworkSensorInitialization.Controls.Add(this.numFIFOSize);
+            this.SensorNetworkSensorInitialization.Controls.Add(this.lblFIFOSize);
+            this.SensorNetworkSensorInitialization.Controls.Add(this.lblGRange);
+            this.SensorNetworkSensorInitialization.Controls.Add(this.comboGRange);
+            this.SensorNetworkSensorInitialization.Controls.Add(this.lblSamplingSpeed);
+            this.SensorNetworkSensorInitialization.Controls.Add(this.comboSamplingSpeed);
+            this.SensorNetworkSensorInitialization.Controls.Add(this.comboAccelLocation);
+            this.SensorNetworkSensorInitialization.Controls.Add(this.lblAccelSettings);
             this.SensorNetworkSensorInitialization.Controls.Add(this.AmbientTempHumid);
             this.SensorNetworkSensorInitialization.Controls.Add(this.lblInitTimeout);
             this.SensorNetworkSensorInitialization.Controls.Add(this.lblDataTimeout);
@@ -2126,6 +2202,239 @@
             this.SensorNetworkSensorInitialization.TabIndex = 17;
             this.SensorNetworkSensorInitialization.TabStop = false;
             this.SensorNetworkSensorInitialization.Text = "Sensor Network Sensor Initialization";
+            // 
+            // txtPeriod
+            // 
+            this.txtPeriod.Location = new System.Drawing.Point(250, 123);
+            this.txtPeriod.Name = "txtPeriod";
+            this.txtPeriod.Size = new System.Drawing.Size(36, 20);
+            this.txtPeriod.TabIndex = 99;
+            this.txtPeriod.TextChanged += new System.EventHandler(this.txtPeriod_TextChanged);
+            // 
+            // lblPeriod
+            // 
+            this.lblPeriod.AutoSize = true;
+            this.lblPeriod.ForeColor = System.Drawing.Color.Black;
+            this.lblPeriod.Location = new System.Drawing.Point(186, 126);
+            this.lblPeriod.Name = "lblPeriod";
+            this.lblPeriod.Size = new System.Drawing.Size(62, 13);
+            this.lblPeriod.TabIndex = 98;
+            this.lblPeriod.Text = "Period (ms):";
+            // 
+            // comboTimingSelect
+            // 
+            this.comboTimingSelect.BackColor = System.Drawing.SystemColors.Window;
+            this.comboTimingSelect.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboTimingSelect.FormattingEnabled = true;
+            this.comboTimingSelect.Items.AddRange(new object[] {
+            "Timer",
+            "Ethernet",
+            "Temperature",
+            "Encoder"});
+            this.comboTimingSelect.Location = new System.Drawing.Point(94, 123);
+            this.comboTimingSelect.Name = "comboTimingSelect";
+            this.comboTimingSelect.Size = new System.Drawing.Size(90, 21);
+            this.comboTimingSelect.TabIndex = 97;
+            this.comboTimingSelect.SelectedIndexChanged += new System.EventHandler(this.comboTimingSelect_SelectedIndexChanged);
+            this.comboTimingSelect.Click += new System.EventHandler(this.comboTimingSelect_Click);
+            // 
+            // lblTimerSettings
+            // 
+            this.lblTimerSettings.AutoSize = true;
+            this.lblTimerSettings.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+            this.lblTimerSettings.ForeColor = System.Drawing.Color.Black;
+            this.lblTimerSettings.Location = new System.Drawing.Point(5, 126);
+            this.lblTimerSettings.Name = "lblTimerSettings";
+            this.lblTimerSettings.Size = new System.Drawing.Size(92, 13);
+            this.lblTimerSettings.TabIndex = 96;
+            this.lblTimerSettings.Text = "Timer Settings:";
+            // 
+            // txtZ
+            // 
+            this.txtZ.Location = new System.Drawing.Point(264, 71);
+            this.txtZ.Name = "txtZ";
+            this.txtZ.Size = new System.Drawing.Size(22, 20);
+            this.txtZ.TabIndex = 95;
+            this.txtZ.TextChanged += new System.EventHandler(this.txtZ_TextChanged);
+            // 
+            // txtY
+            // 
+            this.txtY.Location = new System.Drawing.Point(222, 71);
+            this.txtY.Name = "txtY";
+            this.txtY.Size = new System.Drawing.Size(22, 20);
+            this.txtY.TabIndex = 94;
+            this.txtY.TextChanged += new System.EventHandler(this.txtY_TextChanged);
+            // 
+            // txtX
+            // 
+            this.txtX.Location = new System.Drawing.Point(181, 71);
+            this.txtX.Name = "txtX";
+            this.txtX.Size = new System.Drawing.Size(22, 20);
+            this.txtX.TabIndex = 93;
+            this.txtX.TextChanged += new System.EventHandler(this.txtX_TextChanged);
+            // 
+            // lblZ
+            // 
+            this.lblZ.AutoSize = true;
+            this.lblZ.ForeColor = System.Drawing.Color.Black;
+            this.lblZ.Location = new System.Drawing.Point(248, 74);
+            this.lblZ.Name = "lblZ";
+            this.lblZ.Size = new System.Drawing.Size(14, 13);
+            this.lblZ.TabIndex = 92;
+            this.lblZ.Text = "Z";
+            // 
+            // lblY
+            // 
+            this.lblY.AutoSize = true;
+            this.lblY.ForeColor = System.Drawing.Color.Black;
+            this.lblY.Location = new System.Drawing.Point(205, 74);
+            this.lblY.Name = "lblY";
+            this.lblY.Size = new System.Drawing.Size(14, 13);
+            this.lblY.TabIndex = 91;
+            this.lblY.Text = "Y";
+            // 
+            // lblX
+            // 
+            this.lblX.AutoSize = true;
+            this.lblX.ForeColor = System.Drawing.Color.Black;
+            this.lblX.Location = new System.Drawing.Point(165, 74);
+            this.lblX.Name = "lblX";
+            this.lblX.Size = new System.Drawing.Size(14, 13);
+            this.lblX.TabIndex = 90;
+            this.lblX.Text = "X";
+            // 
+            // lblOffsets
+            // 
+            this.lblOffsets.AutoSize = true;
+            this.lblOffsets.ForeColor = System.Drawing.Color.Black;
+            this.lblOffsets.Location = new System.Drawing.Point(123, 74);
+            this.lblOffsets.Name = "lblOffsets";
+            this.lblOffsets.Size = new System.Drawing.Size(43, 13);
+            this.lblOffsets.TabIndex = 89;
+            this.lblOffsets.Text = "Offsets:";
+            // 
+            // chkBitResolution
+            // 
+            this.chkBitResolution.AutoSize = true;
+            this.chkBitResolution.Checked = true;
+            this.chkBitResolution.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkBitResolution.Location = new System.Drawing.Point(5, 97);
+            this.chkBitResolution.Name = "chkBitResolution";
+            this.chkBitResolution.Size = new System.Drawing.Size(110, 17);
+            this.chkBitResolution.TabIndex = 88;
+            this.chkBitResolution.Text = "Full Bit Resolution";
+            this.chkBitResolution.UseVisualStyleBackColor = true;
+            // 
+            // numFIFOSize
+            // 
+            this.numFIFOSize.Location = new System.Drawing.Point(67, 71);
+            this.numFIFOSize.Maximum = new decimal(new int[] {
+            32,
+            0,
+            0,
+            0});
+            this.numFIFOSize.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numFIFOSize.Name = "numFIFOSize";
+            this.numFIFOSize.Size = new System.Drawing.Size(43, 20);
+            this.numFIFOSize.TabIndex = 87;
+            this.numFIFOSize.Value = new decimal(new int[] {
+            32,
+            0,
+            0,
+            0});
+            // 
+            // lblFIFOSize
+            // 
+            this.lblFIFOSize.AutoSize = true;
+            this.lblFIFOSize.ForeColor = System.Drawing.Color.Black;
+            this.lblFIFOSize.Location = new System.Drawing.Point(5, 74);
+            this.lblFIFOSize.Name = "lblFIFOSize";
+            this.lblFIFOSize.Size = new System.Drawing.Size(56, 13);
+            this.lblFIFOSize.TabIndex = 86;
+            this.lblFIFOSize.Text = "FIFO Size:";
+            // 
+            // lblGRange
+            // 
+            this.lblGRange.AutoSize = true;
+            this.lblGRange.ForeColor = System.Drawing.Color.Black;
+            this.lblGRange.Location = new System.Drawing.Point(179, 47);
+            this.lblGRange.Name = "lblGRange";
+            this.lblGRange.Size = new System.Drawing.Size(53, 13);
+            this.lblGRange.TabIndex = 85;
+            this.lblGRange.Text = "G-Range:";
+            // 
+            // comboGRange
+            // 
+            this.comboGRange.BackColor = System.Drawing.SystemColors.Window;
+            this.comboGRange.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboGRange.FormattingEnabled = true;
+            this.comboGRange.Items.AddRange(new object[] {
+            "±16",
+            "±8",
+            "±4",
+            "±2"});
+            this.comboGRange.Location = new System.Drawing.Point(235, 44);
+            this.comboGRange.Name = "comboGRange";
+            this.comboGRange.Size = new System.Drawing.Size(51, 21);
+            this.comboGRange.TabIndex = 84;
+            // 
+            // lblSamplingSpeed
+            // 
+            this.lblSamplingSpeed.AutoSize = true;
+            this.lblSamplingSpeed.ForeColor = System.Drawing.Color.Black;
+            this.lblSamplingSpeed.Location = new System.Drawing.Point(5, 47);
+            this.lblSamplingSpeed.Name = "lblSamplingSpeed";
+            this.lblSamplingSpeed.Size = new System.Drawing.Size(109, 13);
+            this.lblSamplingSpeed.TabIndex = 83;
+            this.lblSamplingSpeed.Text = "Sampling Speed (Hz):";
+            // 
+            // comboSamplingSpeed
+            // 
+            this.comboSamplingSpeed.BackColor = System.Drawing.SystemColors.Window;
+            this.comboSamplingSpeed.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboSamplingSpeed.FormattingEnabled = true;
+            this.comboSamplingSpeed.Items.AddRange(new object[] {
+            "800",
+            "400",
+            "200",
+            "100",
+            "50",
+            "25"});
+            this.comboSamplingSpeed.Location = new System.Drawing.Point(120, 44);
+            this.comboSamplingSpeed.Name = "comboSamplingSpeed";
+            this.comboSamplingSpeed.Size = new System.Drawing.Size(51, 21);
+            this.comboSamplingSpeed.TabIndex = 82;
+            // 
+            // comboAccelLocation
+            // 
+            this.comboAccelLocation.BackColor = System.Drawing.SystemColors.Window;
+            this.comboAccelLocation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboAccelLocation.FormattingEnabled = true;
+            this.comboAccelLocation.Items.AddRange(new object[] {
+            "Counterbalance",
+            "Elevation Motor",
+            "Azimuth Motor"});
+            this.comboAccelLocation.Location = new System.Drawing.Point(157, 18);
+            this.comboAccelLocation.Name = "comboAccelLocation";
+            this.comboAccelLocation.Size = new System.Drawing.Size(129, 21);
+            this.comboAccelLocation.TabIndex = 81;
+            this.comboAccelLocation.SelectedIndexChanged += new System.EventHandler(this.comboAccelLocation_SelectedIndexChanged);
+            this.comboAccelLocation.Click += new System.EventHandler(this.comboAccelLocation_Click);
+            // 
+            // lblAccelSettings
+            // 
+            this.lblAccelSettings.AutoSize = true;
+            this.lblAccelSettings.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+            this.lblAccelSettings.ForeColor = System.Drawing.Color.Black;
+            this.lblAccelSettings.Location = new System.Drawing.Point(5, 21);
+            this.lblAccelSettings.Name = "lblAccelSettings";
+            this.lblAccelSettings.Size = new System.Drawing.Size(142, 13);
+            this.lblAccelSettings.TabIndex = 80;
+            this.lblAccelSettings.Text = "Accelerometer Settings:";
             // 
             // AmbientTempHumid
             // 
@@ -2772,19 +3081,19 @@
             // 
             // spectraCyberScanChart
             // 
-            chartArea12.AxisX.Title = "Time";
-            chartArea12.AxisY.Title = "RF Data";
-            chartArea12.Name = "ChartArea1";
-            this.spectraCyberScanChart.ChartAreas.Add(chartArea12);
-            legend3.Name = "Legend1";
-            this.spectraCyberScanChart.Legends.Add(legend3);
+            chartArea4.AxisX.Title = "Time";
+            chartArea4.AxisY.Title = "RF Data";
+            chartArea4.Name = "ChartArea1";
+            this.spectraCyberScanChart.ChartAreas.Add(chartArea4);
+            legend1.Name = "Legend1";
+            this.spectraCyberScanChart.Legends.Add(legend1);
             this.spectraCyberScanChart.Location = new System.Drawing.Point(36, 0);
             this.spectraCyberScanChart.Name = "spectraCyberScanChart";
-            series39.ChartArea = "ChartArea1";
-            series39.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
-            series39.Legend = "Legend1";
-            series39.Name = "Data/Time";
-            this.spectraCyberScanChart.Series.Add(series39);
+            series13.ChartArea = "ChartArea1";
+            series13.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+            series13.Legend = "Legend1";
+            series13.Name = "Data/Time";
+            this.spectraCyberScanChart.Series.Add(series13);
             this.spectraCyberScanChart.Size = new System.Drawing.Size(571, 279);
             this.spectraCyberScanChart.TabIndex = 16;
             this.spectraCyberScanChart.Text = "spectraCyberScanChart";
@@ -2912,38 +3221,6 @@
             this.consoleLogBox.Size = new System.Drawing.Size(631, 494);
             this.consoleLogBox.TabIndex = 0;
             // 
-            // lblFanStatus
-            // 
-            this.lblFanStatus.AutoSize = true;
-            this.lblFanStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblFanStatus.ForeColor = System.Drawing.Color.Black;
-            this.lblFanStatus.Location = new System.Drawing.Point(89, 71);
-            this.lblFanStatus.Name = "lblFanStatus";
-            this.lblFanStatus.Size = new System.Drawing.Size(34, 16);
-            this.lblFanStatus.TabIndex = 78;
-            this.lblFanStatus.Text = "N/A";
-            // 
-            // lblFanStatusText
-            // 
-            this.lblFanStatusText.AutoSize = true;
-            this.lblFanStatusText.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblFanStatusText.Location = new System.Drawing.Point(6, 71);
-            this.lblFanStatusText.Name = "lblFanStatusText";
-            this.lblFanStatusText.Size = new System.Drawing.Size(85, 16);
-            this.lblFanStatusText.TabIndex = 77;
-            this.lblFanStatusText.Text = "Fan Status:";
-            // 
-            // btnToggleFan
-            // 
-            this.btnToggleFan.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnToggleFan.Location = new System.Drawing.Point(210, 70);
-            this.btnToggleFan.Name = "btnToggleFan";
-            this.btnToggleFan.Size = new System.Drawing.Size(110, 23);
-            this.btnToggleFan.TabIndex = 79;
-            this.btnToggleFan.Text = "Toggle Fan On/Off";
-            this.btnToggleFan.UseVisualStyleBackColor = true;
-            this.btnToggleFan.Click += new System.EventHandler(this.btnToggleFan_Click);
-            // 
             // DiagnosticsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -3007,6 +3284,7 @@
             this.Encoders.PerformLayout();
             this.SensorNetworkSensorInitialization.ResumeLayout(false);
             this.SensorNetworkSensorInitialization.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numFIFOSize)).EndInit();
             this.ThresholdsGroup.ResumeLayout(false);
             this.ThresholdsGroup.PerformLayout();
             this.grpProximitySensors.ResumeLayout(false);
@@ -3260,5 +3538,27 @@
         private System.Windows.Forms.Button btnToggleFan;
         private System.Windows.Forms.Label lblFanStatus;
         private System.Windows.Forms.Label lblFanStatusText;
+        private System.Windows.Forms.Label lblAccelSettings;
+        private System.Windows.Forms.ComboBox comboAccelLocation;
+        private System.Windows.Forms.Label lblGRange;
+        private System.Windows.Forms.Label lblSamplingSpeed;
+        private System.Windows.Forms.ComboBox comboSamplingSpeed;
+        private System.Windows.Forms.NumericUpDown numFIFOSize;
+        private System.Windows.Forms.Label lblFIFOSize;
+        private System.Windows.Forms.TextBox txtZ;
+        private System.Windows.Forms.TextBox txtY;
+        private System.Windows.Forms.TextBox txtX;
+        private System.Windows.Forms.Label lblZ;
+        private System.Windows.Forms.Label lblY;
+        private System.Windows.Forms.Label lblX;
+        private System.Windows.Forms.Label lblOffsets;
+        private System.Windows.Forms.CheckBox chkBitResolution;
+        private System.Windows.Forms.ComboBox comboGRange;
+        private System.Windows.Forms.ComboBox comboTimingSelect;
+        private System.Windows.Forms.Label lblTimerSettings;
+        private System.Windows.Forms.TextBox txtPeriod;
+        private System.Windows.Forms.Label lblPeriod;
+        private System.Windows.Forms.ToolTip AccelOffsetsValidation;
+        private System.Windows.Forms.ToolTip SensorNetworkPeriodValidation;
     }
 }

@@ -109,7 +109,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
         public void TestInitializeSensors_DisableElTemp_OnlyElTempDisabled()
         {
             // Create an initialization that will enable all sensors.
-            byte[] init = new byte[SensorNetworkConstants.SensorNetworkSensorCount];
+            byte[] init = new byte[SensorNetworkConstants.InitPacketSize];
 
             init[(int)SensorInitializationEnum.ElevationTemp] = 0;
             init[(int)SensorInitializationEnum.AzimuthTemp] = 1;
@@ -152,7 +152,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
         public void TestInitializeSensors_DisableAzTemp_OnlyAzTempDisabled()
         {
             // Create an initialization that will enable all sensors.
-            byte[] init = new byte[SensorNetworkConstants.SensorNetworkSensorCount];
+            byte[] init = new byte[SensorNetworkConstants.InitPacketSize];
 
             init[(int)SensorInitializationEnum.ElevationTemp] = 1;
             init[(int)SensorInitializationEnum.AzimuthTemp] = 0;
@@ -195,7 +195,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
         public void TestInitializeSensors_DisableElEncoder_OnlyElEncoderDisabled()
         {
             // Create an initialization that will enable all sensors.
-            byte[] init = new byte[SensorNetworkConstants.SensorNetworkSensorCount];
+            byte[] init = new byte[SensorNetworkConstants.InitPacketSize];
 
             init[(int)SensorInitializationEnum.ElevationTemp] = 1;
             init[(int)SensorInitializationEnum.AzimuthTemp] = 1;
@@ -238,7 +238,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
         public void TestInitializeSensors_DisableAzEncoder_OnlyAzEncoderDisabled()
         {
             // Create an initialization that will enable all sensors.
-            byte[] init = new byte[SensorNetworkConstants.SensorNetworkSensorCount];
+            byte[] init = new byte[SensorNetworkConstants.InitPacketSize];
 
             init[(int)SensorInitializationEnum.ElevationTemp] = 1;
             init[(int)SensorInitializationEnum.AzimuthTemp] = 1;
@@ -281,7 +281,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
         public void TestInitializeSensors_DisableAzAcc_OnlyAzAccDisabled()
         {
             // Create an initialization that will enable all sensors.
-            byte[] init = new byte[SensorNetworkConstants.SensorNetworkSensorCount];
+            byte[] init = new byte[SensorNetworkConstants.InitPacketSize];
 
             init[(int)SensorInitializationEnum.ElevationTemp] = 1;
             init[(int)SensorInitializationEnum.AzimuthTemp] = 1;
@@ -323,7 +323,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
         [TestMethod]
         public void TestInitializeSensors_DisableElAcc_OnlyElAccDisabled()
         {
-            byte[] init = new byte[SensorNetworkConstants.SensorNetworkSensorCount];
+            byte[] init = new byte[SensorNetworkConstants.InitPacketSize];
 
             init[(int)SensorInitializationEnum.ElevationTemp] = 1;
             init[(int)SensorInitializationEnum.AzimuthTemp] = 1;
@@ -365,7 +365,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
         [TestMethod]
         public void TestInitializeSensors_DisableCbAcc_OnlyCbAccDisabled()
         {
-            byte[] init = new byte[SensorNetworkConstants.SensorNetworkSensorCount];
+            byte[] init = new byte[SensorNetworkConstants.InitPacketSize];
 
             init[(int)SensorInitializationEnum.ElevationTemp] = 1;
             init[(int)SensorInitializationEnum.AzimuthTemp] = 1;
@@ -407,7 +407,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
         [TestMethod]
         public void TestInitializeSensors_DisableAmbTempHumidity_OnlyAmbTempHumidityDisabled()
         {
-            byte[] init = new byte[SensorNetworkConstants.SensorNetworkSensorCount];
+            byte[] init = new byte[SensorNetworkConstants.InitPacketSize];
 
             init[(int)SensorInitializationEnum.ElevationTemp] = 1;
             init[(int)SensorInitializationEnum.AzimuthTemp] = 1;
@@ -450,7 +450,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
         public void TestInitializeSensors_DisableAllSensors_AllSensorsDisabled()
         {
             // Create an initialization
-            byte[] init = new byte[SensorNetworkConstants.SensorNetworkSensorCount];
+            byte[] init = new byte[SensorNetworkConstants.InitPacketSize];
 
             init[(int)SensorInitializationEnum.ElevationTemp] = 0;
             init[(int)SensorInitializationEnum.AzimuthTemp] = 0;
@@ -490,7 +490,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
         public void TestReadFakeDataFromCSV_ElTemp_ElTempsAreCorrect()
         {
             // Initialize only one sensor, so that is the only sensor that gets CSV data.
-            byte[] init = new byte[SensorNetworkConstants.SensorNetworkSensorCount];
+            byte[] init = new byte[SensorNetworkConstants.InitPacketSize];
 
             init[(int)SensorInitializationEnum.ElevationTemp] = 1;
             init[(int)SensorInitializationEnum.AzimuthTemp] = 0;
@@ -536,7 +536,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
         public void TestReadFakeDataFromCSV_AzTemp_AzTempsAreCorrect()
         {
             // Initialize only one sensor, so that is the only sensor that gets CSV data.
-            byte[] init = new byte[SensorNetworkConstants.SensorNetworkSensorCount];
+            byte[] init = new byte[SensorNetworkConstants.InitPacketSize];
 
             init[(int)SensorInitializationEnum.ElevationTemp] = 0;
             init[(int)SensorInitializationEnum.AzimuthTemp] = 1;
@@ -582,7 +582,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
         public void TestReadFakeDataFromCSV_ElEnc_ElEncPosAreCorrect()
         {
             // Initialize only one sensor, so that is the only sensor that gets CSV data.
-            byte[] init = new byte[SensorNetworkConstants.SensorNetworkSensorCount];
+            byte[] init = new byte[SensorNetworkConstants.InitPacketSize];
 
             init[(int)SensorInitializationEnum.ElevationTemp] = 0;
             init[(int)SensorInitializationEnum.AzimuthTemp] = 0;
@@ -628,7 +628,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
         public void TestReadFakeDataFromCSV_AzEnc_AzEncPosAreCorrect()
         {
             // Initialize only one sensor, so that is the only sensor that gets CSV data.
-            byte[] init = new byte[SensorNetworkConstants.SensorNetworkSensorCount];
+            byte[] init = new byte[SensorNetworkConstants.InitPacketSize];
 
             init[(int)SensorInitializationEnum.ElevationTemp] = 0;
             init[(int)SensorInitializationEnum.AzimuthTemp] = 0;
@@ -673,7 +673,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
         [TestMethod]
         public void TestReadFakeDataFromCSV_AzAcc_AzAccAreCorrect()
         {
-            byte[] init = new byte[SensorNetworkConstants.SensorNetworkSensorCount];
+            byte[] init = new byte[SensorNetworkConstants.InitPacketSize];
 
             init[(int)SensorInitializationEnum.ElevationTemp] = 0;
             init[(int)SensorInitializationEnum.AzimuthTemp] = 0;
@@ -734,7 +734,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
         [TestMethod]
         public void TestReadFakeDataFromCSV_ElAcc_ElAccAreCorrect()
         {
-            byte[] init = new byte[SensorNetworkConstants.SensorNetworkSensorCount];
+            byte[] init = new byte[SensorNetworkConstants.InitPacketSize];
 
             init[(int)SensorInitializationEnum.ElevationTemp] = 0;
             init[(int)SensorInitializationEnum.AzimuthTemp] = 0;
@@ -795,7 +795,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
         [TestMethod]
         public void TestReadFakeDataFromCSV_CbAcc_CbAccAreCorrect()
         {
-            byte[] init = new byte[SensorNetworkConstants.SensorNetworkSensorCount];
+            byte[] init = new byte[SensorNetworkConstants.InitPacketSize];
 
             init[(int)SensorInitializationEnum.ElevationTemp] = 0;
             init[(int)SensorInitializationEnum.AzimuthTemp] = 0;
@@ -857,7 +857,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
         public void TestReadFakeDataFromCSV_AmbTempHumidity_AmbTempHumidityAreCorrect()
         {
             // Initialize only one sensor, so that is the only sensor that gets CSV data.
-            byte[] init = new byte[SensorNetworkConstants.SensorNetworkSensorCount];
+            byte[] init = new byte[SensorNetworkConstants.InitPacketSize];
 
             init[(int)SensorInitializationEnum.ElevationTemp] = 0;
             init[(int)SensorInitializationEnum.AzimuthTemp] = 0;
@@ -971,7 +971,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             });
             expectConfThread.Start();
 
-            byte[] expected = Encoding.ASCII.GetBytes("12345678");
+            byte[] expected = new byte[SensorNetworkConstants.InitPacketSize];
             byte[] result = new byte[expected.Length];
 
             // This method has a blocking method, so we must run it in a separate thread

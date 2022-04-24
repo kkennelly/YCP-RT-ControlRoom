@@ -178,7 +178,7 @@ namespace ControlRoomApplication.Controllers.SensorNetwork.Simulation
                         // Read fan byte
                         FanOn = (ClientStream.ReadByte() != 0);
 
-                        Thread.Sleep(SensorNetworkConstants.DataSendingInterval);
+                        Thread.Sleep(SensorNetworkConstants.DefaultDataSendingInterval);
                     }
                     // This will be reached if the connection is unexpectedly terminated (like it is during sensor reinitialization)
                     catch
@@ -362,7 +362,7 @@ namespace ControlRoomApplication.Controllers.SensorNetwork.Simulation
 
             // Wait for the SensorNetworkClient to send the initialization
             TcpClient localClient;
-            byte[] receivedInit = new byte[SensorNetworkConstants.SensorNetworkSensorCount];
+            byte[] receivedInit = new byte[SensorNetworkConstants.InitPacketSize];
 
             // Once this line is passed, we have connected and received the initialization
             localClient = Server.AcceptTcpClient();

@@ -404,23 +404,29 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
                         // Accelerometer 1 (elevation)
                         if (elAcclSize > 0)
                         {
+                            AccelerometerConfig config = InitializationClient.SensorNetworkConfig.ElAccelConfig;
+
                             //Create array of acceleration objects 
-                            CurrentElevationMotorAccl = GetAccelerationFromBytes(ref k, data, elAcclSize, SensorLocationEnum.EL_MOTOR, ConnectionTimestamp);
-                            ElevationAccBlob.BuildAccelerationBlob(CurrentElevationMotorAccl);
+                            CurrentElevationMotorAccl = GetAccelerationFromBytes(ref k, data, elAcclSize, SensorLocationEnum.EL_MOTOR, config.SamplingFrequency, ConnectionTimestamp);
+                            ElevationAccBlob.BuildAccelerationBlob(CurrentElevationMotorAccl, FIFO_Size: (byte)config.FIFOSize, SampleFrequency: (short)config.SamplingFrequency, GRange: (byte)config.GRange, FullResolution: config.FullBitResolution);
                         }
 
                         // Accelerometer 2 (azimuth)
                         if (azAcclSize > 0)
                         {
-                            CurrentAzimuthMotorAccl = GetAccelerationFromBytes(ref k, data, azAcclSize, SensorLocationEnum.AZ_MOTOR, ConnectionTimestamp);
-                            AzimuthAccBlob.BuildAccelerationBlob(CurrentAzimuthMotorAccl);
+                            AccelerometerConfig config = InitializationClient.SensorNetworkConfig.AzAccelConfig;
+
+                            CurrentAzimuthMotorAccl = GetAccelerationFromBytes(ref k, data, azAcclSize, SensorLocationEnum.AZ_MOTOR, config.SamplingFrequency, ConnectionTimestamp);
+                            AzimuthAccBlob.BuildAccelerationBlob(CurrentAzimuthMotorAccl, FIFO_Size: (byte)config.FIFOSize, SampleFrequency: (short)config.SamplingFrequency, GRange: (byte)config.GRange, FullResolution: config.FullBitResolution);
                         }
 
                         // Accelerometer 3 (counterbalance)
                         if (cbAcclSize > 0)
                         {
-                            CurrentCounterbalanceAccl = GetAccelerationFromBytes(ref k, data, cbAcclSize, SensorLocationEnum.COUNTERBALANCE, ConnectionTimestamp);
-                            CounterbalanceAccBlob.BuildAccelerationBlob(CurrentCounterbalanceAccl);
+                            AccelerometerConfig config = InitializationClient.SensorNetworkConfig.CbAccelConfig;
+
+                            CurrentCounterbalanceAccl = GetAccelerationFromBytes(ref k, data, cbAcclSize, SensorLocationEnum.COUNTERBALANCE, config.SamplingFrequency, ConnectionTimestamp);
+                            CounterbalanceAccBlob.BuildAccelerationBlob(CurrentCounterbalanceAccl, FIFO_Size: (byte)config.FIFOSize, SampleFrequency: (short)config.SamplingFrequency, GRange: (byte)config.GRange, FullResolution: config.FullBitResolution);
 
                             // If there is new counterbalance accelerometer data, update the elevation position
                             UpdateCBAccelElevationPosition();
@@ -629,10 +635,15 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
             double z_avg = z_sum / CurrentCounterbalanceAccl.Length;
             //Console.WriteLine("X: " + x_avg + " Y: " + y_avg + " Z: " + z_avg);
 
+            // Set the factor used to convert to G's. If full bit resolution is used, it will always be 256. If not,
+            // then 10-bit resolution is used, and is mapped to the configured g-range
+            AccelerometerConfig cbConfig = InitializationClient.SensorNetworkConfig.CbAccelConfig;
+            double gRangeFactor = cbConfig.FullBitResolution ? 256.0 : 1024 / cbConfig.GRange * 2;
+
             // Map the accerlerometer output values to their proper G-force range
-            double X_out = x_avg / 256.0;
-            double Y_out = y_avg / 256.0;
-            double Z_out = z_avg / 256.0;
+            double X_out = x_avg / gRangeFactor;
+            double Y_out = y_avg / gRangeFactor;
+            double Z_out = z_avg / gRangeFactor;
             //Console.WriteLine("X: " + X_out + " Y: " + Y_out + " Z: " + Z_out);
 
             //Console.WriteLine(Math.Atan2(Y_out, -Z_out) * 180.0 / Math.PI + SensorNetworkConstants.CBAccelPositionOffset);

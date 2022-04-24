@@ -15,6 +15,7 @@ using ControlRoomApplication.Util;
 using System.Threading;
 using System.Text;
 using ControlRoomApplication.Entities.DiagnosticData;
+using ControlRoomApplication.Controllers.SensorNetwork;
 
 namespace ControlRoomApplication.Database
 {
@@ -991,6 +992,34 @@ namespace ControlRoomApplication.Database
                 }
                 else
                 {
+                    config.ElAccelConfig = RetrieveAccelerometerConfigBySensorNetworkConfigIdAndType(config.Id, SensorLocationEnum.EL_MOTOR);
+                    config.AzAccelConfig = RetrieveAccelerometerConfigBySensorNetworkConfigIdAndType(config.Id, SensorLocationEnum.AZ_MOTOR);
+                    config.CbAccelConfig = RetrieveAccelerometerConfigBySensorNetworkConfigIdAndType(config.Id, SensorLocationEnum.COUNTERBALANCE);
+
+                    // These configs might not exist yet if an old config is in use so initialize them
+                    if (config.ElAccelConfig == null)
+                    {
+                        config.ElAccelConfig = new AccelerometerConfig(config.Id, (int)SensorLocationEnum.EL_MOTOR);
+                        AddAccelerometerConfig(config.ElAccelConfig);
+                    }
+
+                    if (config.AzAccelConfig == null)
+                    {
+                        config.AzAccelConfig = new AccelerometerConfig(config.Id, (int)SensorLocationEnum.AZ_MOTOR);
+                        AddAccelerometerConfig(config.AzAccelConfig);
+                    }
+
+                    if (config.CbAccelConfig == null)
+                    {
+                        config.CbAccelConfig = new AccelerometerConfig(config.Id, (int)SensorLocationEnum.COUNTERBALANCE);
+                        AddAccelerometerConfig(config.CbAccelConfig);
+                    }
+
+                    if (config.TimerPeriod == 0) config.TimerPeriod = SensorNetworkConstants.DefaultTimerInterruptInterval;
+                    if (config.EthernetPeriod == 0) config.EthernetPeriod = SensorNetworkConstants.DefaultDataSendingInterval;
+                    if (config.TemperaturePeriod == 0) config.TemperaturePeriod = SensorNetworkConstants.DefaultTemperatureReadingInterval;
+                    if (config.EncoderPeriod == 0) config.EncoderPeriod = SensorNetworkConstants.DefaultEncoderSendingInterval;
+
                     return config;
                 }
             }
@@ -1044,10 +1073,130 @@ namespace ControlRoomApplication.Database
                     Context.SensorNetworkConfig.Remove(toDelete);
                     SaveContext(Context);
 
+                    if (config.ElAccelConfig.SensorNetworkConfigId > 0)
+                    {
+                        DeleteAccelerometerConfig(config.ElAccelConfig);
+                    }
+
+                    if (config.AzAccelConfig.SensorNetworkConfigId > 0)
+                    {
+                        DeleteAccelerometerConfig(config.AzAccelConfig);
+                    }
+
+                    if (config.CbAccelConfig.SensorNetworkConfigId > 0)
+                    {
+                        DeleteAccelerometerConfig(config.CbAccelConfig);
+                    }
+
                     logger.Info(Utilities.GetTimeStamp() + ": Deleted Sensor Network Configuration for Telescope ID " + config.TelescopeId);
                 }
             }
         }
+
+        /// <summary>
+        /// Adds a new Accelerometer Configuration to the database
+        /// </summary>
+        public static void AddAccelerometerConfig(AccelerometerConfig config)
+        {
+            using (RTDbContext Context = InitializeDatabaseContext())
+            {
+                // First see if the config already exists (if Add was called by accident)
+                var testConf = Context.AccelerometerConfig
+                    .Where(c => c.SensorNetworkConfigId == config.SensorNetworkConfigId && c.LocationId == config.LocationId).FirstOrDefault();
+
+                // if it exists, forward the config to UpdateSensorNetworkConfig
+                if (testConf != null)
+                {
+                    UpdateAccelerometerConfig(config);
+                }
+                else
+                {
+                    Context.AccelerometerConfig.Add(config);
+                    SaveContext(Context);
+
+                    logger.Info(Utilities.GetTimeStamp() + $": Created Accelerometer Configuration for Sensor Network Config {config.SensorNetworkConfigId}");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns a AccelerometerConfig based on the SensorNetworkConfig.Id and location provided.
+        /// </summary>
+        /// <param name="sensorNetworkConfigId">ID of the SensorNetworkConfig the Accelerometer config is related to</param>
+        /// <param name="location">The location for the accelerometer that uses this config.</param>
+        /// <returns>AccelerometerConfig pertaining to a SensorNetworkConfig and location; if none is found, null</returns>
+        public static AccelerometerConfig RetrieveAccelerometerConfigBySensorNetworkConfigIdAndType(int sensorNetworkConfigId, SensorLocationEnum location)
+        {
+            using (RTDbContext Context = InitializeDatabaseContext())
+            {
+                var config = Context.AccelerometerConfig
+                    .Where(c => c.SensorNetworkConfigId == sensorNetworkConfigId && c.LocationId == (int)location).FirstOrDefault();
+
+                if (config == null)
+                {
+                    logger.Info(Utilities.GetTimeStamp() + ": The Accelerometer Configuration for Sensor Netowork Config ID " + sensorNetworkConfigId + " could not be found.");
+                    return null;
+                }
+                else
+                {
+                    return config;
+                }
+            }
+        }
+
+        /// <summary>
+        /// This will update the accelerometer configuration for a specific SensorNetworkConfig
+        /// </summary>
+        /// <param name="config">The AccelerometerConfig to be updated</param>
+        public static void UpdateAccelerometerConfig(AccelerometerConfig config)
+        {
+            using (RTDbContext Context = InitializeDatabaseContext())
+            {
+                var outdated = Context.AccelerometerConfig
+                    .Where(c => c.SensorNetworkConfigId == config.SensorNetworkConfigId && c.LocationId == config.LocationId).FirstOrDefault();
+
+                if (outdated == null)
+                {
+                    throw new InvalidOperationException($"Cannot update config; no config found with a Sensor Network Config of ID {config.SensorNetworkConfigId}");
+                }
+                else
+                {
+                    config.Id = outdated.Id;
+                    Context.AccelerometerConfig.AddOrUpdate(config);
+                    SaveContext(Context);
+
+                    logger.Info(Utilities.GetTimeStamp() + ": Updated Accelerometer Configuration for Sensor Network Config ID " + config.SensorNetworkConfigId);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Method used to delete a AccelerometerConfig. This is not currently being
+        /// used in any production code, only for unit tests.
+        /// </summary>
+        /// <param name="config">The AccelerometerConfig to be deleted.</param>
+        public static void DeleteAccelerometerConfig(AccelerometerConfig config)
+        {
+            using (RTDbContext Context = InitializeDatabaseContext())
+            {
+                var toDelete = Context.AccelerometerConfig
+                    .Where(c => c.SensorNetworkConfigId == config.SensorNetworkConfigId && c.LocationId == config.LocationId).FirstOrDefault();
+
+                if (toDelete == null)
+                {
+                    throw new InvalidOperationException($"Cannot delete config; no config found with a sensor network config of ID {config.SensorNetworkConfigId}");
+                }
+                else
+                {
+                    Context.AccelerometerConfig.Attach(toDelete);
+                    Context.AccelerometerConfig.Remove(toDelete);
+                    SaveContext(Context);
+
+                    logger.Info(Utilities.GetTimeStamp() + ": Deleted Accelerometer Configuration for Sensor Network Config ID " + config.SensorNetworkConfigId);
+                }
+            }
+        }
+
         /// <summary>
         /// Adds a selected weather Threshold to the database
         /// </summary>

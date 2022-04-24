@@ -920,6 +920,20 @@ namespace ControlRoomApplication.Controllers {
                     while (offsetOrientation.Azimuth > 360) offsetOrientation.Azimuth -= 360;
                     while (offsetOrientation.Azimuth < 0) offsetOrientation.Azimuth += 360;
 
+                    // Check if target or offset orientations are close to the 360 degree line. If the orientations stradle 360 degrees (ex 359.99 and 0.01),
+                    // add the offset to them to shift their positions and subtract 360 from the one that is greater so that the orientation check is
+                    // accurate (ex to 0.09 and 0.19)
+                    if (targetOrientation.Azimuth + 0.1 >= 360 && offsetOrientation.Azimuth - 0.1 <= 0)
+                    {
+                        targetOrientation.Azimuth += 0.1 - 360;
+                        offsetOrientation.Azimuth += 0.1;
+                    }
+                    else if (offsetOrientation.Azimuth + 0.1 >= 360 && targetOrientation.Azimuth - 0.1 <= 0)
+                    {
+                        targetOrientation.Azimuth += 0.1;
+                        offsetOrientation.Azimuth += 0.1 - 360;
+                    }
+
                     if ((targetOrientation.Azimuth == 0.0 || targetOrientation.Azimuth==360.0) && (offsetOrientation.Azimuth > 359.9 || offsetOrientation.Azimuth < 0.1))
                     {
                         result = MovementResult.Success;

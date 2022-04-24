@@ -54,5 +54,9 @@ namespace ControlRoomApplication.Entities
         [Required]
         [Column("maximum")]
         public Single maxValue { get; set; }
+
+        [Required]
+        [Column("minimum")]
+        public Single minValue { get; set; }
     }
 }

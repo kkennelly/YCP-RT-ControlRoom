@@ -38,9 +38,9 @@
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.shutdownButton = new System.Windows.Forms.Button();
             this.txtPLCPort = new System.Windows.Forms.TextBox();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.comboSpectraCyberBox = new System.Windows.Forms.ComboBox();
             this.txtPLCIP = new System.Windows.Forms.TextBox();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.comboWeatherStationBox = new System.Windows.Forms.ComboBox();
             this.comboPLCType = new System.Windows.Forms.ComboBox();
             this.FreeControl = new System.Windows.Forms.Button();
             this.comboSensorNetworkBox = new System.Windows.Forms.ComboBox();
@@ -141,22 +141,21 @@
             this.txtPLCPort.TabIndex = 5;
             this.txtPLCPort.TextChanged += new System.EventHandler(this.txtPLCPort_TextChanged);
             // 
-            // comboBox1
+            // comboSpectraCyberBox
             // 
-            this.comboBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.comboBox1.BackColor = System.Drawing.Color.WhiteSmoke;
-            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Items.AddRange(new object[] {
+            this.comboSpectraCyberBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.comboSpectraCyberBox.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.comboSpectraCyberBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboSpectraCyberBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.comboSpectraCyberBox.FormattingEnabled = true;
+            this.comboSpectraCyberBox.Items.AddRange(new object[] {
             "Production SpectraCyber",
             "Simulated SpectraCyber"});
-            this.comboBox1.Location = new System.Drawing.Point(6, 47);
-            this.comboBox1.Margin = new System.Windows.Forms.Padding(2);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(246, 28);
-            this.comboBox1.TabIndex = 2;
-            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            this.comboSpectraCyberBox.Location = new System.Drawing.Point(6, 47);
+            this.comboSpectraCyberBox.Margin = new System.Windows.Forms.Padding(2);
+            this.comboSpectraCyberBox.Name = "comboSpectraCyberBox";
+            this.comboSpectraCyberBox.Size = new System.Drawing.Size(246, 28);
+            this.comboSpectraCyberBox.TabIndex = 2;
             // 
             // txtPLCIP
             // 
@@ -170,23 +169,22 @@
             this.txtPLCIP.TabIndex = 4;
             this.txtPLCIP.TextChanged += new System.EventHandler(this.txtPLCIP_TextChanged);
             // 
-            // comboBox2
+            // comboWeatherStationBox
             // 
-            this.comboBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.comboBox2.BackColor = System.Drawing.Color.WhiteSmoke;
-            this.comboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Items.AddRange(new object[] {
+            this.comboWeatherStationBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.comboWeatherStationBox.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.comboWeatherStationBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboWeatherStationBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.comboWeatherStationBox.FormattingEnabled = true;
+            this.comboWeatherStationBox.Items.AddRange(new object[] {
             "Production Weather Station",
             "Simulated Weather Station",
             "Test Weather Station"});
-            this.comboBox2.Location = new System.Drawing.Point(5, 77);
-            this.comboBox2.Margin = new System.Windows.Forms.Padding(2);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(247, 28);
-            this.comboBox2.TabIndex = 1;
-            this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
+            this.comboWeatherStationBox.Location = new System.Drawing.Point(5, 77);
+            this.comboWeatherStationBox.Margin = new System.Windows.Forms.Padding(2);
+            this.comboWeatherStationBox.Name = "comboWeatherStationBox";
+            this.comboWeatherStationBox.Size = new System.Drawing.Size(247, 28);
+            this.comboWeatherStationBox.TabIndex = 1;
             // 
             // comboPLCType
             // 
@@ -264,7 +262,6 @@
             this.LocalIPCombo.Name = "LocalIPCombo";
             this.LocalIPCombo.Size = new System.Drawing.Size(246, 28);
             this.LocalIPCombo.TabIndex = 16;
-            this.LocalIPCombo.SelectedIndexChanged += new System.EventHandler(this.LocalIPCombo_SelectedIndexChanged);
             // 
             // label1
             // 
@@ -281,11 +278,11 @@
             this.simulationSettingsGroupbox.BackColor = System.Drawing.Color.Gray;
             this.simulationSettingsGroupbox.Controls.Add(this.label8);
             this.simulationSettingsGroupbox.Controls.Add(this.txtSpectraPort);
-            this.simulationSettingsGroupbox.Controls.Add(this.comboBox2);
+            this.simulationSettingsGroupbox.Controls.Add(this.comboWeatherStationBox);
             this.simulationSettingsGroupbox.Controls.Add(this.LocalIPCombo);
             this.simulationSettingsGroupbox.Controls.Add(this.comboSensorNetworkBox);
             this.simulationSettingsGroupbox.Controls.Add(this.comboPLCType);
-            this.simulationSettingsGroupbox.Controls.Add(this.comboBox1);
+            this.simulationSettingsGroupbox.Controls.Add(this.comboSpectraCyberBox);
             this.simulationSettingsGroupbox.Controls.Add(this.label2);
             this.simulationSettingsGroupbox.Controls.Add(this.RLLabel);
             this.simulationSettingsGroupbox.Controls.Add(this.txtWSCOMPort);
@@ -624,9 +621,9 @@
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.Button shutdownButton;
         private System.Windows.Forms.TextBox txtPLCPort;
-        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.ComboBox comboSpectraCyberBox;
         private System.Windows.Forms.TextBox txtPLCIP;
-        private System.Windows.Forms.ComboBox comboBox2;
+        private System.Windows.Forms.ComboBox comboWeatherStationBox;
         private System.Windows.Forms.ComboBox comboPLCType;
         private System.Windows.Forms.Button FreeControl;
         private System.Windows.Forms.ComboBox comboSensorNetworkBox;

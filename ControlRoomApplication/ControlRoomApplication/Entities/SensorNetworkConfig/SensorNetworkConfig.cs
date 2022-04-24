@@ -41,7 +41,7 @@ namespace ControlRoomApplication.Entities
 
             TimerPeriod = SensorNetworkConstants.DefaultTimerInterruptInterval;
             EthernetPeriod = SensorNetworkConstants.DefaultDataSendingInterval;
-            TemperaturePeriod = SensorNetworkConstants.DefaultTemperaturereadingInterval;
+            TemperaturePeriod = SensorNetworkConstants.DefaultTemperatureReadingInterval;
             EncoderPeriod = SensorNetworkConstants.DefaultEncoderSendingInterval;
 
             ElAccelConfig = new AccelerometerConfig();

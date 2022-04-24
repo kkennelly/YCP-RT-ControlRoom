@@ -335,6 +335,9 @@
     <Compile Include="Entities\WeatherStation\WeatherThreshold.cs" />
     <Compile Include="Entities\WeatherStation\WeatherData.cs" />
     <Compile Include="Entities\WeatherStation\WeatherStation.cs" />
+    <Compile Include="GUI\DropDownEnums\PLCDropdown.cs" />
+    <Compile Include="GUI\DropDownEnums\SpectraCyberDropdown.cs" />
+    <Compile Include="GUI\DropDownEnums\WeatherStationDropdown.cs" />
     <Compile Include="GUI\InputDialogs\CustomOrientationInputDialog.cs">
       <SubType>Form</SubType>
     </Compile>

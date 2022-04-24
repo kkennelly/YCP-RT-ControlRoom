@@ -225,8 +225,8 @@ namespace ControlRoomApplication.Controllers {
             return new Orientation();
         }
 
-        public override bool Cancel_move() {
-            return true;
+        public override MovementResult Cancel_move() {
+            return MovementResult.None;
 
         }
 
@@ -234,13 +234,13 @@ namespace ControlRoomApplication.Controllers {
             return true;
         }
 
-        public override bool ControlledStop() {
-            return true;
+        public override MovementResult ControlledStop() {
+            return MovementResult.None;
 
         }
 
-        public override bool ImmediateStop() {
-            return true;
+        public override MovementResult ImmediateStop() {
+            return MovementResult.None;
 
         }
 

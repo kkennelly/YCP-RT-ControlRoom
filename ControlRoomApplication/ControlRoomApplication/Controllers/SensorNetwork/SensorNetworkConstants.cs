@@ -32,7 +32,7 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
         /// <summary>
         /// The default interval at which temperature data will be sampled on the Sensor Network.
         /// </summary>
-        public const int DefaultTemperaturereadingInterval = 1000; // in milliseconds
+        public const int DefaultTemperatureReadingInterval = 1000; // in milliseconds
 
         /// <summary>
         /// The default interval at which the absolute encoders will be sampled and sent from the Sensor Network.

@@ -15,6 +15,7 @@ using ControlRoomApplication.Util;
 using System.Threading;
 using System.Text;
 using ControlRoomApplication.Entities.DiagnosticData;
+using ControlRoomApplication.Controllers.SensorNetwork;
 
 namespace ControlRoomApplication.Database
 {
@@ -995,6 +996,7 @@ namespace ControlRoomApplication.Database
                     config.AzAccelConfig = RetrieveAccelerometerConfigBySensorNetworkConfigIdAndType(config.Id, SensorLocationEnum.AZ_MOTOR);
                     config.CbAccelConfig = RetrieveAccelerometerConfigBySensorNetworkConfigIdAndType(config.Id, SensorLocationEnum.COUNTERBALANCE);
 
+                    // These configs might not exist yet if an old config is in use so initialize them
                     if (config.ElAccelConfig == null)
                     {
                         config.ElAccelConfig = new AccelerometerConfig(config.Id, (int)SensorLocationEnum.EL_MOTOR);
@@ -1012,6 +1014,11 @@ namespace ControlRoomApplication.Database
                         config.CbAccelConfig = new AccelerometerConfig(config.Id, (int)SensorLocationEnum.COUNTERBALANCE);
                         AddAccelerometerConfig(config.CbAccelConfig);
                     }
+
+                    if (config.TimerPeriod == 0) config.TimerPeriod = SensorNetworkConstants.DefaultTimerInterruptInterval;
+                    if (config.EthernetPeriod == 0) config.EthernetPeriod = SensorNetworkConstants.DefaultDataSendingInterval;
+                    if (config.TemperaturePeriod == 0) config.TemperaturePeriod = SensorNetworkConstants.DefaultTemperatureReadingInterval;
+                    if (config.EncoderPeriod == 0) config.EncoderPeriod = SensorNetworkConstants.DefaultEncoderSendingInterval;
 
                     return config;
                 }

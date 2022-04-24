@@ -1,4 +1,4 @@
-﻿using ControlRoomApplication.Entities;
+using ControlRoomApplication.Entities;
 using ControlRoomApplication.Util;
 using System;
 using System.Collections.Generic;
@@ -135,6 +135,19 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
         /// temperature recieved from the sensor network.
         /// </summary>
         public double CurrentElevationAmbientDewPoint { get; set; }
+
+        /// <summary>
+        /// Whether or not the fan needs to be set on or off the next time the fan control packet is sent.
+        /// True for setting the fan on, false for setting the fan off.
+        /// </summary>
+        public bool SetFanOnOrOff { get; set; }
+
+        /// <summary>
+        /// Whether or not the fan is on or off, coming from the ESS. The ESS could reset and we need to know if
+        /// the internal fan is on or off for display purposes.
+        /// True for the fan is on, false for the fan is off.
+        /// </summary>
+        public bool FanIsOn { get; set; }
 
         /// <summary>
         /// The current orientation of the telescope based off of the absolute encoders. These
@@ -507,6 +520,9 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
                             Timeout.Stop();
                         }
 
+                        // Send the fan state asap after recieving the packet
+                        Stream.WriteByte(Convert.ToByte(SetFanOnOrOff));
+
                         InterpretData(receivedData, receivedDataSize);
 
                         // We only want to start the timeout if we are currently receiving data. The reason is because, the timeout
@@ -559,6 +575,9 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
 
                 // TODO: Parse errors here. You will need to add the errors to the SensorStatuses object (issue #353)
             };
+
+            // Update fan status
+            FanIsOn = statuses[9];
 
             return s;
         }

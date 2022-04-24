@@ -332,6 +332,18 @@ namespace ControlRoomApplicationTest.DatabaseOperationsTests
 
             double counter_vibe = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.COUNTER_BALANCE_VIBRATION);
             Assert.IsTrue(counter_vibe > 0);
+
+            double amb_temp_high = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.AMBIENT_TEMP);
+            Assert.IsTrue(amb_temp_high > 0);
+
+            double amb_temp_low = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.AMBIENT_TEMP, false);
+            Assert.IsTrue(amb_temp_low > 0);
+
+            double amb_humid_high = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.AMBIENT_HUMIDITY);
+            Assert.IsTrue(amb_humid_high > 0);
+
+            double amb_humid_low = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.AMBIENT_HUMIDITY, false);
+            Assert.IsTrue(amb_humid_low > 0);
         }
 
         [TestMethod]
@@ -762,6 +774,59 @@ namespace ControlRoomApplicationTest.DatabaseOperationsTests
             int time = DatabaseOperations.FetchWeatherThreshold().SnowDumpTime;
             Assert.AreEqual(120, time);
 
+        }
+
+        [TestMethod]
+        public void testGetSensorStatus()
+        {
+            DatabaseOperations.AddSensorStatusData(SensorStatus.Generate(SensorStatusEnum.NORMAL, SensorStatusEnum.ALARM,
+                SensorStatusEnum.ALARM, SensorStatusEnum.ALARM, SensorStatusEnum.ALARM, SensorStatusEnum.ALARM, SensorStatusEnum.ALARM,
+                SensorStatusEnum.ALARM, SensorStatusEnum.ALARM, SensorStatusEnum.ALARM, SensorStatusEnum.ALARM, SensorStatusEnum.ALARM,
+                SensorStatusEnum.ALARM, SensorStatusEnum.ALARM));
+            SensorStatus status = null;
+            status = DatabaseOperations.GetSensorStatusData();
+            Assert.AreEqual(status.gate, (SByte)SensorStatusEnum.NORMAL);
+        }
+
+        [TestMethod]
+        public void TestUpdateSensorThreshold_ChangeAllFields()
+        {
+            ThresholdValues original = new ThresholdValues();
+
+            // Save original threshold
+            double upper = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.AMBIENT_TEMP);
+            double lower = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.AMBIENT_TEMP, false);
+
+            original.minValue = (float)lower;
+            original.maxValue = (float)upper;
+            original.sensor_name = SensorItemEnum.AMBIENT_TEMP.ToString();
+
+            ThresholdValues changed = new ThresholdValues();
+            changed.minValue = 20;
+            changed.maxValue = 50;
+            changed.sensor_name = SensorItemEnum.AMBIENT_TEMP.ToString();
+
+            // Update threshold
+            DatabaseOperations.UpdateSensorThreshold(changed);
+
+            Assert.AreEqual(DatabaseOperations.GetThresholdForSensor(SensorItemEnum.AMBIENT_TEMP), changed.maxValue);
+            Assert.AreEqual(DatabaseOperations.GetThresholdForSensor(SensorItemEnum.AMBIENT_TEMP, false), changed.minValue);
+
+            // Revert threshold
+            DatabaseOperations.UpdateSensorThreshold(original);
+        }
+
+        [TestMethod]
+        public void TestUpdateSensorThreshold_IdDoesntExist()
+        {
+            ThresholdValues invalidThreshold = new ThresholdValues();
+            
+            // Give the threshold a sensor name that will never exist
+            invalidThreshold.sensor_name = SensorItemEnum.GATE.ToString();
+
+            Assert.ThrowsException<InvalidOperationException>(() =>
+                DatabaseOperations.UpdateSensorThreshold(invalidThreshold)
+            );
         }
     }
 }

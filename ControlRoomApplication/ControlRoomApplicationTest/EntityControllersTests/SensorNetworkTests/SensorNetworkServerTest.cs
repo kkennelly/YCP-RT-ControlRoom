@@ -86,6 +86,9 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             // Verify timer is correct
             Assert.IsNotNull(resultTimer);
             Assert.IsFalse(resultTimer.AutoReset);
+
+            // Verify the fan starts in an off state
+            Assert.IsFalse(Server.FanIsOn);
         }
 
         [TestMethod]
@@ -126,6 +129,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             // 0.1 is the approximate margin of error with the conversions
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, expectedValue, 0.16);
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, expectedValue, 0.16);
+
+            Assert.IsTrue(Server.FanIsOn);
         }
 
         [TestMethod]
@@ -165,6 +170,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, 0);
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, 0);
+
+            Assert.IsFalse(Server.FanIsOn);
         }
 
         [TestMethod]
@@ -203,6 +210,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
 
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, 0);
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, 0);
+
+            Assert.IsFalse(Server.FanIsOn);
         }
 
         [TestMethod]
@@ -242,6 +251,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
 
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, 0);
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, 0);
+
+            Assert.IsFalse(Server.FanIsOn);
         }
 
         [TestMethod]
@@ -280,6 +291,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
 
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, 0);
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, 50, 0.17); // This should be the only populated value
+
+            Assert.IsFalse(Server.FanIsOn);
         }
 
         [TestMethod]
@@ -318,6 +331,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
 
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, 50, 0.17); // This should be the only populated value
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, 0);
+
+            Assert.IsFalse(Server.FanIsOn);
         }
 
         [TestMethod]
@@ -356,6 +371,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
 
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, 0);
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, 0);
+
+            Assert.IsFalse(Server.FanIsOn);
         }
 
         [TestMethod]
@@ -394,6 +411,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
 
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, 0);
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, 0);
+
+            Assert.IsFalse(Server.FanIsOn);
         }
 
         [TestMethod]
@@ -432,6 +451,48 @@ namespace ControlRoomApplicationTest.EntityControllersTests
 
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, 0);
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, 0);
+
+            Assert.IsFalse(Server.FanIsOn);
+        }
+
+        [TestMethod]
+        public void TestInterpretData_OnlyFanState_InterpretsOnlyFanState()
+        {
+            // Only the counterbalance accelerometer is initialized
+            byte[] OnlyFanOn = File.ReadAllBytes($"{TestPacketDirectory}OnlyFanOn.snp");
+
+            PrivateObject privServer = new PrivateObject(Server);
+
+            // Call the function, which decodes the data
+            bool success = (bool)privServer.Invoke("InterpretData", OnlyFanOn, OnlyFanOn.Length);
+
+            Assert.IsTrue(success);
+
+            // Verify all of the values are as expected; converted values have a small margin of error
+            Assert.AreEqual(Server.CurrentElevationMotorTemp[0].temp, 0);
+            Assert.AreEqual(Server.CurrentAzimuthMotorTemp[0].temp, 0);
+
+            Assert.AreEqual(Server.CurrentElevationAmbientTemp[0].temp, 0);
+            Assert.AreEqual(Server.CurrentElevationAmbientHumidity[0].HumidityReading, 0);
+
+            Assert.AreEqual(Server.CurrentElevationMotorAccl[0].x, 0);
+            Assert.AreEqual(Server.CurrentElevationMotorAccl[0].y, 0);
+            Assert.AreEqual(Server.CurrentElevationMotorAccl[0].z, 0);
+
+            Assert.AreEqual(Server.CurrentAzimuthMotorAccl[0].x, 0);
+            Assert.AreEqual(Server.CurrentAzimuthMotorAccl[0].y, 0);
+            Assert.AreEqual(Server.CurrentAzimuthMotorAccl[0].z, 0);
+
+            // These should be the only populated values, based off of the pre-made
+            // packet I made for them
+            Assert.AreEqual(Server.CurrentCounterbalanceAccl[0].x, 0);
+            Assert.AreEqual(Server.CurrentCounterbalanceAccl[0].y, 0);
+            Assert.AreEqual(Server.CurrentCounterbalanceAccl[0].z, 0);
+
+            Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, 0);
+            Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, 0);
+
+            Assert.IsTrue(Server.FanIsOn);
         }
 
         [TestMethod]
@@ -507,6 +568,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
 
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, 0);
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, 0);
+
+            Assert.IsFalse(Server.FanIsOn);
         }
 
         [TestMethod]
@@ -546,6 +609,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
 
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, 0);
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, 0);
+
+            Assert.IsFalse(Server.FanIsOn);
         }
 
         [TestMethod]
@@ -587,6 +652,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
 
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, 0);
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, 0);
+
+            Assert.IsFalse(Server.FanIsOn);
         }
 
         [TestMethod]
@@ -625,6 +692,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
 
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, 0);
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, 0);
+
+            Assert.IsFalse(Server.FanIsOn);
         }
 
         [TestMethod]

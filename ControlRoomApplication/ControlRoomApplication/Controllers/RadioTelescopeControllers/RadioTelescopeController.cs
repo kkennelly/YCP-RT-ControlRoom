@@ -38,6 +38,11 @@ namespace ControlRoomApplication.Controllers
         private double MaxElTempThreshold;
         private double MaxAzTempThreshold;
 
+        public double MinAmbientTempThreshold { get; set; }
+        public double MaxAmbientTempThreshold { get; set; }
+        public double MinAmbientHumidityThreshold { get; set; }
+        public double MaxAmbientHumidityThreshold { get; set; }
+
         // Previous snow dump azimuth -- we need to keep track of this in order to add 45 degrees each time we dump
         private double previousSnowDumpAzimuth;
 
@@ -70,6 +75,11 @@ namespace ControlRoomApplication.Controllers
 
             MaxAzTempThreshold = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.AZ_MOTOR_TEMP);
             MaxElTempThreshold = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.ELEV_MOTOR_TEMP);
+
+            MinAmbientTempThreshold = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.AMBIENT_TEMP, false);
+            MaxAmbientTempThreshold = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.AMBIENT_TEMP);
+            MinAmbientHumidityThreshold = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.AMBIENT_HUMIDITY, false);
+            MaxAmbientHumidityThreshold = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.AMBIENT_HUMIDITY);
 
             previousSnowDumpAzimuth = 0;
 
@@ -778,6 +788,13 @@ namespace ControlRoomApplication.Controllers
             bool elTempSafe = checkTemp(currElTemp, true);
             bool azTempSafe = checkTemp(currAzTemp, true);
 
+            // Current Elevation Position, used to compare to see if the elevation changes when motors move
+            double prevElevation = GetCurrentOrientation().Elevation;
+
+            // Set the timeout count to 0, the threshold will be how many 100 milliseconds of no updated data we need to consider timeout, ie 50 is 5 seconds
+            int elevationTimeoutCount = 0;
+            int elevationTimeoutThreshold = 50;
+
             // Sensor overrides must be taken into account
             bool currentAZOveride = overrides.overrideAzimuthMotTemp;
             bool currentELOveride = overrides.overrideElevatMotTemp;
@@ -790,6 +807,69 @@ namespace ControlRoomApplication.Controllers
 
                 azTempSafe = checkTemp(azTemp, azTempSafe);
                 elTempSafe = checkTemp(elTemp, elTempSafe);
+
+                // Sensor status routine, checks for each sensor to update the status in the DB
+                // Check Gate
+                SensorStatusEnum gate = SensorStatusEnum.NORMAL;
+
+                // Check azimuth temp 1
+                SensorStatusEnum azTemp1 = SensorStatusEnum.NORMAL;
+
+                // Check azimuth temp 2
+                SensorStatusEnum azTemp2 = SensorStatusEnum.NORMAL;
+
+                // Check elevation temp 1
+                SensorStatusEnum elTemp1 = SensorStatusEnum.NORMAL;
+
+                // Check elevation temp 2
+                SensorStatusEnum elTemp2 = SensorStatusEnum.NORMAL;
+
+                // Check weather
+                SensorStatusEnum weather = SensorStatusEnum.NORMAL;
+
+                // Check elevation absolute encoder, set to ALERT if timed out
+                SensorStatusEnum elAbsEncoder = SensorStatusEnum.NORMAL;
+                if (RadioTelescope.PLCDriver.MotorsCurrentlyMoving())
+                {
+                    if (prevElevation == GetCurrentOrientation().Elevation)
+                    {
+                        elevationTimeoutCount++;
+                        if (elevationTimeoutCount >= elevationTimeoutThreshold)
+                        {
+                            elAbsEncoder = SensorStatusEnum.ALARM;
+                        }
+                    }
+                    else
+                    {
+                        elevationTimeoutCount = 0;
+                    }
+                }
+                prevElevation = GetCurrentOrientation().Elevation;
+
+                // Check azimuth absolute encoder
+                SensorStatusEnum azAbsEncoder = SensorStatusEnum.NORMAL;
+
+                // Check proximity 0
+                SensorStatusEnum prox0 = SensorStatusEnum.NORMAL;
+
+                // Check proximity 90
+                SensorStatusEnum prox90 = SensorStatusEnum.NORMAL;
+
+                // Check azimuth acceleration
+                SensorStatusEnum azAccel = SensorStatusEnum.NORMAL;
+
+                // Check elevation acceleration
+                SensorStatusEnum elAccel = SensorStatusEnum.NORMAL;
+
+                // Check CB acceleration
+                SensorStatusEnum cbAccel = SensorStatusEnum.NORMAL;
+
+                // Check ambient temp humidity
+                SensorStatusEnum ambientTempHumidity = SensorStatusEnum.NORMAL;
+
+                // Take all updated statuses and add them to the DB
+                DatabaseOperations.AddSensorStatusData(SensorStatus.Generate(gate, azTemp1, azTemp2, elTemp1, elTemp2,
+                    weather, elAbsEncoder, azAbsEncoder, prox0, prox90, azAccel, elAccel, cbAccel, ambientTempHumidity));
 
                 // Determines if the telescope is in a safe state
                 if (azTempSafe && elTempSafe) AllSensorsSafe = true;
@@ -806,6 +886,12 @@ namespace ControlRoomApplication.Controllers
 
                 // Run the software-stop routine
                 CheckAndRunSoftwareStops();
+
+                // If ambient temperature and humidity are overriden, simply leave the fan state as is
+                if (!overrides.overrideAmbientTempHumidity)
+                {
+                    RadioTelescope.SensorNetworkServer.SetFanOnOrOff = DetermineFanState();
+                }
                 
                 Thread.Sleep(100);
             }
@@ -1082,9 +1168,9 @@ namespace ControlRoomApplication.Controllers
                 Thread.Sleep(5000);
 
                 //TEST 7: Return to home
-                logger.Info($"{Utilities.GetTimeStamp()}: Beginning eigth movement: Move to Home");
+                logger.Info($"{Utilities.GetTimeStamp()}: Beginning eighth movement: Move to Home");
                 movementResult = HomeTelescope(MovementPriority.Manual);
-                logger.Info($"{Utilities.GetTimeStamp()}: Finished eigth movement: Move to home");
+                logger.Info($"{Utilities.GetTimeStamp()}: Finished eighth movement: Move to home");
                 Thread.Sleep(1000);
 
                 Monitor.Exit(MovementLock);
@@ -1116,6 +1202,44 @@ namespace ControlRoomApplication.Controllers
                     logger.Info(Utilities.GetTimeStamp() + ": Software-stop hit!");
                 }
             }
+        }
+
+        /// <summary>
+        /// This is the method that handles determining whether the ESS fan should be on or off.
+        /// </summary>
+        /// <returns>True to turn the fan on, false to turn the fan off.</returns>
+        private bool DetermineFanState()
+        {
+            SensorNetwork.SensorNetworkServer sn = RadioTelescope.SensorNetworkServer;
+
+            // If the fan is on, check to see if it needs to be turned off
+            if (sn.FanIsOn)
+            {
+                // Temp is below the lower threshold and either the humidity reached below its threshold or the outside is too
+                // dew point is higher than the inside temp, which means the telescope is warming up and humidity will lower.
+                // Bringing in hot air that has a dew point higher than the inside temp will cause condensation
+                if (sn.CurrentElevationAmbientTemp[0].temp < MinAmbientTempThreshold &&
+                    (sn.CurrentElevationAmbientHumidity[0].HumidityReading < MinAmbientHumidityThreshold ||
+                    sn.CurrentElevationAmbientTemp[0].temp <= RadioTelescope.WeatherStation.GetDewPoint()))
+                {
+                    return false;
+                }
+            }
+            // The fan is off, so check if it needs to be turned on
+            else
+            {
+                // Temp is passed the upper threshold, or the humiditity is passed the upper threshold and the outside air is cooler,
+                // which means the telescope is cooling down and outside air needs to be brought in to avoid condinsation
+                if (sn.CurrentElevationAmbientTemp[0].temp >= MaxAmbientTempThreshold ||
+                    sn.CurrentElevationAmbientHumidity[0].HumidityReading >= MaxAmbientHumidityThreshold &&
+                    sn.CurrentElevationAmbientTemp[0].temp >= RadioTelescope.WeatherStation.GetOutsideTemp())
+                {
+                    return true;
+                }
+            }
+
+            // Reaching this point means that the fan state doesn't need to be changed
+            return sn.FanIsOn;
         }
     }
 }

@@ -84,6 +84,5 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
 
             return success;
         }
-
     }
 }

@@ -514,6 +514,7 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
                 AzimuthAccelerometerStatus = statuses[6] ? SensorNetworkSensorStatus.Okay : SensorNetworkSensorStatus.Error,
                 ElevationAccelerometerStatus = statuses[7] ? SensorNetworkSensorStatus.Okay : SensorNetworkSensorStatus.Error,
                 CounterbalanceAccelerometerStatus = statuses[5] ? SensorNetworkSensorStatus.Okay : SensorNetworkSensorStatus.Error,
+                ElevationAbsoluteEncoderStatus = SensorNetworkSensorStatus.Okay,
 
                 // TODO: Parse errors here. You will need to add the errors to the SensorStatuses object (issue #353)
             };

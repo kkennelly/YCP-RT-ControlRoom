@@ -806,17 +806,17 @@ namespace ControlRoomApplication.Controllers
                 // if gate open
                 // sensors.gate = (SByte)SensorStatusEnum.ALARM;
 
-                // Check azimuth temp 1
-                sensors.az_motor_temp_1 = (SByte)RadioTelescope.SensorNetworkServer.SensorStatuses.AzimuthTemperature1Status;
+                // Check azimuth temp 1, 1 - current ess sensor status will flip the bit
+                sensors.az_motor_temp_1 = (SByte)(1 - RadioTelescope.SensorNetworkServer.SensorStatuses.AzimuthTemperature1Status);
 
                 // Check azimuth temp 2
-                sensors.az_motor_temp_2 = (SByte)RadioTelescope.SensorNetworkServer.SensorStatuses.AzimuthTemperature2Status;
+                sensors.az_motor_temp_2 = (SByte)(1 - RadioTelescope.SensorNetworkServer.SensorStatuses.AzimuthTemperature2Status);
 
                 // Check elevation temp 1
-                sensors.el_motor_temp_1 = (SByte)RadioTelescope.SensorNetworkServer.SensorStatuses.ElevationTemperature1Status;
+                sensors.el_motor_temp_1 = (SByte)(1 - RadioTelescope.SensorNetworkServer.SensorStatuses.ElevationTemperature1Status);
 
                 // Check elevation temp 2
-                sensors.el_motor_temp_2 = (SByte)RadioTelescope.SensorNetworkServer.SensorStatuses.ElevationTemperature2Status;
+                sensors.el_motor_temp_2 = (SByte)(1 - RadioTelescope.SensorNetworkServer.SensorStatuses.ElevationTemperature2Status);
 
                 // Check weather
                 int windSpeedStatus = RadioTelescope.WeatherStation.CurrentWindSpeedStatus;
@@ -841,12 +841,12 @@ namespace ControlRoomApplication.Controllers
 
                     pushNotification.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are in Warning Range: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
                     EmailNotifications.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are in Warning Range: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
-                    
                 }
                 
                 // Check elevation absolute encoder, set to ALERT if timed out
                 sensors.elevation_abs_encoder = (SByte)SensorStatusEnum.NORMAL;
-                if (RadioTelescope.PLCDriver.MotorsCurrentlyMoving())
+
+                if (RadioTelescope.PLCDriver.MotorsCurrentlyMoving(RadioTelescopeAxisEnum.ELEVATION))
                 {
                     if (prevElevation == GetCurrentOrientation().Elevation)
                     {
@@ -854,7 +854,7 @@ namespace ControlRoomApplication.Controllers
                         if (elevationTimeoutCount >= SensorNetwork.SensorNetworkConstants.ElevationTimeoutThreshold)
                         {
                             sensors.elevation_abs_encoder = (SByte)SensorStatusEnum.ALARM;
-                            RadioTelescope.SensorNetworkServer.SensorStatuses.ElevationAbsoluteEncoderStatus = Entities.DiagnosticData.SensorNetworkSensorStatus.Error;
+                            RadioTelescope.SensorNetworkServer.SensorStatuses.ElevationAbsoluteEncoderStatus = SensorNetworkSensorStatus.Error;
                         }
                     }
                     else
@@ -867,7 +867,7 @@ namespace ControlRoomApplication.Controllers
                 //sensors.elevation_abs_encoder = (SByte)RadioTelescope.SensorNetworkServer.SensorStatuses.ElevationAbsoluteEncoderStatus;
 
                 // Check azimuth absolute encoder
-                sensors.azimuth_abs_encoder = (SByte)RadioTelescope.SensorNetworkServer.SensorStatuses.AzimuthAbsoluteEncoderStatus;
+                sensors.azimuth_abs_encoder = (SByte)(1 - RadioTelescope.SensorNetworkServer.SensorStatuses.AzimuthAbsoluteEncoderStatus);
 
                 // Check proximity 0
                 sensors.el_proximity_0 = (SByte)SensorStatusEnum.NORMAL;
@@ -876,13 +876,13 @@ namespace ControlRoomApplication.Controllers
                 sensors.el_proximity_90 = (SByte)SensorStatusEnum.NORMAL;
 
                 // Check azimuth acceleration
-                sensors.az_accel = (SByte)RadioTelescope.SensorNetworkServer.SensorStatuses.AzimuthAccelerometerStatus;
+                sensors.az_accel = (SByte)(1 - RadioTelescope.SensorNetworkServer.SensorStatuses.AzimuthAccelerometerStatus);
 
                 // Check elevation acceleration
-                sensors.el_accel = (SByte)RadioTelescope.SensorNetworkServer.SensorStatuses.ElevationAccelerometerStatus;
+                sensors.el_accel = (SByte)(1 - RadioTelescope.SensorNetworkServer.SensorStatuses.ElevationAccelerometerStatus);
 
                 // Check CB acceleration
-                sensors.counter_balance_accel = (SByte)RadioTelescope.SensorNetworkServer.SensorStatuses.CounterbalanceAccelerometerStatus;
+                sensors.counter_balance_accel = (SByte)(1 - RadioTelescope.SensorNetworkServer.SensorStatuses.CounterbalanceAccelerometerStatus);
 
                 // Check ambient temp humidity
                 sensors.ambient_temp_humidity = (SByte)SensorStatusEnum.NORMAL;

@@ -753,7 +753,7 @@ namespace ControlRoomApplication.Controllers {
             if(!SendGenericCommand(command)) return MovementResult.CouldNotSendCommand;
             
             // The new orientation is 0,0 because homing should result in the motor encoders being zeroed out
-            MovementResult result = MovementMonitor(ThisMove, new Orientation(0, 0), true);
+            MovementResult result = MovementMonitor(command, new Orientation(0, 0), true);
 
             // Set the MotorsHomed to true because motors were successfully homed
             if (result == MovementResult.Success)

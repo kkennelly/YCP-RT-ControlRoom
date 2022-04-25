@@ -719,7 +719,7 @@ namespace ControlRoomApplication.Controllers {
                 (ushort)MCUCommandType.EmptyData,
 
                 // elevation data
-                (ushort)RadioTelescopeDirectionEnum.CounterclockwiseHoming,
+                (ushort)RadioTelescopeDirectionEnum.ClockwiseHoming,
                 (ushort)MCUCommandType.EmptyData,
                 (ushort)MCUCommandType.EmptyData,
                 (ushort)MCUCommandType.EmptyData,
@@ -778,6 +778,7 @@ namespace ControlRoomApplication.Controllers {
 
             // This needs flipped so that the elevation axis moves the correct direction
             positionTranslationEl = -positionTranslationEl;
+            positionTranslationAz = -positionTranslationAz;
 
             command.commandData = new ushort[] {
                 // Azimuth data

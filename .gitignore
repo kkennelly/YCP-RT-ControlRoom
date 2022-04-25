@@ -266,6 +266,9 @@ AWSConstants.cs
 /ControlRoomApplication/results.xml
 /ControlRoomApplication/ControlRoomApplication.dll
 
+# Not an AES key or IV so don't look here
+/ControlRoomApplication/ControlRoomApplication/Constants/AESConstants.cs
+
 # Sensitive push notification data
 /ControlRoomApplication/ControlRoomApplication/Controllers/Communications/pushNotification.cs
 \ControlRoomApplication\ControlRoom\Application\Controllers\Communications\pushNotification.cs

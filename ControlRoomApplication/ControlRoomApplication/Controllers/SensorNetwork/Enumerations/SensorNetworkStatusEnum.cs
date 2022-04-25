@@ -42,7 +42,7 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
 
         /// <summary>
         /// This is set if the SensorNetworkClient fails to send the initialization to the Sensor Network. This can
-        /// happen if the Sensor Network is not on, not plugged in (via eithernet), or the user may have typed the
+        /// happen if the Sensor Network is not on, not plugged in (via Ethernet), or the user may have typed the
         /// incorrect Client IP address/Port.
         /// </summary>
         InitializationSendingFailed,

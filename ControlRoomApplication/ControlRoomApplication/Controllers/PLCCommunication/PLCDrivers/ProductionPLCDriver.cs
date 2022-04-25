@@ -496,7 +496,7 @@ namespace ControlRoomApplication.Controllers
         /// clears the previos move comand from mthe PLC, only works for jog moves
         /// </summary>
         /// <returns></returns>
-        public override bool Cancel_move() {
+        public override MovementResult Cancel_move() {
             return MCU.Cancel_move();
         }
 
@@ -504,11 +504,11 @@ namespace ControlRoomApplication.Controllers
         /// send a hold move command to the MCu
         /// </summary>
         /// <returns></returns>
-        public override bool ControlledStop(  ) {
+        public override MovementResult ControlledStop(  ) {
             return MCU.ControlledStop();
         }
 
-        public override bool ImmediateStop() {
+        public override MovementResult ImmediateStop() {
             return MCU.ImmediateStop();
         }
 

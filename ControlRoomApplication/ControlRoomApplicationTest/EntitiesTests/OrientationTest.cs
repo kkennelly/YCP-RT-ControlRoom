@@ -1,4 +1,5 @@
-﻿using ControlRoomApplication.Entities;
+﻿using ControlRoomApplication.Constants;
+using ControlRoomApplication.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ControlRoomApplicationTest.EntitiesTests
@@ -89,19 +90,19 @@ namespace ControlRoomApplicationTest.EntitiesTests
             Orientation orientation;
 
             // Valid (low edge elevation)
-            orientation = new Orientation(SAFE_VAL, -15);
+            orientation = new Orientation(SAFE_VAL, SimulationConstants.LIMIT_LOW_EL_DEGREES);
             Assert.IsTrue(orientation.orientationValid());
 
             // Valid (high edge elevation)
-            orientation = new Orientation(SAFE_VAL, 93);
+            orientation = new Orientation(SAFE_VAL, SimulationConstants.LIMIT_HIGH_EL_DEGREES);
             Assert.IsTrue(orientation.orientationValid());
 
             // Invalid (low elevation)
-            orientation = new Orientation(SAFE_VAL, -16);
+            orientation = new Orientation(SAFE_VAL, SimulationConstants.LIMIT_LOW_EL_DEGREES - 1);
             Assert.IsFalse(orientation.orientationValid());
 
             // Invalid (high elevation)
-            orientation = new Orientation(SAFE_VAL, 94);
+            orientation = new Orientation(SAFE_VAL, SimulationConstants.LIMIT_HIGH_EL_DEGREES + 1);
             Assert.IsFalse(orientation.orientationValid());
         }
 

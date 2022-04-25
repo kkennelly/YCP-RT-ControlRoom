@@ -126,7 +126,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests {
             var response = TestRadioTelescopeController.CancelCurrentMoveCommand(MovementPriority.GeneralStop);
 
             // Make sure it was successful
-            Assert.IsTrue(response);
+            Assert.AreEqual(MovementResult.Success, response);
         }
 
         [TestMethod]

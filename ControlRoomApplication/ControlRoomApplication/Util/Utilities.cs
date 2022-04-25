@@ -9,6 +9,7 @@ using System.Net;
 using ControlRoomApplication.Constants;
 using ControlRoomApplication.Util;
 using System.Windows.Forms;
+using ControlRoomApplication.Controllers.Communications;
 
 namespace ControlRoomApplication.Util
 {
@@ -16,6 +17,9 @@ namespace ControlRoomApplication.Util
     public class Utilities
     {
         public static object timeZoneName;
+
+        private static readonly log4net.ILog logger =
+         log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         public static String GetTimeStamp()
         {
@@ -65,8 +69,37 @@ namespace ControlRoomApplication.Util
             }
         }
 
+        /// <summary>
+        /// Checks if the command sent is using a version of TCP that uses encryption. If so, it decrypts and return the command to be parsed like normal 
+        /// If the version of TCP uses encryption, then we must also encrypt the data sent back to the mobile app, hence we change the encrypted flag to true 
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns>A tuple that contains the either decrypted or unmodified string and a boolean that says whether or not the string was encrypted.</returns>
+        public static Tuple<string, bool> CheckEncrypted(string data)
+        {
+            bool encrypted = false;
+            double versionNum;
 
+            try
+            {
+                if (Double.TryParse(data.Substring(0, data.IndexOf('|')), out versionNum) && versionNum >= 1.1)
+                {
+                    // Set the instances encrypted bool to true
+                    encrypted = true;
+
+                    // Decrypt the command
+                    data = AES.Decrypt(data.Substring(data.IndexOf('|') + 1), AESConstants.KEY, AESConstants.IV);
+                }
+            }
+            catch (Exception e)
+            {
+                // This exception will be thrown if data receievd is not a command (which is a possible security vulnerability) 
+                // In this case, if an exception is thrown, the data will be returned as is and will later be parsed as an invalid command 
+                logger.Debug(e.StackTrace);
+            }
+
+            return new Tuple<string, bool>(data, encrypted);
+        }
     }
-
 }
 

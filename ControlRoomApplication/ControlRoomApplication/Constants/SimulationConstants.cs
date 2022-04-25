@@ -16,8 +16,8 @@
 
         public const double LIMIT_CW_AZ_DEGREES = -5;
         public const double LIMIT_CCW_AZ_DEGREES = 365;
-        public const double LIMIT_LOW_EL_DEGREES = -15;
-        public const double LIMIT_HIGH_EL_DEGREES = 93;
+        public const double LIMIT_LOW_EL_DEGREES = -7;  // Changed from -15
+        public const double LIMIT_HIGH_EL_DEGREES = 93; // Changed from 93
 
         public const double PROX_CW_AZ_DEGREES = 10;
         public const double PROX_CCW_AZ_DEGREES = 345;

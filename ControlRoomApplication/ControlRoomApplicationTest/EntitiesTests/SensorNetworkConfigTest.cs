@@ -35,6 +35,7 @@ namespace ControlRoomApplicationTest.EntitiesTests
             Assert.AreEqual(config.CounterbalanceAccelerometerInit, true);
             Assert.AreEqual(config.ElevationEncoderInit, true);
             Assert.AreEqual(config.AzimuthEncoderInit, true);
+            Assert.AreEqual(config.ElevationAmbientInit, true);
         }
 
         [TestMethod]
@@ -56,6 +57,7 @@ namespace ControlRoomApplicationTest.EntitiesTests
             Assert.AreEqual(config.CounterbalanceAccelerometerInit, false);
             Assert.AreEqual(config.ElevationEncoderInit, false);
             Assert.AreEqual(config.AzimuthEncoderInit, false);
+            Assert.AreEqual(config.ElevationAmbientInit, false);
         }
 
         [TestMethod]
@@ -171,6 +173,110 @@ namespace ControlRoomApplicationTest.EntitiesTests
         }
 
         [TestMethod]
+        public void TestEquals_AmbTempHumidityInitDifferent_NotEqual()
+        {
+            int telescopeId = 5;
+
+            SensorNetworkConfig config = new SensorNetworkConfig(telescopeId);
+            SensorNetworkConfig other = new SensorNetworkConfig(telescopeId);
+
+            other.ElevationAmbientInit = false;
+
+            Assert.IsFalse(config.Equals(other));
+        }
+
+        [TestMethod]
+        public void TestEquals_TimerPeriodInitDifferent_NotEqual()
+        {
+            int telescopeId = 5;
+
+            SensorNetworkConfig config = new SensorNetworkConfig(telescopeId);
+            SensorNetworkConfig other = new SensorNetworkConfig(telescopeId);
+
+            other.TimerPeriod = 0;
+
+            Assert.IsFalse(config.Equals(other));
+        }
+
+        [TestMethod]
+        public void TestEquals_EthernetPeriodInitDifferent_NotEqual()
+        {
+            int telescopeId = 5;
+
+            SensorNetworkConfig config = new SensorNetworkConfig(telescopeId);
+            SensorNetworkConfig other = new SensorNetworkConfig(telescopeId);
+
+            other.EthernetPeriod = 0;
+
+            Assert.IsFalse(config.Equals(other));
+        }
+
+        [TestMethod]
+        public void TestEquals_ElAccelConfigInitDifferent_NotEqual()
+        {
+            int telescopeId = 5;
+
+            SensorNetworkConfig config = new SensorNetworkConfig(telescopeId);
+            SensorNetworkConfig other = new SensorNetworkConfig(telescopeId);
+
+            other.ElAccelConfig = new AccelerometerConfig(other.Id, (int)SensorLocationEnum.EL_MOTOR);
+
+            Assert.IsFalse(config.Equals(other));
+        }
+
+        [TestMethod]
+        public void TestEquals_AzAccelConfigInitDifferent_NotEqual()
+        {
+            int telescopeId = 5;
+
+            SensorNetworkConfig config = new SensorNetworkConfig(telescopeId);
+            SensorNetworkConfig other = new SensorNetworkConfig(telescopeId);
+
+            other.AzAccelConfig = new AccelerometerConfig(other.Id, (int)SensorLocationEnum.AZ_MOTOR);
+
+            Assert.IsFalse(config.Equals(other));
+        }
+
+        [TestMethod]
+        public void TestEquals_CbAccelConfigInitDifferent_NotEqual()
+        {
+            int telescopeId = 5;
+
+            SensorNetworkConfig config = new SensorNetworkConfig(telescopeId);
+            SensorNetworkConfig other = new SensorNetworkConfig(telescopeId);
+
+            other.CbAccelConfig = new AccelerometerConfig(other.Id, (int)SensorLocationEnum.COUNTERBALANCE);
+
+            Assert.IsFalse(config.Equals(other));
+        }
+
+        [TestMethod]
+        public void TestEquals_TemperaturePeriodInitDifferent_NotEqual()
+        {
+            int telescopeId = 5;
+
+            SensorNetworkConfig config = new SensorNetworkConfig(telescopeId);
+            SensorNetworkConfig other = new SensorNetworkConfig(telescopeId);
+
+            other.TemperaturePeriod = 0;
+
+            Assert.IsFalse(config.Equals(other));
+        }
+
+        [TestMethod]
+        public void TestEquals_EncoderPeriodInitDifferent_NotEqual()
+        {
+            int telescopeId = 5;
+
+            SensorNetworkConfig config = new SensorNetworkConfig(telescopeId);
+            SensorNetworkConfig other = new SensorNetworkConfig(telescopeId);
+
+            other.EncoderPeriod = 0;
+
+            Assert.IsFalse(config.Equals(other));
+        }
+
+        [TestMethod]
         public void TestEquals_TimeoutDataRetrievalDifferent_NotEqual()
         {
             int telescopeId = 5;
@@ -201,14 +307,34 @@ namespace ControlRoomApplicationTest.EntitiesTests
         {
             SensorNetworkConfig config = new SensorNetworkConfig(5);
 
+            config.TimerPeriod = 1;
+            config.EthernetPeriod = 1;
+            config.TemperaturePeriod = 1;
+            config.EncoderPeriod = 1;
+
             var bytes = config.GetSensorInitAsBytes();
 
-            // All bytes in the array should be 1
-            Assert.IsTrue(bytes.All(singleByte => singleByte == 1));
+            // All sensor init bytes in the array should be 1
+            for (int i = 0; i < 8; i++)
+            {
+                Assert.IsTrue(bytes[i] == 1);
+            }
+
+            int parsedTimerPeriod = BitConverter.ToInt32(bytes, 8);
+            Assert.AreEqual(1, parsedTimerPeriod);
+
+            int parsedEthernetPeriod = BitConverter.ToInt32(bytes, 12);
+            Assert.AreEqual(1, parsedEthernetPeriod);
+
+            int parsedTemperaturePeriod = BitConverter.ToInt32(bytes, 16);
+            Assert.AreEqual(1, parsedTemperaturePeriod);
+
+            int parsedEncoderPeriod = BitConverter.ToInt32(bytes, 20);
+            Assert.AreEqual(1, parsedEncoderPeriod);
         }
 
         [TestMethod]
-        public void TestGetSensorInitAsBytes_AllTrue_AllBytesZero()
+        public void TestGetSensorInitAsBytes_AllFalse_AllBytesZero()
         {
             SensorNetworkConfig config = new SensorNetworkConfig(5);
 
@@ -219,11 +345,32 @@ namespace ControlRoomApplicationTest.EntitiesTests
             config.CounterbalanceAccelerometerInit = false;
             config.ElevationEncoderInit = false;
             config.AzimuthEncoderInit = false;
+            config.ElevationAmbientInit = false;
+
+            config.TimerPeriod = 0;
+            config.EthernetPeriod = 0;
+            config.TemperaturePeriod = 0;
+            config.EncoderPeriod = 0;
 
             var bytes = config.GetSensorInitAsBytes();
 
-            // All bytes in the array should be 0
-            Assert.IsTrue(bytes.All(singleByte => singleByte == 0));
+            // All sensor init bytes in the array should be 0
+            for (int i = 0; i < 8; i++)
+            {
+                Assert.IsTrue(bytes[i] == 0);
+            }
+
+            int parsedTimerPeriod = BitConverter.ToInt32(bytes, 8);
+            Assert.AreEqual(0, parsedTimerPeriod);
+
+            int parsedEthernetPeriod = BitConverter.ToInt32(bytes, 12);
+            Assert.AreEqual(0, parsedEthernetPeriod);
+
+            int parsedTemperaturePeriod = BitConverter.ToInt32(bytes, 16);
+            Assert.AreEqual(0, parsedTemperaturePeriod);
+
+            int parsedEncoderPeriod = BitConverter.ToInt32(bytes, 20);
+            Assert.AreEqual(0, parsedEncoderPeriod);
         }
     }
 }

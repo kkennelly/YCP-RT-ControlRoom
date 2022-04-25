@@ -2,6 +2,7 @@
 using ControlRoomApplication.Controllers.SensorNetwork.Simulation;
 using ControlRoomApplication.Entities.DiagnosticData;
 using System;
+using System.Linq;
 
 namespace EmbeddedSystemsTest.SensorNetworkSimulation
 {
@@ -22,12 +23,15 @@ namespace EmbeddedSystemsTest.SensorNetworkSimulation
         /// <param name="azTemps">Array of azimuth temperature samples.</param>
         /// <param name="elEnc">Array of elevation encoder samples.</param>
         /// <param name="azEnc">Array of azimuth encoder samples.</param>
+        /// <param name="ambTemp">Array of ambient temperature samples.</param>
+        /// <param name="ambHumidity">Array of ambient humidity samples.</param>
         /// <param name="statuses">All the sensor statuses and errors that come from the sensor network.</param>
         /// <param name="connectionTimeStamp">The time the sensor network connected to the control room. Used to generate simulated acceleration time captures</param>
+        /// <param name="FanIsOn">Whether or not the fan is on or off.</param>
         /// <returns></returns>
-        public static byte[] ConvertDataArraysToBytes(RawAccelerometerData[] elAccl, RawAccelerometerData[] azAccl, RawAccelerometerData[] cbAccl, double[] elTemps, double[] azTemps, double[] elEnc, double[] azEnc, SensorStatuses statuses, long connectionTimeStamp)
+        public static byte[] ConvertDataArraysToBytes(RawAccelerometerData[] elAccl, RawAccelerometerData[] azAccl, RawAccelerometerData[] cbAccl, double[] elTemps, double[] azTemps, double[] elEnc, double[] azEnc, float[] ambTemp, float[] ambHumidity, SensorStatuses statuses, long connectionTimeStamp, bool FanIsOn)
         {
-            uint dataSize = CalcDataSize(elAccl.Length, azAccl.Length, cbAccl.Length, elTemps.Length, azTemps.Length, elEnc.Length, azEnc.Length);
+            uint dataSize = CalcDataSize(elAccl.Length, azAccl.Length, cbAccl.Length, elTemps.Length, azTemps.Length, elEnc.Length, azEnc.Length, ambTemp.Length, ambHumidity.Length);
 
             // If you want to input raw data instead, just comment out the next few loops.
             // They exist so that we can input data into our CSV files that make sense to us, since
@@ -69,12 +73,14 @@ namespace EmbeddedSystemsTest.SensorNetworkSimulation
                 statuses.ElevationTemperature2Status == SensorNetworkSensorStatus.Okay,
                 statuses.AzimuthTemperature1Status == SensorNetworkSensorStatus.Okay,
                 statuses.AzimuthTemperature2Status == SensorNetworkSensorStatus.Okay,
-                statuses.AzimuthAbsoluteEncoderStatus == SensorNetworkSensorStatus.Okay
+                statuses.AzimuthAbsoluteEncoderStatus == SensorNetworkSensorStatus.Okay,
+                FanIsOn,
+                statuses.ElevationAmbientStatus == SensorNetworkSensorStatus.Okay
             };
 
             int errors = 0; // TODO: implement conversion (issue #376)
 
-            return EncodeRawData(dataSize, elAccl, azAccl, cbAccl, rawElTemps, rawAzTemps, rawElEnc, rawAzEnc, sensorStatusBoolArray, errors, connectionTimeStamp);
+            return EncodeRawData(dataSize, elAccl, azAccl, cbAccl, rawElTemps, rawAzTemps, rawElEnc, rawAzEnc, ambTemp, ambHumidity, sensorStatusBoolArray, errors, connectionTimeStamp);
         }
 
         /// <summary>
@@ -88,9 +94,11 @@ namespace EmbeddedSystemsTest.SensorNetworkSimulation
         /// <param name="azTemp">Array of RAW azimuth temperature samples.</param>
         /// <param name="elEnc">Array of RAW elevation encoder samples. (Should only ever be a size of 1)</param>
         /// <param name="azEnc">Array of RAW azimuth encoder samples. (Should only ever be a size of 1)</param>
+        /// <param name="ambTemp">Array of ambient temperature samples.</param>
+        /// <param name="ambHumidity">Array of ambient humidity samples.</param>
         /// <param name="connectionTimeStamp">The time the sensor network connected to the control room. Used to generate simulated acceleration time captures</param>
         /// <returns></returns>
-        public static byte[] EncodeRawData(uint dataSize, RawAccelerometerData[] elAcclData, RawAccelerometerData[] azAcclData, RawAccelerometerData[] cbAcclData, short[] elTemp, short[] azTemp, short[] elEnc, short[] azEnc, bool[] statuses, int errors, long connectionTimeStamp)
+        public static byte[] EncodeRawData(uint dataSize, RawAccelerometerData[] elAcclData, RawAccelerometerData[] azAcclData, RawAccelerometerData[] cbAcclData, short[] elTemp, short[] azTemp, short[] elEnc, short[] azEnc, float[] ambTemp, float[] ambHumidity, bool[] statuses, int errors, long connectionTimeStamp)
         {
             byte[] data = new byte[dataSize];
 
@@ -101,7 +109,9 @@ namespace EmbeddedSystemsTest.SensorNetworkSimulation
             Add32BitValueToByteArray(ref data, ref i, dataSize);
 
             // Store the sensor statuses
-            data[i++] = ConvertBoolArrayToByte(statuses);
+            // To avoid changing the code too much, store the first 8 statuses, and then the remaining status
+            data[i++] = ConvertBoolArrayToByte(statuses.Take(8).ToArray());
+            data[i++] = ConvertBoolArrayToByte(statuses.Skip(8).ToArray());
 
             // Store the sensor errors in 3 bytes
             Add24BitValueToByteArray(ref data, ref i, errors);
@@ -126,6 +136,12 @@ namespace EmbeddedSystemsTest.SensorNetworkSimulation
 
             // Store azimuth encoder size in 2 bytes
             Add16BitValueToByteArray(ref data, ref i, (short)azEnc.Length);
+
+            // Store ambeint temp size in 2 bytes
+            Add16BitValueToByteArray(ref data, ref i, (short)ambTemp.Length);
+
+            // Store ambient humidity size in 2 bytes
+            Add16BitValueToByteArray(ref data, ref i, (short)ambHumidity.Length);
 
             // Store elevation accelerometer data in a variable number of bytes
             AddAcclDataToByteArray(ref data, ref i, ref elAcclData, SensorNetworkConstants.ElAccelFIFOSize, connectionTimeStamp);
@@ -164,6 +180,28 @@ namespace EmbeddedSystemsTest.SensorNetworkSimulation
                 Add16BitValueToByteArray(ref data, ref i, (short)azEnc[j]);
             }
 
+            // Store ambient temp data in a variable number of bytes
+            // Each sample occupies 4 bytes
+            for (uint j = 0; j < ambTemp.Length; j++)
+            {
+                byte[] bytes = BitConverter.GetBytes(ambTemp[j]);
+                for (int k = 0; k < bytes.Length; k++)
+                {
+                    data[i++] = bytes[k];
+                }
+            }
+
+            // Store ambient humidity data in a variable number of bytes
+            // Each sample occupies 4 bytes
+            for (uint j = 0; j < ambHumidity.Length; j++)
+            {
+                byte[] bytes = BitConverter.GetBytes(ambHumidity[j]);
+                for (int k = 0; k < bytes.Length; k++)
+                {
+                    data[i++] = bytes[k];
+                }
+            }
+
             return data;
         }
 
@@ -178,14 +216,16 @@ namespace EmbeddedSystemsTest.SensorNetworkSimulation
         /// <param name="azTempSize">The number of azimuth temperature samples.</param>
         /// <param name="elEncSize">The number of elevation encoder samples.</param>
         /// <param name="azEncSize">The number of azimuth encoder samples.</param>
+        /// <param name="ambTempSize">The number of ambient temperature samples.</param>
+        /// <param name="ambHumiditySize">The number of ambient humidity samples.</param>
         /// <returns></returns>
-        public static uint CalcDataSize(int elAccSize, int azAccSize, int cbAccSize, int elTempSize, int azTempSize, int elEncSize, int azEncSize)
+        public static uint CalcDataSize(int elAccSize, int azAccSize, int cbAccSize, int elTempSize, int azTempSize, int elEncSize, int azEncSize, int ambTempSize, int ambHumiditySize)
         {
             // 1 for the transmit ID
             // 4 for the total data size
-            // 4 for the sensor statuses and errors
-            // 14 for each sensor's data size (each sensor size is 2 bytes, with 7 sensors total)
-            uint length = 1 + 4 + 4 + 14;
+            // 5 for the sensor statuses and errors
+            // 18 for each sensor's data size (each sensor size is 2 bytes, with 9 readings total)
+            uint length = 1 + 4 + 5 + 18;
 
             // Each accelerometer axis is 2 bytes each. With three axes, that's 6 bytes per accelerometer
             length += (uint)elAccSize * 6;
@@ -209,6 +249,10 @@ namespace EmbeddedSystemsTest.SensorNetworkSimulation
             // Encoder arrays should always be of size 1, so they should only ever be two bytes each
             length += (uint)elEncSize * 2;
             length += (uint)azEncSize * 2;
+
+            // Each ambient temp and humidity value is 4 bytes
+            length += (uint)ambTempSize * 4;
+            length += (uint)ambHumiditySize * 4;
 
             return length;
         }
@@ -278,10 +322,10 @@ namespace EmbeddedSystemsTest.SensorNetworkSimulation
         /// <param name="dataBeingAdded">The data we are adding to the byte array.</param>
         public static void Add32BitValueToByteArray(ref byte[] dataToAddTo, ref int counter, uint dataBeingAdded)
         {
-            dataToAddTo[counter++] = (byte)((((short)dataBeingAdded) & 0xFF000000) >> 24);
-            dataToAddTo[counter++] = (byte)((((short)dataBeingAdded) & 0x00FF0000) >> 16);
-            dataToAddTo[counter++] = (byte)((((short)dataBeingAdded) & 0x0000FF00) >> 8);
-            dataToAddTo[counter++] = (byte)((((short)dataBeingAdded & 0x000000FF)));
+            dataToAddTo[counter++] = (byte)((dataBeingAdded & 0xFF000000) >> 24);
+            dataToAddTo[counter++] = (byte)((dataBeingAdded & 0x00FF0000) >> 16);
+            dataToAddTo[counter++] = (byte)((dataBeingAdded & 0x0000FF00) >> 8);
+            dataToAddTo[counter++] = (byte)(dataBeingAdded & 0x000000FF);
         }
 
         /// <summary>
@@ -333,8 +377,8 @@ namespace EmbeddedSystemsTest.SensorNetworkSimulation
             // Process and encode each fifo dump into the array
             for (int dumpNum = 0; dumpNum < totalNumDumps; dumpNum++)
             {
-                // Add a generated timestamp
-                Add64BitValueToByteArray(ref dataToAddTo, ref counter, (ulong)(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - connectionTimeStamp));
+                // Add a generated timestamp, apply a offset to simulate time passing, and account for the connection time
+                Add64BitValueToByteArray(ref dataToAddTo, ref counter, (ulong)(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() + (50 * dumpNum) - connectionTimeStamp));
 
                 // Set default dump size
                 short dumpSize = fifoSize;

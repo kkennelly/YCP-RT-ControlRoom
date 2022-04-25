@@ -80,8 +80,8 @@
     <Reference Include="AWSSDK.SimpleNotificationService, Version=3.3.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604, processorArchitecture=MSIL">
       <HintPath>..\packages\AWSSDK.SimpleNotificationService.3.5.0\lib\net45\AWSSDK.SimpleNotificationService.dll</HintPath>
     </Reference>
-    <Reference Include="BouncyCastle.Crypto, Version=1.8.3.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
-      <HintPath>..\packages\BouncyCastle.1.8.3.1\lib\BouncyCastle.Crypto.dll</HintPath>
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.9.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
+      <HintPath>..\packages\BouncyCastle.1.8.9\lib\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
@@ -200,6 +200,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants\AbstractSpectraCyberConstants.cs" />
+    <Compile Include="Constants\AESConstants.cs" />
     <Compile Include="Constants\AWSConstants.cs" />
     <Compile Include="Constants\CelestialBodyConstants.cs" />
     <Compile Include="Constants\SimulationConstants.cs" />
@@ -214,6 +215,7 @@
     <Compile Include="Constants\PLCConstants.cs" />
     <Compile Include="Constants\ThreadNameConstants.cs" />
     <Compile Include="Controllers\AASharpControllers\CoordinateCalculationController.cs" />
+    <Compile Include="Controllers\Communications\AES.cs" />
     <Compile Include="Controllers\Communications\ParseTCPCommandResult.cs" />
     <Compile Include="Controllers\Communications\DataToCSV.cs" />
     <Compile Include="Controllers\Communications\EmailNotifications.cs" />
@@ -226,6 +228,7 @@
     <Compile Include="Controllers\ControlRoomController\RadioTelescopeControllerManagementThread.cs" />
     <Compile Include="Controllers\PLCCommunication\ConversionHelper.cs" />
     <Compile Include="Controllers\PLCCommunication\PLCDrivers\MCUManager\Enumerations\MCUNetworkStatus.cs" />
+    <Compile Include="Controllers\PLCCommunication\PLCDrivers\MCUManager\Enumerations\MCUResetResult.cs" />
     <Compile Include="Controllers\PLCCommunication\PLCDrivers\MCUManager\Enumerations\MovementResult.cs" />
     <Compile Include="Controllers\PLCCommunication\PLCDrivers\MCUManager\MCUCommand.cs" />
     <Compile Include="Controllers\PLCCommunication\PLCDrivers\MCUManager\Enumerations\MCUCommandType.cs" />
@@ -240,6 +243,7 @@
     <Compile Include="Controllers\SensorNetwork\Enumerations\AccelerometerErrorCodes.cs" />
     <Compile Include="Controllers\SensorNetwork\Enumerations\AccelerometerSelfTestState.cs" />
     <Compile Include="Controllers\SensorNetwork\Enumerations\AzimuthEncoderErrorCodes.cs" />
+    <Compile Include="Controllers\SensorNetwork\Enumerations\AmbientTempHumidityErrorCodes.cs" />
     <Compile Include="Controllers\SensorNetwork\Enumerations\TemperatureErrorCodes.cs" />
     <Compile Include="Controllers\SensorNetwork\PacketDecodingTools.cs" />
     <Compile Include="Controllers\SensorNetwork\Enumerations\SensorInitializationEnum.cs" />
@@ -273,6 +277,7 @@
     <Compile Include="Entities\DiagnosticData\Acceleration.cs" />
     <Compile Include="Controllers\SensorNetwork\Enumerations\SensorNetworkSensorStatus.cs" />
     <Compile Include="Entities\DiagnosticData\Temperature.cs" />
+    <Compile Include="Entities\DiagnosticData\Humidity.cs" />
     <Compile Include="Entities\Exceptions\MCUExceptions.cs" />
     <Compile Include="Entities\Location\SensorLocationEnum.cs" />
     <Compile Include="Entities\Log\Log.cs" />
@@ -282,6 +287,7 @@
     <Compile Include="Entities\RadioTelescope\RadioTelescopeDirectionEnum.cs" />
     <Compile Include="Entities\RadioTelescope\RadioTelescopeTypeEnum.cs" />
     <Compile Include="Entities\RadioTelescope\RadioTelescopeConfig.cs" />
+    <Compile Include="Entities\SensorNetworkConfig\AccelerometerConfig.cs" />
     <Compile Include="Entities\SensorNetworkConfig\SensorNetworkConfig.cs" />
     <Compile Include="Entities\Sensor\Sensor.cs" />
     <Compile Include="Entities\Sensor\SensorItemEnum.cs" />
@@ -332,6 +338,15 @@
     <Compile Include="Entities\WeatherStation\WeatherThreshold.cs" />
     <Compile Include="Entities\WeatherStation\WeatherData.cs" />
     <Compile Include="Entities\WeatherStation\WeatherStation.cs" />
+    <Compile Include="GUI\DropDownEnums\PLCDropdown.cs" />
+    <Compile Include="GUI\DropDownEnums\SpectraCyberDropdown.cs" />
+    <Compile Include="GUI\DropDownEnums\WeatherStationDropdown.cs" />
+    <Compile Include="GUI\InputDialogs\CustomOrientationInputDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\InputDialogs\CustomOrientationInputDialog.Designer.cs">
+      <DependentUpon>CustomOrientationInputDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="GUI\DiagnosticsForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -350,6 +365,12 @@
     </Compile>
     <Compile Include="GUI\EditDiagScriptsForm.Designer.cs">
       <DependentUpon>EditDiagScriptsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\InputDialogs\InputDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\InputDialogs\InputDialog.Designer.cs">
+      <DependentUpon>InputDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="GUI\RTControlForm.cs">
       <SubType>Form</SubType>
@@ -402,6 +423,8 @@
       <SubType>Designer</SubType>
     </None>
     <None Include=".travis.yml" />
+    <None Include="Controllers\SensorNetwork\Simulation\SimulationCSVData\TestAmbHumidity.csv" />
+    <None Include="Controllers\SensorNetwork\Simulation\SimulationCSVData\TestAmbTemp.csv" />
     <None Include="Controllers\SensorNetwork\Simulation\SimulationCSVData\TestAzAccX.csv" />
     <None Include="Controllers\SensorNetwork\Simulation\SimulationCSVData\TestAzAccY.csv" />
     <None Include="Controllers\SensorNetwork\Simulation\SimulationCSVData\TestAzAccZ.csv" />
@@ -438,6 +461,9 @@
     <Content Include="YCASIcon.ico" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="GUI\InputDialogs\CustomOrientationInputDialog.resx">
+      <DependentUpon>CustomOrientationInputDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GUI\DiagnosticsForm.resx">
       <DependentUpon>DiagnosticsForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -446,6 +472,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\EditDiagScriptsForm.resx">
       <DependentUpon>EditDiagScriptsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\InputDialogs\InputDialog.resx">
+      <DependentUpon>InputDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\RTControlForm.resx">
       <DependentUpon>RTControlForm.cs</DependentUpon>

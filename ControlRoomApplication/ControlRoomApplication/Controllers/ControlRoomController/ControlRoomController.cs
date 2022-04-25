@@ -14,7 +14,9 @@ namespace ControlRoomApplication.Controllers
         private static readonly log4net.ILog logger =
             log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private Thread WeatherMonitoringThread;
+        private Thread SensorStatusUpdateThread;
         private bool KeepWeatherMonitoringThreadAlive;
+        private bool KeepSensorStatusUpdateThreadAlive;
 
         // Weather Station override
         //public bool weatherStationOverride = false;
@@ -22,7 +24,7 @@ namespace ControlRoomApplication.Controllers
         public ControlRoomController(ControlRoom controlRoom)
         {
             ControlRoom = controlRoom;
-            WeatherMonitoringThread = new Thread( new ThreadStart( WeatherMonitoringRoutine ) ) { Name = "Weather Monitoring Routine" };
+            WeatherMonitoringThread = new Thread(new ThreadStart(WeatherMonitoringRoutine)) { Name = "Weather Monitoring Routine" };
             KeepWeatherMonitoringThreadAlive = false;
         }
 
@@ -78,7 +80,8 @@ namespace ControlRoomApplication.Controllers
 
             return true;
         }
-
+       
+        // TODO: Modify this routine to be absorbed into the sensor status update routine inside of sensorMonitor inside of RTController
         public void WeatherMonitoringRoutine()
         {
             while (KeepWeatherMonitoringThreadAlive)
@@ -99,7 +102,13 @@ namespace ControlRoomApplication.Controllers
                         pushNotification.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are too high: " + ControlRoom.WeatherStation.CurrentWindSpeedMPH);
                         EmailNotifications.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are too high: " + ControlRoom.WeatherStation.CurrentWindSpeedMPH);
                     }
-                    DatabaseOperations.AddSensorStatusData(SensorStatus.Generate(SensorStatusEnum.WARNING, SensorStatusEnum.NORMAL, SensorStatusEnum.NORMAL, SensorStatusEnum.ALARM, currentSensor.Status));
+                    // TODO: Update this to use correct sensor status updates, that do not overwrite any other sensor status data in the DB except weather
+                    //DatabaseOperations.AddSensorStatusData(SensorStatus.Generate(SensorStatusEnum.WARNING, SensorStatusEnum.NORMAL, SensorStatusEnum.NORMAL, SensorStatusEnum.ALARM, currentSensor.Status));
+                    DatabaseOperations.AddSensorStatusData(SensorStatus.Generate(SensorStatusEnum.NORMAL, SensorStatusEnum.NORMAL, SensorStatusEnum.NORMAL,
+                        SensorStatusEnum.NORMAL, SensorStatusEnum.NORMAL, currentSensor.Status, SensorStatusEnum.NORMAL, SensorStatusEnum.NORMAL,
+                        SensorStatusEnum.NORMAL, SensorStatusEnum.NORMAL, SensorStatusEnum.NORMAL, SensorStatusEnum.NORMAL, SensorStatusEnum.NORMAL,
+                        SensorStatusEnum.NORMAL));
+                    
                     //ControlRoom.RTControllerManagementThreads[0].checkCurrentSensorAndOverrideStatus();
 
                     /*
@@ -127,13 +136,23 @@ namespace ControlRoomApplication.Controllers
                         pushNotification.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are in Warning Range: " + ControlRoom.WeatherStation.CurrentWindSpeedMPH);
                         EmailNotifications.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are in Warning Range: " + ControlRoom.WeatherStation.CurrentWindSpeedMPH);
                     }
-                    DatabaseOperations.AddSensorStatusData(SensorStatus.Generate(SensorStatusEnum.WARNING, SensorStatusEnum.NORMAL, SensorStatusEnum.NORMAL, SensorStatusEnum.ALARM, currentSensor.Status));
+                    // TODO: Update this to use correct sensor status updates, that do not overwrite any other sensor status data in the DB except weather
+                    //DatabaseOperations.AddSensorStatusData(SensorStatus.Generate(SensorStatusEnum.WARNING, SensorStatusEnum.NORMAL, SensorStatusEnum.NORMAL, SensorStatusEnum.ALARM, currentSensor.Status));
+                    DatabaseOperations.AddSensorStatusData(SensorStatus.Generate(SensorStatusEnum.NORMAL, SensorStatusEnum.NORMAL, SensorStatusEnum.NORMAL,
+                        SensorStatusEnum.NORMAL, SensorStatusEnum.NORMAL, currentSensor.Status, SensorStatusEnum.NORMAL, SensorStatusEnum.NORMAL,
+                        SensorStatusEnum.NORMAL, SensorStatusEnum.NORMAL, SensorStatusEnum.NORMAL, SensorStatusEnum.NORMAL, SensorStatusEnum.NORMAL,
+                        SensorStatusEnum.NORMAL));
                 }
                 else if (windSpeedStatus == 0)
                 {
                     //logger.Info(Utilities.GetTimeStamp() + ": [ControlRoomController] Wind speeds are in a Safe State: " + ControlRoom.WeatherStation.CurrentWindSpeedMPH);
                     currentSensor.Status = SensorStatusEnum.NORMAL;
-                    DatabaseOperations.AddSensorStatusData(SensorStatus.Generate(SensorStatusEnum.WARNING, SensorStatusEnum.NORMAL, SensorStatusEnum.NORMAL, SensorStatusEnum.ALARM, currentSensor.Status));
+                    // TODO: Update this to use correct sensor status updates, that do not overwrite any other sensor status data in the DB except weather
+                    DatabaseOperations.AddSensorStatusData(SensorStatus.Generate(SensorStatusEnum.NORMAL, SensorStatusEnum.NORMAL, SensorStatusEnum.NORMAL,
+                        SensorStatusEnum.NORMAL, SensorStatusEnum.NORMAL, currentSensor.Status, SensorStatusEnum.NORMAL, SensorStatusEnum.NORMAL,
+                        SensorStatusEnum.NORMAL, SensorStatusEnum.NORMAL, SensorStatusEnum.NORMAL, SensorStatusEnum.NORMAL, SensorStatusEnum.NORMAL,
+                        SensorStatusEnum.NORMAL));
+                    //DatabaseOperations.AddSensorStatusData(SensorStatus.Generate(SensorStatusEnum.WARNING, SensorStatusEnum.NORMAL, SensorStatusEnum.NORMAL, SensorStatusEnum.ALARM, currentSensor.Status));
                 }
 
                 /*

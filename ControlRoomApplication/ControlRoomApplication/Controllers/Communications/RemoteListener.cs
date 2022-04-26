@@ -186,35 +186,47 @@ namespace ControlRoomApplication.Controllers
                                         ExecuteTCPCommandResult executeTCPCommandResult = ExecuteRLCommand(parsedTCPCommandResult.parsedString);
 
                                         // inform user of the result of command
-                                        if (executeTCPCommandResult.movementResult != MovementResult.Success)
+                                        switch (parsedTCPCommandResult.parsedString[TCPCommunicationConstants.COMMAND_TYPE])
                                         {
-                                            logger.Debug(Utilities.GetTimeStamp() + ": Command " + data + " failed with error: " + executeTCPCommandResult.errorMessage);
-                                            myWriteBuffer = "Command " + data + " failed with error: " + executeTCPCommandResult.errorMessage;
-                                            writeBackToClient(myWriteBuffer, stream, encrypted);
-                                        }
-                                        else
-                                        {
-                                            switch (parsedTCPCommandResult.parsedString[TCPCommunicationConstants.COMMAND_TYPE])
-                                            {
-                                                // we write back different in the case of a request command. Otherwise, the default is just successfully completing a command
-                                                case "REQUEST":
-                                                    switch (parsedTCPCommandResult.parsedString[TCPCommunicationConstants.REQUEST_TYPE])
+                                            case "RESET_MCU_BIT":
+                                                if (executeTCPCommandResult.resetResult != MCUResetResult.Success)
+                                                {
+                                                    SendFailedExecutionStatus(executeTCPCommandResult, stream, data, encrypted);
+                                                }
+                                                else
+                                                {
+                                                    SendSuccessfulExecutionStatus(stream, data, encrypted);
+                                                }
+                                                break;
+
+                                            default:
+                                                if (executeTCPCommandResult.movementResult != MovementResult.Success)
+                                                {
+                                                    SendFailedExecutionStatus(executeTCPCommandResult, stream, data, encrypted);
+                                                }
+                                                else
+                                                {
+                                                    switch (parsedTCPCommandResult.parsedString[TCPCommunicationConstants.COMMAND_TYPE])
                                                     {
-                                                        case "MVMT_DATA":
-                                                            writeBackToClient(executeTCPCommandResult.errorMessage, stream, encrypted);
-                                                            logger.Debug(Utilities.GetTimeStamp() + ": " + executeTCPCommandResult.errorMessage);
+                                                        // we write back different in the case of a request command. Otherwise, the default is just successfully completing a command
+                                                        case "REQUEST":
+                                                            switch (parsedTCPCommandResult.parsedString[TCPCommunicationConstants.REQUEST_TYPE])
+                                                            {
+                                                                case "MVMT_DATA":
+                                                                    writeBackToClient(executeTCPCommandResult.errorMessage, stream, encrypted);
+                                                                    logger.Debug(Utilities.GetTimeStamp() + ": " + executeTCPCommandResult.errorMessage);
+                                                                    break;
+                                                            }
+                                                            break;
+
+                                                        default:
+                                                            SendSuccessfulExecutionStatus(stream, data, encrypted);
                                                             break;
                                                     }
-                                                    break;
-
-                                                default:
-                                                    logger.Debug(Utilities.GetTimeStamp() + ": SUCCESSFULLY COMPLETED COMMAND: " + data);
-                                                    // send back a success response -- finished command
-                                                    myWriteBuffer = "SUCCESSFULLY COMPLETED COMMAND: " + data;
-                                                    writeBackToClient(myWriteBuffer, stream, encrypted);
-                                                    break;
-                                            }
+                                                }
+                                                break;
                                         }
+                                        
                                     }
 
                                     // Shutdown and end connection
@@ -228,6 +240,36 @@ namespace ControlRoomApplication.Controllers
                     }).Start(); // begin our worker thread to execute our TCP command
                 }
             }
+        }
+
+        /// <summary>
+        /// Send a successful command execution status message back to the mobile app 
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="data"></param>
+        /// <param name="encrypted"></param>
+        public void SendSuccessfulExecutionStatus(NetworkStream stream, string data, bool encrypted)
+        {
+            string buffer = null;
+            logger.Debug(Utilities.GetTimeStamp() + ": SUCCESSFULLY COMPLETED COMMAND: " + data);
+            // send back a success response -- finished command
+            buffer = "SUCCESSFULLY COMPLETED COMMAND: " + data;
+            writeBackToClient(buffer, stream, encrypted);
+        }
+
+        /// <summary>
+        /// Send a failed command execution status message back to the mobile app 
+        /// </summary>
+        /// <param name="executeTCPCommandResult"></param>
+        /// <param name="stream"></param>
+        /// <param name="data"></param>
+        /// <param name="encrypted"></param>
+        public void SendFailedExecutionStatus(ExecuteTCPCommandResult executeTCPCommandResult, NetworkStream stream, string data, bool encrypted)
+        {
+            string buffer = null;
+            logger.Debug(Utilities.GetTimeStamp() + ": Command " + data + " failed with error: " + executeTCPCommandResult.errorMessage);
+            buffer = "Command " + data + " failed with error: " + executeTCPCommandResult.errorMessage;
+            writeBackToClient(buffer, stream, encrypted);
         }
 
         public bool RequestToKillTCPMonitoringRoutine()

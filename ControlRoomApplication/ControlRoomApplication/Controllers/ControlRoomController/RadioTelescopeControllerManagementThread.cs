@@ -193,20 +193,12 @@ namespace ControlRoomApplication.Controllers
                     logger.Info(Utilities.GetTimeStamp() + ": Starting appointment...");
                     endAppt = false;
 
-                    // DONT HOME TELESCOPE WHEN TESTING APPOINTMENTS WITH THE SIM
-
-                    /*
-                    // Home the telescope if it hasn't been homed already 
-                    if (!RTController.RadioTelescope.PLCDriver.GetMotorsHomed())
-                    {
-                        RTController.HomeTelescope(MovementPriority.Appointment);
-                    }
-                    */
+                    logger.Info(Utilities.GetTimeStamp() + ": Homing telescope... ");
+                    RTController.HomeTelescope(MovementPriority.Appointment);
 
                     // Calibrate telescope before the appointment
                     if (NextAppointment._Type != AppointmentTypeEnum.FREE_CONTROL)
                     {
-                        /*
                         logger.Info(Utilities.GetTimeStamp() + ": Thermal Calibrating RadioTelescope Before Appointment");
 
                         DateTime startTreeCalTime, endTreeCalTime, startZenithCalTime, endZenithCalTime;
@@ -272,8 +264,6 @@ namespace ControlRoomApplication.Controllers
                         // attach the ending calibration data to the email
                         attachmentPath.Add(beginTreeAttachmentPath);
                         attachmentPath.Add(beginZenithAttachmentPath);
-                        */
-
                     }
 
                     // Create movement thread

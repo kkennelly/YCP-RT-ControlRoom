@@ -1,4 +1,4 @@
-using ControlRoomApplication.Controllers;
+﻿using ControlRoomApplication.Controllers;
 using ControlRoomApplication.Entities;
 using ControlRoomApplication.GUI;
 using ControlRoomApplication.Simulators.Hardware.WeatherStation;

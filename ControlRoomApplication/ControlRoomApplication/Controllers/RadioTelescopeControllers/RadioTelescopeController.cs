@@ -855,6 +855,7 @@ namespace ControlRoomApplication.Controllers
                 
                 // Check elevation absolute encoder, set to ALERT if timed out
                 sensors.elevation_abs_encoder = (SByte)SensorStatusEnum.NORMAL;
+                RadioTelescope.SensorNetworkServer.SensorStatuses.ElevationAbsoluteEncoderStatus = SensorNetworkSensorStatus.Okay;
 
                 if (RadioTelescope.PLCDriver.MotorsCurrentlyMoving(RadioTelescopeAxisEnum.ELEVATION))
                 {

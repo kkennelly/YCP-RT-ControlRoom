@@ -896,7 +896,7 @@ namespace ControlRoomApplication.Controllers
                 sensors.counter_balance_accel = (SByte)(1 - RadioTelescope.SensorNetworkServer.SensorStatuses.CounterbalanceAccelerometerStatus);
 
                 // Check ambient temp humidity
-                sensors.ambient_temp_humidity = (SByte)SensorStatusEnum.NORMAL;
+                sensors.ambient_temp_humidity = (SByte)(1 - RadioTelescope.SensorNetworkServer.SensorStatuses.ElevationAmbientStatus);
 
                 // Take all updated statuses and add them to the DB
                 DatabaseOperations.AddSensorStatusData(sensors);

@@ -279,3 +279,4 @@ AWSConstants.cs
 # Gradle stuff
 /.gradle
 ControlRoomApplication/ControlRoomApplicationTest/ControlRoomApplicationTest.csproj
+ControlRoomApplication/ControlRoomApplication/Constants/rtmobile-v2-528c5-firebase-adminsdk-n5z8d-ff80743be4.json

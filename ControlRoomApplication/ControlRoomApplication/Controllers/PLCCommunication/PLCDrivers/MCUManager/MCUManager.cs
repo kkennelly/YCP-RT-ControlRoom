@@ -531,7 +531,7 @@ namespace ControlRoomApplication.Controllers {
 
                 case RadioTelescopeAxisEnum.ELEVATION:
                     // Only read the registers we need
-                    data = ReadMCURegisters(10, 1);
+                    data = ReadMCURegisters(0, 11);
                     isMoving = (((data[(int)MCUConstants.MCUOutputRegs.EL_Status_Bist_MSW] >> (int)MCUConstants.MCUStatusBitsMSW.CCW_Motion) & 0b1) == 1) ||
                             (((data[(int)MCUConstants.MCUOutputRegs.EL_Status_Bist_MSW] >> (int)MCUConstants.MCUStatusBitsMSW.CW_Motion) & 0b1) == 1);
                     break;

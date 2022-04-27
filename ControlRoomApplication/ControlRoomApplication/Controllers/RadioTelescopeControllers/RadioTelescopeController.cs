@@ -813,8 +813,10 @@ namespace ControlRoomApplication.Controllers
                 // Sensor status routine, checks for each sensor to update the status in the DB
                 // Check Gate
                 sensors.gate = (SByte)SensorStatusEnum.NORMAL;
-                // if gate open
-                // sensors.gate = (SByte)SensorStatusEnum.ALARM;
+                if (!GetCurrentSafetyInterlockStatus())
+                {
+                    sensors.gate = (SByte)SensorStatusEnum.ALARM;
+                }
 
                 // Check azimuth temp 1, 1 - current ess sensor status will flip the bit
                 sensors.az_motor_temp_1 = (SByte)(1 - RadioTelescope.SensorNetworkServer.SensorStatuses.AzimuthTemperature1Status);

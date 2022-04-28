@@ -610,12 +610,12 @@ namespace ControlRoomApplication.Controllers
             //may want to check for jogs using the RadioTelescopeAxisEnum.BOTH if a jog on both axes is needed in the future 
             if (EnableSoftwareStops &&  axis == RadioTelescopeAxisEnum.ELEVATION)
             {
-                if(direction == RadioTelescopeDirectionEnum.CounterclockwiseOrPositive && GetSoftwareStopElevation() > RadioTelescope.maxElevationDegrees)
+                if(direction == RadioTelescopeDirectionEnum.ClockwiseOrNegative && GetSoftwareStopElevation() > RadioTelescope.maxElevationDegrees)
                 {
                     return MovementResult.SoftwareStopHit;
                 }
 
-                else if(direction == RadioTelescopeDirectionEnum.ClockwiseOrNegative && GetSoftwareStopElevation() < RadioTelescope.minElevationDegrees)
+                else if(direction == RadioTelescopeDirectionEnum.CounterclockwiseOrPositive && GetSoftwareStopElevation() < RadioTelescope.minElevationDegrees)
                 {
                     return MovementResult.SoftwareStopHit;
                 }
@@ -1236,8 +1236,8 @@ namespace ControlRoomApplication.Controllers
                 RadioTelescopeDirectionEnum direction = RadioTelescope.PLCDriver.GetRadioTelescopeDirectionEnum(RadioTelescopeAxisEnum.ELEVATION);
 
                 // Perform a critical movement interrupt if the telescope is moving past either elevation threshold
-                if ((GetSoftwareStopElevation() > RadioTelescope.maxElevationDegrees && direction == RadioTelescopeDirectionEnum.CounterclockwiseOrPositive) ||
-                    (GetSoftwareStopElevation() < RadioTelescope.minElevationDegrees && direction == RadioTelescopeDirectionEnum.ClockwiseOrNegative))
+                if ((GetSoftwareStopElevation() > RadioTelescope.maxElevationDegrees && direction == RadioTelescopeDirectionEnum.ClockwiseOrNegative) ||
+                    (GetSoftwareStopElevation() < RadioTelescope.minElevationDegrees && direction == RadioTelescopeDirectionEnum.CounterclockwiseOrPositive))
                 {
                     RadioTelescope.PLCDriver.InterruptMovementAndWaitUntilStopped(true, true);
                     logger.Info(Utilities.GetTimeStamp() + ": Software-stop hit!");

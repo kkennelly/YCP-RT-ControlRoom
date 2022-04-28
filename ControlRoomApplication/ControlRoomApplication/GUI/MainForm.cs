@@ -350,9 +350,6 @@ namespace ControlRoomApplication.Main
                     // linking radio telescope controller to tcp listener
                     MainControlRoomController.ControlRoom.mobileControlServer.rtController = ARadioTelescope.GetParent();
 
-                    logger.Info(Utilities.GetTimeStamp() + ": Starting Weather Monitoring Routine");
-                    MainControlRoomController.StartWeatherMonitoringRoutine();
-
                     logger.Info(Utilities.GetTimeStamp() + ": Starting Spectra Cyber Controller");
                     ARadioTelescope.SpectraCyberController.BringUp();
 
@@ -434,14 +431,6 @@ namespace ControlRoomApplication.Main
         private void button2_Click(object sender, EventArgs e)
         {
             logger.Info(Utilities.GetTimeStamp() + ": Shut Down Telescope Button Clicked");
-            if (MainControlRoomController != null && MainControlRoomController.RequestToKillWeatherMonitoringRoutine())
-            {
-                logger.Info(Utilities.GetTimeStamp() + ": Successfully shut down weather monitoring routine.");
-            }
-            else
-            {
-                logger.Info(Utilities.GetTimeStamp() + ": ERROR shutting down weather monitoring routine!");
-            }
 
             // Loop through the list of telescope controllers and call their respective bring down sequences.
             for (int i = 0; i < ProgramRTControllerList.Count; i++)

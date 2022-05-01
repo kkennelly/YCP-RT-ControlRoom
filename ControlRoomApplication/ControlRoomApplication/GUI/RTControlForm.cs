@@ -16,6 +16,7 @@ using ControlRoomApplication.Controllers.PLCCommunication.PLCDrivers.MCUManager;
 using System.Threading.Tasks;
 using ControlRoomApplication.Controllers.Communications;
 using ControlRoomApplication.GUI;
+using ControlRoomApplication.Entities.DiagnosticData;
 
 namespace ControlRoomApplication.Main
 {
@@ -1094,14 +1095,30 @@ namespace ControlRoomApplication.Main
 
         private void useCounterbalanceCheckbox_CheckedChanged(object sender, EventArgs e)
         {
-            if (UseCounterbalanceCheckbox.Checked == true && rtController.RadioTelescope.SensorNetworkServer.SensorStatuses.CounterbalanceAccelerometerStatus != SensorStatusEnum.ALARM)
+            if (UseCounterbalanceCheckbox.Checked == true)
             {
-                rtController.UseCounterbalance = true;
+                if (rtController.RadioTelescope.SensorNetworkServer.SensorStatuses.CounterbalanceAccelerometerStatus != SensorNetworkSensorStatus.Error)
+                {
+                    rtController.UseCounterbalance = true;
+                }
+                else
+                {
+                    UseCounterbalanceCheckbox.Checked = false;
+                    MessageBox.Show("The counterbalance accelerometer is experiencing an error and cannot be used.");
+                }
             }
             else
-            {
-                UseCounterbalanceCheckbox.Checked = false;
-                rtController.UseCounterbalance = false;
+            { 
+                if (rtController.RadioTelescope.SensorNetworkServer.SensorStatuses.ElevationAbsoluteEncoderStatus != SensorNetworkSensorStatus.Error)
+                {
+                    UseCounterbalanceCheckbox.Checked = false;
+                    rtController.UseCounterbalance = false;
+                }
+                else
+                {
+                    UseCounterbalanceCheckbox.Checked = true;
+                    MessageBox.Show("The elevation absolute encoder is experiencing an error and cannot be used. ");
+                }    
             }
         }
 

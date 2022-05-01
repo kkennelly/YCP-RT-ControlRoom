@@ -128,15 +128,7 @@ namespace ControlRoomApplication.Controllers
             // Apply final offset
             Orientation finalOffsetOrientation = new Orientation();
 
-            if (!UseCounterbalance)
-            {
-                finalOffsetOrientation.Elevation = RadioTelescope.SensorNetworkServer.CurrentAbsoluteOrientation.Elevation + FinalCalibrationOffset.Elevation;
-            }
-            else
-            {
-                finalOffsetOrientation.Elevation = RadioTelescope.SensorNetworkServer.CurrentCBAccelElevationPosition + FinalCalibrationOffset.Elevation;
-            }
-
+            finalOffsetOrientation.Elevation = RadioTelescope.SensorNetworkServer.CurrentAbsoluteOrientation.Elevation + FinalCalibrationOffset.Elevation;
             finalOffsetOrientation.Azimuth = RadioTelescope.SensorNetworkServer.CurrentAbsoluteOrientation.Azimuth + FinalCalibrationOffset.Azimuth;
 
             // Normalize azimuth orientation
@@ -322,7 +314,14 @@ namespace ControlRoomApplication.Controllers
             }
             else
             {
-                return RadioTelescope.SensorNetworkServer.CurrentAbsoluteOrientation.Elevation;
+                if (!UseCounterbalance)
+                {
+                    return RadioTelescope.SensorNetworkServer.CurrentAbsoluteOrientation.Elevation;
+                }
+                else
+                {
+                    return RadioTelescope.SensorNetworkServer.CurrentCBAccelElevationPosition;
+                }
             }
         }
 

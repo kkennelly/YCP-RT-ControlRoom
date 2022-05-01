@@ -53,6 +53,7 @@ namespace ControlRoomApplication.Main
             this.editButton = new System.Windows.Forms.Button();
             this.errorLabel = new System.Windows.Forms.Label();
             this.overRideGroupbox = new System.Windows.Forms.GroupBox();
+            this.stopRT = new System.Windows.Forms.Button();
             this.SoftwareStopsCheckBox = new System.Windows.Forms.CheckBox();
             this.label8 = new System.Windows.Forms.Label();
             this.statusTextBox = new System.Windows.Forms.TextBox();
@@ -63,7 +64,6 @@ namespace ControlRoomApplication.Main
             this.oneButtonDec = new System.Windows.Forms.Button();
             this.oneForthButtonDec = new System.Windows.Forms.Button();
             this.freeControlGroupbox = new System.Windows.Forms.GroupBox();
-            this.stopRT = new System.Windows.Forms.Button();
             this.controlScriptsCombo = new System.Windows.Forms.ComboBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.runControlScriptButton = new System.Windows.Forms.Button();
@@ -101,6 +101,7 @@ namespace ControlRoomApplication.Main
             this.IFGainToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.frequencyToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.offsetVoltageToolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.UseCounterbalanceCheckbox = new System.Windows.Forms.CheckBox();
             this.RAIncGroupbox.SuspendLayout();
             this.overRideGroupbox.SuspendLayout();
             this.decIncGroupbox.SuspendLayout();
@@ -355,6 +356,7 @@ namespace ControlRoomApplication.Main
             // overRideGroupbox
             // 
             this.overRideGroupbox.BackColor = System.Drawing.Color.Gainsboro;
+            this.overRideGroupbox.Controls.Add(this.UseCounterbalanceCheckbox);
             this.overRideGroupbox.Controls.Add(this.stopRT);
             this.overRideGroupbox.Controls.Add(this.SoftwareStopsCheckBox);
             this.overRideGroupbox.Controls.Add(this.label8);
@@ -389,7 +391,6 @@ namespace ControlRoomApplication.Main
             this.stopRT.Text = "STOP Telescope";
             this.stopRT.UseVisualStyleBackColor = false;
             this.stopRT.Click += new System.EventHandler(this.stopRT_click);
-            this.stopRT.Enabled = true;
             // 
             // SoftwareStopsCheckBox
             // 
@@ -988,6 +989,17 @@ namespace ControlRoomApplication.Main
             this.scanTypeComboBox.TabIndex = 25;
             this.scanTypeComboBox.SelectedIndexChanged += new System.EventHandler(this.scanTypeComboBox_SelectedIndexChanged);
             // 
+            // UseCounterbalanceCheckbox
+            // 
+            this.UseCounterbalanceCheckbox.AutoSize = true;
+            this.UseCounterbalanceCheckbox.Location = new System.Drawing.Point(16, 175);
+            this.UseCounterbalanceCheckbox.Name = "UseCounterbalanceCheckbox";
+            this.UseCounterbalanceCheckbox.Size = new System.Drawing.Size(132, 17);
+            this.UseCounterbalanceCheckbox.TabIndex = 39;
+            this.UseCounterbalanceCheckbox.Text = "Use CB accelerometer";
+            this.UseCounterbalanceCheckbox.UseVisualStyleBackColor = true;
+            this.UseCounterbalanceCheckbox.CheckedChanged += new System.EventHandler(this.useCounterbalanceCheckbox_CheckedChanged);
+            // 
             // FreeControlForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1093,5 +1105,6 @@ namespace ControlRoomApplication.Main
         private System.Windows.Forms.TrackBar speedTrackBar;
         private System.Windows.Forms.CheckBox SoftwareStopsCheckBox;
         private System.Windows.Forms.Button stopRT;
+        private System.Windows.Forms.CheckBox UseCounterbalanceCheckbox;
     }
 }

@@ -44,6 +44,9 @@ namespace ControlRoomApplication.Controllers
         // Snow dump timer
         private static System.Timers.Timer snowDumpTimer;
 
+        // Absolute encoder or counterbalance accelerometer usage
+        public bool UseCounterbalance;
+
         private static readonly log4net.ILog logger =
             log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -67,6 +70,7 @@ namespace ControlRoomApplication.Controllers
             MonitoringSensors = true;
             AllSensorsSafe = true;
             EnableSoftwareStops = true;
+            UseCounterbalance = false;
 
             MaxAzTempThreshold = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.AZ_MOTOR_TEMP);
             MaxElTempThreshold = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.ELEV_MOTOR_TEMP);
@@ -124,7 +128,15 @@ namespace ControlRoomApplication.Controllers
             // Apply final offset
             Orientation finalOffsetOrientation = new Orientation();
 
-            finalOffsetOrientation.Elevation = RadioTelescope.SensorNetworkServer.CurrentAbsoluteOrientation.Elevation + FinalCalibrationOffset.Elevation;
+            if (!UseCounterbalance)
+            {
+                finalOffsetOrientation.Elevation = RadioTelescope.SensorNetworkServer.CurrentAbsoluteOrientation.Elevation + FinalCalibrationOffset.Elevation;
+            }
+            else
+            {
+                finalOffsetOrientation.Elevation = RadioTelescope.SensorNetworkServer.CurrentCBAccelElevationPosition + FinalCalibrationOffset.Elevation;
+            }
+
             finalOffsetOrientation.Azimuth = RadioTelescope.SensorNetworkServer.CurrentAbsoluteOrientation.Azimuth + FinalCalibrationOffset.Azimuth;
 
             // Normalize azimuth orientation

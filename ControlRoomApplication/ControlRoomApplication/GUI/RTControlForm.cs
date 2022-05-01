@@ -1092,6 +1092,19 @@ namespace ControlRoomApplication.Main
             
         }
 
+        private void useCounterbalanceCheckbox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (UseCounterbalanceCheckbox.Checked == true && rtController.RadioTelescope.SensorNetworkServer.SensorStatuses.CounterbalanceAccelerometerStatus != SensorStatusEnum.ALARM)
+            {
+                rtController.UseCounterbalance = true;
+            }
+            else
+            {
+                UseCounterbalanceCheckbox.Checked = false;
+                rtController.UseCounterbalance = false;
+            }
+        }
+
         private bool allScanInputsValid()
         {
             return (scanTypeComboBox.SelectedIndex != 0 && integrationStepCombo.SelectedIndex != 0 &&

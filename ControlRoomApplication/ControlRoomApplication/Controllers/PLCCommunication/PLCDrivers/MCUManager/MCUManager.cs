@@ -243,7 +243,7 @@ namespace ControlRoomApplication.Controllers {
 
             ushort[] data = ReadMCURegisters(0, 16);
 
-            int azMotorEncoderTicks = (data[(ushort)MCUOutputRegs.AZ_MTR_Encoder_Pos_MSW] << 16) + data[(ushort)MCUOutputRegs.AZ_MTR_Encoder_Pos_LSW];
+            int azMotorEncoderTicks = (int)Math.Round(((data[(ushort)MCUOutputRegs.AZ_MTR_Encoder_Pos_MSW] << 16) + data[(ushort)MCUOutputRegs.AZ_MTR_Encoder_Pos_LSW]) / MCUConstants.AZIMUTH_DISCREPANCY_SCALING_FACTOR);
             int elMotorEncoderTicks = -((data[(ushort)MCUOutputRegs.EL_MTR_Encoder_Pos_MSW] << 16) + data[(ushort)MCUOutputRegs.EL_MTR_Encoder_Pos_LSW]);
 
             // If the telescope type is SLIP_RING, we want to normalize the azimuth orientation
@@ -534,7 +534,7 @@ namespace ControlRoomApplication.Controllers {
 
                 case RadioTelescopeAxisEnum.ELEVATION:
                     // Only read the registers we need
-                    data = ReadMCURegisters(10, 1);
+                    data = ReadMCURegisters(0, 11);
                     isMoving = (((data[(int)MCUConstants.MCUOutputRegs.EL_Status_Bist_MSW] >> (int)MCUConstants.MCUStatusBitsMSW.CCW_Motion) & 0b1) == 1) ||
                             (((data[(int)MCUConstants.MCUOutputRegs.EL_Status_Bist_MSW] >> (int)MCUConstants.MCUStatusBitsMSW.CW_Motion) & 0b1) == 1);
                     break;
@@ -719,7 +719,7 @@ namespace ControlRoomApplication.Controllers {
                 (ushort)MCUCommandType.EmptyData,
 
                 // elevation data
-                (ushort)RadioTelescopeDirectionEnum.CounterclockwiseHoming,
+                (ushort)RadioTelescopeDirectionEnum.ClockwiseHoming,
                 (ushort)MCUCommandType.EmptyData,
                 (ushort)MCUCommandType.EmptyData,
                 (ushort)MCUCommandType.EmptyData,
@@ -778,6 +778,7 @@ namespace ControlRoomApplication.Controllers {
 
             // This needs flipped so that the elevation axis moves the correct direction
             positionTranslationEl = -positionTranslationEl;
+            positionTranslationAz = (int)Math.Round(-positionTranslationAz * MCUConstants.AZIMUTH_DISCREPANCY_SCALING_FACTOR);
 
             command.commandData = new ushort[] {
                 // Azimuth data

@@ -279,3 +279,5 @@ AWSConstants.cs
 # Gradle stuff
 /.gradle
 ControlRoomApplication/ControlRoomApplicationTest/ControlRoomApplicationTest.csproj
+
+ControlRoomApplication/ControlRoomApplication/Constants/AESConstants.cs

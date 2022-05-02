@@ -393,7 +393,7 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
 
                         // TODO: Outside of right here, we aren't doing anything with the sensor statuses. These should
                         // be updated along with the sensor data on the diagnostics form. How this looks is up to you. (issue #353)
-                        SensorStatuses = ParseSensorStatuses(sensorStatus, sensorErrors);
+                        SensorStatuses = ParseSensorStatuses(sensorStatus, sensorErrors, SensorStatuses.ElevationAbsoluteEncoderStatus);
 
                         // This is the index we start reading sensor data
                         int k = 28;
@@ -563,8 +563,9 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
         /// </summary>
         /// <param name="statuses">Regular statuses.</param>
         /// <param name="errors">Various error codes if there are errors.</param>
+        /// <param name="elevationStatus">Previous elevation status to be passed in, is set in the sensor status routine</param>
         /// <returns></returns>
-        private SensorStatuses ParseSensorStatuses(BitArray statuses, UInt32 errors)
+        private SensorStatuses ParseSensorStatuses(BitArray statuses, UInt32 errors, SensorNetworkSensorStatus elevationStatus)
         {
             SensorStatuses s = new SensorStatuses
             {
@@ -577,6 +578,8 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
                 AzimuthAccelerometerStatus = statuses[6] ? SensorNetworkSensorStatus.Okay : SensorNetworkSensorStatus.Error,
                 ElevationAccelerometerStatus = statuses[7] ? SensorNetworkSensorStatus.Okay : SensorNetworkSensorStatus.Error,
                 CounterbalanceAccelerometerStatus = statuses[5] ? SensorNetworkSensorStatus.Okay : SensorNetworkSensorStatus.Error,
+                // Set the default value for this to okay, it is checked for inside of the sensor status routine
+                ElevationAbsoluteEncoderStatus = elevationStatus,
                 ElevationAmbientStatus = statuses[8] ? SensorNetworkSensorStatus.Okay : SensorNetworkSensorStatus.Error
 
                 // TODO: Parse errors here. You will need to add the errors to the SensorStatuses object (issue #353)

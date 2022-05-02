@@ -303,7 +303,7 @@ namespace ControlRoomApplication.Controllers
 
         /// <summary>
         /// Gets the elevation readings used by the software stops. When the simulation sensor network is in use,
-        /// the motor positions are used, otherwise the sensor network's absolute orientation reading is used.
+        /// the motor positions are used, otherwise the sensor network's absolute orientation reading is used if the UseCounterbalance flag is false 
         /// </summary>
         /// /// <returns></returns>
         private double GetSoftwareStopElevation()

@@ -328,6 +328,8 @@ namespace ControlRoomApplication.Main
 
                 ActualRATextBox.Text = ConvertedPosition.RightAscension.ToString("0.##");
                 ActualDecTextBox.Text = ConvertedPosition.Declination.ToString("0.##");
+
+                UpdateCounterbalanceCheckbox();
             });
         }
 
@@ -1093,7 +1095,19 @@ namespace ControlRoomApplication.Main
             
         }
 
-        private void useCounterbalanceCheckbox_CheckedChanged(object sender, EventArgs e)
+        private void UpdateCounterbalanceCheckbox()
+        {
+            if (!rtController.UseCounterbalance)
+            {
+                UseCounterbalanceCheckbox.Checked = false;
+            }
+            else
+            {
+                UseCounterbalanceCheckbox.Checked = true;
+            }
+        }
+
+        private void useCounterbalanceCheckbox_Click(object sender, EventArgs e)
         {
             if (UseCounterbalanceCheckbox.Checked == true)
             {
@@ -1103,22 +1117,25 @@ namespace ControlRoomApplication.Main
                 }
                 else
                 {
-                    UseCounterbalanceCheckbox.Checked = false;
+                    rtController.UseCounterbalance = false;
                     MessageBox.Show("The counterbalance accelerometer is experiencing an error and cannot be used.");
                 }
+
+                UpdateCounterbalanceCheckbox();
             }
             else
             { 
                 if (rtController.RadioTelescope.SensorNetworkServer.SensorStatuses.ElevationAbsoluteEncoderStatus != SensorNetworkSensorStatus.Error)
                 {
-                    UseCounterbalanceCheckbox.Checked = false;
                     rtController.UseCounterbalance = false;
                 }
                 else
                 {
-                    UseCounterbalanceCheckbox.Checked = true;
+                    rtController.UseCounterbalance = true;
                     MessageBox.Show("The elevation absolute encoder is experiencing an error and cannot be used. ");
-                }    
+                }
+
+                UpdateCounterbalanceCheckbox();
             }
         }
 

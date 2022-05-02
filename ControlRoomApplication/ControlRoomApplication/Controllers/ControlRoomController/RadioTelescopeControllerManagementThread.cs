@@ -99,7 +99,11 @@ namespace ControlRoomApplication.Controllers
             OverallSensorStatus = true;
 
             Sensors.Add(new Sensor(SensorItemEnum.WIND, SensorStatusEnum.NORMAL));
-           
+
+            // Add the eleveation aboslute encoder and the counterbalance accelerometer to the list of sensors to check for failures
+            Sensors.Add(new Sensor(SensorItemEnum.ELEVATION_ABS_ENCODER, SensorStatusEnum.NORMAL));
+            Sensors.Add(new Sensor(SensorItemEnum.COUNTER_BALANCE_VIBRATION, SensorStatusEnum.NORMAL));
+
             // Commented out because we will not be using this functionality in the future.
             // We will switch to connecting to a server on the cloud
             // Kate Kennelly 2/14/2020
@@ -497,6 +501,12 @@ namespace ControlRoomApplication.Controllers
                 // if the sensor is in the ALARM state
                 if (curSensor.Status == SensorStatusEnum.ALARM)
                 {
+                    // check to see if one of the sensors is either the elevation absolute encoder or the counterbalance accelerometer 
+                    if (curSensor.Item == SensorItemEnum.ELEVATION_ABS_ENCODER || curSensor.Item == SensorItemEnum.COUNTER_BALANCE_VIBRATION)
+                    {
+                        SwitchElevationDevice(curSensor);
+                    }
+
                     // check to see if there is an override for that sensor
                     if (ActiveOverrides.Find(i => i.Item == curSensor.Item) == null)
                     {
@@ -520,5 +530,20 @@ namespace ControlRoomApplication.Controllers
             return true;
         }
 
+        /// <summary>
+        /// Switch the device that is used to read elevation data in the event of one failing 
+        /// </summary>
+        /// <param name="sensor"></param>
+        public void SwitchElevationDevice(Sensor sensor)
+        {
+            if (sensor.Item == SensorItemEnum.ELEVATION_ABS_ENCODER)
+            {
+                RTController.UseCounterbalance = true;
+            }
+            else
+            {
+                RTController.UseCounterbalance = false;
+            }
+        }
     }
 }

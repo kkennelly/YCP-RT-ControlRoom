@@ -998,7 +998,7 @@ namespace ControlRoomApplication.Main
             this.UseCounterbalanceCheckbox.TabIndex = 39;
             this.UseCounterbalanceCheckbox.Text = "Use CB accelerometer";
             this.UseCounterbalanceCheckbox.UseVisualStyleBackColor = true;
-            this.UseCounterbalanceCheckbox.CheckedChanged += new System.EventHandler(this.useCounterbalanceCheckbox_CheckedChanged);
+            this.UseCounterbalanceCheckbox.Click += new System.EventHandler(this.useCounterbalanceCheckbox_Click);
             // 
             // FreeControlForm
             // 

@@ -254,7 +254,7 @@ namespace ControlRoomApplication.Controllers
                             beginTreeAttachmentPath = Path.Combine(currentPath, $"{treeFname}.csv");
                             DataToCSV.ExportToCSV(data[0], treeFname);
 
-                            beginTreeAttachmentPath = Path.Combine(currentPath, $"{zenithFname}.csv");
+                            beginZenithAttachmentPath = Path.Combine(currentPath, $"{zenithFname}.csv");
                             DataToCSV.ExportToCSV(data[1], zenithFname);
                         }
                         catch (Exception e)

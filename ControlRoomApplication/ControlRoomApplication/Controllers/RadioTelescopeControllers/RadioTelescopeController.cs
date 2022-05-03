@@ -13,6 +13,7 @@ using System.Diagnostics;
 using ControlRoomApplication.Controllers.PLCCommunication.PLCDrivers.MCUManager;
 using ControlRoomApplication.Controllers.PLCCommunication.PLCDrivers.MCUManager.Enumerations;
 using ControlRoomApplication.Entities.DiagnosticData;
+using System.IO;
 
 namespace ControlRoomApplication.Controllers
 {
@@ -1331,6 +1332,59 @@ namespace ControlRoomApplication.Controllers
 
             // Reaching this point means that the fan state doesn't need to be changed
             return sn.FanIsOn;
+        }
+
+        public MovementResult AzimuthDiscrepTest()
+        {
+            int numRotations = 100;
+            string path = AppDomain.CurrentDomain.BaseDirectory;
+            string final_loc = Path.Combine(path, $"{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}.csv");
+
+            FileStream file = File.Create(final_loc);
+            file.Close();
+            string header = "Motor Encoder,Absolute Encoder,Difference\n";
+            TextWriter sw = new StreamWriter(final_loc, true);
+            sw.Write(header);
+            sw.Close();
+
+            for (int i = 0; i < numRotations; i++)
+            {
+                MoveRadioTelescopeByXDegrees(new Orientation(360, 0), MovementPriority.Manual);
+                string line = "" + GetCurrentOrientation().Azimuth + "," + GetAbsoluteOrientation().Azimuth + "," + calcDiff() +"\n";
+                sw = new StreamWriter(final_loc, true);
+                sw.Write(line);
+                sw.Close();
+
+                MoveRadioTelescopeByXDegrees(new Orientation(-360, 0), MovementPriority.Manual);
+                line = "" + GetCurrentOrientation().Azimuth + "," + GetAbsoluteOrientation().Azimuth + "," + calcDiff() + "\n";
+                sw = new StreamWriter(final_loc, true);
+                sw.Write(line);
+                sw.Close();
+            }
+            return MovementResult.Success;
+        }
+
+        private double calcDiff()
+        {
+            double motor = GetCurrentOrientation().Azimuth;
+            double absolute = GetAbsoluteOrientation().Azimuth;
+
+            double diff = Math.Abs(motor - absolute);
+
+            if (diff > 180)
+            {
+                if (motor > 180)
+                {
+                    motor -= 360;
+                    diff = Math.Abs(motor - absolute);
+                }
+                else
+                {
+                    absolute -= 360;
+                    diff = Math.Abs(absolute - motor);
+                }
+            }
+            return diff;
         }
     }
 }

@@ -543,6 +543,10 @@ namespace ControlRoomApplication.Main
                     case 10:
                         movementResult = rtController.ExecuteHardwareMovementScript(MovementPriority.Manual);
                         break;
+                    // Discrepency testing
+                    case 11:
+                        movementResult = rtController.AzimuthDiscrepTest();
+                        break;
                     default:
                         // Script does not exist
                         break;

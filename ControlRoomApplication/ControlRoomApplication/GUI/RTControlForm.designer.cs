@@ -533,7 +533,8 @@ namespace ControlRoomApplication.Main
             "Home Telescope",
             "Custom Orientation Movement",
             "Endless Azimuth Rotation",
-            "Hardware Movement Script"});
+            "Hardware Movement Script",
+            "Azimuth Discrepancy Test"});
             this.controlScriptsCombo.Location = new System.Drawing.Point(4, 28);
             this.controlScriptsCombo.Name = "controlScriptsCombo";
             this.controlScriptsCombo.Size = new System.Drawing.Size(260, 21);

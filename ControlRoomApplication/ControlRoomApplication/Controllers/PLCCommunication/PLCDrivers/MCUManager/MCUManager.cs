@@ -340,11 +340,15 @@ namespace ControlRoomApplication.Controllers {
         /// </summary>
         /// <returns></returns>
         public MovementResult ImmediateStop() {
-            //if (!SendGenericCommand(new MCUCommand(MCUMessages.ImmediateStop, MCUCommandType.ImmediateStop) { completed = true }))
-            //    return MovementResult.CouldNotSendCommand;
+            // Homing commands cannot be stopped by controlled stop, so use immediate
+            if (RunningCommand.CommandType == MCUCommandType.Home)
+            {
+                if (!SendGenericCommand(new MCUCommand(MCUMessages.ImmediateStop, MCUCommandType.ImmediateStop) { completed = true }))
+                    return MovementResult.CouldNotSendCommand;
 
-            //return MovementResult.Success;
-
+                return MovementResult.Success;
+            }
+            
             // Use a controlled stop because the immediate stop command stops too immediately and could damage the gearbox
             return ControlledStop();
         }

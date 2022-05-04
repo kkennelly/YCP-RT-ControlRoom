@@ -260,6 +260,7 @@ namespace ControlRoomApplication.Controllers
                 RFData rfResponse = RFData.GenerateFrom(response);
 
                 // move back to previous location
+                /*
                 moveResult = RadioTelescope.PLCDriver.MoveToOrientation(current, MiscellaneousConstants.THERMAL_CALIBRATION_ORIENTATION);
                 if (moveResult != MovementResult.Success)
                 {
@@ -268,6 +269,7 @@ namespace ControlRoomApplication.Controllers
                     Monitor.Exit(MovementLock);
                     return moveResult;
                 }
+                */
 
                 /*
                 // analyze data
@@ -291,12 +293,15 @@ namespace ControlRoomApplication.Controllers
                 {
                     moveResult = StowRadioTelescope(priority);
                 }
-
-                if (RadioTelescope.PLCDriver.CurrentMovementPriority != MovementPriority.Critical) RadioTelescope.PLCDriver.CurrentMovementPriority = MovementPriority.None;
-
-                RadioTelescope.SpectraCyberController.StopScan();
-                Monitor.Exit(MovementLock);
                 */
+
+                if (RadioTelescope.PLCDriver.CurrentMovementPriority != MovementPriority.Critical)
+                {
+                    RadioTelescope.PLCDriver.CurrentMovementPriority = MovementPriority.None;
+                }
+
+                //RadioTelescope.SpectraCyberController.StopScan();
+                Monitor.Exit(MovementLock);
             }
             else
             {

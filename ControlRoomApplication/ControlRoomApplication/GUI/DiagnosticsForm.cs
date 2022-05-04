@@ -343,8 +343,8 @@ namespace ControlRoomApplication.GUI
             {
                 Appointment appt = controlRoom.RTControllerManagementThreads[0].AppointmentToDisplay;
                 statusTextBox.Text = appt.status.ToString();
-                endTimeTextBox.Text = appt.end_time.ToString();
-                startTimeTextBox.Text = appt.start_time.ToString();
+                endTimeTextBox.Text = appt.end_time.ToLocalTime().ToString();
+                startTimeTextBox.Text = appt.start_time.ToLocalTime().ToString();
             }
             else
             {

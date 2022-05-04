@@ -215,7 +215,9 @@ namespace ControlRoomApplication.Controllers
                         endTreeCalTime = DateTime.Now;
 
                         // Zenith calibration
-                        RTController.MoveRadioTelescopeToOrientation(new Orientation(RTController.GetCurrentOrientation().Azimuth, 90), MovementPriority.Appointment);
+                        MovementResult result = RTController.MoveRadioTelescopeToOrientation(new Orientation(RTController.GetCurrentOrientation().Azimuth, 90), MovementPriority.Appointment);
+
+                        logger.Debug(Utilities.GetTimeStamp() + ": Movement result: " + result);
 
                         startZenithCalTime = DateTime.Now;
                         
@@ -278,6 +280,7 @@ namespace ControlRoomApplication.Controllers
                         StartReadingData(NextAppointment);
 
                     // Start movement thread
+                    logger.Debug(Utilities.GetTimeStamp() + ": Starting appointment movement ... ");
                     AppointmentMovementThread.Start();
 
                     if(NextAppointment._Type != AppointmentTypeEnum.FREE_CONTROL)
@@ -452,6 +455,8 @@ namespace ControlRoomApplication.Controllers
         /// <param name="NextAppointment"> The appointment that is currently running. </param>
         private void PerformRadioTelescopeMovement(Appointment NextAppointment)
         {
+            DateTime startTime = DateTime.UtcNow;
+
             NextAppointment._Status = AppointmentStatusEnum.IN_PROGRESS;
             DatabaseOperations.UpdateAppointment(NextAppointment);
 
@@ -462,7 +467,7 @@ namespace ControlRoomApplication.Controllers
             logger.Info(Utilities.GetTimeStamp() + ": Appointment _Type: " + NextAppointment._Type);
 
             // Loop through each second or minute of the appointment (depending on appt type)
-            TimeSpan length = NextAppointment.end_time - NextAppointment.start_time;
+            TimeSpan length = NextAppointment.end_time - startTime;
             double duration = NextAppointment._Type == AppointmentTypeEnum.FREE_CONTROL ? length.TotalSeconds : length.TotalMinutes;
             for (int i = 0; i <= (int) duration; i++)
             {
@@ -471,7 +476,7 @@ namespace ControlRoomApplication.Controllers
                 {
 
                     // Get orientation for current datetime
-                    DateTime datetime = NextAppointment._Type == AppointmentTypeEnum.FREE_CONTROL ? NextAppointment.start_time.AddSeconds(i) : NextAppointment.start_time.AddMinutes(i);
+                    DateTime datetime = NextAppointment._Type == AppointmentTypeEnum.FREE_CONTROL ? startTime.AddSeconds(i) : startTime.AddMinutes(i);
                     NextObjectiveOrientation = RTController.CoordinateController.CalculateOrientation(NextAppointment, datetime);
 
                     // Wait for datetime
@@ -508,6 +513,8 @@ namespace ControlRoomApplication.Controllers
                         logger.Info(Utilities.GetTimeStamp() + ": Moving to Next Objective: Az = " + NextObjectiveOrientation.Azimuth + ", El = " + NextObjectiveOrientation.Elevation);
                         
                         MovementResult apptMovementResult = RTController.MoveRadioTelescopeToOrientation(NextObjectiveOrientation, MovementPriority.Appointment);
+
+                        logger.Debug(Utilities.GetTimeStamp() + ": Movement result: " + apptMovementResult);
 
                         // If the movement result was anything other than success, it means the movement failed and something is wrong with
                         // the hardware.
@@ -612,11 +619,13 @@ namespace ControlRoomApplication.Controllers
         {
             logger.Info(Utilities.GetTimeStamp() + ": Ending Appointment");
             endAppt = true;
+            /*
             MovementResult result = RTController.StowRadioTelescope(MovementPriority.Appointment);
             if (result != MovementResult.Success)
             {
                 logger.Error("Stowing telescope failed with message " + result);
             }
+            */
         }
 
         /// <summary>

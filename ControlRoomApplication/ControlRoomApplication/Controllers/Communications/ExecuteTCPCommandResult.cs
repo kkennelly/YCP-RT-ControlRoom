@@ -18,6 +18,7 @@ namespace ControlRoomApplication.Controllers.Communications
     public class ExecuteTCPCommandResult
     {
         public MovementResult movementResult { get; set; }
+        public MCUResetResult resetResult { get; set; }
         public String errorMessage { get; set; }
 
         // Optional ErrMessage param that can be set if an error occurred, This will allow descriptive communication between CR and Mobile
@@ -25,7 +26,12 @@ namespace ControlRoomApplication.Controllers.Communications
         {
             movementResult = mvmtResult;
             errorMessage = errMessage;
+        }
 
+        public ExecuteTCPCommandResult(MCUResetResult resetResult, String errMessage = null)
+        {
+            resetResult = resetResult;
+            errorMessage = errMessage;
         }
     }
 }

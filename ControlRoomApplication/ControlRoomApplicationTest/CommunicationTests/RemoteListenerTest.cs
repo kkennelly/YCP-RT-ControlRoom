@@ -7,6 +7,7 @@ using ControlRoomApplication.Controllers.SensorNetwork;
 using ControlRoomApplication.Database;
 using ControlRoomApplication.Entities;
 using ControlRoomApplication.Simulators.Hardware.WeatherStation;
+using ControlRoomApplication.Util;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -24,7 +25,7 @@ namespace ControlRoomApplicationTest.CommunicationTests
     {
         // This will contain the RemoteListener object we are using for the various tests
         PrivateObject PrivListener;
-        
+
         ControlRoom ControlRoom;
 
         RadioTelescopeController RtController;
@@ -58,8 +59,10 @@ namespace ControlRoomApplicationTest.CommunicationTests
 
             AbstractWeatherStation WS = new SimulationWeatherStation(1000);
 
-            ControlRoom = new ControlRoom(WS,80);
-            
+            RadioTelescope.WeatherStation = WS;
+
+            ControlRoom = new ControlRoom(WS, 80);
+
             ControlRoom.mobileControlServer.rtController = RtController;
 
             PrivListener = new PrivateObject(ControlRoom.mobileControlServer);
@@ -71,7 +74,7 @@ namespace ControlRoomApplicationTest.CommunicationTests
             // Until a proper bring-down method is created for the Remote Listener, we must stop the server like this after
             // every test.
             ((TcpListener)PrivListener.GetFieldOrProperty("server")).Stop();
-            
+
             DatabaseOperations.DeleteSensorNetworkConfig(RadioTelescope.SensorNetworkServer.InitializationClient.SensorNetworkConfig);
         }
 
@@ -85,7 +88,7 @@ namespace ControlRoomApplicationTest.CommunicationTests
             byte expectedDisabled = 0;
             int expectedDataTimeout = 6;
             int expectedInitTimeout = 5;
-            string command = "1.0 | SENSOR_INIT | "+
+            string command = "1.0 | SENSOR_INIT | " +
                 $"{expectedDisabled}," +
                 $"{expectedDisabled}," +
                 $"{expectedDisabled}," +
@@ -138,7 +141,7 @@ namespace ControlRoomApplicationTest.CommunicationTests
             string command = "1.0 | SET_OVERRIDE | CB_ACC | TRUE | 12:00:00";
 
             ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
-            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] {result.parsedString });
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] { result.parsedString });
 
             Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
             Assert.AreEqual(mvmtResult.movementResult, MovementResult.Success);
@@ -151,7 +154,7 @@ namespace ControlRoomApplicationTest.CommunicationTests
             string command = "1.0 | SET_OVERRIDE | CB_ACC | FALSE | 12:00:00";
 
             ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
-            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] {result.parsedString });
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] { result.parsedString });
 
             Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
             Assert.AreEqual(mvmtResult.movementResult, MovementResult.Success);
@@ -164,7 +167,7 @@ namespace ControlRoomApplicationTest.CommunicationTests
             string command = "1.0 | SET_OVERRIDE | EL_ACC | TRUE | 12:00:00";
 
             ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
-            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] {result.parsedString });
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] { result.parsedString });
 
 
             Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
@@ -178,7 +181,7 @@ namespace ControlRoomApplicationTest.CommunicationTests
             string command = "1.0 | SET_OVERRIDE | EL_ACC | FALSE | 12:00:00";
 
             ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
-            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] {result.parsedString });
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] { result.parsedString });
 
 
             Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
@@ -192,7 +195,7 @@ namespace ControlRoomApplicationTest.CommunicationTests
             string command = "1.0 | SET_OVERRIDE | AZ_ACC | TRUE | 12:00:00";
 
             ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
-            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] {result.parsedString });
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] { result.parsedString });
 
 
             Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
@@ -206,7 +209,7 @@ namespace ControlRoomApplicationTest.CommunicationTests
             string command = "1.0 | SET_OVERRIDE | AZ_ACC | FALSE | 12:00:00";
 
             ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
-            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] {result.parsedString });
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] { result.parsedString });
 
 
             Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
@@ -220,7 +223,7 @@ namespace ControlRoomApplicationTest.CommunicationTests
             string command = "1.0 | SET_OVERRIDE | EL_ABS_ENC | TRUE | 12:00:00";
 
             ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
-            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] {result.parsedString });
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] { result.parsedString });
 
 
             Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
@@ -234,7 +237,7 @@ namespace ControlRoomApplicationTest.CommunicationTests
             string command = "1.0 | SET_OVERRIDE | EL_ABS_ENC | FALSE | 12:00:00";
 
             ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
-            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] {result.parsedString });
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] { result.parsedString });
 
 
             Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
@@ -248,7 +251,7 @@ namespace ControlRoomApplicationTest.CommunicationTests
             string command = "1.0 | SET_OVERRIDE | AZ_ABS_ENC | TRUE | 12:00:00";
 
             ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
-            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] {result.parsedString });
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] { result.parsedString });
 
             Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
             Assert.AreEqual(mvmtResult.movementResult, MovementResult.Success);
@@ -261,7 +264,7 @@ namespace ControlRoomApplicationTest.CommunicationTests
             string command = "1.0 | SET_OVERRIDE | AZ_ABS_ENC | FALSE | 12:00:00";
 
             ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
-            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] {result.parsedString });
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] { result.parsedString });
 
             Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
             Assert.AreEqual(mvmtResult.movementResult, MovementResult.Success);
@@ -274,7 +277,7 @@ namespace ControlRoomApplicationTest.CommunicationTests
             string command = "1.0 | SET_OVERRIDE | ELEVATION_LIMIT_90 | TRUE | 12:00:00";
 
             ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
-            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] {result.parsedString });
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] { result.parsedString });
 
             Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
             Assert.AreEqual(mvmtResult.movementResult, MovementResult.Success);
@@ -287,7 +290,7 @@ namespace ControlRoomApplicationTest.CommunicationTests
             string command = "1.0 | SET_OVERRIDE | ELEVATION_LIMIT_90 | FALSE | 12:00:00";
 
             ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
-            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] {result.parsedString });
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] { result.parsedString });
 
             Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
             Assert.AreEqual(mvmtResult.movementResult, MovementResult.Success);
@@ -300,7 +303,7 @@ namespace ControlRoomApplicationTest.CommunicationTests
             string command = "1.0 | SET_OVERRIDE | ELEVATION_LIMIT_0 | TRUE | 12:00:00";
 
             ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
-            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] {result.parsedString });
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] { result.parsedString });
 
             Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
             Assert.AreEqual(mvmtResult.movementResult, MovementResult.Success);
@@ -313,7 +316,7 @@ namespace ControlRoomApplicationTest.CommunicationTests
             string command = "1.0 | SET_OVERRIDE | AZIMUTH_MOT_TEMP | TRUE | 12:00:00";
 
             ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
-            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] {result.parsedString });
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] { result.parsedString });
 
             Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
             Assert.AreEqual(mvmtResult.movementResult, MovementResult.Success);
@@ -326,7 +329,7 @@ namespace ControlRoomApplicationTest.CommunicationTests
             string command = "1.0 | SET_OVERRIDE | AZIMUTH_MOT_TEMP | FALSE | 12:00:00";
 
             ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
-            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] {result.parsedString });
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] { result.parsedString });
 
             Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
             Assert.AreEqual(mvmtResult.movementResult, MovementResult.Success);
@@ -339,7 +342,7 @@ namespace ControlRoomApplicationTest.CommunicationTests
             string command = "1.0 | SET_OVERRIDE | ELEVATION_MOT_TEMP | TRUE | 12:00:00";
 
             ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
-            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] {result.parsedString });
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] { result.parsedString });
 
             Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
             Assert.AreEqual(mvmtResult.movementResult, MovementResult.Success);
@@ -352,7 +355,7 @@ namespace ControlRoomApplicationTest.CommunicationTests
             string command = "1.0 | SET_OVERRIDE | ELEVATION_MOT_TEMP | FALSE | 12:00:00";
 
             ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
-            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] {result.parsedString });
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] { result.parsedString });
 
             Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
             Assert.AreEqual(mvmtResult.movementResult, MovementResult.Success);
@@ -365,7 +368,7 @@ namespace ControlRoomApplicationTest.CommunicationTests
             string command = "1.0 | SET_OVERRIDE | MAIN_GATE | TRUE | 12:00:00";
 
             ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
-            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] {result.parsedString });
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] { result.parsedString });
 
             Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
             Assert.AreEqual(mvmtResult.movementResult, MovementResult.Success);
@@ -378,7 +381,7 @@ namespace ControlRoomApplicationTest.CommunicationTests
             string command = "1.0 | SET_OVERRIDE | MAIN_GATE | FALSE | 12:00:00";
 
             ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
-            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] {result.parsedString });
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] { result.parsedString });
 
             Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
             Assert.AreEqual(mvmtResult.movementResult, MovementResult.Success);
@@ -391,7 +394,7 @@ namespace ControlRoomApplicationTest.CommunicationTests
             string command = "1.0 | SET_OVERRIDE | WEATHER_STATION | TRUE | 12:00:00";
 
             ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
-            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] {result.parsedString });
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] { result.parsedString });
 
             Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
             Assert.AreEqual(mvmtResult.movementResult, MovementResult.Success);
@@ -404,7 +407,7 @@ namespace ControlRoomApplicationTest.CommunicationTests
             string command = "1.0 | SET_OVERRIDE | WEATHER_STATION | FALSE | 12:00:00";
 
             ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
-            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] {result.parsedString });
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] { result.parsedString });
 
             Assert.AreEqual(result.parseTCPCommandResultEnum, ParseTCPCommandResultEnum.Success);
             Assert.AreEqual(mvmtResult.movementResult, MovementResult.Success);
@@ -565,7 +568,7 @@ namespace ControlRoomApplicationTest.CommunicationTests
         public void TestProcessMessage_TestInvalidNumberArgs_SensorInit_MissingTimestamp()
         {
             string command = "1.0 | SENSOR_INIT | 1,0,1,1,1,1,1,1,1 ";
-            
+
             ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
             Assert.AreEqual(ParseTCPCommandResultEnum.MissingCommandArgs, result.parseTCPCommandResultEnum);
             Assert.IsTrue(result.errorMessage.Contains(TCPCommunicationConstants.MISSING_COMMAND_ARGS));
@@ -678,6 +681,99 @@ namespace ControlRoomApplicationTest.CommunicationTests
             Assert.AreEqual(ParseTCPCommandResultEnum.Success, result.parseTCPCommandResultEnum);
             Assert.AreEqual(MovementResult.Success, mvmtResult.movementResult);
         }
+        
+        [TestMethod]
+        public void TestProcessMessage_TestEncryptedMessage()
+        {
+            string receivedCommand = "1.1|AA9uv3O7ov+eZ2xM9478QpgOxSBhBbyYMf21krHQMZLAdnaAqGwJ2GkZcT8hxE7T";
 
+            Tuple<string, bool> dataPair = Utilities.CheckEncrypted(receivedCommand);
+
+            string command = dataPair.Item1;
+
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            Assert.AreEqual(ParseTCPCommandResultEnum.Success, result.parseTCPCommandResultEnum);
+        }
+
+        [TestMethod]
+        public void TestProcessMessage_TestEncryptionUnsupportedVersion()
+        {
+            string receivedCommand = "1.0 | STOP_RT | 12:00:00";
+
+            Tuple<string, bool> dataPair = Utilities.CheckEncrypted(receivedCommand);
+
+            Assert.IsTrue(receivedCommand.Equals(dataPair.Item1));
+            Assert.IsFalse(dataPair.Item2);
+        }
+
+        [TestMethod]
+        public void TestProcessMessage_TestValidResetMCUErrorBit()
+        {
+            string command = "1.1 | RESET_MCU_BIT | 12:00:00";
+
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            ExecuteTCPCommandResult resetResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] { result.parsedString });
+            Assert.AreEqual(ParseTCPCommandResultEnum.Success, result.parseTCPCommandResultEnum);
+            Assert.AreEqual(MCUResetResult.Success, resetResult.resetResult);
+        }
+        
+        [TestMethod]
+        public void TestProcessMessage_TestResetMCUErrorBit_MissingTimestamp()
+        {
+            string command = "1.1 | RESET_MCU_BIT";
+
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            ExecuteTCPCommandResult resetResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] { result.parsedString });
+            Assert.AreEqual(ParseTCPCommandResultEnum.MissingCommandArgs, result.parseTCPCommandResultEnum);
+        }
+        
+        [TestMethod]
+        public void TestProcessMessage_TestResetMCUErrorBit_UnsupportedVersion()
+        {
+            string command = "1.0 | RESET_MCU_BIT | 12:00:00";
+
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            ExecuteTCPCommandResult resetResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] { result.parsedString });
+            Assert.AreEqual(ParseTCPCommandResultEnum.InvalidVersion, result.parseTCPCommandResultEnum);
+        }
+
+        [TestMethod]
+        public void TestProcessMessage_TestRequestMVMT_DATA()
+        {
+            string command = "1.1 | REQUEST | MVMT_DATA | 12:00:00";
+
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            ExecuteTCPCommandResult resetResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] { result.parsedString });
+            Assert.AreEqual(ParseTCPCommandResultEnum.Success, result.parseTCPCommandResultEnum);
+        }
+
+        [TestMethod]
+        public void TestProcessMessage_TestNewTCPVersion()
+        {
+            string command = "1.1 | STOP_RT | 12:00:00";    // Run a command from an older version of TCP with a new version 
+
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
+            ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] { result.parsedString });
+            Assert.AreEqual(ParseTCPCommandResultEnum.Success, result.parseTCPCommandResultEnum);
+            Assert.AreEqual(MovementResult.Success, mvmtResult.movementResult);
+        }
+
+        [TestMethod]
+        public void TestProcessMessage_NonCommandSent()
+        {
+            string definitelyACommandAndNotAMaliciousAttemptToBreachDataOrSomethingSoDontThinkThat = "lmao give me ip";
+
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", definitelyACommandAndNotAMaliciousAttemptToBreachDataOrSomethingSoDontThinkThat);
+            Assert.AreEqual(ParseTCPCommandResultEnum.MissingCommandArgs, result.parseTCPCommandResultEnum);
+        }
+
+        [TestMethod]
+        public void TestProcessMessage_NonCommandSentWithPipes()
+        {
+            string definitelyACommandAndNotAMaliciousAttemptToBreachDataOrSomethingSoDontThinkThat = "lmao|give|me|ip";
+
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", definitelyACommandAndNotAMaliciousAttemptToBreachDataOrSomethingSoDontThinkThat);
+            Assert.AreEqual(ParseTCPCommandResultEnum.InvalidVersion, result.parseTCPCommandResultEnum);
+        }
     }
 }

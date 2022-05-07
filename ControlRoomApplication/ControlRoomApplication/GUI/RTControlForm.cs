@@ -488,7 +488,7 @@ namespace ControlRoomApplication.Main
                 switch (index)
                 {
                     case 1:
-                        movementResult = rtController.MoveRadioTelescopeToOrientation(MiscellaneousConstants.Stow, MovementPriority.Manual);
+                        movementResult = rtController.StowRadioTelescope(MovementPriority.Manual);
                         break;
 
                     case 2:
@@ -579,6 +579,29 @@ namespace ControlRoomApplication.Main
 
         }
 
+        /// <summary>
+        /// Functionality for when the STOP Telescope button is pressed. Creates a confirmation pop up box to prevent accidental presses of the stop button before sending any stop script.
+        /// </summary>
+        private void stopRT_click(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show("Are you sure you want to stop the telescope?", "Telescope Stop Confirmation", MessageBoxButtons.YesNo);
+
+            if (result == DialogResult.Yes)
+            {
+                // Run the stop script for the telescope
+                MovementResult moveResult = rtController.InterruptRadioTelescope();
+                
+                if (moveResult == MovementResult.Success)
+                {
+                    logger.Info($"{Utilities.GetTimeStamp()}: Telescope movement stopped.");
+                }
+                else
+                {
+                    logger.Info($"{Utilities.GetTimeStamp()}: Failed to stop telescope movement.");
+                }
+            }
+        }
+
         private void ccwAzJogButton_Down( object sender , MouseEventArgs e ) {
             if (Validator.ValidateSpeedTextOnly(speedTextBox.Text))
             {
@@ -594,6 +617,12 @@ namespace ControlRoomApplication.Main
                         logger.Info($"{Utilities.GetTimeStamp()}: Stopping current movement. Please wait until that movement has finished ending and try to jog again.");
                     else if (result == MovementResult.AlreadyMoving)
                         logger.Info($"{Utilities.GetTimeStamp()}: Azimuth counterclockwise jog BLOCKED. Another manual script is already running.");
+                    else
+                    {
+                        logger.Info($"{Utilities.GetTimeStamp()}: An error occurred trying to jog az counterclockwise: {result.ToString()}");
+                        pushNotification.sendToAllAdmins("Jog Error", $"An error occurred trying to jog az counterclockwise: {result.ToString()}");
+                        EmailNotifications.sendToAllAdmins("Jog Error", $"An error occurred trying to jog az counterclockwise: {result.ToString()}");
+                    }
                 }
                 else
                 {
@@ -628,6 +657,12 @@ namespace ControlRoomApplication.Main
                         logger.Info($"{Utilities.GetTimeStamp()}: Stopping current movement. Please wait until that movement has finished ending and try to jog again.");
                     else if (result == MovementResult.AlreadyMoving)
                         logger.Info($"{Utilities.GetTimeStamp()}: Azimuth clockwise jog BLOCKED. Another manual script is already running.");
+                    else
+                    {
+                        logger.Info($"{Utilities.GetTimeStamp()}: An error occurred trying to jog az clockwise: {result.ToString()}");
+                        pushNotification.sendToAllAdmins("Jog Error", $"An error occurred trying to jog az clockwise: {result.ToString()}");
+                        EmailNotifications.sendToAllAdmins("Jog Error", $"An error occurred trying to jog az clockwise: {result.ToString()}");
+                    }
                 }
                 else
                 {
@@ -657,6 +692,10 @@ namespace ControlRoomApplication.Main
 
                 if (result == MovementResult.Success)
                     logger.Info($"{Utilities.GetTimeStamp()}: Successfully stopped jog with a controlled stop.");
+                else
+                {
+                    logger.Info($"{Utilities.GetTimeStamp()}: Controlled stop error: {result}");
+                }
             }
             else if (immediateRadioButton.Checked)
             {
@@ -666,6 +705,10 @@ namespace ControlRoomApplication.Main
 
                 if (result == MovementResult.Success)
                     logger.Info($"{Utilities.GetTimeStamp()}: Successfully stopped jog with an immediate stop.");
+                else
+                {
+                    logger.Info($"{Utilities.GetTimeStamp()}: Immediate stop error: {result}");
+                }
             }
             else
             {
@@ -690,7 +733,7 @@ namespace ControlRoomApplication.Main
                 if (Validator.ValidateSpeed(speed))
                 {
                     // Start CW Jog
-                    MovementResult result = rtController.StartRadioTelescopeJog(speed, RadioTelescopeDirectionEnum.CounterclockwiseOrPositive, RadioTelescopeAxisEnum.ELEVATION);
+                    MovementResult result = rtController.StartRadioTelescopeJog(speed, RadioTelescopeDirectionEnum.ClockwiseOrNegative, RadioTelescopeAxisEnum.ELEVATION);
                     
                     if(result == MovementResult.Success)
                         logger.Info($"{Utilities.GetTimeStamp()}: Successfully started elevation positive jog.");
@@ -698,6 +741,12 @@ namespace ControlRoomApplication.Main
                         logger.Info($"{Utilities.GetTimeStamp()}: Stopping current movement. Please wait until that movement has finished ending and try to jog again.");
                     else if(result == MovementResult.AlreadyMoving)
                         logger.Info($"{Utilities.GetTimeStamp()}: Elevation positive jog BLOCKED. Another manual script is already running.");
+                    else
+                    {
+                        logger.Info($"{Utilities.GetTimeStamp()}: An error occurred trying to positive jog el: {result.ToString()}");
+                        pushNotification.sendToAllAdmins("Jog Error", $"An error occurred trying to positive jog el: {result.ToString()}");
+                        EmailNotifications.sendToAllAdmins("Jog Error", $"An error occurred trying to positive jog el: {result.ToString()}");
+                    }
                 }
                 else
                 {
@@ -722,7 +771,7 @@ namespace ControlRoomApplication.Main
                 if (Validator.ValidateSpeed(speed))
                 {
                     // Start CW Jog
-                    MovementResult result = rtController.StartRadioTelescopeJog(speed, RadioTelescopeDirectionEnum.ClockwiseOrNegative, RadioTelescopeAxisEnum.ELEVATION);
+                    MovementResult result = rtController.StartRadioTelescopeJog(speed, RadioTelescopeDirectionEnum.CounterclockwiseOrPositive, RadioTelescopeAxisEnum.ELEVATION);
 
                     if (result == MovementResult.Success)
                         logger.Info($"{Utilities.GetTimeStamp()}: Successfully started elevation negative jog.");
@@ -730,6 +779,12 @@ namespace ControlRoomApplication.Main
                         logger.Info($"{Utilities.GetTimeStamp()}: Stopping current movement. Please wait until that movement has finished ending and try to jog again.");
                     else if (result == MovementResult.AlreadyMoving)
                         logger.Info($"{Utilities.GetTimeStamp()}: Elevation negative jog BLOCKED. Another manual script is already running.");
+                    else
+                    {
+                        logger.Info($"{Utilities.GetTimeStamp()}: An error occurred trying to negative jog el: {result.ToString()}");
+                        pushNotification.sendToAllAdmins("Jog Error", $"An error occurred trying to negative jog el: {result.ToString()}");
+                        EmailNotifications.sendToAllAdmins("Jog Error", $"An error occurred trying to negative jog el: {result.ToString()}");
+                    }
                 }
                 else
                 {

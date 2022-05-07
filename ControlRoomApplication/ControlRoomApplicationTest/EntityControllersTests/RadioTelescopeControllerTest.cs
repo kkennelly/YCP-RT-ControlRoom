@@ -48,7 +48,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests {
             //     TestRTPLC = new ProductionPLCDriver("192.168.0.70", "192.168.0.50" , 502 , 502 );
             SpectraCyberSimulatorController SCSimController = new SpectraCyberSimulatorController(new SpectraCyberSimulator());
             Location location = MiscellaneousConstants.JOHN_RUDY_PARK;
-            SensorNetworkServer = new SensorNetworkServer(IPAddress.Parse("127.0.0.1"), 3000, "127.0.0.1", 3001, 500, false);
+            SensorNetworkServer = new SensorNetworkServer(IPAddress.Parse("127.0.0.1"), 3000, "127.0.0.1", 3001, 500, true);
             RadioTelescope TestRT = new RadioTelescope(SCSimController, TestRTPLC, location, new Orientation(0, 0));
             TestRT.SensorNetworkServer = SensorNetworkServer;
             //TestRT.SensorNetworkServer.StartSensorMonitoringRoutine();
@@ -126,7 +126,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests {
             var response = TestRadioTelescopeController.CancelCurrentMoveCommand(MovementPriority.GeneralStop);
 
             // Make sure it was successful
-            Assert.IsTrue(response);
+            Assert.AreEqual(MovementResult.Success, response);
         }
 
         [TestMethod]
@@ -1185,6 +1185,22 @@ namespace ControlRoomApplicationTest.EntityControllersTests {
             Assert.AreEqual(1, successes);
             Assert.AreEqual(threadCount - 1, alreadyMovings);
         }
+
+        [TestMethod]
+        public void TestStowRadioTelescope_Success()
+        {
+            TestRadioTelescopeController.HomeTelescope(MovementPriority.Manual);
+            MovementResult result = TestRadioTelescopeController.StowRadioTelescope(MovementPriority.Manual);
+            Assert.AreEqual(MovementResult.Success, result);
+        }
+
+        [TestMethod]
+        public void TestStowRadioTelescope_MotorsNotHomed()
+        {
+            MovementResult result = TestRadioTelescopeController.StowRadioTelescope(MovementPriority.Manual);
+            Assert.AreEqual(MovementResult.MotorsNotHomed, result);
+        }
+    }
 
         /// <summary>
         /// Test CompareMotorAndAbsoluteEncoders for when all values are equal, should return true

@@ -177,9 +177,9 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
         [TestMethod]
         public void TestCalcDataSize_AllZero_CalculatesSizeCorrectly()
         {
-            uint result = PacketEncodingTools.CalcDataSize(0, 0, 0, 0, 0, 0, 0);
+            uint result = PacketEncodingTools.CalcDataSize(0, 0, 0, 0, 0, 0, 0, 0, 0);
 
-            uint expected = 23; // Default data size with no sensors
+            uint expected = 28; // Default data size with no sensors
 
             Assert.AreEqual(expected, result);
         }
@@ -189,9 +189,9 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
         {
             int elAcc = 1; // 1 dump
 
-            uint result = PacketEncodingTools.CalcDataSize(elAcc, 0, 0, 0, 0, 0, 0);
+            uint result = PacketEncodingTools.CalcDataSize(elAcc, 0, 0, 0, 0, 0, 0, 0, 0);
 
-            uint expected = 23 + 6 + 8 + 2; // Default data size plus size of sensor data, timestamp, and FIFO length
+            uint expected = 28 + 6 + 8 + 2; // Default data size plus size of sensor data, timestamp, and FIFO length
 
             Assert.AreEqual(expected, result);
         }
@@ -201,9 +201,9 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
         {
             int azAcc = 1; // 1 dump
 
-            uint result = PacketEncodingTools.CalcDataSize(0, azAcc, 0, 0, 0, 0, 0);
+            uint result = PacketEncodingTools.CalcDataSize(0, azAcc, 0, 0, 0, 0, 0, 0, 0);
 
-            uint expected = 23 + 6 + 8 + 2; // Default data size plus size of sensor data, timestamp, and FIFO length
+            uint expected = 28 + 6 + 8 + 2; // Default data size plus size of sensor data, timestamp, and FIFO length
 
             Assert.AreEqual(expected, result);
         }
@@ -213,9 +213,9 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
         {
             int cbAcc = 1; // 1 dump
 
-            uint result = PacketEncodingTools.CalcDataSize(0, 0, cbAcc, 0, 0, 0, 0);
+            uint result = PacketEncodingTools.CalcDataSize(0, 0, cbAcc, 0, 0, 0, 0, 0, 0);
 
-            uint expected = 23 + 6 + 8 + 2; // Default data size plus size of sensor data, timestamp, and FIFO length
+            uint expected = 28 + 6 + 8 + 2; // Default data size plus size of sensor data, timestamp, and FIFO length
 
             Assert.AreEqual(expected, result);
         }
@@ -225,9 +225,9 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
         {
             int elTemp = 1; // 2 bytes
 
-            uint result = PacketEncodingTools.CalcDataSize(0, 0, 0, elTemp, 0, 0, 0);
+            uint result = PacketEncodingTools.CalcDataSize(0, 0, 0, elTemp, 0, 0, 0, 0, 0);
 
-            uint expected = 23 + 2; // Default data size plus size of sensor data
+            uint expected = 28 + 2; // Default data size plus size of sensor data
 
             Assert.AreEqual(expected, result);
         }
@@ -237,9 +237,9 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
         {
             int azTemp = 1; // 2 bytes
 
-            uint result = PacketEncodingTools.CalcDataSize(0, 0, 0, 0, azTemp, 0, 0);
+            uint result = PacketEncodingTools.CalcDataSize(0, 0, 0, 0, azTemp, 0, 0, 0, 0);
 
-            uint expected = 23 + 2; // Default data size plus size of sensor data
+            uint expected = 28 + 2; // Default data size plus size of sensor data
 
             Assert.AreEqual(expected, result);
         }
@@ -249,9 +249,9 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
         {
             int elEnc = 1; // 2 bytes
 
-            uint result = PacketEncodingTools.CalcDataSize(0, 0, 0, 0, 0, elEnc, 0);
+            uint result = PacketEncodingTools.CalcDataSize(0, 0, 0, 0, 0, elEnc, 0, 0, 0);
 
-            uint expected = 23 + 2; // Default data size plus size of sensor data
+            uint expected = 28 + 2; // Default data size plus size of sensor data
 
             Assert.AreEqual(expected, result);
         }
@@ -261,9 +261,33 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
         {
             int azEnc = 1; // 2 bytes
 
-            uint result = PacketEncodingTools.CalcDataSize(0, 0, 0, 0, 0, 0, azEnc);
+            uint result = PacketEncodingTools.CalcDataSize(0, 0, 0, 0, 0, 0, azEnc, 0, 0);
 
-            uint expected = 23 + 2; // Default data size plus size of sensor data
+            uint expected = 28 + 2; // Default data size plus size of sensor data
+
+            Assert.AreEqual(expected, result);
+        }
+
+        [TestMethod]
+        public void TestCalcDataSize_AmbTemp_CalculatesSizeCorrectly()
+        {
+            int ambTemp = 1; // 4 bytes
+
+            uint result = PacketEncodingTools.CalcDataSize(0, 0, 0, 0, 0, 0, 0, ambTemp, 0);
+
+            uint expected = 28 + 4; // Default data size plus size of sensor data
+
+            Assert.AreEqual(expected, result);
+        }
+
+        [TestMethod]
+        public void TestCalcDataSize_AmbHumidity_CalculatesSizeCorrectly()
+        {
+            int ambHumidity = 1; // 4 bytes
+
+            uint result = PacketEncodingTools.CalcDataSize(0, 0, 0, 0, 0, 0, 0, 0, ambHumidity);
+
+            uint expected = 28 + 4; // Default data size plus size of sensor data
 
             Assert.AreEqual(expected, result);
         }

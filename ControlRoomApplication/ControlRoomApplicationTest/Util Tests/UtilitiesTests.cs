@@ -24,6 +24,17 @@ namespace ControlRoomApplication.UtilitiesTests
             Assert.IsTrue(timeZone);
 
         }
+
+        [TestMethod]
+        public void TestCheckEncrypted_NotEncrypted()
+        {
+            string receivedCommand = "1.0|efjoaifjwaovn894q9q2j8qv48qv4g4q3gq38hg93";
+
+            Tuple<string, bool> dataPair = Utilities.CheckEncrypted(receivedCommand);
+
+            Assert.IsTrue(receivedCommand.Equals(dataPair.Item1));
+            Assert.IsFalse(dataPair.Item2);
+        }
     }
 }
 

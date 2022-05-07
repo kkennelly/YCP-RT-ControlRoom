@@ -215,9 +215,7 @@ namespace ControlRoomApplication.Controllers
                         endTreeCalTime = DateTime.Now;
 
                         // Zenith calibration
-                        MovementResult result = RTController.MoveRadioTelescopeToOrientation(new Orientation(RTController.GetCurrentOrientation().Azimuth, 90), MovementPriority.Appointment);
-
-                        logger.Debug(Utilities.GetTimeStamp() + ": Movement result: " + result);
+                        RTController.MoveRadioTelescopeToOrientation(new Orientation(RTController.GetCurrentOrientation().Azimuth, 90), MovementPriority.Appointment);
 
                         startZenithCalTime = DateTime.Now;
                         
@@ -280,7 +278,6 @@ namespace ControlRoomApplication.Controllers
                         StartReadingData(NextAppointment);
 
                     // Start movement thread
-                    logger.Debug(Utilities.GetTimeStamp() + ": Starting appointment movement ... ");
                     AppointmentMovementThread.Start();
 
                     if(NextAppointment._Type != AppointmentTypeEnum.FREE_CONTROL)
@@ -464,8 +461,6 @@ namespace ControlRoomApplication.Controllers
             SNSMessage.sendMessage(NextAppointment.User, MessageTypeEnum.APPOINTMENT_STARTED);
          
 
-            logger.Info(Utilities.GetTimeStamp() + ": Appointment _Type: " + NextAppointment._Type);
-
             // Loop through each second or minute of the appointment (depending on appt type)
             TimeSpan length = NextAppointment.end_time - startTime;
             double duration = NextAppointment._Type == AppointmentTypeEnum.FREE_CONTROL ? length.TotalSeconds : length.TotalMinutes;
@@ -513,8 +508,6 @@ namespace ControlRoomApplication.Controllers
                         logger.Info(Utilities.GetTimeStamp() + ": Moving to Next Objective: Az = " + NextObjectiveOrientation.Azimuth + ", El = " + NextObjectiveOrientation.Elevation);
                         
                         MovementResult apptMovementResult = RTController.MoveRadioTelescopeToOrientation(NextObjectiveOrientation, MovementPriority.Appointment);
-
-                        logger.Debug(Utilities.GetTimeStamp() + ": Movement result: " + apptMovementResult);
 
                         // If the movement result was anything other than success, it means the movement failed and something is wrong with
                         // the hardware.

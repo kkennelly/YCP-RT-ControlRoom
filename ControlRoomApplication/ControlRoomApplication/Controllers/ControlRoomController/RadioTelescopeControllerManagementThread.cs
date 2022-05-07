@@ -464,8 +464,6 @@ namespace ControlRoomApplication.Controllers
             SNSMessage.sendMessage(NextAppointment.User, MessageTypeEnum.APPOINTMENT_STARTED);
          
 
-            logger.Info(Utilities.GetTimeStamp() + ": Appointment _Type: " + NextAppointment._Type);
-
             // Loop through each second or minute of the appointment (depending on appt type)
             TimeSpan length = NextAppointment.end_time - startTime;
             double duration = NextAppointment._Type == AppointmentTypeEnum.FREE_CONTROL ? length.TotalSeconds : length.TotalMinutes;

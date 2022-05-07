@@ -862,18 +862,6 @@ namespace ControlRoomApplicationTest.DatabaseOperationsTests
         }
 
         [TestMethod]
-        public void testGetSensorStatus()
-        {
-            DatabaseOperations.AddSensorStatusData(SensorStatus.Generate(SensorStatusEnum.NORMAL, SensorStatusEnum.ALARM,
-                SensorStatusEnum.ALARM, SensorStatusEnum.ALARM, SensorStatusEnum.ALARM, SensorStatusEnum.ALARM, SensorStatusEnum.ALARM,
-                SensorStatusEnum.ALARM, SensorStatusEnum.ALARM, SensorStatusEnum.ALARM, SensorStatusEnum.ALARM, SensorStatusEnum.ALARM,
-                SensorStatusEnum.ALARM, SensorStatusEnum.ALARM));
-            SensorStatus status = null;
-            status = DatabaseOperations.GetSensorStatusData();
-            Assert.AreEqual(status.gate, (SByte)SensorStatusEnum.NORMAL);
-        }
-
-        [TestMethod]
         public void TestUpdateSensorThreshold_ChangeAllFields()
         {
             ThresholdValues original = new ThresholdValues();

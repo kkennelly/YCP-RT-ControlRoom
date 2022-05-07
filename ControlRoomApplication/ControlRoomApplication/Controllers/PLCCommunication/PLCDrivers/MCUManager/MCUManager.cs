@@ -343,11 +343,15 @@ namespace ControlRoomApplication.Controllers {
         /// </summary>
         /// <returns></returns>
         public MovementResult ImmediateStop() {
-            //if (!SendGenericCommand(new MCUCommand(MCUMessages.ImmediateStop, MCUCommandType.ImmediateStop) { completed = true }))
-            //    return MovementResult.CouldNotSendCommand;
+            // Homing commands cannot be stopped by controlled stop, so use immediate
+            if (RunningCommand.CommandType == MCUCommandType.Home)
+            {
+                if (!SendGenericCommand(new MCUCommand(MCUMessages.ImmediateStop, MCUCommandType.ImmediateStop) { completed = true }))
+                    return MovementResult.CouldNotSendCommand;
 
-            //return MovementResult.Success;
-
+                return MovementResult.Success;
+            }
+            
             // Use a controlled stop because the immediate stop command stops too immediately and could damage the gearbox
             return ControlledStop();
         }
@@ -534,7 +538,7 @@ namespace ControlRoomApplication.Controllers {
 
                 case RadioTelescopeAxisEnum.ELEVATION:
                     // Only read the registers we need
-                    data = ReadMCURegisters(10, 1);
+                    data = ReadMCURegisters(0, 11);
                     isMoving = (((data[(int)MCUConstants.MCUOutputRegs.EL_Status_Bist_MSW] >> (int)MCUConstants.MCUStatusBitsMSW.CCW_Motion) & 0b1) == 1) ||
                             (((data[(int)MCUConstants.MCUOutputRegs.EL_Status_Bist_MSW] >> (int)MCUConstants.MCUStatusBitsMSW.CW_Motion) & 0b1) == 1);
                     break;
@@ -719,7 +723,7 @@ namespace ControlRoomApplication.Controllers {
                 (ushort)MCUCommandType.EmptyData,
 
                 // elevation data
-                (ushort)RadioTelescopeDirectionEnum.CounterclockwiseHoming,
+                (ushort)RadioTelescopeDirectionEnum.ClockwiseHoming,
                 (ushort)MCUCommandType.EmptyData,
                 (ushort)MCUCommandType.EmptyData,
                 (ushort)MCUCommandType.EmptyData,
@@ -778,6 +782,7 @@ namespace ControlRoomApplication.Controllers {
 
             // This needs flipped so that the elevation axis moves the correct direction
             positionTranslationEl = -positionTranslationEl;
+            positionTranslationAz = -positionTranslationAz;
 
             command.commandData = new ushort[] {
                 // Azimuth data

@@ -19,10 +19,11 @@ using static ControlRoomApplication.Constants.MCUConstants;
 
 namespace ControlRoomApplication.Controllers {
     public class MCUManager {
-        private static readonly log4net.ILog logger = log4net.LogManager.GetLogger( System.Reflection.MethodBase.GetCurrentMethod().DeclaringType );
+        private static readonly log4net.ILog logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public bool MovementInterruptFlag = false;
         public bool CriticalMovementInterruptFlag = false;
         public bool SoftwareStopInterruptFlag = false;
+        public bool MotorsHomed = false;
 
         private long MCU_last_contact = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         private Thread HeartbeatMonitorThread;
@@ -159,6 +160,8 @@ namespace ControlRoomApplication.Controllers {
                     // Only try to connect if it's been more than 5 seconds since the last attempt
                     if ((DateTime.Now - lastConnectAttempt) > TimeSpan.FromSeconds(5))
                     {
+                        // We no longer know if the motors have been homed (MCU could have powered off)
+                        MotorsHomed = false;
                         if (!inError)
                         {
                             logger.Error(Utilities.GetTimeStamp() + ": The MCU failed to retrieve the register data, and is either offline or the connection has been terminated.");
@@ -336,7 +339,7 @@ namespace ControlRoomApplication.Controllers {
 
         /// <summary>
         /// Immediately stops the telescope movement with no ramp down in speed.
-        /// Homing is unaffected by this command.
+        /// Motors are no longer homed because immediate stop commands can cause inertial drift.
         /// </summary>
         /// <returns></returns>
         public MovementResult ImmediateStop() {
@@ -720,7 +723,7 @@ namespace ControlRoomApplication.Controllers {
                 (ushort)MCUCommandType.EmptyData,
 
                 // elevation data
-                (ushort)RadioTelescopeDirectionEnum.CounterclockwiseHoming,
+                (ushort)RadioTelescopeDirectionEnum.ClockwiseHoming,
                 (ushort)MCUCommandType.EmptyData,
                 (ushort)MCUCommandType.EmptyData,
                 (ushort)MCUCommandType.EmptyData,
@@ -754,7 +757,15 @@ namespace ControlRoomApplication.Controllers {
             if(!SendGenericCommand(command)) return MovementResult.CouldNotSendCommand;
             
             // The new orientation is 0,0 because homing should result in the motor encoders being zeroed out
-            return MovementMonitor(command, new Orientation(0,0), true);
+            MovementResult result = MovementMonitor(command, new Orientation(0, 0), true);
+
+            // Set the MotorsHomed to true because motors were successfully homed
+            if (result == MovementResult.Success)
+            {
+                MotorsHomed = true;
+            }
+
+            return result;
         }
 
         private bool BuildAndSendRelativeMove(MCUCommand command, int positionTranslationAz, int positionTranslationEl) {
@@ -771,6 +782,7 @@ namespace ControlRoomApplication.Controllers {
 
             // This needs flipped so that the elevation axis moves the correct direction
             positionTranslationEl = -positionTranslationEl;
+            positionTranslationAz = -positionTranslationAz;
 
             command.commandData = new ushort[] {
                 // Azimuth data

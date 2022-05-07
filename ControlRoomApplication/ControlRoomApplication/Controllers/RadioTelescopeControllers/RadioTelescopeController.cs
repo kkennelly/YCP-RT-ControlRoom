@@ -190,7 +190,7 @@ namespace ControlRoomApplication.Controllers
         /// </summary>
         public bool ShutdownRadioTelescope()
         {
-            //MoveRadioTelescopeToOrientation(MiscellaneousConstants.Stow);
+            //StowRadioTelescope(MovementPriority.GeneralStop);
             snowDumpTimer.Stop();
             snowDumpTimer.Dispose();
 
@@ -278,7 +278,7 @@ namespace ControlRoomApplication.Controllers
                 // return true if working correctly, false if not
                 if (Math.Abs(weatherStationTemp - temperature) < MiscellaneousConstants.THERMAL_CALIBRATION_OFFSET)
                 {
-                    moveResult = RadioTelescope.PLCDriver.MoveToOrientation(MiscellaneousConstants.Stow, current);
+                    moveResult = StowRadioTelescope(priority);
                 }
 
                 if (RadioTelescope.PLCDriver.CurrentMovementPriority != MovementPriority.Critical) RadioTelescope.PLCDriver.CurrentMovementPriority = MovementPriority.None;
@@ -333,7 +333,7 @@ namespace ControlRoomApplication.Controllers
         /// in this may or may not work, it depends on if the derived
         /// AbstractRadioTelescope class has implemented it.
         /// </summary>
-        public MovementResult MoveRadioTelescopeToOrientation(Orientation orientation, MovementPriority priority)
+        public MovementResult MoveRadioTelescopeToOrientation(Orientation orientation, MovementPriority priority, bool useAbsoluteOrientation = false)
         {
             MovementResult result = MovementResult.None;
 
@@ -354,7 +354,14 @@ namespace ControlRoomApplication.Controllers
             {
                 RadioTelescope.PLCDriver.CurrentMovementPriority = priority;
 
-                result = RadioTelescope.PLCDriver.MoveToOrientation(orientation, GetCurrentOrientation());
+                // Use absolute orientation if specified
+                Orientation currentOrientation = GetCurrentOrientation();
+                if (useAbsoluteOrientation)
+                {
+                    currentOrientation = GetAbsoluteOrientation();
+                }
+
+                result = RadioTelescope.PLCDriver.MoveToOrientation(orientation, currentOrientation);
                 if (RadioTelescope.PLCDriver.CurrentMovementPriority == priority) RadioTelescope.PLCDriver.CurrentMovementPriority = MovementPriority.None;
 
                 Monitor.Exit(MovementLock);
@@ -1274,6 +1281,46 @@ namespace ControlRoomApplication.Controllers
                     RadioTelescope.PLCDriver.InterruptMovementAndWaitUntilStopped(true, true);
                     logger.Info(Utilities.GetTimeStamp() + ": Software-stop hit!");
                 }
+            }
+        }
+
+        /// <summary>
+        /// A method to handle stowing the radio telescope.
+        /// </summary>
+        /// <param name="priority">The priority of the stow movement</param>
+        /// <returns>The result of the movement</returns>
+        public MovementResult StowRadioTelescope(MovementPriority priority)
+        {
+            // If motors are homed
+            if (RadioTelescope.PLCDriver.GetMotorsHomed())
+            {
+                logger.Info(Utilities.GetTimeStamp() + ": Stowing telescope");
+                return MoveRadioTelescopeToOrientation(MiscellaneousConstants.Stow, priority);
+            }
+            // Motors are not homed, try to use absolute encoders if we are not using the simulation sensor network 
+            else if (RadioTelescope.SensorNetworkServer.SimulationSensorNetwork == null && 
+                RadioTelescope.SensorNetworkServer.SensorStatuses.ElevationAbsoluteEncoderStatus != SensorNetworkSensorStatus.Error &&
+                RadioTelescope.SensorNetworkServer.SensorStatuses.AzimuthAbsoluteEncoderStatus != SensorNetworkSensorStatus.Error)
+            {
+                logger.Info(Utilities.GetTimeStamp() + ": Stowing telescope with absolute encoders");
+                MovementResult result = MoveRadioTelescopeToOrientation(MiscellaneousConstants.Stow, priority, true);
+
+                // Since the motors are not homed, the movement result will likely return an incorrect position,
+                // so check the absolute encoder orientations instead
+                if (result == MovementResult.IncorrectPosition && 
+                    // Using delta of 0.5 to account for potential abs en inaccuracies and because we do not need this to be a precise movement
+                    Math.Abs(GetAbsoluteOrientation().Azimuth - MiscellaneousConstants.Stow.Azimuth) <= 0.5 &&
+                    Math.Abs(GetAbsoluteOrientation().Elevation - MiscellaneousConstants.Stow.Elevation) <= 0.5)
+                {
+                    result = MovementResult.Success;
+                }
+                return result;
+            }
+            // Don't perform the movement if the motors aren't homed and the absolute encoders are not connected
+            else
+            {
+                logger.Info(Utilities.GetTimeStamp() + ": Canceled stow. Motors not homed and absolute encoders offline!");
+                return MovementResult.MotorsNotHomed;
             }
         }
 

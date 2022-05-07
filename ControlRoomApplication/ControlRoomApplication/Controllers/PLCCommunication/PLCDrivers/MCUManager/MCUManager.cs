@@ -705,6 +705,7 @@ namespace ControlRoomApplication.Controllers {
         /// <returns></returns>
         public MovementResult HomeBothAxes(double RPM) {
 
+            MotorsHomed = false;
             int EL_Speed = ConversionHelper.DPSToSPS( ConversionHelper.RPMToDPS( RPM ) , MotorConstants.GEARING_RATIO_ELEVATION );
             int AZ_Speed = ConversionHelper.DPSToSPS( ConversionHelper.RPMToDPS( RPM ) , MotorConstants.GEARING_RATIO_AZIMUTH );
 

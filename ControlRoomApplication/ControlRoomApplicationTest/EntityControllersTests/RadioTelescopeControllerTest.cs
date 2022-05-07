@@ -1201,5 +1201,70 @@ namespace ControlRoomApplicationTest.EntityControllersTests {
             Assert.AreEqual(MovementResult.MotorsNotHomed, result);
         }
     }
-}
 
+        /// <summary>
+        /// Test CompareMotorAndAbsoluteEncoders for when all values are equal, should return true
+        /// </summary>
+        [TestMethod]
+        public void TestCompareMotorAndAbsoluteEncoders_EQUAL_VALUES()
+        {
+            Orientation motor = new Orientation(0.0, 0.0);
+            Orientation absolute = new Orientation(0.0, 0.0);
+            Assert.IsTrue(TestRadioTelescopeController.CompareMotorAndAbsoluteEncoders(motor, absolute));
+        }
+
+        /// <summary>
+        /// Test CompareMotorAndAbsoluteEncoders for when all values are still within the acceptable threshold, should return true
+        /// </summary>
+        [TestMethod]
+        public void TestCompareMotorAndAbsoluteEncoders_BothSmallDiscrepancies()
+        {
+            double smallDiscrepancy = MiscellaneousConstants.MOTOR_ABSOLUTE_ENCODER_DISCREPANCY / 2;
+            Orientation motor = new Orientation(2.98, 10.02);
+            Orientation absolute = new Orientation(motor.Azimuth + smallDiscrepancy, motor.Elevation + smallDiscrepancy);
+            
+            Assert.IsTrue(TestRadioTelescopeController.CompareMotorAndAbsoluteEncoders(motor, absolute));
+        }
+
+        /// <summary>
+        /// Test CompareMotorAndAbsoluteEncoders for when Azimuth differs by a large discrepancy and Elevation is still acceptable, should return false
+        /// </summary>
+        [TestMethod]
+        public void TestCompareMotorAndAbsoluteEncoders_OneLargeDiscrepancy_Azimuth()
+        {
+            double smallDiscrepancy = MiscellaneousConstants.MOTOR_ABSOLUTE_ENCODER_DISCREPANCY / 2;
+            double largeDiscrepancy = MiscellaneousConstants.MOTOR_ABSOLUTE_ENCODER_DISCREPANCY * 2;
+            Orientation motor = new Orientation(15.0, 24.49);
+            Orientation absolute = new Orientation(motor.Azimuth + largeDiscrepancy, motor.Elevation + smallDiscrepancy);
+            
+            Assert.IsFalse(TestRadioTelescopeController.CompareMotorAndAbsoluteEncoders(motor, absolute));
+        }
+
+        /// <summary>
+        /// Test CompareMotorAndAbsoluteEncoders for when Elevation differs by a large discrepancy and Azimuth is still acceptable, should return false
+        /// </summary>
+        [TestMethod]
+        public void TestCompareMotorAndAbsoluteEncoders_OneLargeDiscrepancy_Elevation()
+        {
+            double smallDiscrepancy = MiscellaneousConstants.MOTOR_ABSOLUTE_ENCODER_DISCREPANCY / 2;
+            double largeDiscrepancy = MiscellaneousConstants.MOTOR_ABSOLUTE_ENCODER_DISCREPANCY * 2;
+            Orientation motor = new Orientation(15.0, 24.49);
+            Orientation absolute = new Orientation(motor.Azimuth + smallDiscrepancy, motor.Elevation + largeDiscrepancy);
+
+            Assert.IsFalse(TestRadioTelescopeController.CompareMotorAndAbsoluteEncoders(motor, absolute));
+        }
+
+        /// <summary>
+        /// Test CompareMotorAndAbsoluteEncoders for when Elevation and Azimuth differ by a large discrepancy, should return false
+        /// </summary>
+        [TestMethod]
+        public void TestCompareMotorAndAbsoluteEncoders_BothLargeDiscrepancies()
+        {
+            double largeDiscrepancy = MiscellaneousConstants.MOTOR_ABSOLUTE_ENCODER_DISCREPANCY * 2;
+            Orientation motor = new Orientation(6.01, -2.045);
+            Orientation absolute = new Orientation(motor.Azimuth + largeDiscrepancy, motor.Elevation + largeDiscrepancy);
+            
+            Assert.IsFalse(TestRadioTelescopeController.CompareMotorAndAbsoluteEncoders(motor, absolute));
+        }
+    }
+}

@@ -787,7 +787,7 @@ namespace ControlRoomApplication.Controllers
             return false;
         }
 
-        // Checks the motor temperatures against acceptable ranges every second
+        // Checks the motor temperatures and positions against acceptable ranges every second
         private void SensorMonitor()
         {
             // Getting initial current temperatures
@@ -811,6 +811,11 @@ namespace ControlRoomApplication.Controllers
             // Loop through every one second to get new sensor data
             while (MonitoringSensors)
             {
+                // Get initial motor and absolute encoder values
+                Orientation currentABSPosition = GetAbsoluteOrientation();
+                Orientation currentMotorPosition = GetCurrentOrientation();
+                bool orientationSafe;
+
                 Temperature azTemp = RadioTelescope.SensorNetworkServer.CurrentAzimuthMotorTemp[RadioTelescope.SensorNetworkServer.CurrentAzimuthMotorTemp.Length - 1];
                 Temperature elTemp = RadioTelescope.SensorNetworkServer.CurrentElevationMotorTemp[RadioTelescope.SensorNetworkServer.CurrentElevationMotorTemp.Length - 1];
 
@@ -910,6 +915,13 @@ namespace ControlRoomApplication.Controllers
                 // Take all updated statuses and add them to the DB
                 DatabaseOperations.AddSensorStatusData(sensors);
 
+                
+                // If using not using sensor network (running a simulation) then just set sensor orientations to true since we won't need to monitor simulation values
+                if (RadioTelescope.SensorNetworkServer.SimulationSensorNetwork != null)
+                    orientationSafe = true;
+                else
+                    orientationSafe = CompareMotorAndAbsoluteEncoders(currentMotorPosition, currentABSPosition);
+
                 // Determines if the telescope is in a safe state
                 if (azTempSafe && elTempSafe) AllSensorsSafe = true;
                 else
@@ -918,6 +930,14 @@ namespace ControlRoomApplication.Controllers
 
                     // If the motors are moving, interrupt the current movement.
                     if (RadioTelescope.PLCDriver.MotorsCurrentlyMoving())
+                    {
+                        RadioTelescope.PLCDriver.InterruptMovementAndWaitUntilStopped();
+                    }
+                }
+
+                if (!orientationSafe)
+                {
+                    if (RadioTelescope.PLCDriver.GetMotorsHomed())
                     {
                         RadioTelescope.PLCDriver.InterruptMovementAndWaitUntilStopped();
                     }
@@ -1378,6 +1398,26 @@ namespace ControlRoomApplication.Controllers
 
             // Reaching this point means that the fan state doesn't need to be changed
             return sn.FanIsOn;
+        }
+
+        /// <summary>
+        /// This is the method that checks for acceptable discrepancy in the absolute and motor encoders
+        /// </summary>
+        /// <returns> True if the discrepancy is below the desired threshold for both Elevation and Azimuth values, false otherwise </returns>
+        /// <param name="motor"> The current orientation of the motor encoders </param>
+        /// <param name="absolute"> The current orientation of the absolute encoders </param>
+        public bool CompareMotorAndAbsoluteEncoders(Orientation motor, Orientation absolute)
+        {
+            // This calculates edge cases for when the azimuth goes from 360 degrees to 0
+            double diff = Math.Abs(motor.Azimuth - absolute.Azimuth);
+            diff = Math.Abs((diff + 180) % 360 - 180);
+
+            // Compare discrepancy of current orientations and keep below constant
+            if (Math.Abs(motor.Elevation - absolute.Elevation) <= MiscellaneousConstants.MOTOR_ABSOLUTE_ENCODER_DISCREPANCY && 
+                diff <= MiscellaneousConstants.MOTOR_ABSOLUTE_ENCODER_DISCREPANCY)
+                return true;
+            else 
+                return false;
         }
     }
 }

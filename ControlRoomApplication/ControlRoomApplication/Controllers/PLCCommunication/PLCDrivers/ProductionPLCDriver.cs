@@ -750,5 +750,14 @@ namespace ControlRoomApplication.Controllers
 
             return RadioTelescopeDirectionEnum.None;
         }
+
+        /// <summary>
+        /// Gets whether or not the motors have been homed.
+        /// </summary>
+        /// <returns>Whether or not the motors have been homed</returns>
+        public override bool GetMotorsHomed()
+        {
+            return MCU.MotorsHomed;
+        }
     }
 }

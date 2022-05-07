@@ -512,8 +512,6 @@ namespace ControlRoomApplication.Controllers
                         
                         MovementResult apptMovementResult = RTController.MoveRadioTelescopeToOrientation(NextObjectiveOrientation, MovementPriority.Appointment);
 
-                        logger.Debug(Utilities.GetTimeStamp() + ": Movement result: " + apptMovementResult);
-
                         // If the movement result was anything other than success, it means the movement failed and something is wrong with
                         // the hardware.
                         // TODO: Talk to Todd about thresholds for this. (issue #388) Right now, it is cancelling the appointment if the movement

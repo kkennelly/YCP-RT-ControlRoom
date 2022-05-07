@@ -296,17 +296,6 @@ namespace ControlRoomApplication.Controllers
 
                         DateTime startTreeCalTime, endTreeCalTime, startZenithCalTime, endZenithCalTime;
 
-                        // Tree calibration 
-                        RTController.ThermalCalibrateRadioTelescope(MovementPriority.Appointment);
-
-                        startTreeCalTime = DateTime.Now;
-
-                        StartReadingData(NextAppointment);
-                        Thread.Sleep(MiscellaneousConstants.CALIBRATION_MS);
-                        StopReadingRFData();
-
-                        endTreeCalTime = DateTime.Now;
-
                         // Zenith calibration
                         RTController.MoveRadioTelescopeToOrientation(new Orientation(RTController.GetCurrentOrientation().Azimuth, 90), MovementPriority.Appointment);
 
@@ -317,6 +306,17 @@ namespace ControlRoomApplication.Controllers
                         StopReadingRFData();
 
                         endZenithCalTime = DateTime.Now;
+
+                        // Tree calibration 
+                        RTController.ThermalCalibrateRadioTelescope(MovementPriority.Appointment);
+
+                        startTreeCalTime = DateTime.Now;
+
+                        StartReadingData(NextAppointment);
+                        Thread.Sleep(MiscellaneousConstants.CALIBRATION_MS);
+                        StopReadingRFData();
+
+                        endTreeCalTime = DateTime.Now;
 
                         AppointmentCalibration endCal = new AppointmentCalibration();
                         endCal.appointment_id = NextAppointment.Id;

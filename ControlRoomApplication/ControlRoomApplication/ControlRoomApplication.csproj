@@ -269,7 +269,9 @@
     <Compile Include="Entities\Acceleration\CounterbalanceAccelerationBlob.cs" />
     <Compile Include="Entities\Acceleration\ElevationAccelerationBlob.cs" />
     <Compile Include="Entities\Acceleration\AzimuthAccelerationBlob.cs" />
+    <Compile Include="Entities\AppointmentCalibration\AppointmentCalibration.cs" />
     <Compile Include="Entities\Appointment\AppointmentPriorityEnum.cs" />
+    <Compile Include="Entities\AppointmentCalibration\AppointmentCalibrationTypeEnum.cs" />
     <Compile Include="Entities\Appointment\AppointmentStatusEnum.cs" />
     <Compile Include="Entities\Appointment\AppointmentTypeEnum.cs" />
     <Compile Include="Entities\CelestialBody\CelestialBodyStatusEnum.cs" />

@@ -125,7 +125,6 @@ namespace ControlRoomApplication.Controllers
                     return GetSunCoordinate(datetime);
                 case CelestialBodyConstants.MOON:
                     return GetMoonCoordinate(datetime);
-                case CelestialBodyConstants.NONE:
                 case null:
                     throw new ArgumentException("Invalid Celestial Body");
                 default:

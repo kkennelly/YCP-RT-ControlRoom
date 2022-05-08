@@ -10,6 +10,8 @@ using System.IO;
 using ControlRoomApplication.Util;
 using ControlRoomApplication.Controllers.PLCCommunication.PLCDrivers.MCUManager;
 using ControlRoomApplication.Controllers.PLCCommunication.PLCDrivers.MCUManager.Enumerations;
+using ControlRoomApplication.Constants;
+using System.Linq;
 
 namespace ControlRoomApplication.Controllers
 {
@@ -41,6 +43,9 @@ namespace ControlRoomApplication.Controllers
         bool safeTel = false;
 
         private int timeoutCounter = 0;
+
+        // List to store attachment paths for sending the email containing all RFData CSV's for an appointment and it's calibration sequence
+        private List<string> attachmentPath = new List<string>();
 
         public Orientation NextObjectiveOrientation
         {
@@ -174,6 +179,9 @@ namespace ControlRoomApplication.Controllers
         {
             bool KeepAlive = KeepThreadAlive;
 
+            // Let MCU connect
+            Thread.Sleep(5000);
+
             while (KeepAlive)
             {
                 NextAppointment = WaitForNextAppointment();
@@ -184,23 +192,82 @@ namespace ControlRoomApplication.Controllers
                     logger.Info(Utilities.GetTimeStamp() + ": Waiting for next Appointment");
                 }
 
-
                 if (NextAppointment != null)
                 {
                     logger.Info(Utilities.GetTimeStamp() + ": Starting appointment...");
                     endAppt = false;
 
-                    // Calibrate telescope
+                    // Calibrate telescope before the appointment
                     if (NextAppointment._Type != AppointmentTypeEnum.FREE_CONTROL)
                     {
-                        logger.Info(Utilities.GetTimeStamp() + ": Thermal Calibrating RadioTelescope");
+                        logger.Info(Utilities.GetTimeStamp() + ": Homing telescope... ");
+                        RTController.HomeTelescope(MovementPriority.Appointment);
+
+                        logger.Info(Utilities.GetTimeStamp() + ": Thermal Calibrating RadioTelescope Before Appointment");
+
+                        DateTime startTreeCalTime, endTreeCalTime, startZenithCalTime, endZenithCalTime;
+
+                        // Tree calibration 
                         RTController.ThermalCalibrateRadioTelescope(MovementPriority.Appointment);
+
+                        startTreeCalTime = DateTime.Now;
+
+                        StartReadingData(NextAppointment);
+                        Thread.Sleep(MiscellaneousConstants.CALIBRATION_MS);
+                        StopReadingRFData();
+
+                        endTreeCalTime = DateTime.Now;
+
+                        // Zenith calibration
+                        RTController.MoveRadioTelescopeToOrientation(new Orientation(RTController.GetCurrentOrientation().Azimuth, 90), MovementPriority.Appointment);
+
+                        startZenithCalTime = DateTime.Now;
+                        
+                        StartReadingData(NextAppointment);
+                        Thread.Sleep(MiscellaneousConstants.CALIBRATION_MS);
+                        StopReadingRFData();
+
+                        endZenithCalTime = DateTime.Now;
+
+                        AppointmentCalibration apptCal = new AppointmentCalibration();
+                        apptCal.appointment_id = NextAppointment.Id;
+                        apptCal.calibration_type = AppointmentCalibrationTypeEnum.BEGINNING;
+                        apptCal.tree_start_time = startTreeCalTime;
+                        apptCal.tree_end_time = endTreeCalTime;
+                        apptCal.zenith_start_time = startZenithCalTime;
+                        apptCal.zenith_end_time = endZenithCalTime;
+                        DatabaseOperations.AddAppointmentCalibrationData(apptCal);
 
                         // If the temperature is low and there's precipitation, dump the dish
                         if (RTController.RadioTelescope.WeatherStation.GetOutsideTemp() <= 40.00 && RTController.RadioTelescope.WeatherStation.GetTotalRain() > 0.00)
                         {
                             RTController.SnowDump(MovementPriority.Appointment);
                         }
+
+                        // Add the beginning appointment calibration data to the file
+                        string beginTreeAttachmentPath = "";
+                        string beginZenithAttachmentPath = "";
+
+                        string treeFname = startTreeCalTime.ToString("yyyyMMddHHmmss") + ("beginningTreeReading");
+                        string zenithFname = startZenithCalTime.ToString("yyyyMMddHHmmss") + ("beginningZenithReading");
+                        string currentPath = AppDomain.CurrentDomain.BaseDirectory;
+
+                        List<List<RFData>> data = DatabaseOperations.GetAppointmentCalibrationData(startTreeCalTime, endTreeCalTime, startZenithCalTime, endZenithCalTime);
+                        try
+                        {
+                            beginTreeAttachmentPath = Path.Combine(currentPath, $"{treeFname}.csv");
+                            DataToCSV.ExportToCSV(data[0], treeFname);
+
+                            beginZenithAttachmentPath = Path.Combine(currentPath, $"{zenithFname}.csv");
+                            DataToCSV.ExportToCSV(data[1], zenithFname);
+                        }
+                        catch (Exception e)
+                        {
+                            Console.Out.WriteLine($"Could not write data! Error: {e}");
+                        }
+                        // attach the ending calibration data to the email
+                        attachmentPath.Add(beginTreeAttachmentPath);
+                        attachmentPath.Add(beginZenithAttachmentPath);
                     }
 
                     // Create movement thread
@@ -208,11 +275,6 @@ namespace ControlRoomApplication.Controllers
                     {
                         Name = "RTControllerIntermediateThread (ID=" + RadioTelescopeID.ToString() + ")"
                     };
-
-                    // Start SpectraCyber if the next appointment is NOT an appointment created by the control form
-                    // This is to allow for greater control of the spectra cyber output from the control form
-                    if(NextAppointment._Type != AppointmentTypeEnum.FREE_CONTROL)
-                        StartReadingData(NextAppointment);
 
                     // Start movement thread
                     AppointmentMovementThread.Start();
@@ -224,6 +286,92 @@ namespace ControlRoomApplication.Controllers
                         StopReadingRFData();
                         // Stow Telescope
                         EndAppointment();
+
+                        // Calibrate at the end of the appointment
+                        logger.Info(Utilities.GetTimeStamp() + ": Thermal Calibrating RadioTelescope After Appointment");
+
+                        DateTime startTreeCalTime, endTreeCalTime, startZenithCalTime, endZenithCalTime;
+
+                        // Zenith calibration
+                        RTController.MoveRadioTelescopeToOrientation(new Orientation(RTController.GetCurrentOrientation().Azimuth, 90), MovementPriority.Appointment);
+
+                        startZenithCalTime = DateTime.Now;
+
+                        StartReadingData(NextAppointment);
+                        Thread.Sleep(MiscellaneousConstants.CALIBRATION_MS);
+                        StopReadingRFData();
+
+                        endZenithCalTime = DateTime.Now;
+
+                        // Tree calibration 
+                        RTController.ThermalCalibrateRadioTelescope(MovementPriority.Appointment);
+
+                        startTreeCalTime = DateTime.Now;
+
+                        StartReadingData(NextAppointment);
+                        Thread.Sleep(MiscellaneousConstants.CALIBRATION_MS);
+                        StopReadingRFData();
+
+                        endTreeCalTime = DateTime.Now;
+
+                        AppointmentCalibration endCal = new AppointmentCalibration();
+                        endCal.appointment_id = NextAppointment.Id;
+                        endCal.calibration_type = AppointmentCalibrationTypeEnum.END;
+                        endCal.tree_start_time = startTreeCalTime;
+                        endCal.tree_end_time = endTreeCalTime;
+                        endCal.zenith_start_time = startZenithCalTime;
+                        endCal.zenith_end_time = endZenithCalTime;
+                        DatabaseOperations.AddAppointmentCalibrationData(endCal);
+
+                        // If the temperature is low and there's precipitation, dump the dish
+                        if (RTController.RadioTelescope.WeatherStation.GetOutsideTemp() <= 40.00 && RTController.RadioTelescope.WeatherStation.GetTotalRain() > 0.00)
+                        {
+                            RTController.SnowDump(MovementPriority.Appointment);
+                        }
+
+                        // Send the user a message containing the data from the RT end calibration
+
+                        // Set email sender
+                        string emailSender = "noreply@ycpradiotelescope.com";
+
+                        // send message to appointment's user
+                        SNSMessage.sendMessage(NextAppointment.User, MessageTypeEnum.APPOINTMENT_COMPLETION);
+
+                        // Gather up email data
+                        string subject = MessageTypeExtension.GetDescription(MessageTypeEnum.APPOINTMENT_COMPLETION);
+                        string text = MessageTypeExtension.GetDescription(MessageTypeEnum.APPOINTMENT_COMPLETION);
+                        string endTreeAttachmentPath = "";
+                        string endZenithAttachmentPath = "";
+
+                        string treeFname = startTreeCalTime.ToString("yyyyMMddHHmmss") + ("endTreeReading");
+                        string zenithFname = startZenithCalTime.ToString("yyyyMMddHHmmss") + ("endZenithReading");
+                        string currentPath = AppDomain.CurrentDomain.BaseDirectory;
+
+                        List<List<RFData>> data = DatabaseOperations.GetAppointmentCalibrationData(startTreeCalTime, endTreeCalTime, startZenithCalTime, endZenithCalTime);
+                        try
+                        {
+                            endTreeAttachmentPath = Path.Combine(currentPath, $"{treeFname}.csv");
+                            DataToCSV.ExportToCSV(data[0], treeFname);
+
+                            endZenithAttachmentPath = Path.Combine(currentPath, $"{zenithFname}.csv");
+                            DataToCSV.ExportToCSV(data[1], zenithFname);
+                        }
+                        catch (Exception e)
+                        {
+                            Console.Out.WriteLine($"Could not write data! Error: {e}");
+                        }
+                        // attach the ending calibration data to the email
+                        attachmentPath.Add(endTreeAttachmentPath);
+                        attachmentPath.Add(endZenithAttachmentPath);
+
+                        // Send email with attachments
+                        EmailNotifications.sendToUser(NextAppointment.User, subject, text, emailSender, attachmentPath, true);
+
+                        // Clean up after yourself, otherwise you'll just fill up our storage space
+                        for (int i = 0; i < attachmentPath.Count; i++)
+                        {
+                            DataToCSV.DeleteCSVFileWhenDone(attachmentPath[i]);
+                        }
                     }
                     else
                     {
@@ -255,6 +403,9 @@ namespace ControlRoomApplication.Controllers
                 KeepAlive = KeepThreadAlive;
 
                 OldAppointment = NextAppointment;
+
+                // Remove all attachment paths
+                attachmentPath.Clear();
 
                 Thread.Sleep(100);
             }
@@ -303,18 +454,19 @@ namespace ControlRoomApplication.Controllers
         /// <param name="NextAppointment"> The appointment that is currently running. </param>
         private void PerformRadioTelescopeMovement(Appointment NextAppointment)
         {
+            DateTime startTime = DateTime.UtcNow;
+
             NextAppointment._Status = AppointmentStatusEnum.IN_PROGRESS;
             DatabaseOperations.UpdateAppointment(NextAppointment);
 
             // send message to appointment's user
             SNSMessage.sendMessage(NextAppointment.User, MessageTypeEnum.APPOINTMENT_STARTED);
-         
-
-            logger.Info(Utilities.GetTimeStamp() + ": Appointment _Type: " + NextAppointment._Type);
 
             // Loop through each second or minute of the appointment (depending on appt type)
-            TimeSpan length = NextAppointment.end_time - NextAppointment.start_time;
+            TimeSpan length = NextAppointment.end_time - startTime;
             double duration = NextAppointment._Type == AppointmentTypeEnum.FREE_CONTROL ? length.TotalSeconds : length.TotalMinutes;
+            bool scanStarted = false;
+
             for (int i = 0; i <= (int) duration; i++)
             {
                 // before we move, check to see if it is safe
@@ -322,7 +474,7 @@ namespace ControlRoomApplication.Controllers
                 {
 
                     // Get orientation for current datetime
-                    DateTime datetime = NextAppointment._Type == AppointmentTypeEnum.FREE_CONTROL ? NextAppointment.start_time.AddSeconds(i) : NextAppointment.start_time.AddMinutes(i);
+                    DateTime datetime = NextAppointment._Type == AppointmentTypeEnum.FREE_CONTROL ? startTime.AddSeconds(i) : startTime.AddMinutes(i);
                     NextObjectiveOrientation = RTController.CoordinateController.CalculateOrientation(NextAppointment, datetime);
 
                     // Wait for datetime
@@ -343,22 +495,30 @@ namespace ControlRoomApplication.Controllers
                         break;
                     }
 
-                // Move to orientation
-                if (NextObjectiveOrientation != null)
-                {
-                    // Kate - removed the check for azumith < 0 in the below if statement due to Todd's request
-                    // Reason being, we should not have an azimuth below 0 be given to us. That check is in the
-                    // method calling this!
-                    if (NextObjectiveOrientation.Elevation < 0)
+                    // Move to orientation
+                    if (NextObjectiveOrientation != null)
                     {
-                        logger.Warn(Utilities.GetTimeStamp() + ": Invalid Appt: Az = " + NextObjectiveOrientation.Azimuth + ", El = " + NextObjectiveOrientation.Elevation);
-                        InterruptAppointmentFlag = true;
-                        break;
-                    }
+                        // Kate - removed the check for azumith < 0 in the below if statement due to Todd's request
+                        // Reason being, we should not have an azimuth below 0 be given to us. That check is in the
+                        // method calling this!
+                        if (NextObjectiveOrientation.Elevation < 0)
+                        {
+                            logger.Warn(Utilities.GetTimeStamp() + ": Invalid Appt: Az = " + NextObjectiveOrientation.Azimuth + ", El = " + NextObjectiveOrientation.Elevation);
+                            InterruptAppointmentFlag = true;
+                            break;
+                        }
 
                         logger.Info(Utilities.GetTimeStamp() + ": Moving to Next Objective: Az = " + NextObjectiveOrientation.Azimuth + ", El = " + NextObjectiveOrientation.Elevation);
                         
                         MovementResult apptMovementResult = RTController.MoveRadioTelescopeToOrientation(NextObjectiveOrientation, MovementPriority.Appointment);
+
+                        // Start SpectraCyber if the next appointment is NOT an appointment created by the control form
+                        // This is to allow for greater control of the spectra cyber output from the control form
+                        if (NextAppointment._Type != AppointmentTypeEnum.FREE_CONTROL && !scanStarted)
+                        {
+                            StartReadingData(NextAppointment);
+                            scanStarted = true;
+                        }
 
                         // If the movement result was anything other than success, it means the movement failed and something is wrong with
                         // the hardware.
@@ -388,7 +548,8 @@ namespace ControlRoomApplication.Controllers
 
                         NextObjectiveOrientation = null;
                     }
-                } else
+                } 
+                else
                 {
                     logger.Info(Utilities.GetTimeStamp() + ": Telescope stopped movement.");
                     i--;
@@ -419,32 +580,26 @@ namespace ControlRoomApplication.Controllers
                 NextAppointment._Status = AppointmentStatusEnum.COMPLETED;
                 DatabaseOperations.UpdateAppointment(NextAppointment);
 
-                // send message to appointment's user
+                // send message to appointment's user that appointment was completed
                 SNSMessage.sendMessage(NextAppointment.User, MessageTypeEnum.APPOINTMENT_COMPLETION);
 
-                // Gather up email data
-                string subject = MessageTypeExtension.GetDescription(MessageTypeEnum.APPOINTMENT_COMPLETION);
-                string text = MessageTypeExtension.GetDescription(MessageTypeEnum.APPOINTMENT_COMPLETION);
-                string attachmentPath = "";
+                string appDataAttachmentPath = "";
 
-                string fname = System.DateTime.Now.ToString("yyyyMMddHHmmss");
+                string fname = DateTime.Now.ToString("yyyyMMddHHmmss" + "appointmentData");
                 string currentPath = AppDomain.CurrentDomain.BaseDirectory;
 
-                List<RFData> data = (List<RFData>)NextAppointment.RFDatas;
+                List<RFData> data = NextAppointment.RFDatas.Where(x => x.time_captured > startTime).ToList();
+                
                 try
                 {
-                    attachmentPath = Path.Combine(currentPath, $"{fname}.csv");
+                    appDataAttachmentPath = Path.Combine(currentPath, $"{fname}.csv");
                     DataToCSV.ExportToCSV(data, fname);
                 }
                 catch (Exception e)
                 {
                     Console.Out.WriteLine($"Could not write data! Error: {e}");
                 }
-
-                EmailNotifications.sendToUser(NextAppointment.User, subject, text, emailSender, attachmentPath, true);
-
-                // Clean up after yourself, otherwise you'll just fill up our storage space
-                DataToCSV.DeleteCSVFileWhenDone(attachmentPath);
+                attachmentPath.Add(appDataAttachmentPath);
             }
         }
 
@@ -455,11 +610,13 @@ namespace ControlRoomApplication.Controllers
         {
             logger.Info(Utilities.GetTimeStamp() + ": Ending Appointment");
             endAppt = true;
+            /*
             MovementResult result = RTController.StowRadioTelescope(MovementPriority.Appointment);
             if (result != MovementResult.Success)
             {
                 logger.Error("Stowing telescope failed with message " + result);
             }
+            */
         }
 
         /// <summary>

@@ -21,6 +21,11 @@ namespace ControlRoomApplicationTest.DatabaseOperationsTests
         private RFData data3;
         private RFData data4;
 
+        // Test Appointment Calibration objects
+        private AppointmentCalibration apptCal1;
+        private AppointmentCalibration apptCal2;
+        private AppointmentCalibration apptCal3;
+
         // Test Appointment objects
         private Appointment appt;
         private int NumRTInstances = 1;
@@ -57,25 +62,55 @@ namespace ControlRoomApplicationTest.DatabaseOperationsTests
             data2 = new RFData();
             data3 = new RFData();
             data4 = new RFData();
-            DateTime now = DateTime.UtcNow;
+            DateTime now = DateTime.Now;
             DateTime date = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
 
             Appointment RFappt = appt;
             data1.Intensity = 9234875;
-            data1.TimeCaptured = date;
+            data1.time_captured = date.ToUniversalTime();
             data1.Appointment = RFappt;
 
             data2.Intensity = 8739425;
-            data2.TimeCaptured = date.AddSeconds(3);
+            data2.time_captured = date.AddSeconds(3).ToUniversalTime();
             data2.Appointment = RFappt;
 
             data3.Intensity = 12987;
-            data3.TimeCaptured = date.AddSeconds(4);
+            data3.time_captured = date.AddSeconds(4).ToUniversalTime();
             data3.Appointment = RFappt;
 
             data4.Intensity = 12987;
-            data4.TimeCaptured = date.AddSeconds(5);
+            data4.time_captured = date.AddSeconds(5).ToUniversalTime();
             data4.Appointment = RFappt;
+
+            // Appointment Calibration initialization
+            apptCal1 = new AppointmentCalibration();
+            apptCal2 = new AppointmentCalibration();
+            apptCal3 = new AppointmentCalibration();
+
+            //Appointment calAppt = appt;
+            //apptCal1.Appointment = appt;
+            apptCal1.appointment_id = appt.Id;
+            apptCal1.calibration_type = AppointmentCalibrationTypeEnum.BEGINNING;
+            apptCal1.tree_start_time = date;
+            apptCal1.tree_end_time = date;
+            apptCal1.zenith_start_time = date;
+            apptCal1.zenith_end_time = date;
+
+            //apptCal2.Appointment = appt;
+            apptCal2.appointment_id = appt.Id;
+            apptCal2.calibration_type = AppointmentCalibrationTypeEnum.END;
+            apptCal2.tree_start_time = date;
+            apptCal2.tree_end_time = date;
+            apptCal2.zenith_start_time = date;
+            apptCal2.zenith_end_time = date;
+
+            // Set calibration time so that it will use all rf_data objects created
+            apptCal3.appointment_id = appt.Id;
+            apptCal3.calibration_type = AppointmentCalibrationTypeEnum.BEGINNING;
+            apptCal3.tree_start_time = date;
+            apptCal3.tree_end_time = date.AddSeconds(3);
+            apptCal3.zenith_start_time = date.AddSeconds(4);
+            apptCal3.zenith_end_time = date.AddSeconds(5);
 
             NumAppointments++;
             NumRTInstances++;
@@ -161,15 +196,15 @@ namespace ControlRoomApplicationTest.DatabaseOperationsTests
             Assert.AreEqual(dbData1.Intensity, data1.Intensity);
             Assert.AreEqual(dbData2.Intensity, data2.Intensity);
 
-            Assert.IsTrue(dbData1.TimeCaptured == data1.TimeCaptured);
-            Assert.IsTrue(dbData2.TimeCaptured == data2.TimeCaptured);
+            Assert.IsTrue(dbData1.time_captured == data1.time_captured);
+            Assert.IsTrue(dbData2.time_captured == data2.time_captured);
 
         }
 
         [TestMethod]
         public void TestCreateRFData_InvalidDate()
         {
-            data3.TimeCaptured = DateTime.UtcNow.AddDays(1);
+            data3.time_captured = DateTime.UtcNow.AddDays(1);
 
             DatabaseOperations.AddRFData(data3);
 
@@ -788,6 +823,42 @@ namespace ControlRoomApplicationTest.DatabaseOperationsTests
             int time = DatabaseOperations.FetchWeatherThreshold().SnowDumpTime;
             Assert.AreEqual(120, time);
 
+        }
+
+        [TestMethod]
+        public void testAddAppointmentCalibration()
+        {
+            DatabaseOperations.AddAppointmentCalibrationData(apptCal1);
+            DatabaseOperations.AddAppointmentCalibrationData(apptCal2);
+        }
+        
+        [TestMethod]
+        public void testGetAppointmentCalibrationFromAppointment()
+        {
+            // Add rfdata for testing
+            DatabaseOperations.AddRFData(data1);
+            DatabaseOperations.AddRFData(data2);
+            DatabaseOperations.AddRFData(data3);
+            DatabaseOperations.AddRFData(data4);
+
+            // Add appointment calibration, assume that the previously added rfdata are data stored because of the calibration data (works out that the data 1 & 2 should be for tree, 3 & 4 for zenith reading
+            DatabaseOperations.AddAppointmentCalibrationData(apptCal3);
+            List<AppointmentCalibration> fetchCalibration = DatabaseOperations.GetAppointmentCalibrationsFromAppointment(apptCal3.appointment_id);
+
+            // Ensure that the apptCal3 is the same as the appt cal we added previously
+            Assert.AreEqual(apptCal3.tree_end_time, fetchCalibration[0].tree_end_time);
+
+            List<List<RFData>> calData = DatabaseOperations.GetAppointmentCalibrationData(apptCal3.tree_start_time, apptCal3.tree_end_time, apptCal3.zenith_start_time, apptCal3.zenith_end_time);
+
+            List<RFData> treeData = calData[0];
+            List<RFData> zenData = calData[1];
+
+            // Assert that not an empty list, and then assert that all of the data previously added matches up through intensity since the time captured was used to relate the datas
+            Assert.IsFalse(treeData.Count == 0 || zenData.Count == 0);
+            Assert.AreEqual(zenData[0].Intensity, data3.Intensity);
+            Assert.AreEqual(zenData[1].Intensity, data4.Intensity);
+            Assert.AreEqual(treeData[0].Intensity, data1.Intensity);
+            Assert.AreEqual(treeData[1].Intensity, data2.Intensity);
         }
 
         [TestMethod]

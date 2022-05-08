@@ -37,6 +37,7 @@ namespace ControlRoomApplication.Main
 
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<RFData> RFDatas { get; set; }
+        public DbSet<AppointmentCalibration> AppointmentCalibrations { get; set; }
         public DbSet<Orientation> Orientations { get; set; }
         public DbSet<Coordinate> Coordinates { get; set; }
         public DbSet<Location> Location { get; set; }

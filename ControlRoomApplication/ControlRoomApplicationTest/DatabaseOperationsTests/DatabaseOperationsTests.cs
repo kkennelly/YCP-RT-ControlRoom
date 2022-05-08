@@ -62,24 +62,24 @@ namespace ControlRoomApplicationTest.DatabaseOperationsTests
             data2 = new RFData();
             data3 = new RFData();
             data4 = new RFData();
-            DateTime now = DateTime.UtcNow;
+            DateTime now = DateTime.Now;
             DateTime date = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
 
             Appointment RFappt = appt;
             data1.Intensity = 9234875;
-            data1.time_captured = date;
+            data1.time_captured = date.ToUniversalTime();
             data1.Appointment = RFappt;
 
             data2.Intensity = 8739425;
-            data2.time_captured = date.AddSeconds(3);
+            data2.time_captured = date.AddSeconds(3).ToUniversalTime();
             data2.Appointment = RFappt;
 
             data3.Intensity = 12987;
-            data3.time_captured = date.AddSeconds(4);
+            data3.time_captured = date.AddSeconds(4).ToUniversalTime();
             data3.Appointment = RFappt;
 
             data4.Intensity = 12987;
-            data4.time_captured = date.AddSeconds(5);
+            data4.time_captured = date.AddSeconds(5).ToUniversalTime();
             data4.Appointment = RFappt;
 
             // Appointment Calibration initialization
@@ -843,12 +843,12 @@ namespace ControlRoomApplicationTest.DatabaseOperationsTests
 
             // Add appointment calibration, assume that the previously added rfdata are data stored because of the calibration data (works out that the data 1 & 2 should be for tree, 3 & 4 for zenith reading
             DatabaseOperations.AddAppointmentCalibrationData(apptCal3);
-            List<AppointmentCalibration> fetchCalibration = DatabaseOperations.getAppointmentCalibrationsFromAppointment(apptCal3.appointment_id);
+            List<AppointmentCalibration> fetchCalibration = DatabaseOperations.GetAppointmentCalibrationsFromAppointment(apptCal3.appointment_id);
 
             // Ensure that the apptCal3 is the same as the appt cal we added previously
             Assert.AreEqual(apptCal3.tree_end_time, fetchCalibration[0].tree_end_time);
 
-            List<List<RFData>> calData = DatabaseOperations.getAppointmentCalibrationData(apptCal3.tree_start_time, apptCal3.tree_end_time, apptCal3.zenith_start_time, apptCal3.zenith_end_time);
+            List<List<RFData>> calData = DatabaseOperations.GetAppointmentCalibrationData(apptCal3.tree_start_time, apptCal3.tree_end_time, apptCal3.zenith_start_time, apptCal3.zenith_end_time);
 
             List<RFData> treeData = calData[0];
             List<RFData> zenData = calData[1];

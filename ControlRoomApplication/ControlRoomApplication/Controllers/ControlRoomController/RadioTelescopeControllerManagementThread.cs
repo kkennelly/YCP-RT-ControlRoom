@@ -252,7 +252,7 @@ namespace ControlRoomApplication.Controllers
                         string zenithFname = startZenithCalTime.ToString("yyyyMMddHHmmss") + ("beginningZenithReading");
                         string currentPath = AppDomain.CurrentDomain.BaseDirectory;
 
-                        List<List<RFData>> data = DatabaseOperations.getAppointmentCalibrationData(startTreeCalTime, endTreeCalTime, startZenithCalTime, endZenithCalTime);
+                        List<List<RFData>> data = DatabaseOperations.GetAppointmentCalibrationData(startTreeCalTime, endTreeCalTime, startZenithCalTime, endZenithCalTime);
                         try
                         {
                             beginTreeAttachmentPath = Path.Combine(currentPath, $"{treeFname}.csv");
@@ -347,7 +347,7 @@ namespace ControlRoomApplication.Controllers
                         string zenithFname = startZenithCalTime.ToString("yyyyMMddHHmmss") + ("endZenithReading");
                         string currentPath = AppDomain.CurrentDomain.BaseDirectory;
 
-                        List<List<RFData>> data = DatabaseOperations.getAppointmentCalibrationData(startTreeCalTime, endTreeCalTime, startZenithCalTime, endZenithCalTime);
+                        List<List<RFData>> data = DatabaseOperations.GetAppointmentCalibrationData(startTreeCalTime, endTreeCalTime, startZenithCalTime, endZenithCalTime);
                         try
                         {
                             endTreeAttachmentPath = Path.Combine(currentPath, $"{treeFname}.csv");
@@ -556,7 +556,6 @@ namespace ControlRoomApplication.Controllers
                 }
             }
 
-            // Modify this so that it sends an email if there is an error, otherwise adds the data from a CSV into the list to all be sent after the ending calibration occurs
             // Set email sender
             string emailSender = "noreply@ycpradiotelescope.com";
 
@@ -584,12 +583,6 @@ namespace ControlRoomApplication.Controllers
                 // send message to appointment's user that appointment was completed
                 SNSMessage.sendMessage(NextAppointment.User, MessageTypeEnum.APPOINTMENT_COMPLETION);
 
-                /* REMOVE, old code for sending emails previously
-                // Gather up email data
-                string subject = MessageTypeExtension.GetDescription(MessageTypeEnum.APPOINTMENT_COMPLETION);
-                string text = MessageTypeExtension.GetDescription(MessageTypeEnum.APPOINTMENT_COMPLETION);
-                */
-
                 string appDataAttachmentPath = "";
 
                 string fname = DateTime.Now.ToString("yyyyMMddHHmmss" + "appointmentData");
@@ -607,14 +600,6 @@ namespace ControlRoomApplication.Controllers
                     Console.Out.WriteLine($"Could not write data! Error: {e}");
                 }
                 attachmentPath.Add(appDataAttachmentPath);
-                /* To be removed, old code to send the email once appointment completion, now instead adds the CSV to an email with the other CSV files for appointment calibration
-                List<string> attachments = new List<string>();
-                attachments.Add(attachmentPath);
-                EmailNotifications.sendToUser(NextAppointment.User, subject, text, emailSender, attachments, true);
-
-                // Clean up after yourself, otherwise you'll just fill up our storage space
-                DataToCSV.DeleteCSVFileWhenDone(attachmentPath);
-                */
             }
         }
 

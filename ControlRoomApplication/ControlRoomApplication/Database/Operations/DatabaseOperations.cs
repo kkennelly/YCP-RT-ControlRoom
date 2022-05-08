@@ -456,7 +456,7 @@ namespace ControlRoomApplication.Database
         /// Returns an appointment calibration type list of the calibrations for discerning times when RF data collection occured
         /// </list>
         /// </returns>
-        public static List<AppointmentCalibration> getAppointmentCalibrationsFromAppointment(int appointmentId)
+        public static List<AppointmentCalibration> GetAppointmentCalibrationsFromAppointment(int appointmentId)
         {
             List<AppointmentCalibration> apptCals = new List<AppointmentCalibration>();
 
@@ -472,15 +472,15 @@ namespace ControlRoomApplication.Database
         /// <summary>
         /// Gets rf data for appointment calibration stored in the database
         /// </summary>
-        /// <param 
-        /// name="treeStart, treeEnd, elStart, elEnd, type">Name of starting and stopping times of both calibrations 
-        /// for any appointment, type is whether the appointment calibration data to be returned is for the beginning or end calibration
-        /// </param>
+        /// <param name="treeStart">Tree scan start time.</param>
+        /// <param name="treeEnd">Tree scan end time.</param>
+        /// <param name="elStart">Zenith start time.</param>
+        /// <param name="elEnd">Zenith end time.</param>
         /// <returns>
         /// List of 2 RFData lists collected within the timeframe, tree calibration indexed at 0, elevation at 1
         /// </returns>
-        
-        public static List<List<RFData>> getAppointmentCalibrationData(DateTime treeStart, DateTime treeEnd, DateTime elStart, DateTime elEnd)
+
+        public static List<List<RFData>> GetAppointmentCalibrationData(DateTime treeStart, DateTime treeEnd, DateTime elStart, DateTime elEnd)
         {
             List<List<RFData>> fullCalibration = new List<List<RFData>>();
             

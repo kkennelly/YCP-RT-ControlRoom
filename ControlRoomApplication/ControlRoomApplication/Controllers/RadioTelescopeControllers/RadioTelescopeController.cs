@@ -50,10 +50,6 @@ namespace ControlRoomApplication.Controllers
         // Snow dump timer
         private static System.Timers.Timer snowDumpTimer;
 
-        // Spectracyber timer
-        private static System.Timers.Timer spectraCyberTimer;
-        private bool spectraCyberTimerEnd;
-
         private static readonly log4net.ILog logger =
             log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -92,9 +88,6 @@ namespace ControlRoomApplication.Controllers
             snowDumpTimer.Elapsed += AutomaticSnowDumpInterval;
             snowDumpTimer.AutoReset = true;
             snowDumpTimer.Enabled = true;
-
-            spectraCyberTimer = new System.Timers.Timer(MiscellaneousConstants.CALIBRATION_MS);
-            spectraCyberTimerEnd = false;
         }
 
         /// <summary>

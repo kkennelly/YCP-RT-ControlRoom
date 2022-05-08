@@ -62,59 +62,21 @@ namespace ControlRoomApplication.Controllers.Communications
             return Task.FromResult(success);
         }
 
-         /*
-        public static Task<bool> sendToUser(User u, string subject, string body, string sender, string AttachmentPath = null, bool testflag = false)
-        {
-            bool success = false;
-
-            Thread t = new Thread(() =>
-            {
-                try
-                {
-                    EmailNotifications.sendEmail(u, subject, body, sender, AttachmentPath);
-                    success = true;
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine($"ERROR: Email could not send: {e}");
-                    success = false;
-                }
-            });
-
-            t.Priority = ThreadPriority.Lowest;
-            t.Start();
-
-            // If it is a unit test, we want to wait for the thread to finish running before returning a value
-            if (testflag) t.Join();
-
-            return Task.FromResult(success);
-        }
-        // */
-
         // Case for when we want to add multiple attachments to an email
         public static Task<bool> sendToUser(User u, string subject, string body, string sender, List<string> AttachmentPath = null, bool testflag = false)
         {
             bool success = false;
 
-            Thread t = new Thread(() =>
+            try
             {
-                try
-                {
-                    EmailNotifications.sendEmail(u, subject, body, sender, AttachmentPath);
-                    success = true;
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine($"ERROR: Email could not send: {e}");
-                    success = false;
-                }
-            });
-
-            t.Priority = ThreadPriority.Lowest;
-            t.Start();
-
-            // If it is a unit test, we want to wait for the thread to finish running before returning a value
-            t.Join();
+                EmailNotifications.sendEmail(u, subject, body, sender, AttachmentPath);
+                success = true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"ERROR: Email could not send: {e}");
+                success = false;
+            }
 
             return Task.FromResult(success);
         }

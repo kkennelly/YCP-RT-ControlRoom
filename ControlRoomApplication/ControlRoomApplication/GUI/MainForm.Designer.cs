@@ -313,7 +313,7 @@
             this.txtSpectraPort.BackColor = System.Drawing.Color.Gainsboro;
             this.txtSpectraPort.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
             this.txtSpectraPort.ForeColor = System.Drawing.Color.DarkGray;
-            this.txtSpectraPort.Location = new System.Drawing.Point(390, 18);
+            this.txtSpectraPort.Location = new System.Drawing.Point(390, 53);
             this.txtSpectraPort.Margin = new System.Windows.Forms.Padding(2);
             this.txtSpectraPort.Name = "txtSpectraPort";
             this.txtSpectraPort.Size = new System.Drawing.Size(104, 29);
@@ -352,7 +352,7 @@
             this.txtWSCOMPort.BackColor = System.Drawing.Color.Gainsboro;
             this.txtWSCOMPort.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
             this.txtWSCOMPort.ForeColor = System.Drawing.Color.DarkGray;
-            this.txtWSCOMPort.Location = new System.Drawing.Point(390, 54);
+            this.txtWSCOMPort.Location = new System.Drawing.Point(390, 17);
             this.txtWSCOMPort.Margin = new System.Windows.Forms.Padding(2);
             this.txtWSCOMPort.Name = "txtWSCOMPort";
             this.txtWSCOMPort.Size = new System.Drawing.Size(104, 29);

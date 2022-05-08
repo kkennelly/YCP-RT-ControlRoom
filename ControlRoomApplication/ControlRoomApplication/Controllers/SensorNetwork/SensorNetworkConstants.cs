@@ -149,5 +149,10 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
         /// This is the degrees offset manually applied to the counterbalance accelerometer position used for greater precision.
         /// </summary>
         public const double CBAccelPositionOffset = 2;
+
+        /// <summary>
+        /// Constants for the elevation timeout sensor status in MS
+        /// </summary>
+        public const int ElevationTimeoutThreshold = 50;
     }
 }

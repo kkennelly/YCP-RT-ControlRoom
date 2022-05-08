@@ -13,11 +13,15 @@ using System.Collections.Generic;
 using FirebaseAdmin;
 using FirebaseAdmin.Messaging;
 using Google.Apis.Auth.OAuth2;
+using ControlRoomApplication.Util;
 
 namespace ControlRoomApplication.Controllers.Communications
 {
     public class pushNotification
     {
+        private static readonly log4net.ILog logger =
+        log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         public static bool send(String titleText, String bodyText) { return true; }
         public static bool sendEmail(bool b) { return true; }
 
@@ -54,8 +58,9 @@ namespace ControlRoomApplication.Controllers.Communications
             string response = FirebaseMessaging.DefaultInstance.SendAsync(message).Result;
             // Response is a message ID string.
             Console.WriteLine("Successfully sent message: " + response);
+            logger.Debug(Utilities.GetTimeStamp() + ": Notification sent: " + bodyText);
 
-            return false;
+            return true;
         }
     }
 }

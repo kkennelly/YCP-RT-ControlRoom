@@ -521,7 +521,7 @@ namespace ControlRoomApplication.Controllers
         /// <param name="targetOrientation">The target orientation.</param>
         /// <returns></returns>
         public override MovementResult RelativeMove(int programmedPeakSpeedAZInt, int programmedPeakSpeedELInt, int positionTranslationAZ, int positionTranslationEL, Orientation targetOrientation) {
-            return MCU.MoveAndWaitForCompletion(programmedPeakSpeedAZInt, programmedPeakSpeedELInt, positionTranslationAZ, positionTranslationEL, targetOrientation);
+            return MCU.MoveAndWaitForCompletion(programmedPeakSpeedAZInt, programmedPeakSpeedELInt, positionTranslationAZ, -1 * positionTranslationEL, targetOrientation);
         }
 
         public override MovementResult MoveToOrientation(Orientation target_orientation, Orientation current_orientation)
@@ -550,7 +550,7 @@ namespace ControlRoomApplication.Controllers
             }
 
             positionTranslationAZ = ConversionHelper.DegreesToSteps(azimuthOrientationMovement, MotorConstants.GEARING_RATIO_AZIMUTH);
-            positionTranslationEL = ConversionHelper.DegreesToSteps((target_orientation.Elevation - current_orientation.Elevation), MotorConstants.GEARING_RATIO_ELEVATION);
+            positionTranslationEL = -1 * ConversionHelper.DegreesToSteps((target_orientation.Elevation - current_orientation.Elevation), MotorConstants.GEARING_RATIO_ELEVATION);
 
             int EL_Speed = ConversionHelper.DPSToSPS( ConversionHelper.RPMToDPS( 0.6 ), MotorConstants.GEARING_RATIO_ELEVATION);
             int AZ_Speed = ConversionHelper.DPSToSPS( ConversionHelper.RPMToDPS( 0.6 ), MotorConstants.GEARING_RATIO_AZIMUTH);
@@ -749,6 +749,15 @@ namespace ControlRoomApplication.Controllers
             }
 
             return RadioTelescopeDirectionEnum.None;
+        }
+
+        /// <summary>
+        /// Gets whether or not the motors have been homed.
+        /// </summary>
+        /// <returns>Whether or not the motors have been homed</returns>
+        public override bool GetMotorsHomed()
+        {
+            return MCU.MotorsHomed;
         }
     }
 }

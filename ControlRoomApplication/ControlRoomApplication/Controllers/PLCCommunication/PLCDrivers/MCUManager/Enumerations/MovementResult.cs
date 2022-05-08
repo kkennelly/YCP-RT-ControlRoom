@@ -103,6 +103,11 @@ namespace ControlRoomApplication.Controllers.PLCCommunication.PLCDrivers.MCUMana
         /// This is set if the command could not be sent to the MCU for whatever reason. The most common reason this
         /// may happen is if the MCU goes offline, Ethernet becomes disconnected, etc.
         /// </summary>
-        CouldNotSendCommand
+        CouldNotSendCommand,
+
+        /// <summary>
+        /// Used if the motors are not homed, thus a we cannot perform a safe movement
+        /// </summary>
+        MotorsNotHomed
     }
 }

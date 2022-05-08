@@ -378,5 +378,14 @@ namespace ControlRoomApplication.Controllers {
         {
             throw new NotImplementedException();
         }
+
+        /// <summary>
+        /// Gets whether or not the motors have been homed.
+        /// </summary>
+        /// <returns>Whether or not the motors have been homed</returns>
+        public override bool GetMotorsHomed()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

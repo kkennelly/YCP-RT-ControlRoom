@@ -12,6 +12,7 @@ using System.Timers;
 using System.Diagnostics;
 using ControlRoomApplication.Controllers.PLCCommunication.PLCDrivers.MCUManager;
 using ControlRoomApplication.Controllers.PLCCommunication.PLCDrivers.MCUManager.Enumerations;
+using ControlRoomApplication.Entities.DiagnosticData;
 
 namespace ControlRoomApplication.Controllers
 {
@@ -189,7 +190,7 @@ namespace ControlRoomApplication.Controllers
         /// </summary>
         public bool ShutdownRadioTelescope()
         {
-            //MoveRadioTelescopeToOrientation(MiscellaneousConstants.Stow);
+            //StowRadioTelescope(MovementPriority.GeneralStop);
             snowDumpTimer.Stop();
             snowDumpTimer.Dispose();
 
@@ -277,7 +278,7 @@ namespace ControlRoomApplication.Controllers
                 // return true if working correctly, false if not
                 if (Math.Abs(weatherStationTemp - temperature) < MiscellaneousConstants.THERMAL_CALIBRATION_OFFSET)
                 {
-                    moveResult = RadioTelescope.PLCDriver.MoveToOrientation(MiscellaneousConstants.Stow, current);
+                    moveResult = StowRadioTelescope(priority);
                 }
 
                 if (RadioTelescope.PLCDriver.CurrentMovementPriority != MovementPriority.Critical) RadioTelescope.PLCDriver.CurrentMovementPriority = MovementPriority.None;
@@ -332,7 +333,7 @@ namespace ControlRoomApplication.Controllers
         /// in this may or may not work, it depends on if the derived
         /// AbstractRadioTelescope class has implemented it.
         /// </summary>
-        public MovementResult MoveRadioTelescopeToOrientation(Orientation orientation, MovementPriority priority)
+        public MovementResult MoveRadioTelescopeToOrientation(Orientation orientation, MovementPriority priority, bool useAbsoluteOrientation = false)
         {
             MovementResult result = MovementResult.None;
 
@@ -353,7 +354,14 @@ namespace ControlRoomApplication.Controllers
             {
                 RadioTelescope.PLCDriver.CurrentMovementPriority = priority;
 
-                result = RadioTelescope.PLCDriver.MoveToOrientation(orientation, GetCurrentOrientation());
+                // Use absolute orientation if specified
+                Orientation currentOrientation = GetCurrentOrientation();
+                if (useAbsoluteOrientation)
+                {
+                    currentOrientation = GetAbsoluteOrientation();
+                }
+
+                result = RadioTelescope.PLCDriver.MoveToOrientation(orientation, currentOrientation);
                 if (RadioTelescope.PLCDriver.CurrentMovementPriority == priority) RadioTelescope.PLCDriver.CurrentMovementPriority = MovementPriority.None;
 
                 Monitor.Exit(MovementLock);
@@ -779,7 +787,7 @@ namespace ControlRoomApplication.Controllers
             return false;
         }
 
-        // Checks the motor temperatures against acceptable ranges every second
+        // Checks the motor temperatures and positions against acceptable ranges every second
         private void SensorMonitor()
         {
             // Getting initial current temperatures
@@ -791,17 +799,23 @@ namespace ControlRoomApplication.Controllers
             // Current Elevation Position, used to compare to see if the elevation changes when motors move
             double prevElevation = GetCurrentOrientation().Elevation;
 
-            // Set the timeout count to 0, the threshold will be how many 100 milliseconds of no updated data we need to consider timeout, ie 50 is 5 seconds
+            // Set the timeout count to 0. threshold is a constant, these will be in MS
             int elevationTimeoutCount = 0;
-            int elevationTimeoutThreshold = 50;
 
             // Sensor overrides must be taken into account
             bool currentAZOveride = overrides.overrideAzimuthMotTemp;
             bool currentELOveride = overrides.overrideElevatMotTemp;
 
+            SensorStatus sensors = new SensorStatus();
+
             // Loop through every one second to get new sensor data
             while (MonitoringSensors)
             {
+                // Get initial motor and absolute encoder values
+                Orientation currentABSPosition = GetAbsoluteOrientation();
+                Orientation currentMotorPosition = GetCurrentOrientation();
+                bool orientationSafe;
+
                 Temperature azTemp = RadioTelescope.SensorNetworkServer.CurrentAzimuthMotorTemp[RadioTelescope.SensorNetworkServer.CurrentAzimuthMotorTemp.Length - 1];
                 Temperature elTemp = RadioTelescope.SensorNetworkServer.CurrentElevationMotorTemp[RadioTelescope.SensorNetworkServer.CurrentElevationMotorTemp.Length - 1];
 
@@ -810,33 +824,62 @@ namespace ControlRoomApplication.Controllers
 
                 // Sensor status routine, checks for each sensor to update the status in the DB
                 // Check Gate
-                SensorStatusEnum gate = SensorStatusEnum.NORMAL;
+                sensors.gate = (SByte)SensorStatusEnum.NORMAL;
+                if (!GetCurrentSafetyInterlockStatus())
+                {
+                    sensors.gate = (SByte)SensorStatusEnum.ALARM;
+                }
 
-                // Check azimuth temp 1
-                SensorStatusEnum azTemp1 = SensorStatusEnum.NORMAL;
+                // Check azimuth temp 1, 1 - current ess sensor status will flip the bit
+                sensors.az_motor_temp_1 = (SByte)(1 - RadioTelescope.SensorNetworkServer.SensorStatuses.AzimuthTemperature1Status);
 
                 // Check azimuth temp 2
-                SensorStatusEnum azTemp2 = SensorStatusEnum.NORMAL;
+                sensors.az_motor_temp_2 = (SByte)(1 - RadioTelescope.SensorNetworkServer.SensorStatuses.AzimuthTemperature2Status);
 
                 // Check elevation temp 1
-                SensorStatusEnum elTemp1 = SensorStatusEnum.NORMAL;
+                sensors.el_motor_temp_1 = (SByte)(1 - RadioTelescope.SensorNetworkServer.SensorStatuses.ElevationTemperature1Status);
 
                 // Check elevation temp 2
-                SensorStatusEnum elTemp2 = SensorStatusEnum.NORMAL;
+                sensors.el_motor_temp_2 = (SByte)(1 - RadioTelescope.SensorNetworkServer.SensorStatuses.ElevationTemperature2Status);
 
                 // Check weather
-                SensorStatusEnum weather = SensorStatusEnum.NORMAL;
+                int windSpeedStatus = RadioTelescope.WeatherStation.CurrentWindSpeedStatus;
+                sensors.weather_station = (SByte)SensorStatusEnum.NORMAL;
 
+                // Tragic wind speed
+                if (windSpeedStatus == 2)
+                {
+                    logger.Info(Utilities.GetTimeStamp() + ": [ControlRoomController] Wind speeds were too high: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
+                    // Might want to consider weather station overrides
+                    sensors.weather_station = (SByte)SensorStatusEnum.ALARM;
+
+                    pushNotification.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are too high: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
+                    EmailNotifications.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are too high: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
+                }
+                // Slightly potentially tragic wind speed
+                else if (windSpeedStatus == 1)
+                {
+                    logger.Info(Utilities.GetTimeStamp() + ": [ControlRoomController] Wind speeds are in Warning Range: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
+                    // Might want to consider weather station overrides
+                    sensors.weather_station = (SByte)SensorStatusEnum.WARNING;
+
+                    pushNotification.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are in Warning Range: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
+                    EmailNotifications.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are in Warning Range: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
+                }
+                
                 // Check elevation absolute encoder, set to ALERT if timed out
-                SensorStatusEnum elAbsEncoder = SensorStatusEnum.NORMAL;
-                if (RadioTelescope.PLCDriver.MotorsCurrentlyMoving())
+                sensors.elevation_abs_encoder = (SByte)SensorStatusEnum.NORMAL;
+                RadioTelescope.SensorNetworkServer.SensorStatuses.ElevationAbsoluteEncoderStatus = SensorNetworkSensorStatus.Okay;
+
+                if (RadioTelescope.PLCDriver.MotorsCurrentlyMoving(RadioTelescopeAxisEnum.ELEVATION))
                 {
                     if (prevElevation == GetCurrentOrientation().Elevation)
                     {
                         elevationTimeoutCount++;
-                        if (elevationTimeoutCount >= elevationTimeoutThreshold)
+                        if (elevationTimeoutCount >= SensorNetwork.SensorNetworkConstants.ElevationTimeoutThreshold)
                         {
-                            elAbsEncoder = SensorStatusEnum.ALARM;
+                            sensors.elevation_abs_encoder = (SByte)SensorStatusEnum.ALARM;
+                            RadioTelescope.SensorNetworkServer.SensorStatuses.ElevationAbsoluteEncoderStatus = SensorNetworkSensorStatus.Error;
                         }
                     }
                     else
@@ -846,30 +889,38 @@ namespace ControlRoomApplication.Controllers
                 }
                 prevElevation = GetCurrentOrientation().Elevation;
 
+                //sensors.elevation_abs_encoder = (SByte)RadioTelescope.SensorNetworkServer.SensorStatuses.ElevationAbsoluteEncoderStatus;
+
                 // Check azimuth absolute encoder
-                SensorStatusEnum azAbsEncoder = SensorStatusEnum.NORMAL;
+                sensors.azimuth_abs_encoder = (SByte)(1 - RadioTelescope.SensorNetworkServer.SensorStatuses.AzimuthAbsoluteEncoderStatus);
 
                 // Check proximity 0
-                SensorStatusEnum prox0 = SensorStatusEnum.NORMAL;
+                sensors.el_proximity_0 = (SByte)SensorStatusEnum.NORMAL;
 
                 // Check proximity 90
-                SensorStatusEnum prox90 = SensorStatusEnum.NORMAL;
+                sensors.el_proximity_90 = (SByte)SensorStatusEnum.NORMAL;
 
                 // Check azimuth acceleration
-                SensorStatusEnum azAccel = SensorStatusEnum.NORMAL;
+                sensors.az_accel = (SByte)(1 - RadioTelescope.SensorNetworkServer.SensorStatuses.AzimuthAccelerometerStatus);
 
                 // Check elevation acceleration
-                SensorStatusEnum elAccel = SensorStatusEnum.NORMAL;
+                sensors.el_accel = (SByte)(1 - RadioTelescope.SensorNetworkServer.SensorStatuses.ElevationAccelerometerStatus);
 
                 // Check CB acceleration
-                SensorStatusEnum cbAccel = SensorStatusEnum.NORMAL;
+                sensors.counter_balance_accel = (SByte)(1 - RadioTelescope.SensorNetworkServer.SensorStatuses.CounterbalanceAccelerometerStatus);
 
                 // Check ambient temp humidity
-                SensorStatusEnum ambientTempHumidity = SensorStatusEnum.NORMAL;
+                sensors.ambient_temp_humidity = (SByte)(1 - RadioTelescope.SensorNetworkServer.SensorStatuses.ElevationAmbientStatus);
 
                 // Take all updated statuses and add them to the DB
-                DatabaseOperations.AddSensorStatusData(SensorStatus.Generate(gate, azTemp1, azTemp2, elTemp1, elTemp2,
-                    weather, elAbsEncoder, azAbsEncoder, prox0, prox90, azAccel, elAccel, cbAccel, ambientTempHumidity));
+                DatabaseOperations.AddSensorStatusData(sensors);
+
+                
+                // If using not using sensor network (running a simulation) then just set sensor orientations to true since we won't need to monitor simulation values
+                if (RadioTelescope.SensorNetworkServer.SimulationSensorNetwork != null)
+                    orientationSafe = true;
+                else
+                    orientationSafe = CompareMotorAndAbsoluteEncoders(currentMotorPosition, currentABSPosition);
 
                 // Determines if the telescope is in a safe state
                 if (azTempSafe && elTempSafe) AllSensorsSafe = true;
@@ -879,6 +930,14 @@ namespace ControlRoomApplication.Controllers
 
                     // If the motors are moving, interrupt the current movement.
                     if (RadioTelescope.PLCDriver.MotorsCurrentlyMoving())
+                    {
+                        RadioTelescope.PLCDriver.InterruptMovementAndWaitUntilStopped();
+                    }
+                }
+
+                if (!orientationSafe)
+                {
+                    if (RadioTelescope.PLCDriver.GetMotorsHomed())
                     {
                         RadioTelescope.PLCDriver.InterruptMovementAndWaitUntilStopped();
                     }
@@ -1246,6 +1305,46 @@ namespace ControlRoomApplication.Controllers
         }
 
         /// <summary>
+        /// A method to handle stowing the radio telescope.
+        /// </summary>
+        /// <param name="priority">The priority of the stow movement</param>
+        /// <returns>The result of the movement</returns>
+        public MovementResult StowRadioTelescope(MovementPriority priority)
+        {
+            // If motors are homed
+            if (RadioTelescope.PLCDriver.GetMotorsHomed())
+            {
+                logger.Info(Utilities.GetTimeStamp() + ": Stowing telescope");
+                return MoveRadioTelescopeToOrientation(MiscellaneousConstants.Stow, priority);
+            }
+            // Motors are not homed, try to use absolute encoders if we are not using the simulation sensor network 
+            else if (RadioTelescope.SensorNetworkServer.SimulationSensorNetwork == null && 
+                RadioTelescope.SensorNetworkServer.SensorStatuses.ElevationAbsoluteEncoderStatus != SensorNetworkSensorStatus.Error &&
+                RadioTelescope.SensorNetworkServer.SensorStatuses.AzimuthAbsoluteEncoderStatus != SensorNetworkSensorStatus.Error)
+            {
+                logger.Info(Utilities.GetTimeStamp() + ": Stowing telescope with absolute encoders");
+                MovementResult result = MoveRadioTelescopeToOrientation(MiscellaneousConstants.Stow, priority, true);
+
+                // Since the motors are not homed, the movement result will likely return an incorrect position,
+                // so check the absolute encoder orientations instead
+                if (result == MovementResult.IncorrectPosition && 
+                    // Using delta of 0.5 to account for potential abs en inaccuracies and because we do not need this to be a precise movement
+                    Math.Abs(GetAbsoluteOrientation().Azimuth - MiscellaneousConstants.Stow.Azimuth) <= 0.5 &&
+                    Math.Abs(GetAbsoluteOrientation().Elevation - MiscellaneousConstants.Stow.Elevation) <= 0.5)
+                {
+                    result = MovementResult.Success;
+                }
+                return result;
+            }
+            // Don't perform the movement if the motors aren't homed and the absolute encoders are not connected
+            else
+            {
+                logger.Info(Utilities.GetTimeStamp() + ": Canceled stow. Motors not homed and absolute encoders offline!");
+                return MovementResult.MotorsNotHomed;
+            }
+        }
+
+        /// <summary>
         /// Interrupts the telescope regardless of the movement movement type and stops it immediately.
         /// </summary>
         /// <returns>The result of the stop command</returns>
@@ -1299,6 +1398,26 @@ namespace ControlRoomApplication.Controllers
 
             // Reaching this point means that the fan state doesn't need to be changed
             return sn.FanIsOn;
+        }
+
+        /// <summary>
+        /// This is the method that checks for acceptable discrepancy in the absolute and motor encoders
+        /// </summary>
+        /// <returns> True if the discrepancy is below the desired threshold for both Elevation and Azimuth values, false otherwise </returns>
+        /// <param name="motor"> The current orientation of the motor encoders </param>
+        /// <param name="absolute"> The current orientation of the absolute encoders </param>
+        public bool CompareMotorAndAbsoluteEncoders(Orientation motor, Orientation absolute)
+        {
+            // This calculates edge cases for when the azimuth goes from 360 degrees to 0
+            double diff = Math.Abs(motor.Azimuth - absolute.Azimuth);
+            diff = Math.Abs((diff + 180) % 360 - 180);
+
+            // Compare discrepancy of current orientations and keep below constant
+            if (Math.Abs(motor.Elevation - absolute.Elevation) <= MiscellaneousConstants.MOTOR_ABSOLUTE_ENCODER_DISCREPANCY && 
+                diff <= MiscellaneousConstants.MOTOR_ABSOLUTE_ENCODER_DISCREPANCY)
+                return true;
+            else 
+                return false;
         }
     }
 }

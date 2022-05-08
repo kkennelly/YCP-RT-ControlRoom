@@ -107,7 +107,6 @@
     <Compile Include="EntitiesTests\AccelerationTest.cs" />
     <Compile Include="EntitiesTests\HumidityTest.cs" />
     <Compile Include="EntitiesTests\AccelerometerConfigTest.cs" />
-    <Compile Include="EntitiesTests\AppointmentCalibrationTest.cs" />
     <Compile Include="EntitiesTests\TemperatureTest.cs" />
     <Compile Include="EntitiesTests\SensorNetworkConfigTest.cs" />
     <Compile Include="EntitiesTests\SpectraCyberConfigTest.cs" />

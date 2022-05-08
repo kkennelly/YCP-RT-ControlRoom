@@ -1200,7 +1200,6 @@ namespace ControlRoomApplicationTest.EntityControllersTests {
             MovementResult result = TestRadioTelescopeController.StowRadioTelescope(MovementPriority.Manual);
             Assert.AreEqual(MovementResult.MotorsNotHomed, result);
         }
-    }
 
         /// <summary>
         /// Test CompareMotorAndAbsoluteEncoders for when all values are equal, should return true

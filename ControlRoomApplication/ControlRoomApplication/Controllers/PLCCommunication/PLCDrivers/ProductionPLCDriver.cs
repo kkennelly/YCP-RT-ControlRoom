@@ -324,7 +324,7 @@ namespace ControlRoomApplication.Controllers
                             {
                                 logger.Info(Utilities.GetTimeStamp() + ": Elevation Lower Limit Switch Hit");
 
-                                pushNotification.sendToAllAdmins("LIMIT SWITCH", "Elevation lower limit switch hit");
+                                PushNotification.sendToAllAdmins("LIMIT SWITCH", "Elevation lower limit switch hit");
                                 EmailNotifications.sendToAllAdmins("LIMIT SWITCH", "Elevation lower limit switch hit");
                             }
                         }
@@ -344,7 +344,7 @@ namespace ControlRoomApplication.Controllers
                             {
                                 logger.Info(Utilities.GetTimeStamp() + ": Elevation Upper Limit Switch Hit");
 
-                                pushNotification.sendToAllAdmins("LIMIT SWITCH", "Elevation upper limit switch hit");
+                                PushNotification.sendToAllAdmins("LIMIT SWITCH", "Elevation upper limit switch hit");
                                 EmailNotifications.sendToAllAdmins("LIMIT SWITCH", "Elevation upper limit switch hit");
                             }
                         }
@@ -358,14 +358,14 @@ namespace ControlRoomApplication.Controllers
                             {
                                 logger.Info(Utilities.GetTimeStamp() + ": gate opened");
 
-                                pushNotification.sendToAllAdmins("GATE ACTIVITY", "Gate has been opened.");
+                                PushNotification.sendToAllAdmins("GATE ACTIVITY", "Gate has been opened.");
                                 EmailNotifications.sendToAllAdmins("GATE ACTIVITY", "Gate has been opened.");
                             }
                             else
                             {
                                 logger.Info(Utilities.GetTimeStamp() + ": gate closed");
 
-                                pushNotification.sendToAllAdmins("GATE ACTIVITY", "Gate has been closed.");
+                                PushNotification.sendToAllAdmins("GATE ACTIVITY", "Gate has been closed.");
                                 EmailNotifications.sendToAllAdmins("GATE ACTIVITY", "Gate has been closed.");
                             }
                         }
@@ -380,7 +380,7 @@ namespace ControlRoomApplication.Controllers
                                 logger.Info(Utilities.GetTimeStamp() + ": Estop Hit");
                                 CurrentMovementPriority = MovementPriority.Critical;
 
-                                pushNotification.sendToAllAdmins("E-STOP ACTIVITY", "E-stop has been hit.");
+                                PushNotification.sendToAllAdmins("E-STOP ACTIVITY", "E-stop has been hit.");
                                 EmailNotifications.sendToAllAdmins("E-STOP ACTIVITY", "E-stop has been hit.");
                             }
                             else
@@ -388,7 +388,7 @@ namespace ControlRoomApplication.Controllers
                                 logger.Info(Utilities.GetTimeStamp() + ": Estop released");
                                 CurrentMovementPriority = MovementPriority.None;
 
-                                pushNotification.sendToAllAdmins("E-STOP ACTIVITY", "E-stop has been released.");
+                                PushNotification.sendToAllAdmins("E-STOP ACTIVITY", "E-stop has been released.");
                                 EmailNotifications.sendToAllAdmins("E-STOP ACTIVITY", "E-stop has been released.");
                             }
                         }

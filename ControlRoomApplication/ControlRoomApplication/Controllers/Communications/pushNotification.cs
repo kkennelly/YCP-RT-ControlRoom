@@ -17,13 +17,10 @@ using ControlRoomApplication.Util;
 
 namespace ControlRoomApplication.Controllers.Communications
 {
-    public class pushNotification
+    public class PushNotification
     {
         private static readonly log4net.ILog logger =
         log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
-        public static bool send(String titleText, String bodyText) { return true; }
-        public static bool sendEmail(bool b) { return true; }
 
         public static bool firebaseAppCreated = false;
 
@@ -42,9 +39,9 @@ namespace ControlRoomApplication.Controllers.Communications
             var message = new Message()
             {
                 Data = new Dictionary<string, string>()
-    {
-        { "specialMessages", "1234" },
-    },
+                {
+                    { "specialMessages", "1234" },
+                },
                 //Token = registrationToken,
                 Topic = "admin",
                 Notification = new Notification()

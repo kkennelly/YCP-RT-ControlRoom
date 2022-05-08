@@ -349,7 +349,7 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
                     Status = SensorNetworkStatusEnum.InitializationSendingFailed;
                     if(Timeout.Enabled) Timeout.Stop();
 
-                    pushNotification.sendToAllAdmins("Sensor Network Error", $"Status: {Status}");
+                    PushNotification.sendToAllAdmins("Sensor Network Error", $"Status: {Status}");
                 }
                 else
                 {
@@ -552,7 +552,7 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
                         logger.Error($"{Utilities.GetTimeStamp()}: An error occurred while running the server; please check that the connection is available.");
                         logger.Info($"{Utilities.GetTimeStamp()}: Trying to reconnect to the Sensor Network...");
 
-                        pushNotification.sendToAllAdmins("Sensor Network Error", $"Status: {Status}");
+                        PushNotification.sendToAllAdmins("Sensor Network Error", $"Status: {Status}");
                     }
                 }
             }
@@ -614,7 +614,7 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
 
             logger.Error($"{Utilities.GetTimeStamp()}: Connection to the Sensor Network timed out! Status: {Status}");
 
-            pushNotification.sendToAllAdmins("Sensor Network Timeout", $"Status: {Status}");
+            PushNotification.sendToAllAdmins("Sensor Network Timeout", $"Status: {Status}");
         }
 
         /// <summary>

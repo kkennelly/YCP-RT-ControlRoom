@@ -338,7 +338,7 @@ namespace ControlRoomApplication.Controllers
             }
             else
             {
-                return RadioTelescope.SensorNetworkServer.CurrentAbsoluteOrientation.Elevation;
+                return GetAbsoluteOrientation().Elevation;
             }
         }
 

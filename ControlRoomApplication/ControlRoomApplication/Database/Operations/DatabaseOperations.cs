@@ -487,8 +487,8 @@ namespace ControlRoomApplication.Database
             using (RTDbContext Context = InitializeDatabaseContext())
             {
                 // Add the RFData from the calibration timeline, first add tree then add elevation               
-                fullCalibration.Add(Context.RFDatas.SqlQuery("SELECT * FROM rf_data WHERE time_captured BETWEEN @treeStart AND @treeEnd", new MySqlParameter("treeStart", treeStart), new MySqlParameter("treeEnd", treeEnd)).ToList<RFData>());
-                fullCalibration.Add(Context.RFDatas.SqlQuery("SELECT * FROM rf_data WHERE time_captured BETWEEN @elStart AND @elEnd", new MySqlParameter("elStart", elStart), new MySqlParameter("elEnd", elEnd)).ToList<RFData>());
+                fullCalibration.Add(Context.RFDatas.SqlQuery("SELECT * FROM rf_data WHERE time_captured BETWEEN @treeStart AND @treeEnd", new MySqlParameter("treeStart", treeStart.ToUniversalTime()), new MySqlParameter("treeEnd", treeEnd.ToUniversalTime())).ToList<RFData>());
+                fullCalibration.Add(Context.RFDatas.SqlQuery("SELECT * FROM rf_data WHERE time_captured BETWEEN @elStart AND @elEnd", new MySqlParameter("elStart", elStart.ToUniversalTime()), new MySqlParameter("elEnd", elEnd.ToUniversalTime())).ToList<RFData>());
             }
 
             return fullCalibration;

@@ -114,7 +114,7 @@ namespace ControlRoomApplication.Controllers.Communications
             t.Start();
 
             // If it is a unit test, we want to wait for the thread to finish running before returning a value
-            if (testflag) t.Join();
+            t.Join();
 
             return Task.FromResult(success);
         }
@@ -174,19 +174,22 @@ namespace ControlRoomApplication.Controllers.Communications
                         user.email_address,
                         subject,
                         body);
-                    for (int i = 0; i < AttachPath.Count; i++)
+
+                    try
                     {
-                        using (Attachment data = new Attachment(AttachPath[i], MediaTypeNames.Application.Octet))
+                        for (int i = 0; i < AttachPath.Count; i++)
                         {
+                            Attachment data = new Attachment(AttachPath[i], MediaTypeNames.Application.Octet);
                             ContentDisposition disposition = data.ContentDisposition;
                             disposition.CreationDate = System.IO.File.GetCreationTime(AttachPath[i]);
                             disposition.ModificationDate = System.IO.File.GetLastWriteTime(AttachPath[i]);
                             disposition.ReadDate = System.IO.File.GetLastAccessTime(AttachPath[i]);
 
                             message.Attachments.Add(data);
-
-                            request.RawMessage.Data = SendAttachmentHelper.ConvertMailMessageToMemoryStream(message);
                         }
+
+                        request.RawMessage.Data = SendAttachmentHelper.ConvertMailMessageToMemoryStream(message);
+
                         try
                         {
                             Console.WriteLine("Sending email using Amazon SES...");
@@ -198,6 +201,10 @@ namespace ControlRoomApplication.Controllers.Communications
                             Console.WriteLine("The email was not sent.");
                             Console.WriteLine($"Error: {e}");
                         }
+                    }
+                    finally
+                    {
+                        message.Attachments.Dispose();
                     }
                 }
             }

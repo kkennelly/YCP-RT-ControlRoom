@@ -181,6 +181,7 @@ namespace ControlRoomApplication.Controllers
 
             // Let MCU connect
             Thread.Sleep(5000);
+            RTController.RadioTelescope.PLCDriver.ResetMCUErrors();
 
             while (KeepAlive)
             {

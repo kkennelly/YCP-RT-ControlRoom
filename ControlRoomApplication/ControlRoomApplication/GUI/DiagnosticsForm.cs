@@ -737,7 +737,7 @@ namespace ControlRoomApplication.GUI
         private void btnTest_Click(object sender, System.EventArgs e)
         {
             logger.Debug(Utilities.GetTimeStamp() + ": Test notification being sent");
-            pushNotification.sendToAllAdmins("Test Header", "Test sent from control form", false);
+            PushNotification.sendToAllAdmins("Test Header", "Test sent from control form", false);
         }
 
         private void btnAddOneTemp_Click(object sender, System.EventArgs e)

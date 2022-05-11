@@ -43,6 +43,11 @@ namespace ControlRoomApplication.Controllers.SensorNetwork.Simulation
         public SensorNetworkSensorStatus ElevationTemperature2Status { get; set; }
 
         /// <summary>
+        /// The error state of the elevation ambient temperature and humidity sensor.
+        /// </summary>
+        public SensorNetworkSensorStatus ElevationAmbientStatus { get; set; }
+
+        /// <summary>
         /// The error state of the azimuth accelerometer status.
         /// </summary>
         public SensorNetworkSensorStatus AzimuthAccelerometerStatus { get; set; }

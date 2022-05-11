@@ -1,4 +1,5 @@
-﻿using ControlRoomApplication.Entities;
+﻿using ControlRoomApplication.Constants;
+using ControlRoomApplication.Entities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,6 +11,9 @@ namespace ControlRoomApplication.Controllers.Communications
 {
     public class DataToCSV
     {
+        private static readonly log4net.ILog logger = 
+            log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         public static bool ExportToCSV(List<RFData> Data, string fname)
         {
             StringBuilder sb = new StringBuilder();
@@ -77,7 +81,7 @@ namespace ControlRoomApplication.Controllers.Communications
             bool success = false;
             int numAttempts = 0;
 
-            while (numAttempts < 10)
+            while (numAttempts < MiscellaneousConstants.MAX_ATTEMPTS)
             {
                 try
                 {
@@ -92,10 +96,11 @@ namespace ControlRoomApplication.Controllers.Communications
                 }
             }
 
-            if(numAttempts == 9)
+            if (numAttempts == MiscellaneousConstants.MAX_ATTEMPTS)
             {
-                Console.Out.WriteLine($"Could not delete file at '{filepath}'! File may be stuck in a locked state.");
+                logger.Debug($"Could not delete file at '{filepath}'! File may be stuck in a locked state.");
             }
+
             return success;
         }
     }

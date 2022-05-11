@@ -87,6 +87,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             RawAccelerometerData[] resultCbAcc = (RawAccelerometerData[])PrivSim.GetFieldOrProperty("CounterbalanceAccData");
             double[] resultElEnc = (double[])PrivSim.GetFieldOrProperty("ElevationEncoderData");
             double[] resultAzEnc = (double[])PrivSim.GetFieldOrProperty("AzimuthEncoderData");
+            float[] resultAmbTemp = (float[])PrivSim.GetFieldOrProperty("AmbientTempData");
+            float[] resultAmbHumidity = (float[])PrivSim.GetFieldOrProperty("AmbientHumidityData");
 
             // Create expected array length (spoiler: it is zero)
             int expectedArrLength = 0;
@@ -99,13 +101,15 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             Assert.AreEqual(expectedArrLength, resultCbAcc.Length);
             Assert.AreEqual(expectedArrLength, resultElEnc.Length);
             Assert.AreEqual(expectedArrLength, resultAzEnc.Length);
+            Assert.AreEqual(expectedArrLength, resultAmbTemp.Length);
+            Assert.AreEqual(expectedArrLength, resultAmbHumidity.Length);
         }
 
         [TestMethod]
         public void TestInitializeSensors_DisableElTemp_OnlyElTempDisabled()
         {
             // Create an initialization that will enable all sensors.
-            byte[] init = new byte[SensorNetworkConstants.SensorNetworkSensorCount];
+            byte[] init = new byte[SensorNetworkConstants.InitPacketSize];
 
             init[(int)SensorInitializationEnum.ElevationTemp] = 0;
             init[(int)SensorInitializationEnum.AzimuthTemp] = 1;
@@ -114,6 +118,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             init[(int)SensorInitializationEnum.AzimuthAccelerometer] = 1;
             init[(int)SensorInitializationEnum.ElevationAccelerometer] = 1;
             init[(int)SensorInitializationEnum.CounterbalanceAccelerometer] = 1;
+            init[(int)SensorInitializationEnum.AmbientTempHumidity] = 1;
 
             PrivSim.Invoke("InitializeSensors", init);
 
@@ -125,6 +130,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             RawAccelerometerData[] resultCbAcc = (RawAccelerometerData[])PrivSim.GetFieldOrProperty("CounterbalanceAccData");
             double[] resultElEnc = (double[])PrivSim.GetFieldOrProperty("ElevationEncoderData");
             double[] resultAzEnc = (double[])PrivSim.GetFieldOrProperty("AzimuthEncoderData");
+            float[] resultAmbTemp = (float[])PrivSim.GetFieldOrProperty("AmbientTempData");
+            float[] resultAmbHumidity = (float[])PrivSim.GetFieldOrProperty("AmbientHumidityData");
 
             // Create expected array length (spoiler: it is zero)
             int expectedArrLength = 0;
@@ -137,13 +144,15 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             Assert.AreEqual(expectedArrLength, resultCbAcc.Length);
             Assert.AreEqual(expectedArrLength, resultElEnc.Length);
             Assert.AreEqual(expectedArrLength, resultAzEnc.Length);
+            Assert.AreEqual(expectedArrLength, resultAmbTemp.Length);
+            Assert.AreEqual(expectedArrLength, resultAmbHumidity.Length);
         }
 
         [TestMethod]
         public void TestInitializeSensors_DisableAzTemp_OnlyAzTempDisabled()
         {
             // Create an initialization that will enable all sensors.
-            byte[] init = new byte[SensorNetworkConstants.SensorNetworkSensorCount];
+            byte[] init = new byte[SensorNetworkConstants.InitPacketSize];
 
             init[(int)SensorInitializationEnum.ElevationTemp] = 1;
             init[(int)SensorInitializationEnum.AzimuthTemp] = 0;
@@ -152,6 +161,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             init[(int)SensorInitializationEnum.AzimuthAccelerometer] = 1;
             init[(int)SensorInitializationEnum.ElevationAccelerometer] = 1;
             init[(int)SensorInitializationEnum.CounterbalanceAccelerometer] = 1;
+            init[(int)SensorInitializationEnum.AmbientTempHumidity] = 1;
 
             PrivSim.Invoke("InitializeSensors", init);
 
@@ -163,6 +173,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             RawAccelerometerData[] resultCbAcc = (RawAccelerometerData[])PrivSim.GetFieldOrProperty("CounterbalanceAccData");
             double[] resultElEnc = (double[])PrivSim.GetFieldOrProperty("ElevationEncoderData");
             double[] resultAzEnc = (double[])PrivSim.GetFieldOrProperty("AzimuthEncoderData");
+            float[] resultAmbTemp = (float[])PrivSim.GetFieldOrProperty("AmbientTempData");
+            float[] resultAmbHumidity = (float[])PrivSim.GetFieldOrProperty("AmbientHumidityData");
 
             // Create expected array length (spoiler: it is zero)
             int expectedArrLength = 0;
@@ -175,13 +187,15 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             Assert.AreEqual(expectedArrLength, resultCbAcc.Length);
             Assert.AreEqual(expectedArrLength, resultElEnc.Length);
             Assert.AreEqual(expectedArrLength, resultAzEnc.Length);
+            Assert.AreEqual(expectedArrLength, resultAmbTemp.Length);
+            Assert.AreEqual(expectedArrLength, resultAmbHumidity.Length);
         }
 
         [TestMethod]
         public void TestInitializeSensors_DisableElEncoder_OnlyElEncoderDisabled()
         {
             // Create an initialization that will enable all sensors.
-            byte[] init = new byte[SensorNetworkConstants.SensorNetworkSensorCount];
+            byte[] init = new byte[SensorNetworkConstants.InitPacketSize];
 
             init[(int)SensorInitializationEnum.ElevationTemp] = 1;
             init[(int)SensorInitializationEnum.AzimuthTemp] = 1;
@@ -190,6 +204,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             init[(int)SensorInitializationEnum.AzimuthAccelerometer] = 1;
             init[(int)SensorInitializationEnum.ElevationAccelerometer] = 1;
             init[(int)SensorInitializationEnum.CounterbalanceAccelerometer] = 1;
+            init[(int)SensorInitializationEnum.AmbientTempHumidity] = 1;
 
             PrivSim.Invoke("InitializeSensors", init);
 
@@ -201,6 +216,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             RawAccelerometerData[] resultCbAcc = (RawAccelerometerData[])PrivSim.GetFieldOrProperty("CounterbalanceAccData");
             double[] resultElEnc = (double[])PrivSim.GetFieldOrProperty("ElevationEncoderData");
             double[] resultAzEnc = (double[])PrivSim.GetFieldOrProperty("AzimuthEncoderData");
+            float[] resultAmbTemp = (float[])PrivSim.GetFieldOrProperty("AmbientTempData");
+            float[] resultAmbHumidity = (float[])PrivSim.GetFieldOrProperty("AmbientHumidityData");
 
             // Create expected array length (spoiler: it is zero)
             int expectedArrLength = 0;
@@ -213,13 +230,15 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             Assert.AreEqual(expectedArrLength, resultElAcc.Length);
             Assert.AreEqual(expectedArrLength, resultAzAcc.Length);
             Assert.AreEqual(expectedArrLength, resultCbAcc.Length);
+            Assert.AreEqual(expectedArrLength, resultAmbTemp.Length);
+            Assert.AreEqual(expectedArrLength, resultAmbHumidity.Length);
         }
 
         [TestMethod]
         public void TestInitializeSensors_DisableAzEncoder_OnlyAzEncoderDisabled()
         {
             // Create an initialization that will enable all sensors.
-            byte[] init = new byte[SensorNetworkConstants.SensorNetworkSensorCount];
+            byte[] init = new byte[SensorNetworkConstants.InitPacketSize];
 
             init[(int)SensorInitializationEnum.ElevationTemp] = 1;
             init[(int)SensorInitializationEnum.AzimuthTemp] = 1;
@@ -228,6 +247,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             init[(int)SensorInitializationEnum.AzimuthAccelerometer] = 1;
             init[(int)SensorInitializationEnum.ElevationAccelerometer] = 1;
             init[(int)SensorInitializationEnum.CounterbalanceAccelerometer] = 1;
+            init[(int)SensorInitializationEnum.AmbientTempHumidity] = 1;
 
             PrivSim.Invoke("InitializeSensors", init);
 
@@ -239,6 +259,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             RawAccelerometerData[] resultCbAcc = (RawAccelerometerData[])PrivSim.GetFieldOrProperty("CounterbalanceAccData");
             double[] resultElEnc = (double[])PrivSim.GetFieldOrProperty("ElevationEncoderData");
             double[] resultAzEnc = (double[])PrivSim.GetFieldOrProperty("AzimuthEncoderData");
+            float[] resultAmbTemp = (float[])PrivSim.GetFieldOrProperty("AmbientTempData");
+            float[] resultAmbHumidity = (float[])PrivSim.GetFieldOrProperty("AmbientHumidityData");
 
             // Create expected array length (spoiler: it is zero)
             int expectedArrLength = 0;
@@ -251,13 +273,15 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             Assert.AreEqual(expectedArrLength, resultElAcc.Length);
             Assert.AreEqual(expectedArrLength, resultAzAcc.Length);
             Assert.AreEqual(expectedArrLength, resultCbAcc.Length);
+            Assert.AreEqual(expectedArrLength, resultAmbTemp.Length);
+            Assert.AreEqual(expectedArrLength, resultAmbHumidity.Length);
         }
 
         [TestMethod]
         public void TestInitializeSensors_DisableAzAcc_OnlyAzAccDisabled()
         {
             // Create an initialization that will enable all sensors.
-            byte[] init = new byte[SensorNetworkConstants.SensorNetworkSensorCount];
+            byte[] init = new byte[SensorNetworkConstants.InitPacketSize];
 
             init[(int)SensorInitializationEnum.ElevationTemp] = 1;
             init[(int)SensorInitializationEnum.AzimuthTemp] = 1;
@@ -266,6 +290,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             init[(int)SensorInitializationEnum.AzimuthAccelerometer] = 0;
             init[(int)SensorInitializationEnum.ElevationAccelerometer] = 1;
             init[(int)SensorInitializationEnum.CounterbalanceAccelerometer] = 1;
+            init[(int)SensorInitializationEnum.AmbientTempHumidity] = 1;
 
             PrivSim.Invoke("InitializeSensors", init);
 
@@ -277,6 +302,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             RawAccelerometerData[] resultCbAcc = (RawAccelerometerData[])PrivSim.GetFieldOrProperty("CounterbalanceAccData");
             double[] resultElEnc = (double[])PrivSim.GetFieldOrProperty("ElevationEncoderData");
             double[] resultAzEnc = (double[])PrivSim.GetFieldOrProperty("AzimuthEncoderData");
+            float[] resultAmbTemp = (float[])PrivSim.GetFieldOrProperty("AmbientTempData");
+            float[] resultAmbHumidity = (float[])PrivSim.GetFieldOrProperty("AmbientHumidityData");
 
             // Create expected array length (spoiler: it is zero)
             int expectedArrLength = 0;
@@ -289,12 +316,14 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             Assert.IsNull(resultAzAcc);
             Assert.AreEqual(expectedArrLength, resultElAcc.Length);
             Assert.AreEqual(expectedArrLength, resultCbAcc.Length);
+            Assert.AreEqual(expectedArrLength, resultAmbTemp.Length);
+            Assert.AreEqual(expectedArrLength, resultAmbHumidity.Length);
         }
 
         [TestMethod]
         public void TestInitializeSensors_DisableElAcc_OnlyElAccDisabled()
         {
-            byte[] init = new byte[SensorNetworkConstants.SensorNetworkSensorCount];
+            byte[] init = new byte[SensorNetworkConstants.InitPacketSize];
 
             init[(int)SensorInitializationEnum.ElevationTemp] = 1;
             init[(int)SensorInitializationEnum.AzimuthTemp] = 1;
@@ -303,6 +332,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             init[(int)SensorInitializationEnum.AzimuthAccelerometer] = 1;
             init[(int)SensorInitializationEnum.ElevationAccelerometer] = 0;
             init[(int)SensorInitializationEnum.CounterbalanceAccelerometer] = 1;
+            init[(int)SensorInitializationEnum.AmbientTempHumidity] = 1;
 
             PrivSim.Invoke("InitializeSensors", init);
 
@@ -314,6 +344,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             RawAccelerometerData[] resultCbAcc = (RawAccelerometerData[])PrivSim.GetFieldOrProperty("CounterbalanceAccData");
             double[] resultElEnc = (double[])PrivSim.GetFieldOrProperty("ElevationEncoderData");
             double[] resultAzEnc = (double[])PrivSim.GetFieldOrProperty("AzimuthEncoderData");
+            float[] resultAmbTemp = (float[])PrivSim.GetFieldOrProperty("AmbientTempData");
+            float[] resultAmbHumidity = (float[])PrivSim.GetFieldOrProperty("AmbientHumidityData");
 
             // Create expected array length (spoiler: it is zero)
             int expectedArrLength = 0;
@@ -326,12 +358,14 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             Assert.AreEqual(expectedArrLength, resultAzAcc.Length);
             Assert.IsNull(resultElAcc);
             Assert.AreEqual(expectedArrLength, resultCbAcc.Length);
+            Assert.AreEqual(expectedArrLength, resultAmbTemp.Length);
+            Assert.AreEqual(expectedArrLength, resultAmbHumidity.Length);
         }
 
         [TestMethod]
         public void TestInitializeSensors_DisableCbAcc_OnlyCbAccDisabled()
         {
-            byte[] init = new byte[SensorNetworkConstants.SensorNetworkSensorCount];
+            byte[] init = new byte[SensorNetworkConstants.InitPacketSize];
 
             init[(int)SensorInitializationEnum.ElevationTemp] = 1;
             init[(int)SensorInitializationEnum.AzimuthTemp] = 1;
@@ -340,6 +374,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             init[(int)SensorInitializationEnum.AzimuthAccelerometer] = 1;
             init[(int)SensorInitializationEnum.ElevationAccelerometer] = 1;
             init[(int)SensorInitializationEnum.CounterbalanceAccelerometer] = 0;
+            init[(int)SensorInitializationEnum.AmbientTempHumidity] = 1;
 
             PrivSim.Invoke("InitializeSensors", init);
 
@@ -351,6 +386,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             RawAccelerometerData[] resultCbAcc = (RawAccelerometerData[])PrivSim.GetFieldOrProperty("CounterbalanceAccData");
             double[] resultElEnc = (double[])PrivSim.GetFieldOrProperty("ElevationEncoderData");
             double[] resultAzEnc = (double[])PrivSim.GetFieldOrProperty("AzimuthEncoderData");
+            float[] resultAmbTemp = (float[])PrivSim.GetFieldOrProperty("AmbientTempData");
+            float[] resultAmbHumidity = (float[])PrivSim.GetFieldOrProperty("AmbientHumidityData");
 
             // Create expected array length (spoiler: it is zero)
             int expectedArrLength = 0;
@@ -363,21 +400,23 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             Assert.AreEqual(expectedArrLength, resultAzAcc.Length);
             Assert.AreEqual(expectedArrLength, resultElAcc.Length);
             Assert.IsNull(resultCbAcc);
+            Assert.AreEqual(expectedArrLength, resultAmbTemp.Length);
+            Assert.AreEqual(expectedArrLength, resultAmbHumidity.Length);
         }
 
         [TestMethod]
-        public void TestInitializeSensors_DisableAllSensors_AllSensorsDisabled()
+        public void TestInitializeSensors_DisableAmbTempHumidity_OnlyAmbTempHumidityDisabled()
         {
-            // Create an initialization
-            byte[] init = new byte[SensorNetworkConstants.SensorNetworkSensorCount];
+            byte[] init = new byte[SensorNetworkConstants.InitPacketSize];
 
-            init[(int)SensorInitializationEnum.ElevationTemp] = 0;
-            init[(int)SensorInitializationEnum.AzimuthTemp] = 0;
-            init[(int)SensorInitializationEnum.ElevationEncoder] = 0;
-            init[(int)SensorInitializationEnum.AzimuthEncoder] = 0;
-            init[(int)SensorInitializationEnum.AzimuthAccelerometer] = 0;
-            init[(int)SensorInitializationEnum.ElevationAccelerometer] = 0;
-            init[(int)SensorInitializationEnum.CounterbalanceAccelerometer] = 0;
+            init[(int)SensorInitializationEnum.ElevationTemp] = 1;
+            init[(int)SensorInitializationEnum.AzimuthTemp] = 1;
+            init[(int)SensorInitializationEnum.ElevationEncoder] = 1;
+            init[(int)SensorInitializationEnum.AzimuthEncoder] = 1;
+            init[(int)SensorInitializationEnum.AzimuthAccelerometer] = 1;
+            init[(int)SensorInitializationEnum.ElevationAccelerometer] = 1;
+            init[(int)SensorInitializationEnum.CounterbalanceAccelerometer] = 1;
+            init[(int)SensorInitializationEnum.AmbientTempHumidity] = 0;
 
             PrivSim.Invoke("InitializeSensors", init);
 
@@ -389,6 +428,51 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             RawAccelerometerData[] resultCbAcc = (RawAccelerometerData[])PrivSim.GetFieldOrProperty("CounterbalanceAccData");
             double[] resultElEnc = (double[])PrivSim.GetFieldOrProperty("ElevationEncoderData");
             double[] resultAzEnc = (double[])PrivSim.GetFieldOrProperty("AzimuthEncoderData");
+            float[] resultAmbTemp = (float[])PrivSim.GetFieldOrProperty("AmbientTempData");
+            float[] resultAmbHumidity = (float[])PrivSim.GetFieldOrProperty("AmbientHumidityData");
+
+            // Create expected array length (spoiler: it is zero)
+            int expectedArrLength = 0;
+
+            // Verify all arrays still have a length of 0 except the null one
+            Assert.AreEqual(expectedArrLength, resultElTemp.Length);
+            Assert.AreEqual(expectedArrLength, resultAzTemp.Length);
+            Assert.AreEqual(expectedArrLength, resultElEnc.Length);
+            Assert.AreEqual(expectedArrLength, resultAzEnc.Length);
+            Assert.AreEqual(expectedArrLength, resultAzAcc.Length);
+            Assert.AreEqual(expectedArrLength, resultElAcc.Length);
+            Assert.AreEqual(expectedArrLength, resultCbAcc.Length);
+            Assert.IsNull(resultAmbTemp);
+            Assert.IsNull(resultAmbHumidity);
+        }
+
+        [TestMethod]
+        public void TestInitializeSensors_DisableAllSensors_AllSensorsDisabled()
+        {
+            // Create an initialization
+            byte[] init = new byte[SensorNetworkConstants.InitPacketSize];
+
+            init[(int)SensorInitializationEnum.ElevationTemp] = 0;
+            init[(int)SensorInitializationEnum.AzimuthTemp] = 0;
+            init[(int)SensorInitializationEnum.ElevationEncoder] = 0;
+            init[(int)SensorInitializationEnum.AzimuthEncoder] = 0;
+            init[(int)SensorInitializationEnum.AzimuthAccelerometer] = 0;
+            init[(int)SensorInitializationEnum.ElevationAccelerometer] = 0;
+            init[(int)SensorInitializationEnum.CounterbalanceAccelerometer] = 0;
+            init[(int)SensorInitializationEnum.AmbientTempHumidity] = 0;
+
+            PrivSim.Invoke("InitializeSensors", init);
+
+            // Gather result data
+            double[] resultElTemp = (double[])PrivSim.GetFieldOrProperty("ElevationTempData");
+            double[] resultAzTemp = (double[])PrivSim.GetFieldOrProperty("AzimuthTempData");
+            RawAccelerometerData[] resultElAcc = (RawAccelerometerData[])PrivSim.GetFieldOrProperty("ElevationAccData");
+            RawAccelerometerData[] resultAzAcc = (RawAccelerometerData[])PrivSim.GetFieldOrProperty("AzimuthAccData");
+            RawAccelerometerData[] resultCbAcc = (RawAccelerometerData[])PrivSim.GetFieldOrProperty("CounterbalanceAccData");
+            double[] resultElEnc = (double[])PrivSim.GetFieldOrProperty("ElevationEncoderData");
+            double[] resultAzEnc = (double[])PrivSim.GetFieldOrProperty("AzimuthEncoderData");
+            float[] resultAmbTemp = (float[])PrivSim.GetFieldOrProperty("AmbientTempData");
+            float[] resultAmbHumidity = (float[])PrivSim.GetFieldOrProperty("AmbientHumidityData");
 
             // Verify all arrays still have a length of 0 except the null one
             Assert.IsNull(resultElTemp);
@@ -398,13 +482,15 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             Assert.IsNull(resultAzAcc);
             Assert.IsNull(resultElAcc);
             Assert.IsNull(resultCbAcc);
+            Assert.IsNull(resultAmbTemp);
+            Assert.IsNull(resultAmbHumidity);
         }
 
         [TestMethod]
         public void TestReadFakeDataFromCSV_ElTemp_ElTempsAreCorrect()
         {
             // Initialize only one sensor, so that is the only sensor that gets CSV data.
-            byte[] init = new byte[SensorNetworkConstants.SensorNetworkSensorCount];
+            byte[] init = new byte[SensorNetworkConstants.InitPacketSize];
 
             init[(int)SensorInitializationEnum.ElevationTemp] = 1;
             init[(int)SensorInitializationEnum.AzimuthTemp] = 0;
@@ -413,6 +499,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             init[(int)SensorInitializationEnum.AzimuthAccelerometer] = 0;
             init[(int)SensorInitializationEnum.ElevationAccelerometer] = 0;
             init[(int)SensorInitializationEnum.CounterbalanceAccelerometer] = 0;
+            init[(int)SensorInitializationEnum.AmbientTempHumidity] = 0;
 
             PrivSim.Invoke("InitializeSensors", init);
 
@@ -426,6 +513,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             RawAccelerometerData[] resultCbAcc = (RawAccelerometerData[])PrivSim.GetFieldOrProperty("CounterbalanceAccData");
             double[] resultElEnc = (double[])PrivSim.GetFieldOrProperty("ElevationEncoderData");
             double[] resultAzEnc = (double[])PrivSim.GetFieldOrProperty("AzimuthEncoderData");
+            float[] resultAmbTemp = (float[])PrivSim.GetFieldOrProperty("AmbientTempData");
+            float[] resultAmbHumidity = (float[])PrivSim.GetFieldOrProperty("AmbientHumidityData");
 
             double[] expectedArray = new double[] { 1, 2 };
 
@@ -439,13 +528,15 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             Assert.IsNull(resultAzAcc);
             Assert.IsNull(resultElAcc);
             Assert.IsNull(resultCbAcc);
+            Assert.IsNull(resultAmbTemp);
+            Assert.IsNull(resultAmbHumidity);
         }
 
         [TestMethod]
         public void TestReadFakeDataFromCSV_AzTemp_AzTempsAreCorrect()
         {
             // Initialize only one sensor, so that is the only sensor that gets CSV data.
-            byte[] init = new byte[SensorNetworkConstants.SensorNetworkSensorCount];
+            byte[] init = new byte[SensorNetworkConstants.InitPacketSize];
 
             init[(int)SensorInitializationEnum.ElevationTemp] = 0;
             init[(int)SensorInitializationEnum.AzimuthTemp] = 1;
@@ -454,6 +545,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             init[(int)SensorInitializationEnum.AzimuthAccelerometer] = 0;
             init[(int)SensorInitializationEnum.ElevationAccelerometer] = 0;
             init[(int)SensorInitializationEnum.CounterbalanceAccelerometer] = 0;
+            init[(int)SensorInitializationEnum.AmbientTempHumidity] = 0;
 
             PrivSim.Invoke("InitializeSensors", init);
 
@@ -467,6 +559,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             RawAccelerometerData[] resultCbAcc = (RawAccelerometerData[])PrivSim.GetFieldOrProperty("CounterbalanceAccData");
             double[] resultElEnc = (double[])PrivSim.GetFieldOrProperty("ElevationEncoderData");
             double[] resultAzEnc = (double[])PrivSim.GetFieldOrProperty("AzimuthEncoderData");
+            float[] resultAmbTemp = (float[])PrivSim.GetFieldOrProperty("AmbientTempData");
+            float[] resultAmbHumidity = (float[])PrivSim.GetFieldOrProperty("AmbientHumidityData");
 
             double[] expectedArray = new double[] { 2, 3 };
 
@@ -480,13 +574,15 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             Assert.IsNull(resultAzAcc);
             Assert.IsNull(resultElAcc);
             Assert.IsNull(resultCbAcc);
+            Assert.IsNull(resultAmbTemp);
+            Assert.IsNull(resultAmbHumidity);
         }
 
         [TestMethod]
         public void TestReadFakeDataFromCSV_ElEnc_ElEncPosAreCorrect()
         {
             // Initialize only one sensor, so that is the only sensor that gets CSV data.
-            byte[] init = new byte[SensorNetworkConstants.SensorNetworkSensorCount];
+            byte[] init = new byte[SensorNetworkConstants.InitPacketSize];
 
             init[(int)SensorInitializationEnum.ElevationTemp] = 0;
             init[(int)SensorInitializationEnum.AzimuthTemp] = 0;
@@ -495,6 +591,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             init[(int)SensorInitializationEnum.AzimuthAccelerometer] = 0;
             init[(int)SensorInitializationEnum.ElevationAccelerometer] = 0;
             init[(int)SensorInitializationEnum.CounterbalanceAccelerometer] = 0;
+            init[(int)SensorInitializationEnum.AmbientTempHumidity] = 0;
 
             PrivSim.Invoke("InitializeSensors", init);
 
@@ -508,6 +605,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             RawAccelerometerData[] resultCbAcc = (RawAccelerometerData[])PrivSim.GetFieldOrProperty("CounterbalanceAccData");
             double[] resultElEnc = (double[])PrivSim.GetFieldOrProperty("ElevationEncoderData");
             double[] resultAzEnc = (double[])PrivSim.GetFieldOrProperty("AzimuthEncoderData");
+            float[] resultAmbTemp = (float[])PrivSim.GetFieldOrProperty("AmbientTempData");
+            float[] resultAmbHumidity = (float[])PrivSim.GetFieldOrProperty("AmbientHumidityData");
 
             double[] expectedArray = new double[] { 3, 4 };
 
@@ -521,13 +620,15 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             Assert.IsNull(resultAzAcc);
             Assert.IsNull(resultElAcc);
             Assert.IsNull(resultCbAcc);
+            Assert.IsNull(resultAmbTemp);
+            Assert.IsNull(resultAmbHumidity);
         }
 
         [TestMethod]
         public void TestReadFakeDataFromCSV_AzEnc_AzEncPosAreCorrect()
         {
             // Initialize only one sensor, so that is the only sensor that gets CSV data.
-            byte[] init = new byte[SensorNetworkConstants.SensorNetworkSensorCount];
+            byte[] init = new byte[SensorNetworkConstants.InitPacketSize];
 
             init[(int)SensorInitializationEnum.ElevationTemp] = 0;
             init[(int)SensorInitializationEnum.AzimuthTemp] = 0;
@@ -536,6 +637,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             init[(int)SensorInitializationEnum.AzimuthAccelerometer] = 0;
             init[(int)SensorInitializationEnum.ElevationAccelerometer] = 0;
             init[(int)SensorInitializationEnum.CounterbalanceAccelerometer] = 0;
+            init[(int)SensorInitializationEnum.AmbientTempHumidity] = 0;
 
             PrivSim.Invoke("InitializeSensors", init);
 
@@ -549,6 +651,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             RawAccelerometerData[] resultCbAcc = (RawAccelerometerData[])PrivSim.GetFieldOrProperty("CounterbalanceAccData");
             double[] resultElEnc = (double[])PrivSim.GetFieldOrProperty("ElevationEncoderData");
             double[] resultAzEnc = (double[])PrivSim.GetFieldOrProperty("AzimuthEncoderData");
+            float[] resultAmbTemp = (float[])PrivSim.GetFieldOrProperty("AmbientTempData");
+            float[] resultAmbHumidity = (float[])PrivSim.GetFieldOrProperty("AmbientHumidityData");
 
             double[] expectedArray = new double[] { 4, 5 };
 
@@ -562,12 +666,14 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             Assert.IsNull(resultAzAcc);
             Assert.IsNull(resultElAcc);
             Assert.IsNull(resultCbAcc);
+            Assert.IsNull(resultAmbTemp);
+            Assert.IsNull(resultAmbHumidity);
         }
 
         [TestMethod]
         public void TestReadFakeDataFromCSV_AzAcc_AzAccAreCorrect()
         {
-            byte[] init = new byte[SensorNetworkConstants.SensorNetworkSensorCount];
+            byte[] init = new byte[SensorNetworkConstants.InitPacketSize];
 
             init[(int)SensorInitializationEnum.ElevationTemp] = 0;
             init[(int)SensorInitializationEnum.AzimuthTemp] = 0;
@@ -576,6 +682,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             init[(int)SensorInitializationEnum.AzimuthAccelerometer] = 1;
             init[(int)SensorInitializationEnum.ElevationAccelerometer] = 0;
             init[(int)SensorInitializationEnum.CounterbalanceAccelerometer] = 0;
+            init[(int)SensorInitializationEnum.AmbientTempHumidity] = 0;
 
             PrivSim.Invoke("InitializeSensors", init);
 
@@ -589,6 +696,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             RawAccelerometerData[] resultCbAcc = (RawAccelerometerData[])PrivSim.GetFieldOrProperty("CounterbalanceAccData");
             double[] resultElEnc = (double[])PrivSim.GetFieldOrProperty("ElevationEncoderData");
             double[] resultAzEnc = (double[])PrivSim.GetFieldOrProperty("AzimuthEncoderData");
+            float[] resultAmbTemp = (float[])PrivSim.GetFieldOrProperty("AmbientTempData");
+            float[] resultAmbHumidity = (float[])PrivSim.GetFieldOrProperty("AmbientHumidityData");
 
             RawAccelerometerData[] expectedAcc = new RawAccelerometerData[400];
 
@@ -618,12 +727,14 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             Assert.IsNull(resultAzEnc);
             Assert.IsNull(resultElAcc);
             Assert.IsNull(resultCbAcc);
+            Assert.IsNull(resultAmbTemp);
+            Assert.IsNull(resultAmbHumidity);
         }
 
         [TestMethod]
         public void TestReadFakeDataFromCSV_ElAcc_ElAccAreCorrect()
         {
-            byte[] init = new byte[SensorNetworkConstants.SensorNetworkSensorCount];
+            byte[] init = new byte[SensorNetworkConstants.InitPacketSize];
 
             init[(int)SensorInitializationEnum.ElevationTemp] = 0;
             init[(int)SensorInitializationEnum.AzimuthTemp] = 0;
@@ -632,6 +743,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             init[(int)SensorInitializationEnum.AzimuthAccelerometer] = 0;
             init[(int)SensorInitializationEnum.ElevationAccelerometer] = 1;
             init[(int)SensorInitializationEnum.CounterbalanceAccelerometer] = 0;
+            init[(int)SensorInitializationEnum.AmbientTempHumidity] = 0;
 
             PrivSim.Invoke("InitializeSensors", init);
 
@@ -645,6 +757,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             RawAccelerometerData[] resultCbAcc = (RawAccelerometerData[])PrivSim.GetFieldOrProperty("CounterbalanceAccData");
             double[] resultElEnc = (double[])PrivSim.GetFieldOrProperty("ElevationEncoderData");
             double[] resultAzEnc = (double[])PrivSim.GetFieldOrProperty("AzimuthEncoderData");
+            float[] resultAmbTemp = (float[])PrivSim.GetFieldOrProperty("AmbientTempData");
+            float[] resultAmbHumidity = (float[])PrivSim.GetFieldOrProperty("AmbientHumidityData");
 
             RawAccelerometerData[] expectedAcc = new RawAccelerometerData[400];
 
@@ -674,12 +788,14 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             Assert.IsNull(resultAzEnc);
             Assert.IsNull(resultAzAcc);
             Assert.IsNull(resultCbAcc);
+            Assert.IsNull(resultAmbTemp);
+            Assert.IsNull(resultAmbHumidity);
         }
 
         [TestMethod]
         public void TestReadFakeDataFromCSV_CbAcc_CbAccAreCorrect()
         {
-            byte[] init = new byte[SensorNetworkConstants.SensorNetworkSensorCount];
+            byte[] init = new byte[SensorNetworkConstants.InitPacketSize];
 
             init[(int)SensorInitializationEnum.ElevationTemp] = 0;
             init[(int)SensorInitializationEnum.AzimuthTemp] = 0;
@@ -688,6 +804,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             init[(int)SensorInitializationEnum.AzimuthAccelerometer] = 0;
             init[(int)SensorInitializationEnum.ElevationAccelerometer] = 0;
             init[(int)SensorInitializationEnum.CounterbalanceAccelerometer] = 1;
+            init[(int)SensorInitializationEnum.AmbientTempHumidity] = 0;
 
             PrivSim.Invoke("InitializeSensors", init);
 
@@ -701,6 +818,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             RawAccelerometerData[] resultCbAcc = (RawAccelerometerData[])PrivSim.GetFieldOrProperty("CounterbalanceAccData");
             double[] resultElEnc = (double[])PrivSim.GetFieldOrProperty("ElevationEncoderData");
             double[] resultAzEnc = (double[])PrivSim.GetFieldOrProperty("AzimuthEncoderData");
+            float[] resultAmbTemp = (float[])PrivSim.GetFieldOrProperty("AmbientTempData");
+            float[] resultAmbHumidity = (float[])PrivSim.GetFieldOrProperty("AmbientHumidityData");
 
             RawAccelerometerData[] expectedAcc = new RawAccelerometerData[400];
 
@@ -730,6 +849,55 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             Assert.IsNull(resultAzEnc);
             Assert.IsNull(resultAzAcc);
             Assert.IsNull(resultElAcc);
+            Assert.IsNull(resultAmbTemp);
+            Assert.IsNull(resultAmbHumidity);
+        }
+
+        [TestMethod]
+        public void TestReadFakeDataFromCSV_AmbTempHumidity_AmbTempHumidityAreCorrect()
+        {
+            // Initialize only one sensor, so that is the only sensor that gets CSV data.
+            byte[] init = new byte[SensorNetworkConstants.InitPacketSize];
+
+            init[(int)SensorInitializationEnum.ElevationTemp] = 0;
+            init[(int)SensorInitializationEnum.AzimuthTemp] = 0;
+            init[(int)SensorInitializationEnum.ElevationEncoder] = 0;
+            init[(int)SensorInitializationEnum.AzimuthEncoder] = 0;
+            init[(int)SensorInitializationEnum.AzimuthAccelerometer] = 0;
+            init[(int)SensorInitializationEnum.ElevationAccelerometer] = 0;
+            init[(int)SensorInitializationEnum.CounterbalanceAccelerometer] = 0;
+            init[(int)SensorInitializationEnum.AmbientTempHumidity] = 1;
+
+            PrivSim.Invoke("InitializeSensors", init);
+
+            PrivSim.Invoke("ReadFakeDataFromCSV");
+
+            // Gather result data
+            double[] resultElTemp = (double[])PrivSim.GetFieldOrProperty("ElevationTempData");
+            double[] resultAzTemp = (double[])PrivSim.GetFieldOrProperty("AzimuthTempData");
+            RawAccelerometerData[] resultElAcc = (RawAccelerometerData[])PrivSim.GetFieldOrProperty("ElevationAccData");
+            RawAccelerometerData[] resultAzAcc = (RawAccelerometerData[])PrivSim.GetFieldOrProperty("AzimuthAccData");
+            RawAccelerometerData[] resultCbAcc = (RawAccelerometerData[])PrivSim.GetFieldOrProperty("CounterbalanceAccData");
+            double[] resultElEnc = (double[])PrivSim.GetFieldOrProperty("ElevationEncoderData");
+            double[] resultAzEnc = (double[])PrivSim.GetFieldOrProperty("AzimuthEncoderData");
+            float[] resultAmbTemp = (float[])PrivSim.GetFieldOrProperty("AmbientTempData");
+            float[] resultAmbHumidity = (float[])PrivSim.GetFieldOrProperty("AmbientHumidityData");
+
+            float[] expectedTempArray = new float[] { 5, 6 };
+            float[] expectedHumidityArray = new float[] { 6, 7 };
+
+            // Verify the result array is as expected
+            Assert.IsTrue(expectedTempArray.SequenceEqual(resultAmbTemp));
+            Assert.IsTrue(expectedHumidityArray.SequenceEqual(resultAmbHumidity));
+
+            // Verify the rest of the fields are still null
+            Assert.IsNull(resultElTemp);
+            Assert.IsNull(resultAzTemp);
+            Assert.IsNull(resultElEnc);
+            Assert.IsNull(resultAzEnc);
+            Assert.IsNull(resultAzAcc);
+            Assert.IsNull(resultElAcc);
+            Assert.IsNull(resultCbAcc);
         }
 
         [TestMethod]
@@ -803,7 +971,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             });
             expectConfThread.Start();
 
-            byte[] expected = Encoding.ASCII.GetBytes("1234567");
+            byte[] expected = new byte[SensorNetworkConstants.InitPacketSize];
             byte[] result = new byte[expected.Length];
 
             // This method has a blocking method, so we must run it in a separate thread
@@ -908,6 +1076,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
                     ref nullInt,
                     ref nullInt,
                     ref nullInt,
+                    ref nullInt,
+                    ref nullInt,
                     ref nullInt
                 );
 
@@ -942,6 +1112,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
             {
                 subArrays = SimSensorNetwork.BuildSubArrays(
                     ref index,
+                    ref nullInt,
+                    ref nullInt,
                     ref nullInt,
                     ref nullInt,
                     ref nullInt,
@@ -986,6 +1158,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
                     ref nullInt,
                     ref nullInt,
                     ref nullInt,
+                    ref nullInt,
+                    ref nullInt,
                     ref nullInt
                 );
 
@@ -1023,6 +1197,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
                     ref nullInt,
                     ref nullInt,
                     ref index,
+                    ref nullInt,
+                    ref nullInt,
                     ref nullInt,
                     ref nullInt,
                     ref nullInt
@@ -1068,6 +1244,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
                     ref nullInt,
                     ref index,
                     ref nullInt,
+                    ref nullInt,
+                    ref nullInt,
                     ref nullInt
                 );
 
@@ -1111,6 +1289,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
                     ref nullInt,
                     ref nullInt,
                     ref index,
+                    ref nullInt,
+                    ref nullInt,
                     ref nullInt
                 );
 
@@ -1154,10 +1334,94 @@ namespace ControlRoomApplicationTest.EntityControllersTests.SensorNetworkTests.S
                     ref nullInt,
                     ref nullInt,
                     ref nullInt,
-                    ref index
+                    ref index,
+                    ref nullInt,
+                    ref nullInt
                 );
 
                 subArrays.CounterBAccl.CopyTo(resultArray, i);
+            }
+
+            Assert.IsTrue(expectedArray.SequenceEqual(resultArray));
+        }
+
+        [TestMethod]
+        public void TestBuildSubArrays_AmbientTemperature_AmbientTemperatureIterates()
+        {
+            // "Initialize" sensor
+            PrivSim.SetFieldOrProperty("AmbientTempData", new float[0]);
+
+            // Populate initialized sensor
+            PrivSim.Invoke("ReadFakeDataFromCSV");
+
+            // Retrieve populated sensor
+            float[] initArray = (float[])PrivSim.GetFieldOrProperty("AmbientTempData");
+            float[] expectedArray = new float[initArray.Length + 1]; // + 1 is to test looping back to the beginning
+            initArray.CopyTo(expectedArray, 0);
+            expectedArray[expectedArray.Length - 1] = initArray[0];
+
+            float[] resultArray = new float[expectedArray.Length];
+
+            int? index = 0;
+            int? nullInt = null;
+            SimulationSubArrayData subArrays;
+
+            for (int i = 0; i < expectedArray.Length; i++)
+            {
+                subArrays = SimSensorNetwork.BuildSubArrays(
+                    ref nullInt,
+                    ref nullInt,
+                    ref nullInt,
+                    ref nullInt,
+                    ref nullInt,
+                    ref nullInt,
+                    ref nullInt,
+                    ref index,
+                    ref nullInt
+                );
+
+                resultArray[i] = subArrays.AmbientTemps[subArrays.AmbientTemps.Length - 1];
+            }
+
+            Assert.IsTrue(expectedArray.SequenceEqual(resultArray));
+        }
+
+        [TestMethod]
+        public void TestBuildSubArrays_AmbientHumidity_AmbientHumidityIterates()
+        {
+            // "Initialize" sensor
+            PrivSim.SetFieldOrProperty("AmbientHumidityData", new float[0]);
+
+            // Populate initialized sensor
+            PrivSim.Invoke("ReadFakeDataFromCSV");
+
+            // Retrieve populated sensor
+            float[] initArray = (float[])PrivSim.GetFieldOrProperty("AmbientHumidityData");
+            float[] expectedArray = new float[initArray.Length + 1]; // + 1 is to test looping back to the beginning
+            initArray.CopyTo(expectedArray, 0);
+            expectedArray[expectedArray.Length - 1] = initArray[0];
+
+            float[] resultArray = new float[expectedArray.Length];
+
+            int? index = 0;
+            int? nullInt = null;
+            SimulationSubArrayData subArrays;
+
+            for (int i = 0; i < expectedArray.Length; i++)
+            {
+                subArrays = SimSensorNetwork.BuildSubArrays(
+                    ref nullInt,
+                    ref nullInt,
+                    ref nullInt,
+                    ref nullInt,
+                    ref nullInt,
+                    ref nullInt,
+                    ref nullInt,
+                    ref nullInt,
+                    ref index
+                );
+
+                resultArray[i] = subArrays.AmbientHumidity[subArrays.AmbientHumidity.Length - 1];
             }
 
             Assert.IsTrue(expectedArray.SequenceEqual(resultArray));

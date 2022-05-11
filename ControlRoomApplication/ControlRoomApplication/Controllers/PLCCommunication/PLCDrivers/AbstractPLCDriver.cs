@@ -80,7 +80,7 @@ namespace ControlRoomApplication.Controllers
 
         public abstract Orientation GetMotorEncoderPosition();
 
-        public abstract bool Cancel_move();
+        public abstract MovementResult Cancel_move();
 
         // All of the "scripts" are here all the way to....
         // Control Scripts
@@ -94,9 +94,9 @@ namespace ControlRoomApplication.Controllers
 
         public abstract bool Configure_MCU(double startSpeedAzimuth, double startSpeedElevation, int homeTimeoutAzimuth, int homeTimeoutElevation);
 
-        public abstract bool ControlledStop();
+        public abstract MovementResult ControlledStop();
 
-        public abstract bool ImmediateStop();
+        public abstract MovementResult ImmediateStop();
 
         public abstract MovementResult RelativeMove(int programmedPeakSpeedAZInt, int programmedPeakSpeedELInt, int positionTranslationAZ, int positionTranslationEL, Orientation targetOrientation);
 
@@ -158,5 +158,11 @@ namespace ControlRoomApplication.Controllers
         /// <param name="axis">Azimuth or elevation.</param>
         /// <returns>The direction that the specfied axis is spinning.</returns>
         public abstract RadioTelescopeDirectionEnum GetRadioTelescopeDirectionEnum(RadioTelescopeAxisEnum axis);
+
+        /// <summary>
+        /// Gets whether or not the motors have been homed.
+        /// </summary>
+        /// <returns>Whether or not the motors have been homed</returns>
+        public abstract bool GetMotorsHomed();
     }
 }

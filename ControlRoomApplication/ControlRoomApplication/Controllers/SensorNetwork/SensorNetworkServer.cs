@@ -1,4 +1,4 @@
-﻿using ControlRoomApplication.Entities;
+using ControlRoomApplication.Entities;
 using ControlRoomApplication.Util;
 using System;
 using System.Collections.Generic;
@@ -53,6 +53,12 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
             CurrentAzimuthMotorTemp = new Temperature[1];
             CurrentAzimuthMotorTemp[0] = new Temperature();
 
+            CurrentElevationAmbientTemp = new Temperature[1];
+            CurrentElevationAmbientTemp[0] = new Temperature();
+
+            CurrentElevationAmbientHumidity = new Humidity[1];
+            CurrentElevationAmbientHumidity[0] = new Humidity();
+
             CurrentAbsoluteOrientation = new Orientation();
 
             CurrentElevationMotorAccl = new Acceleration[1];
@@ -74,6 +80,7 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
             SensorStatuses.AzimuthTemperature2Status = SensorNetworkSensorStatus.Okay;
             SensorStatuses.ElevationTemperature1Status = SensorNetworkSensorStatus.Okay;
             SensorStatuses.ElevationTemperature2Status = SensorNetworkSensorStatus.Okay;
+            SensorStatuses.ElevationAmbientStatus = SensorNetworkSensorStatus.Okay;
             SensorStatuses.AzimuthAccelerometerStatus = SensorNetworkSensorStatus.Okay;
             SensorStatuses.ElevationAccelerometerStatus = SensorNetworkSensorStatus.Okay;
             SensorStatuses.CounterbalanceAccelerometerStatus = SensorNetworkSensorStatus.Okay;
@@ -112,6 +119,35 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
         /// The current azimuth motor temperature received from the sensor network. 
         /// </summary>
         public Temperature[] CurrentAzimuthMotorTemp { get; set; }
+
+        /// <summary>
+        /// The current elevation ambient temperature received from the sensor network. 
+        /// </summary>
+        public Temperature[] CurrentElevationAmbientTemp { get; set; }
+
+        /// <summary>
+        /// The current elevation ambient humidity received from the sensor network. 
+        /// </summary>
+        public Humidity[] CurrentElevationAmbientHumidity { get; set; }
+
+        /// <summary>
+        /// The current elevation ambient dew point calculated from the ambient humidity and 
+        /// temperature recieved from the sensor network.
+        /// </summary>
+        public double CurrentElevationAmbientDewPoint { get; set; }
+
+        /// <summary>
+        /// Whether or not the fan needs to be set on or off the next time the fan control packet is sent.
+        /// True for setting the fan on, false for setting the fan off.
+        /// </summary>
+        public bool SetFanOnOrOff { get; set; }
+
+        /// <summary>
+        /// Whether or not the fan is on or off, coming from the ESS. The ESS could reset and we need to know if
+        /// the internal fan is on or off for display purposes.
+        /// True for the fan is on, false for the fan is off.
+        /// </summary>
+        public bool FanIsOn { get; set; }
 
         /// <summary>
         /// The current orientation of the telescope based off of the absolute encoders. These
@@ -212,7 +248,10 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
         /// </summary>
         private CounterbalanceAccelerationBlob CounterbalanceAccBlob { get; set; }
 
-
+        /// <summary>
+        /// This stores the timestamp that the sensor network server got connected with a client
+        /// </summary>
+        private long ConnectionTimestamp { get; set; }
 
         /// <summary>
         /// This starts the SensorMonitoringRoutine. Calling this will immediately begin initialization.
@@ -310,10 +349,11 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
                     Status = SensorNetworkStatusEnum.InitializationSendingFailed;
                     if(Timeout.Enabled) Timeout.Stop();
 
-                    pushNotification.sendToAllAdmins("Sensor Network Error", $"Status: {Status}");
+                    PushNotification.sendToAllAdmins("Sensor Network Error", $"Status: {Status}");
                 }
                 else
                 {
+                    ConnectionTimestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
                     logger.Info($"{Utilities.GetTimeStamp()}: Successfully sent sensor initialization to the Sensor Network.");
                     success = true;
                 }
@@ -337,24 +377,26 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
                         // At this point, we may begin parsing the data
 
                         // Sensor statuses and error codes
-                        BitArray sensorStatus = new BitArray(new byte[] { data[5] }); // sensor statuses 
-                        UInt32 sensorErrors = (UInt32)(data[6] << 16 | data[7] << 8 | data[8]); // sensor self-tests | adxl error codes and azimuth encoder error code | temp sensor error codes
+                        BitArray sensorStatus = new BitArray(new byte[] { data[5], data[6] }); // sensor statuses 
+                        UInt32 sensorErrors = (UInt32)(data[7] << 16 | data[8] << 8 | data[9]); // sensor self-tests | adxl error codes and azimuth encoder error code | temp sensor error codes
 
                         // Acquire the sample sizes for each sensor
-                        UInt16 elAcclSize = (UInt16)(data[9] << 8 | data[10]);
-                        UInt16 azAcclSize = (UInt16)(data[11] << 8 | data[12]);
-                        UInt16 cbAcclSize = (UInt16)(data[13] << 8 | data[14]);
-                        UInt16 elTempSensorSize = (UInt16)(data[15] << 8 | data[16]);
-                        UInt16 azTempSensorSize = (UInt16)(data[17] << 8 | data[18]);
-                        UInt16 elEncoderSize = (UInt16)(data[19] << 8 | data[20]);
-                        UInt16 azEncoderSize = (UInt16)(data[21] << 8 | data[22]);
+                        UInt16 elAcclSize = (UInt16)(data[10] << 8 | data[11]);
+                        UInt16 azAcclSize = (UInt16)(data[12] << 8 | data[13]);
+                        UInt16 cbAcclSize = (UInt16)(data[14] << 8 | data[15]);
+                        UInt16 elTempSensorSize = (UInt16)(data[16] << 8 | data[17]);
+                        UInt16 azTempSensorSize = (UInt16)(data[18] << 8 | data[19]);
+                        UInt16 elEncoderSize = (UInt16)(data[20] << 8 | data[21]);
+                        UInt16 azEncoderSize = (UInt16)(data[22] << 8 | data[23]);
+                        UInt16 ambientTempSize = (UInt16)(data[24] << 8 | data[25]);
+                        UInt16 ambientHumiditySize = (UInt16)(data[26] << 8 | data[27]);
 
                         // TODO: Outside of right here, we aren't doing anything with the sensor statuses. These should
                         // be updated along with the sensor data on the diagnostics form. How this looks is up to you. (issue #353)
-                        SensorStatuses = ParseSensorStatuses(sensorStatus, sensorErrors);
+                        SensorStatuses = ParseSensorStatuses(sensorStatus, sensorErrors, SensorStatuses.ElevationAbsoluteEncoderStatus);
 
                         // This is the index we start reading sensor data
-                        int k = 23;
+                        int k = 28;
 
                         // If no data comes through for a sensor (i.e. the size is 0), then it will not be updated,
                         // otherwise the UI value would temporarily be set to 0, which would be inaccurate
@@ -362,29 +404,29 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
                         // Accelerometer 1 (elevation)
                         if (elAcclSize > 0)
                         {
-                            //Create array of acceleration objects 
-                            CurrentElevationMotorAccl = GetAccelerationFromBytes(ref k, data, elAcclSize, SensorLocationEnum.EL_MOTOR);
+                            AccelerometerConfig config = InitializationClient.SensorNetworkConfig.ElAccelConfig;
 
-                            //add to the Elevation Acceleration Blob
-                            ElevationAccBlob.BuildAccelerationBlob(CurrentElevationMotorAccl);
+                            //Create array of acceleration objects 
+                            CurrentElevationMotorAccl = GetAccelerationFromBytes(ref k, data, elAcclSize, SensorLocationEnum.EL_MOTOR, config.SamplingFrequency, ConnectionTimestamp);
+                            ElevationAccBlob.BuildAccelerationBlob(CurrentElevationMotorAccl, FIFO_Size: (byte)config.FIFOSize, SampleFrequency: (short)config.SamplingFrequency, GRange: (byte)config.GRange, FullResolution: config.FullBitResolution);
                         }
 
                         // Accelerometer 2 (azimuth)
                         if (azAcclSize > 0)
                         {
-                            CurrentAzimuthMotorAccl = GetAccelerationFromBytes(ref k, data, azAcclSize, SensorLocationEnum.AZ_MOTOR);
-                            
-                            //add to the Azimuth Acceleration Blob
-                            AzimuthAccBlob.BuildAccelerationBlob(CurrentAzimuthMotorAccl);
+                            AccelerometerConfig config = InitializationClient.SensorNetworkConfig.AzAccelConfig;
+
+                            CurrentAzimuthMotorAccl = GetAccelerationFromBytes(ref k, data, azAcclSize, SensorLocationEnum.AZ_MOTOR, config.SamplingFrequency, ConnectionTimestamp);
+                            AzimuthAccBlob.BuildAccelerationBlob(CurrentAzimuthMotorAccl, FIFO_Size: (byte)config.FIFOSize, SampleFrequency: (short)config.SamplingFrequency, GRange: (byte)config.GRange, FullResolution: config.FullBitResolution);
                         }
 
                         // Accelerometer 3 (counterbalance)
                         if (cbAcclSize > 0)
                         {
-                            CurrentCounterbalanceAccl = GetAccelerationFromBytes(ref k, data, cbAcclSize, SensorLocationEnum.COUNTERBALANCE);
+                            AccelerometerConfig config = InitializationClient.SensorNetworkConfig.CbAccelConfig;
 
-                            //add to the Counterbalance Acceleration Blob
-                            CounterbalanceAccBlob.BuildAccelerationBlob(CurrentCounterbalanceAccl);
+                            CurrentCounterbalanceAccl = GetAccelerationFromBytes(ref k, data, cbAcclSize, SensorLocationEnum.COUNTERBALANCE, config.SamplingFrequency, ConnectionTimestamp);
+                            CounterbalanceAccBlob.BuildAccelerationBlob(CurrentCounterbalanceAccl, FIFO_Size: (byte)config.FIFOSize, SampleFrequency: (short)config.SamplingFrequency, GRange: (byte)config.GRange, FullResolution: config.FullBitResolution);
 
                             // If there is new counterbalance accelerometer data, update the elevation position
                             UpdateCBAccelElevationPosition();
@@ -393,14 +435,14 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
                         // Elevation temperature
                         if (elTempSensorSize > 0)
                         {
-                            CurrentElevationMotorTemp = GetTemperatureFromBytes(ref k, data, elTempSensorSize, SensorLocationEnum.EL_MOTOR);
+                            CurrentElevationMotorTemp = GetMotorTemperatureFromBytes(ref k, data, elTempSensorSize, SensorLocationEnum.EL_MOTOR);
                             Database.DatabaseOperations.AddSensorData(CurrentElevationMotorTemp);
                         }
 
                         // Azimuth temperature
                         if (azTempSensorSize > 0)
                         {
-                            CurrentAzimuthMotorTemp = GetTemperatureFromBytes(ref k, data, azTempSensorSize, SensorLocationEnum.AZ_MOTOR);
+                            CurrentAzimuthMotorTemp = GetMotorTemperatureFromBytes(ref k, data, azTempSensorSize, SensorLocationEnum.AZ_MOTOR);
                             Database.DatabaseOperations.AddSensorData(CurrentAzimuthMotorTemp);
                         }
 
@@ -414,6 +456,22 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
                         if (azEncoderSize > 0)
                         {
                             CurrentAbsoluteOrientation.Azimuth = GetAzimuthAxisPositionFromBytes(ref k, data, AbsoluteOrientationOffset.Azimuth, CurrentAbsoluteOrientation.Azimuth);
+                        }
+
+                        // Elevation Ambient Temperature
+                        if (ambientTempSize > 0)
+                        {
+                            CurrentElevationAmbientTemp = GetAmbientTemperatureFromBytes(ref k, data, ambientTempSize, SensorLocationEnum.EL_FRAME);
+                            UpdateAmbientDewPoint();
+                            Database.DatabaseOperations.AddSensorData(CurrentElevationAmbientTemp);
+                        }
+
+                        // Elevation Ambient Temperature
+                        if (ambientHumiditySize > 0)
+                        {
+                            CurrentElevationAmbientHumidity = GetAmbientHumidityFromBytes(ref k, data, ambientHumiditySize, SensorLocationEnum.EL_FRAME);
+                            UpdateAmbientDewPoint();
+                            Database.DatabaseOperations.AddSensorData(CurrentElevationAmbientHumidity);
                         }
 
                         success = true;
@@ -468,6 +526,9 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
                             Timeout.Stop();
                         }
 
+                        // Send the fan state asap after recieving the packet
+                        Stream.WriteByte(Convert.ToByte(SetFanOnOrOff));
+
                         InterpretData(receivedData, receivedDataSize);
 
                         // We only want to start the timeout if we are currently receiving data. The reason is because, the timeout
@@ -491,7 +552,7 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
                         logger.Error($"{Utilities.GetTimeStamp()}: An error occurred while running the server; please check that the connection is available.");
                         logger.Info($"{Utilities.GetTimeStamp()}: Trying to reconnect to the Sensor Network...");
 
-                        pushNotification.sendToAllAdmins("Sensor Network Error", $"Status: {Status}");
+                        PushNotification.sendToAllAdmins("Sensor Network Error", $"Status: {Status}");
                     }
                 }
             }
@@ -502,8 +563,9 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
         /// </summary>
         /// <param name="statuses">Regular statuses.</param>
         /// <param name="errors">Various error codes if there are errors.</param>
+        /// <param name="elevationStatus">Previous elevation status to be passed in, is set in the sensor status routine</param>
         /// <returns></returns>
-        private SensorStatuses ParseSensorStatuses(BitArray statuses, UInt32 errors)
+        private SensorStatuses ParseSensorStatuses(BitArray statuses, UInt32 errors, SensorNetworkSensorStatus elevationStatus)
         {
             SensorStatuses s = new SensorStatuses
             {
@@ -516,9 +578,15 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
                 AzimuthAccelerometerStatus = statuses[6] ? SensorNetworkSensorStatus.Okay : SensorNetworkSensorStatus.Error,
                 ElevationAccelerometerStatus = statuses[7] ? SensorNetworkSensorStatus.Okay : SensorNetworkSensorStatus.Error,
                 CounterbalanceAccelerometerStatus = statuses[5] ? SensorNetworkSensorStatus.Okay : SensorNetworkSensorStatus.Error,
+                // Set the default value for this to okay, it is checked for inside of the sensor status routine
+                ElevationAbsoluteEncoderStatus = elevationStatus,
+                ElevationAmbientStatus = statuses[8] ? SensorNetworkSensorStatus.Okay : SensorNetworkSensorStatus.Error
 
                 // TODO: Parse errors here. You will need to add the errors to the SensorStatuses object (issue #353)
             };
+
+            // Update fan status
+            FanIsOn = statuses[9];
 
             return s;
         }
@@ -546,7 +614,7 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
 
             logger.Error($"{Utilities.GetTimeStamp()}: Connection to the Sensor Network timed out! Status: {Status}");
 
-            pushNotification.sendToAllAdmins("Sensor Network Timeout", $"Status: {Status}");
+            PushNotification.sendToAllAdmins("Sensor Network Timeout", $"Status: {Status}");
         }
 
         /// <summary>
@@ -570,15 +638,47 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
             double z_avg = z_sum / CurrentCounterbalanceAccl.Length;
             //Console.WriteLine("X: " + x_avg + " Y: " + y_avg + " Z: " + z_avg);
 
+            // Set the factor used to convert to G's. If full bit resolution is used, it will always be 256. If not,
+            // then 10-bit resolution is used, and is mapped to the configured g-range
+            AccelerometerConfig cbConfig = InitializationClient.SensorNetworkConfig.CbAccelConfig;
+            double gRangeFactor = cbConfig.FullBitResolution ? 256.0 : 1024 / cbConfig.GRange * 2;
+
             // Map the accerlerometer output values to their proper G-force range
-            double X_out = x_avg / 256.0;
-            double Y_out = y_avg / 256.0;
-            double Z_out = z_avg / 256.0;
+            double X_out = x_avg / gRangeFactor;
+            double Y_out = y_avg / gRangeFactor;
+            double Z_out = z_avg / gRangeFactor;
             //Console.WriteLine("X: " + X_out + " Y: " + Y_out + " Z: " + Z_out);
 
             //Console.WriteLine(Math.Atan2(Y_out, -Z_out) * 180.0 / Math.PI + SensorNetworkConstants.CBAccelPositionOffset);
             // Calculate roll orientation
             CurrentCBAccelElevationPosition = Math.Atan2(Y_out, -Z_out) * 180.0 / Math.PI + SensorNetworkConstants.CBAccelPositionOffset;
+        }
+
+        /// <summary>
+        /// A method to update the current ambient dew point.
+        /// Code was taken/modeled from https://www.best-microcontroller-projects.com/dht22.html
+        /// reference (1) : http://wahiduddin.net/calc/density_algorithms.htm
+        /// reference (2) : http://www.colorado.edu/geography/weather_station/Geog_site/about.htm
+        /// </summary>
+        private void UpdateAmbientDewPoint()
+        {
+            double currentTempC = (CurrentElevationAmbientTemp[CurrentElevationAmbientTemp.Length - 1].temp - 32) * 5.0 / 9.0;
+            // (1) Saturation Vapor Pressure = ESGG(T)
+            double ratio = 373.15 / (273.15 + currentTempC);
+            double rhs = -7.90298 * (ratio - 1);
+            rhs += 5.02808 * Math.Log10(ratio);
+            rhs += -1.3816e-7 * (Math.Pow(10, (11.344 * (1 - 1 / ratio))) - 1);
+            rhs += 8.1328e-3 * (Math.Pow(10, (-3.49149 * (ratio - 1))) - 1);
+            rhs += Math.Log10(1013.246);
+
+            // factor -3 is to adjust units -Vapor Pressure SVP * humidity
+            double vp = Math.Pow(10, rhs - 3) * CurrentElevationAmbientHumidity[CurrentElevationAmbientHumidity.Length - 1].HumidityReading;
+
+            // (2) DEWPOINT = F(Vapor Pressure)
+            double t = Math.Log(vp / 0.61078);
+            double dewPointC = (241.88 * t) / (17.558 - t);
+
+            CurrentElevationAmbientDewPoint = 9.0 / 5.0 * dewPointC + 32;
         }
     }
 }

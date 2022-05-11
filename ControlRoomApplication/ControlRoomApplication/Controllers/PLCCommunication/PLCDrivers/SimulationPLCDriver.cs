@@ -72,7 +72,7 @@ namespace ControlRoomApplication.Controllers
             return driver.GetMotorEncoderPosition();
         }
 
-        public override bool Cancel_move()
+        public override MovementResult Cancel_move()
         {
             return driver.Cancel_move();
         }
@@ -82,12 +82,12 @@ namespace ControlRoomApplication.Controllers
             return driver.Configure_MCU(startSpeedAzimuth, startSpeedElevation, homeTimeoutAzimuth, homeTimeoutElevation);
         }
 
-        public override bool ControlledStop()
+        public override MovementResult ControlledStop()
         {
             return driver.ControlledStop();
         }
 
-        public override bool ImmediateStop()
+        public override MovementResult ImmediateStop()
         {
             return driver.ImmediateStop();
         }
@@ -103,6 +103,15 @@ namespace ControlRoomApplication.Controllers
         }
 
         public override MovementResult StartBothAxesJog(double azSpeed, RadioTelescopeDirectionEnum azDirection, double elSpeed, RadioTelescopeDirectionEnum elDirection) {
+            if (elDirection == RadioTelescopeDirectionEnum.ClockwiseOrNegative)
+            {
+                elDirection = RadioTelescopeDirectionEnum.CounterclockwiseOrPositive;
+            }
+            else if (elDirection == RadioTelescopeDirectionEnum.CounterclockwiseOrPositive)
+            {
+                elDirection = RadioTelescopeDirectionEnum.ClockwiseOrNegative;
+            }
+
             return driver.StartBothAxesJog(azSpeed, azDirection, elSpeed, elDirection);
         }
 
@@ -174,6 +183,11 @@ namespace ControlRoomApplication.Controllers
         public override RadioTelescopeDirectionEnum GetRadioTelescopeDirectionEnum(RadioTelescopeAxisEnum axis)
         {
                 return driver.GetRadioTelescopeDirectionEnum(axis);
+        }
+
+        public override bool GetMotorsHomed()
+        {
+            return driver.GetMotorsHomed();
         }
     }
 }

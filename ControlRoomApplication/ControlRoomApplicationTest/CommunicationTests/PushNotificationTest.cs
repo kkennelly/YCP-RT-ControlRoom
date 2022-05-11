@@ -11,12 +11,9 @@ namespace ControlRoomApplicationTest.CommunicationTests
         public void TestSendPushNotificationsToAllAdmins()
         {
             // Execute task
-            Task<bool> task = pushNotification.sendToAllAdmins("TEST", "This should pass.", true);
+            bool test = pushNotification.sendToAllAdmins("TEST", "This should pass.", true);
 
-            // Wait for task to complete so result is up to date
-            task.Wait();
-
-            Assert.IsTrue(task.Result);
+            Assert.IsTrue(test);
         }
     }
 }

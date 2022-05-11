@@ -324,7 +324,7 @@ namespace ControlRoomApplication.Controllers
                             {
                                 logger.Info(Utilities.GetTimeStamp() + ": Elevation Lower Limit Switch Hit");
 
-                                pushNotification.sendToAllAdmins("LIMIT SWITCH", "Elevation lower limit switch hit");
+                                PushNotification.sendToAllAdmins("LIMIT SWITCH", "Elevation lower limit switch hit");
                                 EmailNotifications.sendToAllAdmins("LIMIT SWITCH", "Elevation lower limit switch hit");
                             }
                         }
@@ -344,7 +344,7 @@ namespace ControlRoomApplication.Controllers
                             {
                                 logger.Info(Utilities.GetTimeStamp() + ": Elevation Upper Limit Switch Hit");
 
-                                pushNotification.sendToAllAdmins("LIMIT SWITCH", "Elevation upper limit switch hit");
+                                PushNotification.sendToAllAdmins("LIMIT SWITCH", "Elevation upper limit switch hit");
                                 EmailNotifications.sendToAllAdmins("LIMIT SWITCH", "Elevation upper limit switch hit");
                             }
                         }
@@ -358,14 +358,14 @@ namespace ControlRoomApplication.Controllers
                             {
                                 logger.Info(Utilities.GetTimeStamp() + ": gate opened");
 
-                                pushNotification.sendToAllAdmins("GATE ACTIVITY", "Gate has been opened.");
+                                PushNotification.sendToAllAdmins("GATE ACTIVITY", "Gate has been opened.");
                                 EmailNotifications.sendToAllAdmins("GATE ACTIVITY", "Gate has been opened.");
                             }
                             else
                             {
                                 logger.Info(Utilities.GetTimeStamp() + ": gate closed");
 
-                                pushNotification.sendToAllAdmins("GATE ACTIVITY", "Gate has been closed.");
+                                PushNotification.sendToAllAdmins("GATE ACTIVITY", "Gate has been closed.");
                                 EmailNotifications.sendToAllAdmins("GATE ACTIVITY", "Gate has been closed.");
                             }
                         }
@@ -380,7 +380,7 @@ namespace ControlRoomApplication.Controllers
                                 logger.Info(Utilities.GetTimeStamp() + ": Estop Hit");
                                 CurrentMovementPriority = MovementPriority.Critical;
 
-                                pushNotification.sendToAllAdmins("E-STOP ACTIVITY", "E-stop has been hit.");
+                                PushNotification.sendToAllAdmins("E-STOP ACTIVITY", "E-stop has been hit.");
                                 EmailNotifications.sendToAllAdmins("E-STOP ACTIVITY", "E-stop has been hit.");
                             }
                             else
@@ -388,7 +388,7 @@ namespace ControlRoomApplication.Controllers
                                 logger.Info(Utilities.GetTimeStamp() + ": Estop released");
                                 CurrentMovementPriority = MovementPriority.None;
 
-                                pushNotification.sendToAllAdmins("E-STOP ACTIVITY", "E-stop has been released.");
+                                PushNotification.sendToAllAdmins("E-STOP ACTIVITY", "E-stop has been released.");
                                 EmailNotifications.sendToAllAdmins("E-STOP ACTIVITY", "E-stop has been released.");
                             }
                         }
@@ -496,7 +496,7 @@ namespace ControlRoomApplication.Controllers
         /// clears the previos move comand from mthe PLC, only works for jog moves
         /// </summary>
         /// <returns></returns>
-        public override bool Cancel_move() {
+        public override MovementResult Cancel_move() {
             return MCU.Cancel_move();
         }
 
@@ -504,11 +504,11 @@ namespace ControlRoomApplication.Controllers
         /// send a hold move command to the MCu
         /// </summary>
         /// <returns></returns>
-        public override bool ControlledStop(  ) {
+        public override MovementResult ControlledStop(  ) {
             return MCU.ControlledStop();
         }
 
-        public override bool ImmediateStop() {
+        public override MovementResult ImmediateStop() {
             return MCU.ImmediateStop();
         }
 
@@ -521,7 +521,7 @@ namespace ControlRoomApplication.Controllers
         /// <param name="targetOrientation">The target orientation.</param>
         /// <returns></returns>
         public override MovementResult RelativeMove(int programmedPeakSpeedAZInt, int programmedPeakSpeedELInt, int positionTranslationAZ, int positionTranslationEL, Orientation targetOrientation) {
-            return MCU.MoveAndWaitForCompletion(programmedPeakSpeedAZInt, programmedPeakSpeedELInt, positionTranslationAZ, positionTranslationEL, targetOrientation);
+            return MCU.MoveAndWaitForCompletion(programmedPeakSpeedAZInt, programmedPeakSpeedELInt, positionTranslationAZ, -1 * positionTranslationEL, targetOrientation);
         }
 
         public override MovementResult MoveToOrientation(Orientation target_orientation, Orientation current_orientation)
@@ -550,7 +550,7 @@ namespace ControlRoomApplication.Controllers
             }
 
             positionTranslationAZ = ConversionHelper.DegreesToSteps(azimuthOrientationMovement, MotorConstants.GEARING_RATIO_AZIMUTH);
-            positionTranslationEL = ConversionHelper.DegreesToSteps((target_orientation.Elevation - current_orientation.Elevation), MotorConstants.GEARING_RATIO_ELEVATION);
+            positionTranslationEL = -1 * ConversionHelper.DegreesToSteps((target_orientation.Elevation - current_orientation.Elevation), MotorConstants.GEARING_RATIO_ELEVATION);
 
             int EL_Speed = ConversionHelper.DPSToSPS( ConversionHelper.RPMToDPS( 0.6 ), MotorConstants.GEARING_RATIO_ELEVATION);
             int AZ_Speed = ConversionHelper.DPSToSPS( ConversionHelper.RPMToDPS( 0.6 ), MotorConstants.GEARING_RATIO_AZIMUTH);
@@ -749,6 +749,15 @@ namespace ControlRoomApplication.Controllers
             }
 
             return RadioTelescopeDirectionEnum.None;
+        }
+
+        /// <summary>
+        /// Gets whether or not the motors have been homed.
+        /// </summary>
+        /// <returns>Whether or not the motors have been homed</returns>
+        public override bool GetMotorsHomed()
+        {
+            return MCU.MotorsHomed;
         }
     }
 }

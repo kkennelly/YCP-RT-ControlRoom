@@ -96,7 +96,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests
                 NetworkStream stream = localClient.GetStream();
 
                 // This will hold our sensor initialization
-                byte[] bytes = new byte[SensorNetworkConstants.SensorNetworkSensorCount];
+                byte[] bytes = new byte[SensorNetworkConstants.InitPacketSize];
 
                 // Wait for initialization
                 stream.Read(bytes, 0, bytes.Length);
@@ -143,7 +143,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests
                 NetworkStream stream = localClient.GetStream();
 
                 // This will hold our sensor initialization
-                byte[] bytes = new byte[SensorNetworkConstants.SensorNetworkSensorCount];
+                byte[] bytes = new byte[SensorNetworkConstants.InitPacketSize];
 
                 // Wait for initialization
                 stream.Read(bytes, 0, bytes.Length);
@@ -169,6 +169,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             client.SensorNetworkConfig.CounterbalanceAccelerometerInit = false;
             client.SensorNetworkConfig.ElevationEncoderInit = false;
             client.SensorNetworkConfig.AzimuthEncoderInit = false;
+            client.SensorNetworkConfig.ElevationAmbientInit = false;
 
             // Send the init byte array
             bool succeeded = client.SendSensorInitialization();

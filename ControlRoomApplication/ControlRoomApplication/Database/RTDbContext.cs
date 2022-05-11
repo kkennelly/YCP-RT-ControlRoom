@@ -2,6 +2,7 @@
 using System.Data.Entity;
 using ControlRoomApplication.Constants;
 using ControlRoomApplication.Entities;
+using ControlRoomApplication.Entities.DiagnosticData;
 
 namespace ControlRoomApplication.Main
 {
@@ -36,11 +37,13 @@ namespace ControlRoomApplication.Main
 
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<RFData> RFDatas { get; set; }
+        public DbSet<AppointmentCalibration> AppointmentCalibrations { get; set; }
         public DbSet<Orientation> Orientations { get; set; }
         public DbSet<Coordinate> Coordinates { get; set; }
         public DbSet<Location> Location { get; set; }
         public DbSet<Log> Logs { get; set; }
         public DbSet<Temperature> Temperatures { get; set; }
+        public DbSet<Humidity> Humidity { get; set; }
         public DbSet<Acceleration> Accelerations { get; set; }
         public DbSet<AzimuthAccelerationBlob> AzimuthAccelerationBlobs { get; set; }
         public DbSet<ElevationAccelerationBlob> ElevationAccelerationBlobs { get; set; }
@@ -48,6 +51,7 @@ namespace ControlRoomApplication.Main
 
         public DbSet<CelestialBody> CelestialBodies { get; set; }
         public DbSet<SensorNetworkConfig> SensorNetworkConfig { get; set; }
+        public DbSet<AccelerometerConfig> AccelerometerConfig { get; set; }
         public DbSet<SpectraCyberConfig> SpectraCyberConfigs { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }

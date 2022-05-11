@@ -56,6 +56,10 @@ namespace ControlRoomApplication.Controllers.SensorNetwork.Simulation
 
         private double[] ElevationTempData { get; set; }
 
+        private float[] AmbientTempData { get; set; }
+
+        private float[] AmbientHumidityData { get; set; }
+
         private RawAccelerometerData[] AzimuthAccData { get; set; }
 
         private RawAccelerometerData[] ElevationAccData { get; set; }
@@ -65,6 +69,10 @@ namespace ControlRoomApplication.Controllers.SensorNetwork.Simulation
         private double[] AzimuthEncoderData { get; set; }
 
         private double[] ElevationEncoderData { get; set; }
+
+        private long ConnectionTimeStamp { get; set; }
+
+        private bool FanOn { get; set; }
 
         /// <summary>
         /// This is used to start the simulation Sensor Network. Calling this is equivalent to powering on the Teensy.
@@ -109,8 +117,10 @@ namespace ControlRoomApplication.Controllers.SensorNetwork.Simulation
             byte[] receivedInit = new byte[0];
             if(CurrentlyRunning) receivedInit = RequestAndAcquireSensorInitialization();
 
+            ConnectionTimeStamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
             // At this point, we have the initialization and can initialize the sensors
-            if(CurrentlyRunning) InitializeSensors(receivedInit);
+            if (CurrentlyRunning) InitializeSensors(receivedInit);
 
             // Now we can grab the CSV data for ONLY the initialized sensors...
             if(CurrentlyRunning) ReadFakeDataFromCSV();
@@ -124,6 +134,8 @@ namespace ControlRoomApplication.Controllers.SensorNetwork.Simulation
             int? elAccIdx = 0;
             int? azAccIdx = 0;
             int? cbAccIdx = 0;
+            int? ambTempIdx = 0;
+            int? ambHumidityIdx = 0;
 
             // This will tell us if we are rebooting or not. We will only reboot if the connection is randomly terminated.
             bool reboot = false;
@@ -132,7 +144,7 @@ namespace ControlRoomApplication.Controllers.SensorNetwork.Simulation
             while (CurrentlyRunning)
             {
                 // Convert subarrays to bytes
-                SimulationSubArrayData subArrays = BuildSubArrays(ref elTempIdx, ref azTempIdx, ref elEncIdx, ref azEncIdx, ref elAccIdx, ref azAccIdx, ref cbAccIdx);
+                SimulationSubArrayData subArrays = BuildSubArrays(ref elTempIdx, ref azTempIdx, ref elEncIdx, ref azEncIdx, ref elAccIdx, ref azAccIdx, ref cbAccIdx, ref ambTempIdx, ref ambHumidityIdx);
 
                 SensorStatuses statuses = new SensorStatuses
                 {
@@ -147,7 +159,11 @@ namespace ControlRoomApplication.Controllers.SensorNetwork.Simulation
                     subArrays.AzimuthTemps, 
                     subArrays.ElevationEnc, 
                     subArrays.AzimuthEnc,
-                    statuses
+                    subArrays.AmbientTemps,
+                    subArrays.AmbientHumidity,
+                    statuses,
+                    ConnectionTimeStamp,
+                    FanOn
                 );
 
                 // We have to check for CurrentlyRunning down here because we don't know when the connection is going to be terminated, and
@@ -158,7 +174,11 @@ namespace ControlRoomApplication.Controllers.SensorNetwork.Simulation
                     {
                         // Send arrays
                         ClientStream.Write(dataToSend, 0, dataToSend.Length);
-                        Thread.Sleep(SensorNetworkConstants.DataSendingInterval);
+
+                        // Read fan byte
+                        FanOn = (ClientStream.ReadByte() != 0);
+
+                        Thread.Sleep(SensorNetworkConstants.DefaultDataSendingInterval);
                     }
                     // This will be reached if the connection is unexpectedly terminated (like it is during sensor reinitialization)
                     catch
@@ -190,7 +210,7 @@ namespace ControlRoomApplication.Controllers.SensorNetwork.Simulation
         /// <param name="azAccIdx">Azimuth accelerometer data array index that we are pulling from.</param>
         /// <param name="cbAccIdx">Counterbalance accelerometer data array index that we are pulling from.</param>
         /// <returns></returns>
-        public SimulationSubArrayData BuildSubArrays(ref int? elTempIdx, ref int? azTempIdx, ref int? elEncIdx, ref int? azEncIdx, ref int? elAccIdx, ref int? azAccIdx, ref int? cbAccIdx)
+        public SimulationSubArrayData BuildSubArrays(ref int? elTempIdx, ref int? azTempIdx, ref int? elEncIdx, ref int? azEncIdx, ref int? elAccIdx, ref int? azAccIdx, ref int? cbAccIdx, ref int? ambTempIdx, ref int? ambHumidityIdx)
         {
             SimulationSubArrayData subArrays = new SimulationSubArrayData();
 
@@ -273,7 +293,29 @@ namespace ControlRoomApplication.Controllers.SensorNetwork.Simulation
                 else cbAccIdx += 100;
             }
             else subArrays.CounterBAccl = new RawAccelerometerData[0];
-            
+
+            if (AmbientTempData != null && ambTempIdx != null)
+            {
+                subArrays.AmbientTemps = new float[1];
+                Array.Copy(AmbientTempData, ambTempIdx ?? 0, subArrays.AmbientTemps, 0, 1);
+
+                // Increment to next index, or back to 0 if we've reached the end of the main array
+                if (ambTempIdx + 1 > AmbientTempData.Length - 1) ambTempIdx = 0;
+                else ambTempIdx++;
+            }
+            else subArrays.AmbientTemps = new float[0];
+
+            if (AmbientHumidityData != null && ambHumidityIdx != null)
+            {
+                subArrays.AmbientHumidity = new float[1];
+                Array.Copy(AmbientHumidityData, ambHumidityIdx ?? 0, subArrays.AmbientHumidity, 0, 1);
+
+                // Increment to next index, or back to 0 if we've reached the end of the main array
+                if (ambHumidityIdx + 1 > AmbientHumidityData.Length - 1) ambHumidityIdx = 0;
+                else ambHumidityIdx++;
+            }
+            else subArrays.AmbientHumidity = new float[0];
+
             return subArrays;
         }
 
@@ -320,7 +362,7 @@ namespace ControlRoomApplication.Controllers.SensorNetwork.Simulation
 
             // Wait for the SensorNetworkClient to send the initialization
             TcpClient localClient;
-            byte[] receivedInit = new byte[SensorNetworkConstants.SensorNetworkSensorCount];
+            byte[] receivedInit = new byte[SensorNetworkConstants.InitPacketSize];
 
             // Once this line is passed, we have connected and received the initialization
             localClient = Server.AcceptTcpClient();
@@ -362,6 +404,17 @@ namespace ControlRoomApplication.Controllers.SensorNetwork.Simulation
 
             if (init[(int)SensorInitializationEnum.CounterbalanceAccelerometer] == 0) CounterbalanceAccData = null;
             else CounterbalanceAccData = new RawAccelerometerData[0];
+
+            if (init[(int)SensorInitializationEnum.AmbientTempHumidity] == 0)
+            {
+                AmbientTempData = null;
+                AmbientHumidityData = null;
+            }
+            else
+            {
+                AmbientTempData = new float[0];
+                AmbientHumidityData = new float[0];
+            }
         }
 
         /// <summary>
@@ -508,6 +561,28 @@ namespace ControlRoomApplication.Controllers.SensorNetwork.Simulation
                     .Select(str => double.TryParse(str, out dbl) ? dbl : 0));
 
                 AzimuthEncoderData = values.ToArray();
+            }
+
+            if (AmbientTempData != null)
+            {
+                float flt;
+
+                var values = File.ReadAllLines(DataDirectory + "TestAmbTemp.csv")
+                    .SelectMany(a => a.Split(',')
+                    .Select(str => float.TryParse(str, out flt) ? flt : 0));
+
+                AmbientTempData = values.ToArray();
+            }
+
+            if (AmbientHumidityData != null)
+            {
+                float flt;
+
+                var values = File.ReadAllLines(DataDirectory + "TestAmbHumidity.csv")
+                    .SelectMany(a => a.Split(',')
+                    .Select(str => float.TryParse(str, out flt) ? flt : 0));
+
+                AmbientHumidityData = values.ToArray();
             }
         }
     }

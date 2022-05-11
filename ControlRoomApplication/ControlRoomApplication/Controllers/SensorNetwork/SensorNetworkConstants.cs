@@ -22,12 +22,27 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
         public const double AzimuthEncoderScaling = 2047;
         
         /// <summary>
-        /// This is the approximate interval at which the SensorNetworkServer expects to receive
+        /// This is the default approximate interval at which the SensorNetworkServer expects to receive
         /// data from the Sensor Network. Because the transfer isn't perfect, there will be an additional
         /// ~50ms delay. For example, a 250ms interval will yield about a 300ms receive interval.
         /// This is also used in the SensorNetworkSimulation.
         /// </summary>
-        public const int DataSendingInterval = 250; // in milliseconds
+        public const int DefaultDataSendingInterval = 250; // in milliseconds
+        
+        /// <summary>
+        /// The default interval at which temperature data will be sampled on the Sensor Network.
+        /// </summary>
+        public const int DefaultTemperatureReadingInterval = 1000; // in milliseconds
+
+        /// <summary>
+        /// The default interval at which the absolute encoders will be sampled and sent from the Sensor Network.
+        /// </summary>
+        public const int DefaultEncoderSendingInterval = 20; // in milliseconds
+
+        /// <summary>
+        /// The default interval at which the timer will interrupt and increment the Sensor Network counters.
+        /// </summary>
+        public const int DefaultTimerInterruptInterval = 1; // in milliseconds
 
         /// <summary>
         /// This is the default data retrieval timeout when the user has run the telescope for the first time,
@@ -42,10 +57,9 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
         public const int DefaultInitializationTimeout = 10000; // in milliseconds
 
         /// <summary>
-        /// This is the total number of Sensor Network sensors that can be receiving data at a given time. 
-        /// This is used to determine the byte size of the initialization. 
+        /// This is the total number of bytes used for the initialization packet. 
         /// </summary>
-        public const int SensorNetworkSensorCount = 7;
+        public const int InitPacketSize = 45;
 
         /// <summary>
         /// If we receive this ID from the sensor network, it means that everything is going well, and we are about
@@ -72,8 +86,73 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
         public const string SimCSVDirectory = "../../Controllers/SensorNetwork/Simulation/SimulationCSVData/";
 
         /// <summary>
+        /// The default sampling frequency to be used by our accelerometers.
+        /// </summary>
+        public const short DefaultAccelSamplingFrequency = 800; // in Hz
+
+        /// <summary>
+        /// The default FIFO size to be used by our accelerometers.
+        /// </summary>
+        public const byte DefaultAccelFIFOSize = 32;
+
+        /// <summary>
+        /// The default G-range to be used by our accelerometers.
+        /// </summary>
+        public const byte DefaultAccelGRange = 16; // in G's
+
+        /// <summary>
+        /// The default x-axis offset to apply to our accelerometers.
+        /// </summary>
+        public const byte DefaultAccelXOffset = 0;
+
+        /// <summary>
+        /// The default y-axis offset to apply to our accelerometers.
+        /// </summary>
+        public const byte DefaultAccelYOffset = 0;
+
+        /// <summary>
+        /// The default z-axis offset to apply to our accelerometers.
+        /// </summary>
+        public const byte DefaultAccelZOffset = 0;
+
+        /// <summary>
+        /// The default Full Bit Resolution setting to be used by our accelerometers.
+        /// </summary>
+        public const bool DefaultAccelFullBitResolution = true;
+
+        /// <summary>
+        /// The maximum offset that can be applied to the accelerometers. The accelerometer offsets are 8-bit signed registers
+        /// </summary>
+        public const int MaxAccelOffset = 127;
+
+        /// <summary>
+        /// The minimum offset that can be applied to the accelerometers. The accelerometer offsets are 8-bit signed registers
+        /// </summary>
+        public const int MinAccelOffset = -128;
+
+        /// <summary>
+        /// This is the FIFO size used by the azimuth motor accelerometer
+        /// </summary>
+        public const int AzAccelFIFOSize = 32;
+
+        /// <summary>
+        /// This is the FIFO size used by the elevation motor accelerometer
+        /// </summary>
+        public const int ElAccelFIFOSize = 32;
+
+        /// <summary>
+        /// This is the FIFO size used by the counterbalance accelerometer
+        /// </summary>
+        public const int CbAccelFIFOSize = 32;
+
+        /// <summary>
         /// This is the degrees offset manually applied to the counterbalance accelerometer position used for greater precision.
         /// </summary>
         public const double CBAccelPositionOffset = 2;
+
+        /// <summary>
+        /// Constants for the elevation timeout sensor status in MS
+        /// </summary>
+        public const int ElevationTimeoutThreshold = 50;
     }
 }

@@ -79,7 +79,9 @@ namespace ControlRoomApplication.Main
             IFGainVal.Text = formData.IFGain;
             immediateRadioButton.Checked = formData.immediateStopBool;
             ControlledButtonRadio.Checked = formData.controlledStopBool;
-            manual_save_state = formData.manualControlEnabled;
+            // Manual Control should start deactivated upon opening RTControl, so it should
+            // not fetch previous data. 
+            manual_save_state = false;
             save_state = formData.freeControlEnabled;
 
             ControlRoomUser = DatabaseOperations.GetControlRoomUser();
@@ -151,38 +153,20 @@ namespace ControlRoomApplication.Main
             tenButton.Enabled = formData.freeControlEnabled;
             tenButtonDec.Enabled = formData.freeControlEnabled;
 
-            //Initialize Manual control Box based on previous data (false by default)
-            if (!manual_save_state)
-            {
-                manualControlButton.Text = "Activate Manual Control";
-                // if free control is active, this button will be disabled. Gray it out if so
-                if (save_state)
-                {
-                    manualControlButton.BackColor = System.Drawing.Color.DarkGray;
-                    manualControlButton.Enabled = false;
-                }
-                else
-                {
-                    manualControlButton.BackColor = System.Drawing.Color.Red;
-                    manualControlButton.Enabled = true;
-                }
-                manualGroupBox.BackColor = System.Drawing.Color.DarkGray;
-            }
-            else if (manual_save_state)
-            {
-                manualControlButton.Text = "Deactivate Manual Control";
-                manualControlButton.BackColor = System.Drawing.Color.LimeGreen;
-                manualGroupBox.BackColor = System.Drawing.Color.Gainsboro;
-
-            }
-            plusElaButton.Enabled = formData.manualControlEnabled;
-            cwAzJogButton.Enabled = formData.manualControlEnabled;
-            ccwAzJogButton.Enabled = formData.manualControlEnabled;
-            subElaButton.Enabled = formData.manualControlEnabled;
-            ControlledButtonRadio.Enabled = formData.manualControlEnabled;
-            immediateRadioButton.Enabled = formData.manualControlEnabled;
-            speedTextBox.Enabled = formData.manualControlEnabled;
-            speedTrackBar.Enabled = formData.manualControlEnabled;
+            // Initialize Manual Control Box - should start with "Activate Manual Control" upon opening RTControl
+            // All Manual Control buttons should be disabled upon opening RT Control regardless of save states. 
+            
+            manualControlButton.Text = "Activate Manual Control";
+            manualControlButton.BackColor = System.Drawing.Color.Red;
+            manualControlButton.Enabled = true;
+            plusElaButton.Enabled = false;
+            cwAzJogButton.Enabled = false;
+            ccwAzJogButton.Enabled = false;
+            subElaButton.Enabled = false;
+            ControlledButtonRadio.Enabled = false;
+            immediateRadioButton.Enabled = false;
+            speedTextBox.Enabled = false;
+            speedTrackBar.Enabled = false;
             speedTrackBar.Value = 10;
 
 

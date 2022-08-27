@@ -1117,34 +1117,37 @@ namespace ControlRoomApplication.Main
 
         private void useCounterbalanceCheckbox_Click(object sender, EventArgs e)
         {
+            SensorNetworkSensorStatus cbAccelStatus = rtController.RadioTelescope.SensorNetworkServer.SensorStatuses.CounterbalanceAccelerometerStatus;
+            SensorNetworkSensorStatus elAbsEncStatus = rtController.RadioTelescope.SensorNetworkServer.SensorStatuses.ElevationAbsoluteEncoderStatus;
+
             if (UseCounterbalanceCheckbox.Checked == true)
             {
-                if (rtController.RadioTelescope.SensorNetworkServer.SensorStatuses.CounterbalanceAccelerometerStatus != SensorNetworkSensorStatus.Error)
+                if (cbAccelStatus == SensorNetworkSensorStatus.Error) 
                 {
-                    rtController.UseCounterbalance = true;
-                }
-                else
-                {
-                    rtController.UseCounterbalance = false;
                     MessageBox.Show("The counterbalance accelerometer is experiencing an error and cannot be used.");
                 }
-
-                UpdateCounterbalanceCheckbox();
+                else 
+                {
+                    rtController.UseCounterbalance = true;
+                    rtController.UseElevationAbsEncoder = false;
+                    rtController.UseMotorEncoder = false;
+                }
             }
             else
             { 
-                if (rtController.RadioTelescope.SensorNetworkServer.SensorStatuses.ElevationAbsoluteEncoderStatus != SensorNetworkSensorStatus.Error)
+                if (elAbsEncStatus == SensorNetworkSensorStatus.Error) 
+                { 
+                    MessageBox.Show("The elevation absolute encoder is experiencing an error and cannot be used.");
+                }
+                else 
                 {
+                    rtController.UseElevationAbsEncoder = true;
                     rtController.UseCounterbalance = false;
+                    rtController.UseMotorEncoder = false;
                 }
-                else
-                {
-                    rtController.UseCounterbalance = true;
-                    MessageBox.Show("The elevation absolute encoder is experiencing an error and cannot be used. ");
-                }
-
-                UpdateCounterbalanceCheckbox();
             }
+
+            UpdateCounterbalanceCheckbox();
         }
 
         private bool allScanInputsValid()

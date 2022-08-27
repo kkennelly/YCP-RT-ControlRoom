@@ -52,6 +52,8 @@ namespace ControlRoomApplication.Controllers
 
         // Absolute encoder or counterbalance accelerometer usage
         public bool UseCounterbalance;
+        public bool UseElevationAbsEncoder;
+        public bool UseMotorEncoder;
 
         private static readonly log4net.ILog logger =
             log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
@@ -77,6 +79,8 @@ namespace ControlRoomApplication.Controllers
             AllSensorsSafe = true;
             EnableSoftwareStops = true;
             UseCounterbalance = false;
+            UseElevationAbsEncoder = false;
+            UseMotorEncoder = false;
 
             MaxAzTempThreshold = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.AZ_MOTOR_TEMP);
             MaxElTempThreshold = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.ELEV_MOTOR_TEMP);
@@ -335,13 +339,17 @@ namespace ControlRoomApplication.Controllers
             }
             else
             {
-                if (!UseCounterbalance)
+                if (UseCounterbalance)
+                {
+                    return RadioTelescope.SensorNetworkServer.CurrentCBAccelElevationPosition;
+                }
+                else if (UseElevationAbsEncoder)
                 {
                     return RadioTelescope.SensorNetworkServer.CurrentAbsoluteOrientation.Elevation;
                 }
                 else
                 {
-                    return RadioTelescope.SensorNetworkServer.CurrentCBAccelElevationPosition;
+                    return RadioTelescope.SensorNetworkServer.CurrentElevationMotorAccl[0].acc;
                 }
             }
         }

@@ -689,18 +689,42 @@ namespace ControlRoomApplication.Controllers
         }
 
         /// <summary>
-        /// Switch the device that is used to read elevation data in the event of one failing 
+        /// Switch the device that is used to read elevation data in the event of one or both failing 
         /// </summary>
         /// <param name="sensor"></param>
         public void SwitchElevationDevice(Sensor sensor)
         {
+            Sensor altSensor;
             if (sensor.Item == SensorItemEnum.ELEVATION_ABS_ENCODER)
             {
-                RTController.UseCounterbalance = true;
+                RTController.UseElevationAbsEncoder = false;
+
+                altSensor = Sensors.Find(Sensor => Sensor.Item == SensorItemEnum.COUNTER_BALANCE_VIBRATION);
+                if (altSensor.Status != SensorStatusEnum.ALARM)
+                {
+                    RTController.UseCounterbalance = true;
+                    RTController.UseMotorEncoder = false;
+                }
+                else if (altSensor.Status == SensorStatusEnum.ALARM)    // Both are failing, hence use the motor encoder 
+                {
+                    RTController.UseCounterbalance = false;
+                    RTController.UseMotorEncoder = true;
+                }
             }
-            else
+            else    // Sensor is the Counterbalance Accelerometer 
             {
                 RTController.UseCounterbalance = false;
+
+                altSensor = Sensors.Find(Sensor => Sensor.Item == SensorItemEnum.ELEVATION_ABS_ENCODER);
+                if (altSensor.Status != SensorStatusEnum.ALARM) {
+                    RTController.UseElevationAbsEncoder = true;
+                    RTController.UseMotorEncoder = false;
+                }
+                else if (altSensor.Status == SensorStatusEnum.ALARM)    // Both are failing, hence use the motor encoder 
+                {
+                    RTController.UseElevationAbsEncoder = false;
+                    RTController.UseMotorEncoder = true;
+                }
             }
         }
     }

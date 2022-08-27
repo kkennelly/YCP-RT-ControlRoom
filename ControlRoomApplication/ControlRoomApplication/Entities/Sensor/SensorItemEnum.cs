@@ -20,6 +20,7 @@ namespace ControlRoomApplication.Entities
         // specific
         AZ_MOTOR_TEMP,
         ELEV_MOTOR_TEMP,
+        AMBIENT_TEMP_HUMIDITY,
         AZ_MOTOR_VIBRATION,
         ELEV_MOTOR_VIBRATION,
         AZ_MOTOR_CURRENT,
@@ -28,6 +29,10 @@ namespace ControlRoomApplication.Entities
         WIND,
         RAIN_AMOUNT,
         ELEVATION_ABS_ENCODER,
-        AZIMUTH_ABS_ENCODER
+        AZIMUTH_ABS_ENCODER,
+
+        // For thresholds only
+        AMBIENT_TEMP,
+        AMBIENT_HUMIDITY
     }
 }

@@ -27,13 +27,13 @@ namespace ControlRoomApplicationTest.CommunicationTests
             RFData junk1 = new RFData();
             junk1.Id = 0;
             junk1.appointment_id = 0;
-            junk1.TimeCaptured = new DateTime();
+            junk1.time_captured = new DateTime();
             junk1.Intensity = 10000;
 
             RFData junk2 = new RFData();
             junk2.Id = 1;
             junk2.appointment_id = 0;
-            junk2.TimeCaptured = new DateTime();
+            junk2.time_captured = new DateTime();
             junk2.Intensity = 20000;
 
             List<RFData> JunkRFData = new List<RFData>();

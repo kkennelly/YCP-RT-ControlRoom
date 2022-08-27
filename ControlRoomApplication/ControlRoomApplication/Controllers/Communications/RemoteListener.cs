@@ -186,35 +186,47 @@ namespace ControlRoomApplication.Controllers
                                         ExecuteTCPCommandResult executeTCPCommandResult = ExecuteRLCommand(parsedTCPCommandResult.parsedString);
 
                                         // inform user of the result of command
-                                        if (executeTCPCommandResult.movementResult != MovementResult.Success)
+                                        switch (parsedTCPCommandResult.parsedString[TCPCommunicationConstants.COMMAND_TYPE])
                                         {
-                                            logger.Debug(Utilities.GetTimeStamp() + ": Command " + data + " failed with error: " + executeTCPCommandResult.errorMessage);
-                                            myWriteBuffer = "Command " + data + " failed with error: " + executeTCPCommandResult.errorMessage;
-                                            writeBackToClient(myWriteBuffer, stream, encrypted);
-                                        }
-                                        else
-                                        {
-                                            switch (parsedTCPCommandResult.parsedString[TCPCommunicationConstants.COMMAND_TYPE])
-                                            {
-                                                // we write back different in the case of a request command. Otherwise, the default is just successfully completing a command
-                                                case "REQUEST":
-                                                    switch (parsedTCPCommandResult.parsedString[TCPCommunicationConstants.REQUEST_TYPE])
+                                            case "RESET_MCU_BIT":
+                                                if (executeTCPCommandResult.resetResult != MCUResetResult.Success)
+                                                {
+                                                    SendFailedExecutionStatus(executeTCPCommandResult, stream, data, encrypted);
+                                                }
+                                                else
+                                                {
+                                                    SendSuccessfulExecutionStatus(stream, data, encrypted);
+                                                }
+                                                break;
+
+                                            default:
+                                                if (executeTCPCommandResult.movementResult != MovementResult.Success)
+                                                {
+                                                    SendFailedExecutionStatus(executeTCPCommandResult, stream, data, encrypted);
+                                                }
+                                                else
+                                                {
+                                                    switch (parsedTCPCommandResult.parsedString[TCPCommunicationConstants.COMMAND_TYPE])
                                                     {
-                                                        case "MVMT_DATA":
-                                                            writeBackToClient(executeTCPCommandResult.errorMessage, stream, encrypted);
-                                                            logger.Debug(Utilities.GetTimeStamp() + ": " + executeTCPCommandResult.errorMessage);
+                                                        // we write back different in the case of a request command. Otherwise, the default is just successfully completing a command
+                                                        case "REQUEST":
+                                                            switch (parsedTCPCommandResult.parsedString[TCPCommunicationConstants.REQUEST_TYPE])
+                                                            {
+                                                                case "MVMT_DATA":
+                                                                    writeBackToClient(executeTCPCommandResult.errorMessage, stream, encrypted);
+                                                                    logger.Debug(Utilities.GetTimeStamp() + ": " + executeTCPCommandResult.errorMessage);
+                                                                    break;
+                                                            }
+                                                            break;
+
+                                                        default:
+                                                            SendSuccessfulExecutionStatus(stream, data, encrypted);
                                                             break;
                                                     }
-                                                    break;
-
-                                                default:
-                                                    logger.Debug(Utilities.GetTimeStamp() + ": SUCCESSFULLY COMPLETED COMMAND: " + data);
-                                                    // send back a success response -- finished command
-                                                    myWriteBuffer = "SUCCESSFULLY COMPLETED COMMAND: " + data;
-                                                    writeBackToClient(myWriteBuffer, stream, encrypted);
-                                                    break;
-                                            }
+                                                }
+                                                break;
                                         }
+                                        
                                     }
 
                                     // Shutdown and end connection
@@ -228,6 +240,36 @@ namespace ControlRoomApplication.Controllers
                     }).Start(); // begin our worker thread to execute our TCP command
                 }
             }
+        }
+
+        /// <summary>
+        /// Send a successful command execution status message back to the mobile app 
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="data"></param>
+        /// <param name="encrypted"></param>
+        public void SendSuccessfulExecutionStatus(NetworkStream stream, string data, bool encrypted)
+        {
+            string buffer = null;
+            logger.Debug(Utilities.GetTimeStamp() + ": SUCCESSFULLY COMPLETED COMMAND: " + data);
+            // send back a success response -- finished command
+            buffer = "SUCCESSFULLY COMPLETED COMMAND: " + data;
+            writeBackToClient(buffer, stream, encrypted);
+        }
+
+        /// <summary>
+        /// Send a failed command execution status message back to the mobile app 
+        /// </summary>
+        /// <param name="executeTCPCommandResult"></param>
+        /// <param name="stream"></param>
+        /// <param name="data"></param>
+        /// <param name="encrypted"></param>
+        public void SendFailedExecutionStatus(ExecuteTCPCommandResult executeTCPCommandResult, NetworkStream stream, string data, bool encrypted)
+        {
+            string buffer = null;
+            logger.Debug(Utilities.GetTimeStamp() + ": Command " + data + " failed with error: " + executeTCPCommandResult.errorMessage);
+            buffer = "Command " + data + " failed with error: " + executeTCPCommandResult.errorMessage;
+            writeBackToClient(buffer, stream, encrypted);
         }
 
         public bool RequestToKillTCPMonitoringRoutine()
@@ -439,7 +481,7 @@ namespace ControlRoomApplication.Controllers
                         case "ELEVATION_MOT_TEMP":
                             rtController.setOverride("elevation motor temperature", doOverride);
                             break;
-                        
+
                         // If no case is reached, the sensor is not valid. Return appropriately
                         default: 
                             return new ExecuteTCPCommandResult(MovementResult.InvalidCommand, TCPCommunicationConstants.INVALID_SENSOR_OVERRIDE + sensorToOverride);
@@ -474,7 +516,7 @@ namespace ControlRoomApplication.Controllers
                             break;
 
                         case "STOW":
-                            result = rtController.MoveRadioTelescopeToOrientation(MiscellaneousConstants.Stow, MovementPriority.Manual);
+                            result = rtController.StowRadioTelescope(MovementPriority.Manual);
                             break;
 
                         case "FULL_CLOCK":
@@ -512,9 +554,9 @@ namespace ControlRoomApplication.Controllers
                 }
                 else if (command=="STOP_RT")
                 {
-                    rtController.RadioTelescope.PLCDriver.InterruptMovementAndWaitUntilStopped();
+                    MovementResult result = rtController.InterruptRadioTelescope();
 
-                    return new ExecuteTCPCommandResult(MovementResult.Success, TCPCommunicationConstants.ALL_STOP_ERR);
+                    return new ExecuteTCPCommandResult(result, TCPCommunicationConstants.ALL_STOP_ERR);
 
                 }
                 else if (command=="SENSOR_INIT")
@@ -811,7 +853,7 @@ namespace ControlRoomApplication.Controllers
             }
             catch(Exception e)
             {
-                logger.Error("An error occured when attempting to write back to the client: " + e.Message);
+                logger.Error("An error occurred when attempting to write back to the client: " + e.Message);
             }
         }
 
@@ -922,7 +964,28 @@ namespace ControlRoomApplication.Controllers
             // Send back MCU data if TCP version is 1.1 or greater 
             if (versionNum >= 1.1)
             {
-                sendBack += " | BIT_FLIPPED: " + Convert.ToString(rtController.RadioTelescope.PLCDriver.CheckMCUErrors().Count > 0).ToUpper();
+                //Added priority to determine frequency of client requests 
+                string currentMovementPriority = rtController.RadioTelescope.PLCDriver.CurrentMovementPriority.ToString();
+
+                //Gathers all weather data to be append to a request string 
+                string windSpeed = rtController.RadioTelescope.WeatherStation.GetWindSpeed().ToString();
+                string windDirection = rtController.RadioTelescope.WeatherStation.GetWindDirection().ToString();
+                string dailyRain = rtController.RadioTelescope.WeatherStation.GetDailyRain().ToString();
+                string rainRate = rtController.RadioTelescope.WeatherStation.GetRainRate().ToString();
+                string outsideTemp = rtController.RadioTelescope.WeatherStation.GetOutsideTemp().ToString();
+                string insideTemp = rtController.RadioTelescope.WeatherStation.GetInsideTemp().ToString();
+                string baromPressure = rtController.RadioTelescope.WeatherStation.GetBarometricPressure().ToString();
+                string dewPoint = rtController.RadioTelescope.WeatherStation.GetDewPoint().ToString();
+                string windChill = rtController.RadioTelescope.WeatherStation.GetDewPoint().ToString();
+                string outsideHumidity = rtController.RadioTelescope.WeatherStation.GetHumidity().ToString();
+                string totalRain = rtController.RadioTelescope.WeatherStation.GetTotalRain().ToString();
+                string monthlyRain = rtController.RadioTelescope.WeatherStation.GetMonthlyRain().ToString();
+                string heatIndex = rtController.RadioTelescope.WeatherStation.GetHeatIndex().ToString();
+
+                //Concatenates all weather data together using ? as a elimination symbol to allow the client to split easily 
+                string weatherDataString = windSpeed + "?" + windDirection + "?" + dailyRain + "?" + rainRate + "?" + outsideTemp + "?" + insideTemp + "?" + baromPressure + "?" + dewPoint + "?" + windChill + "?" + outsideHumidity + "?" + totalRain + "?" + monthlyRain + "?" + heatIndex;
+
+                sendBack += " | BIT_FLIPPED: " + Convert.ToString(rtController.RadioTelescope.PLCDriver.CheckMCUErrors().Count > 0).ToUpper() + " | " + "PRIORITY: " + currentMovementPriority + " | " + weatherDataString;
             }
 
             return sendBack;

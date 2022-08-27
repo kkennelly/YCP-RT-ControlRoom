@@ -1,4 +1,5 @@
 ﻿using ControlRoomApplication.Controllers.SensorNetwork;
+using ControlRoomApplication.Database;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -31,11 +32,21 @@ namespace ControlRoomApplication.Entities
             // Initialize all sensors to enabled by default
             ElevationTemp1Init = true;
             AzimuthTemp1Init = true;
+            ElevationAmbientInit = true;
             AzimuthAccelerometerInit = true;
             ElevationAccelerometerInit = true;
             CounterbalanceAccelerometerInit = true;
             AzimuthEncoderInit = true;
             ElevationEncoderInit = true;
+
+            TimerPeriod = SensorNetworkConstants.DefaultTimerInterruptInterval;
+            EthernetPeriod = SensorNetworkConstants.DefaultDataSendingInterval;
+            TemperaturePeriod = SensorNetworkConstants.DefaultTemperatureReadingInterval;
+            EncoderPeriod = SensorNetworkConstants.DefaultEncoderSendingInterval;
+
+            ElAccelConfig = new AccelerometerConfig();
+            AzAccelConfig = new AccelerometerConfig();
+            CbAccelConfig = new AccelerometerConfig();
         }
 
         /// <summary>
@@ -51,11 +62,21 @@ namespace ControlRoomApplication.Entities
             // Initialize all sensors to be disabled
             ElevationTemp1Init = false;
             AzimuthTemp1Init = false;
+            ElevationAmbientInit = false;
             AzimuthAccelerometerInit = false;
             ElevationAccelerometerInit = false;
             CounterbalanceAccelerometerInit = false;
             AzimuthEncoderInit = false;
             ElevationEncoderInit = false;
+
+            TimerPeriod = 0;
+            EthernetPeriod = 0;
+            TemperaturePeriod = 0;
+            EncoderPeriod = 0;
+
+            ElAccelConfig = new AccelerometerConfig();
+            AzAccelConfig = new AccelerometerConfig();
+            CbAccelConfig = new AccelerometerConfig();
         }
 
         /// <summary>
@@ -90,6 +111,15 @@ namespace ControlRoomApplication.Entities
         /// </summary>
         [Column("azimuth_temp_1_init")]
         public bool AzimuthTemp1Init { get; set; }
+
+        /// <summary>
+        /// This will tell the Sensor Network whether or not to initialize the DHT22 ambient temp and humidity sensor.
+        /// We will not receive data for this sensor if it is not initialized.
+        /// true = initialize;
+        /// false = do not initialize
+        /// </summary>
+        [Column("elevation_ambient_init")]
+        public bool ElevationAmbientInit { get; set; }
 
         /// <summary>
         /// This will tell the Sensor Network whether or not to initialize the azimuth accelerometer.
@@ -149,6 +179,39 @@ namespace ControlRoomApplication.Entities
         public int TimeoutInitialization { get; set; }
 
         /// <summary>
+        /// How often the ms timer will go off on the ESS.
+        /// </summary>
+        [Column("timer_period")]
+        public int TimerPeriod { get; set; }
+
+        /// <summary>
+        /// How often the ESS will send the main packet to us.
+        /// </summary>
+        [Column("ethernet_period")]
+        public int EthernetPeriod { get; set; }
+
+        /// <summary>
+        /// How often temperature data will be collected.
+        /// </summary>
+        [Column("temperature_period")]
+        public int TemperaturePeriod { get; set; }
+
+        /// <summary>
+        /// How often the absolute encoders will be read and data sent to us.
+        /// </summary>
+        [Column("encoder_period")]
+        public int EncoderPeriod { get; set; }
+
+        [NotMapped]
+        public AccelerometerConfig ElAccelConfig { get; set; }
+
+        [NotMapped]
+        public AccelerometerConfig AzAccelConfig { get; set; }
+
+        [NotMapped]
+        public AccelerometerConfig CbAccelConfig { get; set; }
+
+        /// <summary>
         /// This will check if two SensorNetworkConfigs are identical or not
         /// </summary>
         /// <param name="other">The SensorNetworkConfig to compare against</param>
@@ -164,13 +227,22 @@ namespace ControlRoomApplication.Entities
                 this.TelescopeId == other.TelescopeId &&
                 this.ElevationTemp1Init == other.ElevationTemp1Init &&
                 this.AzimuthTemp1Init == other.AzimuthTemp1Init &&
+                this.ElevationAmbientInit == other.ElevationAmbientInit &&
                 this.AzimuthAccelerometerInit == other.AzimuthAccelerometerInit &&
                 this.ElevationAccelerometerInit == other.ElevationAccelerometerInit &&
                 this.CounterbalanceAccelerometerInit == other.CounterbalanceAccelerometerInit &&
                 this.AzimuthEncoderInit == other.AzimuthEncoderInit &&
                 this.ElevationEncoderInit == other.ElevationEncoderInit &&
                 this.TimeoutDataRetrieval == other.TimeoutDataRetrieval &&
-                this.TimeoutInitialization == other.TimeoutInitialization)
+                this.TimeoutInitialization == other.TimeoutInitialization &&
+                this.TimerPeriod == other.TimerPeriod &&
+                this.EthernetPeriod == other.EthernetPeriod &&
+                this.TemperaturePeriod == other.TemperaturePeriod &&
+                this.EncoderPeriod == other.EncoderPeriod &&
+                this.ElAccelConfig.Equals(other.ElAccelConfig) &&
+                this.AzAccelConfig.Equals(other.AzAccelConfig) &&
+                this.CbAccelConfig.Equals(other.CbAccelConfig)
+                )
             {
                 return true;
             }
@@ -197,8 +269,19 @@ namespace ControlRoomApplication.Entities
                 AzimuthEncoderInit ?                (byte)1 : (byte)0,
                 AzimuthAccelerometerInit ?          (byte)1 : (byte)0,
                 ElevationAccelerometerInit ?        (byte)1 : (byte)0,
-                CounterbalanceAccelerometerInit ?   (byte)1 : (byte)0
+                CounterbalanceAccelerometerInit ?   (byte)1 : (byte)0,
+                ElevationAmbientInit ?              (byte)1 : (byte)0
             };
+
+            // Build rest of init packet
+            init = init.Concat(BitConverter.GetBytes(TimerPeriod))
+                .Concat(BitConverter.GetBytes(EthernetPeriod))
+                .Concat(BitConverter.GetBytes(TemperaturePeriod))
+                .Concat(BitConverter.GetBytes(EncoderPeriod))
+                .Concat(ElAccelConfig.GetAccelConfigAsBytes())
+                .Concat(AzAccelConfig.GetAccelConfigAsBytes())
+                .Concat(CbAccelConfig.GetAccelConfigAsBytes())
+                .ToArray();
 
             return init;
         }

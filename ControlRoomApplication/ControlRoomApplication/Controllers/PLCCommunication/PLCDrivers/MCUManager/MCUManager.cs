@@ -19,10 +19,11 @@ using static ControlRoomApplication.Constants.MCUConstants;
 
 namespace ControlRoomApplication.Controllers {
     public class MCUManager {
-        private static readonly log4net.ILog logger = log4net.LogManager.GetLogger( System.Reflection.MethodBase.GetCurrentMethod().DeclaringType );
+        private static readonly log4net.ILog logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public bool MovementInterruptFlag = false;
         public bool CriticalMovementInterruptFlag = false;
         public bool SoftwareStopInterruptFlag = false;
+        public bool MotorsHomed = false;
 
         private long MCU_last_contact = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         private Thread HeartbeatMonitorThread;
@@ -159,6 +160,8 @@ namespace ControlRoomApplication.Controllers {
                     // Only try to connect if it's been more than 5 seconds since the last attempt
                     if ((DateTime.Now - lastConnectAttempt) > TimeSpan.FromSeconds(5))
                     {
+                        // We no longer know if the motors have been homed (MCU could have powered off)
+                        MotorsHomed = false;
                         if (!inError)
                         {
                             logger.Error(Utilities.GetTimeStamp() + ": The MCU failed to retrieve the register data, and is either offline or the connection has been terminated.");
@@ -240,7 +243,7 @@ namespace ControlRoomApplication.Controllers {
 
             ushort[] data = ReadMCURegisters(0, 16);
 
-            int azMotorEncoderTicks = (data[(ushort)MCUOutputRegs.AZ_MTR_Encoder_Pos_MSW] << 16) + data[(ushort)MCUOutputRegs.AZ_MTR_Encoder_Pos_LSW];
+            int azMotorEncoderTicks = (int)Math.Round(((data[(ushort)MCUOutputRegs.AZ_MTR_Encoder_Pos_MSW] << 16) + data[(ushort)MCUOutputRegs.AZ_MTR_Encoder_Pos_LSW]) / MCUConstants.AZIMUTH_DISCREPANCY_SCALING_FACTOR);
             int elMotorEncoderTicks = -((data[(ushort)MCUOutputRegs.EL_MTR_Encoder_Pos_MSW] << 16) + data[(ushort)MCUOutputRegs.EL_MTR_Encoder_Pos_LSW]);
 
             // If the telescope type is SLIP_RING, we want to normalize the azimuth orientation
@@ -336,14 +339,21 @@ namespace ControlRoomApplication.Controllers {
 
         /// <summary>
         /// Immediately stops the telescope movement with no ramp down in speed.
-        /// Homing is unaffected by this command.
+        /// Motors are no longer homed because immediate stop commands can cause inertial drift.
         /// </summary>
         /// <returns></returns>
         public MovementResult ImmediateStop() {
-            if (!SendGenericCommand(new MCUCommand(MCUMessages.ImmediateStop, MCUCommandType.ImmediateStop) { completed = true }))
-                return MovementResult.CouldNotSendCommand;
+            // Homing commands cannot be stopped by controlled stop, so use immediate
+            if (RunningCommand.CommandType == MCUCommandType.Home)
+            {
+                if (!SendGenericCommand(new MCUCommand(MCUMessages.ImmediateStop, MCUCommandType.ImmediateStop) { completed = true }))
+                    return MovementResult.CouldNotSendCommand;
 
-            return MovementResult.Success;
+                return MovementResult.Success;
+            }
+            
+            // Use a controlled stop because the immediate stop command stops too immediately and could damage the gearbox
+            return ControlledStop();
         }
 
         // This only resets command errors
@@ -528,7 +538,7 @@ namespace ControlRoomApplication.Controllers {
 
                 case RadioTelescopeAxisEnum.ELEVATION:
                     // Only read the registers we need
-                    data = ReadMCURegisters(10, 1);
+                    data = ReadMCURegisters(0, 11);
                     isMoving = (((data[(int)MCUConstants.MCUOutputRegs.EL_Status_Bist_MSW] >> (int)MCUConstants.MCUStatusBitsMSW.CCW_Motion) & 0b1) == 1) ||
                             (((data[(int)MCUConstants.MCUOutputRegs.EL_Status_Bist_MSW] >> (int)MCUConstants.MCUStatusBitsMSW.CW_Motion) & 0b1) == 1);
                     break;
@@ -695,6 +705,7 @@ namespace ControlRoomApplication.Controllers {
         /// <returns></returns>
         public MovementResult HomeBothAxes(double RPM) {
 
+            MotorsHomed = false;
             int EL_Speed = ConversionHelper.DPSToSPS( ConversionHelper.RPMToDPS( RPM ) , MotorConstants.GEARING_RATIO_ELEVATION );
             int AZ_Speed = ConversionHelper.DPSToSPS( ConversionHelper.RPMToDPS( RPM ) , MotorConstants.GEARING_RATIO_AZIMUTH );
 
@@ -708,19 +719,19 @@ namespace ControlRoomApplication.Controllers {
                 (ushort)((AZ_Speed & 0xFFFF0000)>>16),
                 (ushort)(AZ_Speed & 0xFFFF),
                 ACTUAL_MCU_MOVE_ACCELERATION_WITH_GEARING,
-                ACTUAL_MCU_MOVE_ACCELERATION_WITH_GEARING,
+                GetDeceleration(AZ_Speed, MotorConstants.GEARING_RATIO_AZIMUTH),
                 (ushort)MCUCommandType.EmptyData,
                 (ushort)MCUCommandType.EmptyData,
 
                 // elevation data
-                (ushort)RadioTelescopeDirectionEnum.CounterclockwiseHoming,
+                (ushort)RadioTelescopeDirectionEnum.ClockwiseHoming,
                 (ushort)MCUCommandType.EmptyData,
                 (ushort)MCUCommandType.EmptyData,
                 (ushort)MCUCommandType.EmptyData,
                 (ushort)((EL_Speed & 0xFFFF0000)>>16),
                 (ushort)(EL_Speed & 0xFFFF),
                 ACTUAL_MCU_MOVE_ACCELERATION_WITH_GEARING,
-                ACTUAL_MCU_MOVE_ACCELERATION_WITH_GEARING,
+                GetDeceleration(EL_Speed, MotorConstants.GEARING_RATIO_ELEVATION),
                 (ushort)MCUCommandType.EmptyData,
                 (ushort)MCUCommandType.EmptyData
             };
@@ -747,7 +758,15 @@ namespace ControlRoomApplication.Controllers {
             if(!SendGenericCommand(command)) return MovementResult.CouldNotSendCommand;
             
             // The new orientation is 0,0 because homing should result in the motor encoders being zeroed out
-            return MovementMonitor(command, new Orientation(0,0), true);
+            MovementResult result = MovementMonitor(command, new Orientation(0, 0), true);
+
+            // Set the MotorsHomed to true because motors were successfully homed
+            if (result == MovementResult.Success)
+            {
+                MotorsHomed = true;
+            }
+
+            return result;
         }
 
         private bool BuildAndSendRelativeMove(MCUCommand command, int positionTranslationAz, int positionTranslationEl) {
@@ -764,6 +783,7 @@ namespace ControlRoomApplication.Controllers {
 
             // This needs flipped so that the elevation axis moves the correct direction
             positionTranslationEl = -positionTranslationEl;
+            positionTranslationAz = (int)Math.Round(-positionTranslationAz * MCUConstants.AZIMUTH_DISCREPANCY_SCALING_FACTOR);
 
             command.commandData = new ushort[] {
                 // Azimuth data
@@ -774,7 +794,7 @@ namespace ControlRoomApplication.Controllers {
                 (ushort)((command.AzimuthSpeed & 0xFFFF0000)>>16),
                 (ushort)(command.AzimuthSpeed & 0xFFFF),
                 ACTUAL_MCU_MOVE_ACCELERATION_WITH_GEARING,
-                ACTUAL_MCU_MOVE_ACCELERATION_WITH_GEARING,
+                GetDeceleration(command.AzimuthSpeed, MotorConstants.GEARING_RATIO_AZIMUTH),
                 (ushort)MCUCommandType.EmptyData,
                 (ushort)MCUCommandType.EmptyData,
 
@@ -786,7 +806,7 @@ namespace ControlRoomApplication.Controllers {
                 (ushort)((command.ElevationSpeed & 0xFFFF0000)>>16),
                 (ushort)(command.ElevationSpeed & 0xFFFF),
                 ACTUAL_MCU_MOVE_ACCELERATION_WITH_GEARING,
-                ACTUAL_MCU_MOVE_ACCELERATION_WITH_GEARING,
+                GetDeceleration(command.ElevationSpeed, MotorConstants.GEARING_RATIO_ELEVATION),
                 (ushort)MCUCommandType.EmptyData,
                 (ushort)MCUCommandType.EmptyData
             };
@@ -917,6 +937,20 @@ namespace ControlRoomApplication.Controllers {
                     while (offsetOrientation.Azimuth > 360) offsetOrientation.Azimuth -= 360;
                     while (offsetOrientation.Azimuth < 0) offsetOrientation.Azimuth += 360;
 
+                    // Check if target or offset orientations are close to the 360 degree line. If the orientations stradle 360 degrees (ex 359.99 and 0.01),
+                    // add the offset to them to shift their positions and subtract 360 from the one that is greater so that the orientation check is
+                    // accurate (ex to 0.09 and 0.19)
+                    if (targetOrientation.Azimuth + 0.1 >= 360 && offsetOrientation.Azimuth - 0.1 <= 0)
+                    {
+                        targetOrientation.Azimuth += 0.1 - 360;
+                        offsetOrientation.Azimuth += 0.1;
+                    }
+                    else if (offsetOrientation.Azimuth + 0.1 >= 360 && targetOrientation.Azimuth - 0.1 <= 0)
+                    {
+                        targetOrientation.Azimuth += 0.1;
+                        offsetOrientation.Azimuth += 0.1 - 360;
+                    }
+
                     if ((targetOrientation.Azimuth == 0.0 || targetOrientation.Azimuth==360.0) && (offsetOrientation.Azimuth > 359.9 || offsetOrientation.Azimuth < 0.1))
                     {
                         result = MovementResult.Success;
@@ -1038,7 +1072,7 @@ namespace ControlRoomApplication.Controllers {
 
             int AZstepSpeed = ConversionHelper.RPMToSPS( AZspeed , MotorConstants.GEARING_RATIO_AZIMUTH );
             int ELstepSpeed = ConversionHelper.RPMToSPS( ELspeed , MotorConstants.GEARING_RATIO_ELEVATION );
-            ushort[] data = new ushort[10] { (ushort)azDirection , 0x0003 , 0x0 , 0x0 , (ushort)(AZstepSpeed >> 16) , (ushort)(AZstepSpeed & 0xffff) , MCUConstants.ACTUAL_MCU_MOVE_ACCELERATION_WITH_GEARING , MCUConstants.ACTUAL_MCU_MOVE_ACCELERATION_WITH_GEARING , 0x0 , 0x0 , };
+            ushort[] data = new ushort[10] { (ushort)azDirection , 0x0003 , 0x0 , 0x0 , (ushort)(AZstepSpeed >> 16) , (ushort)(AZstepSpeed & 0xffff) , MCUConstants.ACTUAL_MCU_MOVE_ACCELERATION_WITH_GEARING , GetDeceleration(AZstepSpeed, MotorConstants.GEARING_RATIO_AZIMUTH), 0x0 , 0x0 , };
             ushort[] data2 = new ushort[20];
 
             if(AZstepSpeed > AZStartSpeed) {
@@ -1119,12 +1153,15 @@ namespace ControlRoomApplication.Controllers {
         /// <returns></returns>
         public bool SendSingleAxisJog(RadioTelescopeAxisEnum axis, RadioTelescopeDirectionEnum direction, double speed) {
             int stepSpeed;
+            int gearingRatio;
             bool success = false;
 
             if(axis == RadioTelescopeAxisEnum.AZIMUTH) {
                 stepSpeed = ConversionHelper.RPMToSPS(speed, MotorConstants.GEARING_RATIO_AZIMUTH);
+                gearingRatio = MotorConstants.GEARING_RATIO_AZIMUTH;
             } else {
                 stepSpeed = ConversionHelper.RPMToSPS(speed, MotorConstants.GEARING_RATIO_ELEVATION);
+                gearingRatio = MotorConstants.GEARING_RATIO_ELEVATION;
             }
 
             ushort[] data = new ushort[10] {
@@ -1135,7 +1172,7 @@ namespace ControlRoomApplication.Controllers {
                 (ushort)(stepSpeed >> 16),
                 (ushort)(stepSpeed & 0xffff),
                 MCUConstants.ACTUAL_MCU_MOVE_ACCELERATION_WITH_GEARING,
-                MCUConstants.ACTUAL_MCU_MOVE_ACCELERATION_WITH_GEARING,
+                GetDeceleration(stepSpeed, gearingRatio),
                 (ushort)MCUCommandType.EmptyData,
                 (ushort)MCUCommandType.EmptyData
             };
@@ -1169,6 +1206,33 @@ namespace ControlRoomApplication.Controllers {
         public void setTelescopeType(RadioTelescopeTypeEnum type)
         {
             telescopeType = type;
+        }
+
+        /// <summary>
+        /// Compute the deceleration to be used for MCU movements. Takes in an input speed and computes the deceleration needed to stop
+        /// within the target stop distance constant.
+        /// </summary>
+        /// <param name="inputSpeed">The speed in ticks/s the motor will be running at.</param>
+        /// <param name="gearingratio">The gearing ratio used to convert the distance constant.</param>
+        /// <returns>The deceleration value ticks/s/ms to slow the motor down within the stopping distance constant.</returns>
+        private ushort GetDeceleration(double inputSpeed, int gearingratio)
+        {
+            // Time it takes to stop is t = distance/velocity
+            // Acceleration is change in velocity over time: (v1-v0)/t => (v1-0)/t => v1/distance/v1 => v1*v1/distance
+            ushort deceleration = (ushort)Math.Ceiling(inputSpeed * inputSpeed / ConversionHelper.DegreesToSteps(MCUConstants.TARGET_STOP_DISTANCE, gearingratio) / 1000);
+
+            // If deceleration is less than the default, use the default because telesope will stop within target distance and won't take as long
+            if (deceleration < MCUConstants.ACTUAL_MCU_MOVE_ACCELERATION_WITH_GEARING)
+            {
+                deceleration = MCUConstants.ACTUAL_MCU_MOVE_ACCELERATION_WITH_GEARING;
+            }
+            // If the deceleration is greater than the allowed amount, set it to the allowed amount
+            else if (deceleration > MCUConstants.ACTUAL_MCU_PEAK_ACCELERATION)
+            {
+                deceleration = MCUConstants.ACTUAL_MCU_PEAK_ACCELERATION;
+            }
+
+            return deceleration;
         }
     }
 }

@@ -76,7 +76,7 @@ namespace ControlRoomApplicationTest.CommunicationTests
             RFData junkdata = new RFData();
             junkdata.Id = 0;
             junkdata.appointment_id = 0;
-            junkdata.TimeCaptured = System.DateTime.Now;
+            junkdata.time_captured = System.DateTime.Now;
             junkdata.Intensity = 8675309;
 
             List<RFData> JunkRFData = new List<RFData>();
@@ -84,8 +84,12 @@ namespace ControlRoomApplicationTest.CommunicationTests
 
             DataToCSV.ExportToCSV(JunkRFData, testpath);
 
+            // List of "attachments"
+            List<string> attachmentPath = new List<string>();
+            attachmentPath.Add($"{testpath}.csv");
+
             // Execute task
-            Task<bool> task = EmailNotifications.sendToUser(fakeUser, subject, body, sender, $"{testpath}.csv", true);
+            Task<bool> task = EmailNotifications.sendToUser(fakeUser, subject, body, sender, attachmentPath, true);
 
             // Wait for main task to finish before assertion
             task.Wait();

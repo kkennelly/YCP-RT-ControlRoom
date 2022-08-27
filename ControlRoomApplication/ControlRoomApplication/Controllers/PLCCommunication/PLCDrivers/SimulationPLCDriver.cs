@@ -103,6 +103,15 @@ namespace ControlRoomApplication.Controllers
         }
 
         public override MovementResult StartBothAxesJog(double azSpeed, RadioTelescopeDirectionEnum azDirection, double elSpeed, RadioTelescopeDirectionEnum elDirection) {
+            if (elDirection == RadioTelescopeDirectionEnum.ClockwiseOrNegative)
+            {
+                elDirection = RadioTelescopeDirectionEnum.CounterclockwiseOrPositive;
+            }
+            else if (elDirection == RadioTelescopeDirectionEnum.CounterclockwiseOrPositive)
+            {
+                elDirection = RadioTelescopeDirectionEnum.ClockwiseOrNegative;
+            }
+
             return driver.StartBothAxesJog(azSpeed, azDirection, elSpeed, elDirection);
         }
 
@@ -174,6 +183,11 @@ namespace ControlRoomApplication.Controllers
         public override RadioTelescopeDirectionEnum GetRadioTelescopeDirectionEnum(RadioTelescopeAxisEnum axis)
         {
                 return driver.GetRadioTelescopeDirectionEnum(axis);
+        }
+
+        public override bool GetMotorsHomed()
+        {
+            return driver.GetMotorsHomed();
         }
     }
 }

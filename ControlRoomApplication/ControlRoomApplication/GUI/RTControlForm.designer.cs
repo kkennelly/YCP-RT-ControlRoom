@@ -598,7 +598,6 @@ namespace ControlRoomApplication.Main
             // speedTrackBar
             // 
             this.speedTrackBar.Location = new System.Drawing.Point(108, 145);
-            this.speedTrackBar.Maximum = 20;
             this.speedTrackBar.Name = "speedTrackBar";
             this.speedTrackBar.Size = new System.Drawing.Size(150, 45);
             this.speedTrackBar.SmallChange = 3;

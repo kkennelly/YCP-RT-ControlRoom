@@ -243,7 +243,7 @@ namespace ControlRoomApplication.Controllers {
 
             ushort[] data = ReadMCURegisters(0, 16);
 
-            int azMotorEncoderTicks = (data[(ushort)MCUOutputRegs.AZ_MTR_Encoder_Pos_MSW] << 16) + data[(ushort)MCUOutputRegs.AZ_MTR_Encoder_Pos_LSW];
+            int azMotorEncoderTicks = (int)Math.Round(((data[(ushort)MCUOutputRegs.AZ_MTR_Encoder_Pos_MSW] << 16) + data[(ushort)MCUOutputRegs.AZ_MTR_Encoder_Pos_LSW]) / MCUConstants.AZIMUTH_DISCREPANCY_SCALING_FACTOR);
             int elMotorEncoderTicks = -((data[(ushort)MCUOutputRegs.EL_MTR_Encoder_Pos_MSW] << 16) + data[(ushort)MCUOutputRegs.EL_MTR_Encoder_Pos_LSW]);
 
             // If the telescope type is SLIP_RING, we want to normalize the azimuth orientation
@@ -783,7 +783,7 @@ namespace ControlRoomApplication.Controllers {
 
             // This needs flipped so that the elevation axis moves the correct direction
             positionTranslationEl = -positionTranslationEl;
-            positionTranslationAz = -positionTranslationAz;
+            positionTranslationAz = (int)Math.Round(-positionTranslationAz * MCUConstants.AZIMUTH_DISCREPANCY_SCALING_FACTOR);
 
             command.commandData = new ushort[] {
                 // Azimuth data

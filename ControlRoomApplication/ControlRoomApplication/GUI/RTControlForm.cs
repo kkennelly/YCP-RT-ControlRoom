@@ -214,7 +214,9 @@ namespace ControlRoomApplication.Main
             {
                 threads[0].EndAppointment();
             }).Start();
-            
+
+            // Disables manual control on page close
+            formData.manualControlEnabled = false; 
 
             timer1.Enabled = false;
         }
@@ -488,7 +490,7 @@ namespace ControlRoomApplication.Main
                 switch (index)
                 {
                     case 1:
-                        movementResult = rtController.MoveRadioTelescopeToOrientation(MiscellaneousConstants.Stow, MovementPriority.Manual);
+                        movementResult = rtController.StowRadioTelescope(MovementPriority.Manual);
                         break;
 
                     case 2:
@@ -555,7 +557,7 @@ namespace ControlRoomApplication.Main
                 else if (movementResult != MovementResult.None)
                 {
                     logger.Info($"{Utilities.GetTimeStamp()}: Script {indexName} FAILED with error message: {movementResult.ToString()}");
-                    pushNotification.sendToAllAdmins("Script Failed", $"Script {indexName} FAILED with error message: {movementResult.ToString()}");
+                    PushNotification.sendToAllAdmins("Script Failed", $"Script {indexName} FAILED with error message: {movementResult.ToString()}");
                     EmailNotifications.sendToAllAdmins("Script Failed", $"Script {indexName} FAILED with error message: {movementResult.ToString()}");
                 }
             });
@@ -589,8 +591,16 @@ namespace ControlRoomApplication.Main
             if (result == DialogResult.Yes)
             {
                 // Run the stop script for the telescope
-                rtController.RadioTelescope.PLCDriver.InterruptMovementAndWaitUntilStopped(true);
-                logger.Info($"{Utilities.GetTimeStamp()}: Telescope movement stopped.");
+                MovementResult moveResult = rtController.InterruptRadioTelescope();
+                
+                if (moveResult == MovementResult.Success)
+                {
+                    logger.Info($"{Utilities.GetTimeStamp()}: Telescope movement stopped.");
+                }
+                else
+                {
+                    logger.Info($"{Utilities.GetTimeStamp()}: Failed to stop telescope movement.");
+                }
             }
         }
 
@@ -612,7 +622,7 @@ namespace ControlRoomApplication.Main
                     else
                     {
                         logger.Info($"{Utilities.GetTimeStamp()}: An error occurred trying to jog az counterclockwise: {result.ToString()}");
-                        pushNotification.sendToAllAdmins("Jog Error", $"An error occurred trying to jog az counterclockwise: {result.ToString()}");
+                        PushNotification.sendToAllAdmins("Jog Error", $"An error occurred trying to jog az counterclockwise: {result.ToString()}");
                         EmailNotifications.sendToAllAdmins("Jog Error", $"An error occurred trying to jog az counterclockwise: {result.ToString()}");
                     }
                 }
@@ -652,7 +662,7 @@ namespace ControlRoomApplication.Main
                     else
                     {
                         logger.Info($"{Utilities.GetTimeStamp()}: An error occurred trying to jog az clockwise: {result.ToString()}");
-                        pushNotification.sendToAllAdmins("Jog Error", $"An error occurred trying to jog az clockwise: {result.ToString()}");
+                        PushNotification.sendToAllAdmins("Jog Error", $"An error occurred trying to jog az clockwise: {result.ToString()}");
                         EmailNotifications.sendToAllAdmins("Jog Error", $"An error occurred trying to jog az clockwise: {result.ToString()}");
                     }
                 }
@@ -725,7 +735,7 @@ namespace ControlRoomApplication.Main
                 if (Validator.ValidateSpeed(speed))
                 {
                     // Start CW Jog
-                    MovementResult result = rtController.StartRadioTelescopeJog(speed, RadioTelescopeDirectionEnum.CounterclockwiseOrPositive, RadioTelescopeAxisEnum.ELEVATION);
+                    MovementResult result = rtController.StartRadioTelescopeJog(speed, RadioTelescopeDirectionEnum.ClockwiseOrNegative, RadioTelescopeAxisEnum.ELEVATION);
                     
                     if(result == MovementResult.Success)
                         logger.Info($"{Utilities.GetTimeStamp()}: Successfully started elevation positive jog.");
@@ -736,7 +746,7 @@ namespace ControlRoomApplication.Main
                     else
                     {
                         logger.Info($"{Utilities.GetTimeStamp()}: An error occurred trying to positive jog el: {result.ToString()}");
-                        pushNotification.sendToAllAdmins("Jog Error", $"An error occurred trying to positive jog el: {result.ToString()}");
+                        PushNotification.sendToAllAdmins("Jog Error", $"An error occurred trying to positive jog el: {result.ToString()}");
                         EmailNotifications.sendToAllAdmins("Jog Error", $"An error occurred trying to positive jog el: {result.ToString()}");
                     }
                 }
@@ -763,7 +773,7 @@ namespace ControlRoomApplication.Main
                 if (Validator.ValidateSpeed(speed))
                 {
                     // Start CW Jog
-                    MovementResult result = rtController.StartRadioTelescopeJog(speed, RadioTelescopeDirectionEnum.ClockwiseOrNegative, RadioTelescopeAxisEnum.ELEVATION);
+                    MovementResult result = rtController.StartRadioTelescopeJog(speed, RadioTelescopeDirectionEnum.CounterclockwiseOrPositive, RadioTelescopeAxisEnum.ELEVATION);
 
                     if (result == MovementResult.Success)
                         logger.Info($"{Utilities.GetTimeStamp()}: Successfully started elevation negative jog.");
@@ -774,7 +784,7 @@ namespace ControlRoomApplication.Main
                     else
                     {
                         logger.Info($"{Utilities.GetTimeStamp()}: An error occurred trying to negative jog el: {result.ToString()}");
-                        pushNotification.sendToAllAdmins("Jog Error", $"An error occurred trying to negative jog el: {result.ToString()}");
+                        PushNotification.sendToAllAdmins("Jog Error", $"An error occurred trying to negative jog el: {result.ToString()}");
                         EmailNotifications.sendToAllAdmins("Jog Error", $"An error occurred trying to negative jog el: {result.ToString()}");
                     }
                 }

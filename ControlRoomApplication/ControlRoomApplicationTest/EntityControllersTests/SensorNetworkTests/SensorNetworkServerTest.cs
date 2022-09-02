@@ -67,6 +67,10 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             Assert.IsNotNull(Server.CurrentElevationMotorTemp);
             Assert.IsNotNull(Server.CurrentAzimuthMotorTemp);
 
+            // Verify ambient temp and humidity are correct
+            Assert.IsNotNull(Server.CurrentElevationAmbientTemp);
+            Assert.IsNotNull(Server.CurrentElevationAmbientHumidity);
+
             // Verify orientation is correct
             Assert.IsNotNull(Server.CurrentAbsoluteOrientation);
 
@@ -82,6 +86,9 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             // Verify timer is correct
             Assert.IsNotNull(resultTimer);
             Assert.IsFalse(resultTimer.AutoReset);
+
+            // Verify the fan starts in an off state
+            Assert.IsFalse(Server.FanIsOn);
         }
 
         [TestMethod]
@@ -104,6 +111,9 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             Assert.AreEqual(Server.CurrentElevationMotorTemp[0].temp, expectedValue, 0.1);
             Assert.AreEqual(Server.CurrentAzimuthMotorTemp[0].temp, expectedValue, 0.1);
 
+            Assert.AreEqual(Server.CurrentElevationAmbientTemp[0].temp, expectedValue, 0.1);
+            Assert.AreEqual(Server.CurrentElevationAmbientHumidity[0].HumidityReading, expectedValue, 0.1);
+
             Assert.AreEqual(Server.CurrentElevationMotorAccl[0].x, expectedValue);
             Assert.AreEqual(Server.CurrentElevationMotorAccl[0].y, expectedValue);
             Assert.AreEqual(Server.CurrentElevationMotorAccl[0].z, expectedValue);
@@ -119,11 +129,12 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             // 0.1 is the approximate margin of error with the conversions
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, expectedValue, 0.16);
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, expectedValue, 0.16);
+
+            Assert.IsTrue(Server.FanIsOn);
         }
 
         [TestMethod]
-        public void TestInterpretData_OnlyElTemp_InterpretsOnlyElTemp()
-        {
+        public void TestInterpretData_OnlyElTemp_InterpretsOnlyElTemp()        {
             // Only the elevation temperature is initialized and should decode to the temp in Celsius
             byte[] OnlyElTemp50C = File.ReadAllBytes($"{TestPacketDirectory}OnlyElTemp50C.snp");
 
@@ -142,6 +153,9 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             // The rest of the values should be EMPTY (aka 0)
             Assert.AreEqual(Server.CurrentAzimuthMotorTemp[0].temp, 0);
 
+            Assert.AreEqual(Server.CurrentElevationAmbientTemp[0].temp, 0);
+            Assert.AreEqual(Server.CurrentElevationAmbientHumidity[0].HumidityReading, 0);
+
             Assert.AreEqual(Server.CurrentElevationMotorAccl[0].x, 0);
             Assert.AreEqual(Server.CurrentElevationMotorAccl[0].y, 0);
             Assert.AreEqual(Server.CurrentElevationMotorAccl[0].z, 0);
@@ -156,6 +170,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, 0);
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, 0);
+
+            Assert.IsFalse(Server.FanIsOn);
         }
 
         [TestMethod]
@@ -177,6 +193,9 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             Assert.AreEqual(Server.CurrentElevationMotorTemp[0].temp, 0);
             Assert.AreEqual(Server.CurrentAzimuthMotorTemp[0].temp, expectedValue, 0.1); // This should be the only populated value
 
+            Assert.AreEqual(Server.CurrentElevationAmbientTemp[0].temp, 0);
+            Assert.AreEqual(Server.CurrentElevationAmbientHumidity[0].HumidityReading, 0);
+
             Assert.AreEqual(Server.CurrentElevationMotorAccl[0].x, 0);
             Assert.AreEqual(Server.CurrentElevationMotorAccl[0].y, 0);
             Assert.AreEqual(Server.CurrentElevationMotorAccl[0].z, 0);
@@ -191,6 +210,49 @@ namespace ControlRoomApplicationTest.EntityControllersTests
 
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, 0);
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, 0);
+
+            Assert.IsFalse(Server.FanIsOn);
+        }
+
+        [TestMethod]
+        public void TestInterpretData_OnlyAmbTempHumidity_InterpretsOnlyAmbTempHumidity()
+        {
+            // Only the ambient temperature and humidity are initialized and should decode to the temp in Fahrenheit and % humidity
+            byte[] OnlyAmbTempHumidity50 = File.ReadAllBytes($"{TestPacketDirectory}OnlyAmbTempHumidity50.snp");
+
+            PrivateObject privServer = new PrivateObject(Server);
+
+            int expectedValue = 50;
+
+            // Call the function, which decodes the data
+            bool success = (bool)privServer.Invoke("InterpretData", OnlyAmbTempHumidity50, OnlyAmbTempHumidity50.Length);
+
+            Assert.IsTrue(success);
+
+            // Verify all of the values are as expected; converted values have a small margin of error
+            Assert.AreEqual(Server.CurrentElevationMotorTemp[0].temp, 0);
+            Assert.AreEqual(Server.CurrentAzimuthMotorTemp[0].temp, 0);
+
+            // These should be the only populated values
+            Assert.AreEqual(Server.CurrentElevationAmbientTemp[0].temp, expectedValue, 0.1);
+            Assert.AreEqual(Server.CurrentElevationAmbientHumidity[0].HumidityReading, expectedValue, 0.1);
+
+            Assert.AreEqual(Server.CurrentElevationMotorAccl[0].x, 0);
+            Assert.AreEqual(Server.CurrentElevationMotorAccl[0].y, 0);
+            Assert.AreEqual(Server.CurrentElevationMotorAccl[0].z, 0);
+
+            Assert.AreEqual(Server.CurrentAzimuthMotorAccl[0].x, 0);
+            Assert.AreEqual(Server.CurrentAzimuthMotorAccl[0].y, 0);
+            Assert.AreEqual(Server.CurrentAzimuthMotorAccl[0].z, 0);
+
+            Assert.AreEqual(Server.CurrentCounterbalanceAccl[0].x, 0);
+            Assert.AreEqual(Server.CurrentCounterbalanceAccl[0].y, 0);
+            Assert.AreEqual(Server.CurrentCounterbalanceAccl[0].z, 0);
+
+            Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, 0);
+            Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, 0);
+
+            Assert.IsFalse(Server.FanIsOn);
         }
 
         [TestMethod]
@@ -212,6 +274,9 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             Assert.AreEqual(Server.CurrentElevationMotorTemp[0].temp, 0);
             Assert.AreEqual(Server.CurrentAzimuthMotorTemp[0].temp, 0);
 
+            Assert.AreEqual(Server.CurrentElevationAmbientTemp[0].temp, 0);
+            Assert.AreEqual(Server.CurrentElevationAmbientHumidity[0].HumidityReading, 0);
+
             Assert.AreEqual(Server.CurrentElevationMotorAccl[0].x, 0);
             Assert.AreEqual(Server.CurrentElevationMotorAccl[0].y, 0);
             Assert.AreEqual(Server.CurrentElevationMotorAccl[0].z, 0);
@@ -226,6 +291,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
 
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, 0);
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, 50, 0.17); // This should be the only populated value
+
+            Assert.IsFalse(Server.FanIsOn);
         }
 
         [TestMethod]
@@ -247,6 +314,9 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             Assert.AreEqual(Server.CurrentElevationMotorTemp[0].temp, 0);
             Assert.AreEqual(Server.CurrentAzimuthMotorTemp[0].temp, 0);
 
+            Assert.AreEqual(Server.CurrentElevationAmbientTemp[0].temp, 0);
+            Assert.AreEqual(Server.CurrentElevationAmbientHumidity[0].HumidityReading, 0);
+
             Assert.AreEqual(Server.CurrentElevationMotorAccl[0].x, 0);
             Assert.AreEqual(Server.CurrentElevationMotorAccl[0].y, 0);
             Assert.AreEqual(Server.CurrentElevationMotorAccl[0].z, 0);
@@ -261,6 +331,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
 
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, 50, 0.17); // This should be the only populated value
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, 0);
+
+            Assert.IsFalse(Server.FanIsOn);
         }
 
         [TestMethod]
@@ -280,6 +352,9 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             Assert.AreEqual(Server.CurrentElevationMotorTemp[0].temp, 0);
             Assert.AreEqual(Server.CurrentAzimuthMotorTemp[0].temp, 0);
 
+            Assert.AreEqual(Server.CurrentElevationAmbientTemp[0].temp, 0);
+            Assert.AreEqual(Server.CurrentElevationAmbientHumidity[0].HumidityReading, 0);
+
             // These should be the only populated values, based off of the pre-made
             // packet I made for them
             Assert.AreEqual(Server.CurrentElevationMotorAccl[0].x, 1);
@@ -296,6 +371,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
 
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, 0);
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, 0);
+
+            Assert.IsFalse(Server.FanIsOn);
         }
 
         [TestMethod]
@@ -315,6 +392,9 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             Assert.AreEqual(Server.CurrentElevationMotorTemp[0].temp, 0);
             Assert.AreEqual(Server.CurrentAzimuthMotorTemp[0].temp, 0);
 
+            Assert.AreEqual(Server.CurrentElevationAmbientTemp[0].temp, 0);
+            Assert.AreEqual(Server.CurrentElevationAmbientHumidity[0].HumidityReading, 0);
+
             Assert.AreEqual(Server.CurrentElevationMotorAccl[0].x, 0);
             Assert.AreEqual(Server.CurrentElevationMotorAccl[0].y, 0);
             Assert.AreEqual(Server.CurrentElevationMotorAccl[0].z, 0);
@@ -331,6 +411,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
 
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, 0);
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, 0);
+
+            Assert.IsFalse(Server.FanIsOn);
         }
 
         [TestMethod]
@@ -350,6 +432,9 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             Assert.AreEqual(Server.CurrentElevationMotorTemp[0].temp, 0);
             Assert.AreEqual(Server.CurrentAzimuthMotorTemp[0].temp, 0);
 
+            Assert.AreEqual(Server.CurrentElevationAmbientTemp[0].temp, 0);
+            Assert.AreEqual(Server.CurrentElevationAmbientHumidity[0].HumidityReading, 0);
+
             Assert.AreEqual(Server.CurrentElevationMotorAccl[0].x, 0);
             Assert.AreEqual(Server.CurrentElevationMotorAccl[0].y, 0);
             Assert.AreEqual(Server.CurrentElevationMotorAccl[0].z, 0);
@@ -366,6 +451,48 @@ namespace ControlRoomApplicationTest.EntityControllersTests
 
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, 0);
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, 0);
+
+            Assert.IsFalse(Server.FanIsOn);
+        }
+
+        [TestMethod]
+        public void TestInterpretData_OnlyFanState_InterpretsOnlyFanState()
+        {
+            // Only the counterbalance accelerometer is initialized
+            byte[] OnlyFanOn = File.ReadAllBytes($"{TestPacketDirectory}OnlyFanOn.snp");
+
+            PrivateObject privServer = new PrivateObject(Server);
+
+            // Call the function, which decodes the data
+            bool success = (bool)privServer.Invoke("InterpretData", OnlyFanOn, OnlyFanOn.Length);
+
+            Assert.IsTrue(success);
+
+            // Verify all of the values are as expected; converted values have a small margin of error
+            Assert.AreEqual(Server.CurrentElevationMotorTemp[0].temp, 0);
+            Assert.AreEqual(Server.CurrentAzimuthMotorTemp[0].temp, 0);
+
+            Assert.AreEqual(Server.CurrentElevationAmbientTemp[0].temp, 0);
+            Assert.AreEqual(Server.CurrentElevationAmbientHumidity[0].HumidityReading, 0);
+
+            Assert.AreEqual(Server.CurrentElevationMotorAccl[0].x, 0);
+            Assert.AreEqual(Server.CurrentElevationMotorAccl[0].y, 0);
+            Assert.AreEqual(Server.CurrentElevationMotorAccl[0].z, 0);
+
+            Assert.AreEqual(Server.CurrentAzimuthMotorAccl[0].x, 0);
+            Assert.AreEqual(Server.CurrentAzimuthMotorAccl[0].y, 0);
+            Assert.AreEqual(Server.CurrentAzimuthMotorAccl[0].z, 0);
+
+            // These should be the only populated values, based off of the pre-made
+            // packet I made for them
+            Assert.AreEqual(Server.CurrentCounterbalanceAccl[0].x, 0);
+            Assert.AreEqual(Server.CurrentCounterbalanceAccl[0].y, 0);
+            Assert.AreEqual(Server.CurrentCounterbalanceAccl[0].z, 0);
+
+            Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, 0);
+            Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, 0);
+
+            Assert.IsTrue(Server.FanIsOn);
         }
 
         [TestMethod]
@@ -389,7 +516,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests
                 NetworkStream stream = localClient.GetStream();
 
                 // This will hold our sensor initialization
-                byte[] bytes = new byte[SensorNetworkConstants.SensorNetworkSensorCount];
+                byte[] bytes = new byte[SensorNetworkConstants.InitPacketSize];
 
                 // Wait for initialization
                 stream.Read(bytes, 0, bytes.Length);
@@ -424,6 +551,9 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             Assert.AreEqual(Server.CurrentElevationMotorTemp[0].temp, 0);
             Assert.AreEqual(Server.CurrentAzimuthMotorTemp[0].temp, 0);
 
+            Assert.AreEqual(Server.CurrentElevationAmbientTemp[0].temp, 0);
+            Assert.AreEqual(Server.CurrentElevationAmbientHumidity[0].HumidityReading, 0);
+
             Assert.AreEqual(Server.CurrentElevationMotorAccl[0].x, 0);
             Assert.AreEqual(Server.CurrentElevationMotorAccl[0].y, 0);
             Assert.AreEqual(Server.CurrentElevationMotorAccl[0].z, 0);
@@ -438,6 +568,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
 
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, 0);
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, 0);
+
+            Assert.IsFalse(Server.FanIsOn);
         }
 
         [TestMethod]
@@ -460,6 +592,9 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             Assert.AreEqual(Server.CurrentElevationMotorTemp[0].temp, 0);
             Assert.AreEqual(Server.CurrentAzimuthMotorTemp[0].temp, 0);
 
+            Assert.AreEqual(Server.CurrentElevationAmbientTemp[0].temp, 0);
+            Assert.AreEqual(Server.CurrentElevationAmbientHumidity[0].HumidityReading, 0);
+
             Assert.AreEqual(Server.CurrentElevationMotorAccl[0].x, 0);
             Assert.AreEqual(Server.CurrentElevationMotorAccl[0].y, 0);
             Assert.AreEqual(Server.CurrentElevationMotorAccl[0].z, 0);
@@ -474,6 +609,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
 
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, 0);
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, 0);
+
+            Assert.IsFalse(Server.FanIsOn);
         }
 
         [TestMethod]
@@ -498,6 +635,9 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             Assert.AreEqual(Server.CurrentElevationMotorTemp[0].temp, 0);
             Assert.AreEqual(Server.CurrentAzimuthMotorTemp[0].temp, 0);
 
+            Assert.AreEqual(Server.CurrentElevationAmbientTemp[0].temp, 0);
+            Assert.AreEqual(Server.CurrentElevationAmbientHumidity[0].HumidityReading, 0);
+
             Assert.AreEqual(Server.CurrentElevationMotorAccl[0].x, 0);
             Assert.AreEqual(Server.CurrentElevationMotorAccl[0].y, 0);
             Assert.AreEqual(Server.CurrentElevationMotorAccl[0].z, 0);
@@ -512,6 +652,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
 
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, 0);
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, 0);
+
+            Assert.IsFalse(Server.FanIsOn);
         }
 
         [TestMethod]
@@ -533,6 +675,9 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             Assert.AreEqual(Server.CurrentElevationMotorTemp[0].temp, 0);
             Assert.AreEqual(Server.CurrentAzimuthMotorTemp[0].temp, 0);
 
+            Assert.AreEqual(Server.CurrentElevationAmbientTemp[0].temp, 0);
+            Assert.AreEqual(Server.CurrentElevationAmbientHumidity[0].HumidityReading, 0);
+
             Assert.AreEqual(Server.CurrentElevationMotorAccl[0].x, 0);
             Assert.AreEqual(Server.CurrentElevationMotorAccl[0].y, 0);
             Assert.AreEqual(Server.CurrentElevationMotorAccl[0].z, 0);
@@ -547,6 +692,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
 
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, 0);
             Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, 0);
+
+            Assert.IsFalse(Server.FanIsOn);
         }
 
         [TestMethod]

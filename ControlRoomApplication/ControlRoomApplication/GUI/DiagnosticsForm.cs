@@ -21,6 +21,7 @@ using System.Drawing.Printing;
 using System.Threading.Tasks;
 using ControlRoomApplication.Validation;
 using ControlRoomApplication.Controllers.PLCCommunication.PLCDrivers.MCUManager;
+using ControlRoomApplication.Entities.DiagnosticData;
 
 namespace ControlRoomApplication.GUI
 {
@@ -88,6 +89,15 @@ namespace ControlRoomApplication.GUI
         bool ValidUpperSWStopLimit;
         bool ValidLowerSWStopLimit;
 
+        bool AmbTempLimitsValid;
+        bool AmbHumidLimitsValid;
+
+        // Validation for sensor network configuration
+        bool XOffsetValid;
+        bool YOffsetValid;
+        bool ZOffsetValid;
+        bool PeriodValid;
+
         private int rtId;
 
         private Acceleration[] azOld;
@@ -148,6 +158,7 @@ namespace ControlRoomApplication.GUI
             bool currWS = controlRoom.weatherStationOverride;
             bool currAZ = rtController.overrides.overrideAzimuthMotTemp;
             bool currEL = rtController.overrides.overrideElevatMotTemp;
+            bool currAmbTempHumidity = rtController.overrides.overrideAmbientTempHumidity;
             bool currElProx0 = rtController.overrides.overrideElevatProx0;
             bool currElProx90 = rtController.overrides.overrideElevatProx90;
             bool currAzimuthAbsEncoder = rtController.overrides.overrideAzimuthAbsEncoder;
@@ -155,7 +166,7 @@ namespace ControlRoomApplication.GUI
             bool currAzimuthAccelerometer = rtController.overrides.overrideAzimuthAccelerometer;
             bool currElevationAccelerometer = rtController.overrides.overrideElevationAccelerometer;
             bool currCounterbalanceAccelerometer = rtController.overrides.overrideCounterbalanceAccelerometer;
-            UpdateOverrideButtons(currMain, currWS, currAZ, currEL, currElProx0, currElProx90, 
+            UpdateOverrideButtons(currMain, currWS, currAZ, currEL, currAmbTempHumidity, currElProx0, currElProx90, 
                 currAzimuthAbsEncoder, currElevationAbsEncoder, currAzimuthAccelerometer, currElevationAccelerometer, currCounterbalanceAccelerometer);
 
             SensorSettingsThread = new BackgroundWorker();
@@ -170,9 +181,15 @@ namespace ControlRoomApplication.GUI
 
             // Set sensor initialization checkboxes to reflect what is stored in the database
             SensorNetworkConfig = rtController.RadioTelescope.SensorNetworkServer.InitializationClient.SensorNetworkConfig;
+            comboAccelLocation.SelectedIndex = 0;
+            comboTimingSelect.SelectedIndex = 0;
+
+            UpdateAccelConfigFields();
+            UpdatePeriodConfigField();
 
             AzimuthTemperature1.Checked = SensorNetworkConfig.AzimuthTemp1Init;
             ElevationTemperature1.Checked = SensorNetworkConfig.ElevationTemp1Init;
+            AmbientTempHumid.Checked = SensorNetworkConfig.ElevationAmbientInit;
             AzimuthAccelerometer.Checked = SensorNetworkConfig.AzimuthAccelerometerInit;
             ElevationAccelerometer.Checked = SensorNetworkConfig.ElevationAccelerometerInit;
             CounterbalanceAccelerometer.Checked = SensorNetworkConfig.CounterbalanceAccelerometerInit;
@@ -181,10 +198,15 @@ namespace ControlRoomApplication.GUI
             txtDataTimeout.Text = "" + (double)SensorNetworkConfig.TimeoutDataRetrieval / 1000;
             txtInitTimeout.Text = "" + (double)SensorNetworkConfig.TimeoutInitialization / 1000;
 
-            //get the current software stops thresholds
-            //get the current software stops thresholds
-            LowerSWStopsLimitText.Text = "" + rtController.RadioTelescope.minElevationDegrees.ToString("0.00");
-            UpperSWStopsLimitText.Text = "" + rtController.RadioTelescope.maxElevationDegrees.ToString("0.00");
+            // Get the current thresholds
+            txtLowerSWStopsLimit.Text = "" + rtController.RadioTelescope.minElevationDegrees.ToString("0.00");
+            txtUpperSWStopsLimit.Text = "" + rtController.RadioTelescope.maxElevationDegrees.ToString("0.00");
+
+            txtLowerTempLimit.Text = "" + rtController.MinAmbientTempThreshold.ToString("0.00");
+            txtUpperTempLimit.Text = "" + rtController.MaxAmbientTempThreshold.ToString("0.00");
+
+            txtLowerHumidLimit.Text = "" + rtController.MinAmbientHumidityThreshold.ToString("0.00");
+            txtUpperHumidLimit.Text = "" + rtController.MaxAmbientHumidityThreshold.ToString("0.00");
 
             // Set default values for timeout validation
             DataTimeoutValid = true;
@@ -279,12 +301,23 @@ namespace ControlRoomApplication.GUI
             _azEncoderDegrees = currAbsOrientation.Azimuth;
             _elEncoderDegrees = currAbsOrientation.Elevation;
             lblAzAbsPos.Text = Math.Round(_azEncoderDegrees, 2).ToString();
-            lblElAbsPos.Text = Math.Round(_elEncoderDegrees, 2).ToString();
 
-            timer1.Interval = 200;
+            // Check if elevation encoder is timed out, output ERR if so, otherwise output current position
+            if (rtController.RadioTelescope.SensorNetworkServer.SensorStatuses.ElevationAbsoluteEncoderStatus.Equals(SensorNetworkSensorStatus.Error))
+            {
+                lblElAbsPos.Text = "ERR";
+            }
+            else 
+            {
+                lblElAbsPos.Text = Math.Round(_elEncoderDegrees, 2).ToString();
+            }
 
             Temperature[] ElMotTemps = rtController.RadioTelescope.SensorNetworkServer.CurrentElevationMotorTemp;
             Temperature[] AzMotTemps = rtController.RadioTelescope.SensorNetworkServer.CurrentAzimuthMotorTemp;
+
+            Temperature[] ElAmbTemps = rtController.RadioTelescope.SensorNetworkServer.CurrentElevationAmbientTemp;
+            Humidity[] ElAmbHumidity = rtController.RadioTelescope.SensorNetworkServer.CurrentElevationAmbientHumidity;
+            double ElAmbDewPoint = rtController.RadioTelescope.SensorNetworkServer.CurrentElevationAmbientDewPoint;
 
             // these come in as celsius
             double ElMotTemp = ElMotTemps[ElMotTemps.Length - 1].temp;
@@ -300,13 +333,18 @@ namespace ControlRoomApplication.GUI
             double ElMotTempFahrenheit = (ElMotTemp * (9.0 / 5.0)) + 32;
             double AzMotTempFahrenheit = (AzMotTemp * (9.0 / 5.0)) + 32;
 
+            // Ambient temp comes in as fahrenheit
+            double ElAmbTemp = ElAmbTemps[ElAmbTemps.Length - 1].temp;
+            double ElAmbHumid = ElAmbHumidity[ElAmbHumidity.Length - 1].HumidityReading;
+            double ElAmbTempCelsius = (ElAmbTemp - 32) * (5.0 / 9.0);
+            double ElAmbDewPointCelsius = (ElAmbDewPoint - 32) * (5.0 / 9.0);
 
             if (controlRoom.RTControllerManagementThreads.Count > 0 && controlRoom.RTControllerManagementThreads[0].AppointmentToDisplay != null)
             {
                 Appointment appt = controlRoom.RTControllerManagementThreads[0].AppointmentToDisplay;
                 statusTextBox.Text = appt.status.ToString();
-                endTimeTextBox.Text = appt.end_time.ToString();
-                startTimeTextBox.Text = appt.start_time.ToString();
+                endTimeTextBox.Text = appt.end_time.ToLocalTime().ToString();
+                startTimeTextBox.Text = appt.start_time.ToLocalTime().ToString();
             }
             else
             {
@@ -322,6 +360,8 @@ namespace ControlRoomApplication.GUI
                 outTempUnits.Text = "Celsius";
                 AZTempUnitLabel.Text = "Celsius";
                 ElTempUnitLabel.Text = "Celsius";
+                lblAmbientTempUnit.Text = "Celsius";
+                lblAmbientDewPointUnit.Text = "Celsius";
                 outsideTempLabel.Text = Math.Round(insideTempCel, 2).ToString();
                 insideTempLabel.Text = Math.Round(outsideTempCel, 2).ToString();
 
@@ -342,6 +382,19 @@ namespace ControlRoomApplication.GUI
                 {
                     fldAzTemp.Text = "--";
                 }
+
+                if (SensorNetworkConfig.ElevationAmbientInit)
+                {
+                    fldAmbientTemp.Text = Math.Round(ElAmbTempCelsius, 2).ToString();
+                    fldAmbientHumidity.Text = Math.Round(ElAmbHumid, 2).ToString();
+                    fldAmbientDewPoint.Text = Math.Round(ElAmbDewPointCelsius, 2).ToString();
+                }
+                else
+                {
+                    fldAmbientTemp.Text = "--";
+                    fldAmbientHumidity.Text = "--";
+                    fldAmbientDewPoint.Text = "--";
+                }
             }
             //fahrenheit
             else if (fahrenheit == true)
@@ -350,6 +403,8 @@ namespace ControlRoomApplication.GUI
                 outTempUnits.Text = "Fahrenheit";
                 AZTempUnitLabel.Text = "Fahrenheit";
                 ElTempUnitLabel.Text = "Fahrenheit";
+                lblAmbientTempUnit.Text = "Fahrenheit";
+                lblAmbientDewPointUnit.Text = "Fahrenheit";
                 outsideTempLabel.Text = Math.Round(controlRoom.WeatherStation.GetOutsideTemp(), 2).ToString();
                 insideTempLabel.Text = Math.Round(controlRoom.WeatherStation.GetInsideTemp(), 2).ToString();
 
@@ -369,6 +424,19 @@ namespace ControlRoomApplication.GUI
                 else
                 {
                     fldAzTemp.Text = "--";
+                }
+
+                if (SensorNetworkConfig.ElevationAmbientInit)
+                {
+                    fldAmbientTemp.Text = Math.Round(ElAmbTemp, 2).ToString();
+                    fldAmbientHumidity.Text = Math.Round(ElAmbHumid, 2).ToString();
+                    fldAmbientDewPoint.Text = Math.Round(ElAmbDewPoint, 2).ToString();
+                }
+                else
+                {
+                    fldAmbientTemp.Text = "--";
+                    fldAmbientHumidity.Text = "--";
+                    fldAmbientDewPoint.Text = "--";
                 }
             }
 
@@ -481,6 +549,17 @@ namespace ControlRoomApplication.GUI
 
             // Display errors
             lblMCUErrors.Text = errors;
+
+            // Fan state
+            if (rtController.RadioTelescope.SensorNetworkServer.FanIsOn)
+            {
+                lblFanStatus.Text = "On";
+
+            }
+            else
+            {
+                lblFanStatus.Text = "Off";
+            }
 
             // Console Log Output Update
             consoleLogBox.Text = mainF.log.loggerQueue;
@@ -657,7 +736,8 @@ namespace ControlRoomApplication.GUI
 
         private void btnTest_Click(object sender, System.EventArgs e)
         {
-            double temperature = 0;
+            logger.Debug(Utilities.GetTimeStamp() + ": Test notification being sent");
+            PushNotification.sendToAllAdmins("Test Header", "Test sent from control form", false);
         }
 
         private void btnAddOneTemp_Click(object sender, System.EventArgs e)
@@ -924,6 +1004,7 @@ namespace ControlRoomApplication.GUI
             bool currWS = controlRoom.weatherStationOverride;
             bool currAZ = rtController.overrides.overrideAzimuthMotTemp;
             bool currEL = rtController.overrides.overrideElevatMotTemp;
+            bool currAmbTempHumidity = rtController.overrides.overrideAmbientTempHumidity;
             bool currElProx0 = rtController.overrides.overrideElevatProx0;
             bool currElProx90 = rtController.overrides.overrideElevatProx90;
             bool currAzimuthAbsEncoder = rtController.overrides.overrideAzimuthAbsEncoder;
@@ -932,7 +1013,7 @@ namespace ControlRoomApplication.GUI
             bool currElevationAccelerometer = rtController.overrides.overrideElevationAccelerometer;
             bool currCounterbalanceAccelerometer = rtController.overrides.overrideCounterbalanceAccelerometer;
 
-            bool newMain, newWS, newAZ, newEL, newElProx0, newElProx90, 
+            bool newMain, newWS, newAZ, newEL, newAmbTempHumidity, newElProx0, newElProx90, 
                 newAzimuthAbsEncoder, newElevationAbsEncoder, newAzimuthAccelerometer, newElevationAccelerometer, newCounterbalanceAccelerometer;
 
             // Only keep running this loop while the Radio Telescope is online
@@ -942,6 +1023,7 @@ namespace ControlRoomApplication.GUI
                 newWS = controlRoom.weatherStationOverride;
                 newAZ = rtController.overrides.overrideAzimuthMotTemp;
                 newEL = rtController.overrides.overrideElevatMotTemp;
+                newAmbTempHumidity = rtController.overrides.overrideAmbientTempHumidity;
                 newElProx0 = rtController.overrides.overrideElevatProx0;
                 newElProx90 = rtController.overrides.overrideElevatProx90;
                 newAzimuthAbsEncoder = rtController.overrides.overrideAzimuthAbsEncoder;
@@ -954,6 +1036,7 @@ namespace ControlRoomApplication.GUI
                     currMain != newMain || 
                     currAZ != newAZ || 
                     currEL != newEL ||
+                    currAmbTempHumidity != newAmbTempHumidity ||
                     currElProx0 != newElProx0 ||
                     currElProx90 != newElProx90 ||
                     currAzimuthAbsEncoder != newAzimuthAbsEncoder ||
@@ -966,6 +1049,7 @@ namespace ControlRoomApplication.GUI
                     currWS = newWS;
                     currAZ = newAZ;
                     currEL = newEL;
+                    currAmbTempHumidity = newAmbTempHumidity;
                     currElProx0 = newElProx0;
                     currElProx90 = newElProx90;
                     currAzimuthAbsEncoder = newAzimuthAbsEncoder;
@@ -975,7 +1059,7 @@ namespace ControlRoomApplication.GUI
                     currCounterbalanceAccelerometer = newCounterbalanceAccelerometer;
 
                     Utilities.WriteToGUIFromThread(this, () => {
-                        UpdateOverrideButtons(currMain, currWS, currAZ, currEL, currElProx0, currElProx90,
+                        UpdateOverrideButtons(currMain, currWS, currAZ, currEL, currAmbTempHumidity, currElProx0, currElProx90,
                             currAzimuthAbsEncoder, currElevationAbsEncoder, currAzimuthAccelerometer, currElevationAccelerometer, currCounterbalanceAccelerometer);
                     });
                 }
@@ -984,7 +1068,7 @@ namespace ControlRoomApplication.GUI
         }
 
         // Loads the override buttons
-        public void UpdateOverrideButtons(bool currMain, bool currWS, bool currAZ, bool currEL, bool currElProx0, bool currElProx90,
+        public void UpdateOverrideButtons(bool currMain, bool currWS, bool currAZ, bool currEL, bool currAmbTempHumidity, bool currElProx0, bool currElProx90,
             bool azimuthAbsEncoder, bool elevationAbsEncoder, bool azimuthAccelerometer, bool elevationAccelerometer, bool counterbalanceAccelerometer)
         {
             // Weather Station Override
@@ -1033,6 +1117,18 @@ namespace ControlRoomApplication.GUI
             {
                 ElMotTempSensOverride.Text = "ENABLED";
                 ElMotTempSensOverride.BackColor = System.Drawing.Color.LimeGreen;
+            }
+
+            // Ambient Temperature and Humidity Override
+            if (currAmbTempHumidity)
+            {
+                AmbTempHumidSensOverride.Text = "OVERRIDING";
+                AmbTempHumidSensOverride.BackColor = System.Drawing.Color.Red;
+            }
+            else
+            {
+                AmbTempHumidSensOverride.Text = "ENABLED";
+                AmbTempHumidSensOverride.BackColor = System.Drawing.Color.LimeGreen;
             }
 
             // Elevation Limit Switch 0 Degrees Override
@@ -1224,11 +1320,79 @@ namespace ControlRoomApplication.GUI
 
         private async void UpdateSensorInitiliazation_Click(object sender, EventArgs e)
         {
+            // First update the accel config with data that may not have been saved yet. Trying to do this inside the thread will
+            // cause a crash
+            int index = comboAccelLocation.SelectedIndex;
+            AccelerometerConfig accelConfig;
+
+            // Pick selected accelerometer
+            switch (index)
+            {
+                // Counterbalance Accelerometer
+                case 0:
+                    accelConfig = SensorNetworkConfig.CbAccelConfig;
+                    break;
+
+                // Elevation Accelerometer
+                case 1:
+                    accelConfig = SensorNetworkConfig.ElAccelConfig;
+                    break;
+
+                // Azimuth Accelerometer
+                case 2:
+                    accelConfig = SensorNetworkConfig.AzAccelConfig;
+                    break;
+
+                // Invalid index
+                default:
+                    return;
+            }
+
+            // Update the accelerometer config for the active accelerometer (the other accelerometer configs would have already been updated at this point)
+            accelConfig.SamplingFrequency = double.Parse(comboSamplingSpeed.Text);
+            accelConfig.GRange = int.Parse(comboGRange.Text.Substring(1));
+            accelConfig.FIFOSize = (int)numFIFOSize.Value;
+            accelConfig.XOffset = int.Parse(txtX.Text);
+            accelConfig.YOffset = int.Parse(txtY.Text);
+            accelConfig.ZOffset = int.Parse(txtZ.Text);
+            accelConfig.FullBitResolution = chkBitResolution.Checked;
+
+            index = comboTimingSelect.SelectedIndex;
+
+            // Get selected period and update 
+            switch (index)
+            {
+                // Timer
+                case 0:
+                    SensorNetworkConfig.TimerPeriod = int.Parse(txtPeriod.Text);
+                    break;
+
+                // Ethernet
+                case 1:
+                    SensorNetworkConfig.EthernetPeriod = int.Parse(txtPeriod.Text);
+                    break;
+
+                // Temperature
+                case 2:
+                    SensorNetworkConfig.TemperaturePeriod = int.Parse(txtPeriod.Text);
+                    break;
+
+                // Encoder
+                case 3:
+                    SensorNetworkConfig.EncoderPeriod = int.Parse(txtPeriod.Text);
+                    break;
+
+                // Invalid index
+                default:
+                    return;
+            }
+
             // This must be executed async so the status updates/timer keeps ticking
             await Task.Run(() => { 
                 // First set all the checkboxes equal to the sensor network config
                 SensorNetworkConfig.AzimuthTemp1Init = AzimuthTemperature1.Checked;
                 SensorNetworkConfig.ElevationTemp1Init = ElevationTemperature1.Checked;
+                SensorNetworkConfig.ElevationAmbientInit = AmbientTempHumid.Checked;
                 SensorNetworkConfig.AzimuthAccelerometerInit = AzimuthAccelerometer.Checked;
                 SensorNetworkConfig.ElevationAccelerometerInit = ElevationAccelerometer.Checked;
                 SensorNetworkConfig.CounterbalanceAccelerometerInit = CounterbalanceAccelerometer.Checked;
@@ -1241,7 +1405,10 @@ namespace ControlRoomApplication.GUI
 
                 // Update the config in the DB
                 DatabaseOperations.UpdateSensorNetworkConfig(SensorNetworkConfig);
-            
+                DatabaseOperations.UpdateAccelerometerConfig(SensorNetworkConfig.ElAccelConfig);
+                DatabaseOperations.UpdateAccelerometerConfig(SensorNetworkConfig.AzAccelConfig);
+                DatabaseOperations.UpdateAccelerometerConfig(SensorNetworkConfig.CbAccelConfig);
+
                 // reboot
                 rtController.RadioTelescope.SensorNetworkServer.RebootSensorNetwork();
             });
@@ -1287,7 +1454,7 @@ namespace ControlRoomApplication.GUI
                 InitTimeoutValidation.Hide(lblInitTimeout);
 
                 // If the other tooltip is not in error, the button may be clicked
-                if (DataTimeoutValid) UpdateSensorInitiliazation.Enabled = true;
+                if (DataTimeoutValid && XOffsetValid && YOffsetValid && ZOffsetValid && PeriodValid) UpdateSensorInitiliazation.Enabled = true;
             }
             else
             {
@@ -1297,31 +1464,51 @@ namespace ControlRoomApplication.GUI
             }
         }
 
-        private void UpdateSWStopsButton_Click(object sender, EventArgs e)
+        private void UpdateThresholdsButton_Click(object sender, EventArgs e)
         {
 
-            if(ValidLowerSWStopLimit && ValidUpperSWStopLimit)
+            if(ValidLowerSWStopLimit && ValidUpperSWStopLimit &&
+                AmbTempLimitsValid && AmbHumidLimitsValid)
             {
-                rtController.RadioTelescope.maxElevationDegrees = double.Parse(UpperSWStopsLimitText.Text);
-                rtController.RadioTelescope.minElevationDegrees = double.Parse(LowerSWStopsLimitText.Text);
+                rtController.RadioTelescope.maxElevationDegrees = double.Parse(txtUpperSWStopsLimit.Text);
+                rtController.RadioTelescope.minElevationDegrees = double.Parse(txtLowerSWStopsLimit.Text);
 
-                logger.Info(Utilities.GetTimeStamp() + String.Format(" Updating Software stop thresholds... New values: Lower = {0} , Upper = {1} ", double.Parse(LowerSWStopsLimitText.Text), double.Parse(UpperSWStopsLimitText.Text)));
+                rtController.MinAmbientTempThreshold = double.Parse(txtLowerTempLimit.Text);
+                rtController.MaxAmbientTempThreshold = double.Parse(txtUpperTempLimit.Text);
+
+                rtController.MinAmbientHumidityThreshold = double.Parse(txtLowerHumidLimit.Text);
+                rtController.MaxAmbientHumidityThreshold = double.Parse(txtUpperHumidLimit.Text);
+
+                logger.Info(Utilities.GetTimeStamp() + String.Format(" Updating Software Stop thresholds... New values: Lower = {0} , Upper = {1} ", double.Parse(txtLowerSWStopsLimit.Text), double.Parse(txtUpperSWStopsLimit.Text)));
                 DatabaseOperations.UpdateTelescope(rtController.RadioTelescope);
+
+                ThresholdValues updatedAmbTemp = new ThresholdValues();
+                updatedAmbTemp.sensor_name = SensorItemEnum.AMBIENT_TEMP.ToString();
+                updatedAmbTemp.maxValue = (float)rtController.MaxAmbientTempThreshold;
+                updatedAmbTemp.minValue = (float)rtController.MinAmbientTempThreshold;
+
+                ThresholdValues updatedAmbHumidity = new ThresholdValues();
+                updatedAmbHumidity.sensor_name = SensorItemEnum.AMBIENT_HUMIDITY.ToString();
+                updatedAmbHumidity.maxValue = (float)rtController.MaxAmbientHumidityThreshold;
+                updatedAmbHumidity.minValue = (float)rtController.MinAmbientHumidityThreshold;
+
+                DatabaseOperations.UpdateSensorThreshold(updatedAmbTemp);
+                DatabaseOperations.UpdateSensorThreshold(updatedAmbHumidity);
             }
 
         }
 
-        private void ValidateUpperLimit()
+        private void ValidateUpperSWStopLimit()
         {
             ValidUpperSWStopLimit = false;
 
-            bool isNumeric = Double.TryParse(UpperSWStopsLimitText.Text, out double requestedUpperLimit);
+            bool isNumeric = Double.TryParse(txtUpperSWStopsLimit.Text, out double requestedUpperLimit);
 
             if (isNumeric)
             {
-                Double.TryParse(LowerSWStopsLimitText.Text, out double requestedLowerLimit);
+                Double.TryParse(txtLowerSWStopsLimit.Text, out double requestedLowerLimit);
 
-                double RequestedUpperLimit = double.Parse(UpperSWStopsLimitText.Text);
+                double RequestedUpperLimit = double.Parse(txtUpperSWStopsLimit.Text);
                 
                 if (!ValidUpperSWStopLimit)
                 {
@@ -1331,34 +1518,34 @@ namespace ControlRoomApplication.GUI
                 if (!Validator.IsBetween(RequestedUpperLimit, requestedLowerLimit, MiscellaneousConstants.MAX_SOFTWARE_STOP_EL_DEGREES))
                 {
 
-                    UpperLimitToolTip.Show(String.Format("Upper Software Stop limit must be between {0} and {1} degrees (inclusive)", requestedLowerLimit, MiscellaneousConstants.MAX_SOFTWARE_STOP_EL_DEGREES), UpperSWStopsLimitText);
-                    UpperSWStopsLimitText.BackColor = Color.Yellow;
+                    UpperSWStopsValidation.Show(String.Format("Upper Software Stop limit must be between {0} and {1} degrees (inclusive)", requestedLowerLimit, MiscellaneousConstants.MAX_SOFTWARE_STOP_EL_DEGREES), txtUpperSWStopsLimit);
+                    txtUpperSWStopsLimit.BackColor = Color.Yellow;
                     ValidUpperSWStopLimit = false;
                 }
                 else
                 {
-                    UpperLimitToolTip.Hide(UpperSWStopsLimitText);
-                    UpperSWStopsLimitText.BackColor = Color.White;
+                    UpperSWStopsValidation.Hide(txtUpperSWStopsLimit);
+                    txtUpperSWStopsLimit.BackColor = Color.White;
                     ValidUpperSWStopLimit = true;
                 }
             }
             else
             {
-                UpperLimitToolTip.Show("Upper Software Stop limit must be a number", UpperSWStopsLimitText);
-                UpperSWStopsLimitText.BackColor = Color.Yellow;
+                UpperSWStopsValidation.Show("Upper Software Stop limit must be a number", txtUpperSWStopsLimit);
+                txtUpperSWStopsLimit.BackColor = Color.Yellow;
                 ValidUpperSWStopLimit = false;
             }
         }
 
-        private void ValidateLowerLimit()
+        private void ValidateLowerSWStopLimit()
         {
             ValidLowerSWStopLimit = false;
 
-            bool isNumeric = Double.TryParse(LowerSWStopsLimitText.Text, out double requestedLowerLimit);
+            bool isNumeric = Double.TryParse(txtLowerSWStopsLimit.Text, out double requestedLowerLimit);
 
             if (isNumeric)
             {
-                Double.TryParse(UpperSWStopsLimitText.Text, out double requestedUpperLimit);
+                Double.TryParse(txtUpperSWStopsLimit.Text, out double requestedUpperLimit);
 
                 if (!ValidUpperSWStopLimit)
                 {
@@ -1367,39 +1554,421 @@ namespace ControlRoomApplication.GUI
 
                 if (!Validator.IsBetween(requestedLowerLimit, MiscellaneousConstants.MIN_SOFTWARE_STOP_EL_DEGREES, requestedUpperLimit))
                 {
-                    LowerLimitToolTip.Show(String.Format("Lower Software Stop limit must be between {0} and {1} degrees (inclusive)", MiscellaneousConstants.MIN_SOFTWARE_STOP_EL_DEGREES, requestedUpperLimit), LowerSWStopsLimitText);
-                    LowerSWStopsLimitText.BackColor = Color.Yellow;
+                    LowerSWStopsValidation.Show(String.Format("Lower Software Stop limit must be between {0} and {1} degrees (inclusive)", MiscellaneousConstants.MIN_SOFTWARE_STOP_EL_DEGREES, requestedUpperLimit), txtLowerSWStopsLimit);
+                    txtLowerSWStopsLimit.BackColor = Color.Yellow;
                     ValidLowerSWStopLimit = false;
 
                 }
                 else
                 {
-                    LowerLimitToolTip.Hide(LowerSWStopsLimitText);
-                    LowerSWStopsLimitText.BackColor = Color.White;
+                    LowerSWStopsValidation.Hide(txtLowerSWStopsLimit);
+                    txtLowerSWStopsLimit.BackColor = Color.White;
                     ValidLowerSWStopLimit = true;
                 }
             }
             else
             {
-                LowerLimitToolTip.Show("Lower Software Stop limit must be a number", LowerSWStopsLimitText);
-                LowerSWStopsLimitText.BackColor = Color.Yellow;
+                LowerSWStopsValidation.Show("Lower Software Stop limit must be a number", txtLowerSWStopsLimit);
+                txtLowerSWStopsLimit.BackColor = Color.Yellow;
                 ValidLowerSWStopLimit = false;
             }
+        }
 
+        private void ValidateAmbTempLimit()
+        {
+            bool isUpperNumeric = Double.TryParse(txtUpperTempLimit.Text, out double requestedUpperLimit);
+            bool isLowerNumeric = Double.TryParse(txtLowerTempLimit.Text, out double requestedLowerLimit);
+
+            AmbTempValidation.Hide(txtLowerTempLimit);
+
+            if (!isUpperNumeric)
+            {
+                AmbTempValidation.Show("Upper ambient temperature threshold must be a number", txtLowerTempLimit);
+                txtUpperTempLimit.BackColor = Color.Yellow;
+                AmbTempLimitsValid = false;
+            }
+            else if (!isLowerNumeric)
+            {
+                AmbTempValidation.Show("Lower ambient temperature threshold must be a number", txtLowerTempLimit);
+                txtLowerTempLimit.BackColor = Color.Yellow;
+                AmbTempLimitsValid = false;
+            }
+            else
+            {
+                if (requestedLowerLimit <= requestedUpperLimit)
+                {
+                    txtUpperTempLimit.BackColor = Color.White;
+                    AmbTempLimitsValid = true;
+                    AmbTempValidation.Hide(txtLowerTempLimit);
+                    txtLowerTempLimit.BackColor = Color.White;
+                }
+                else
+                {
+                    AmbTempValidation.Show("Upper ambient temperature threshold cannot be less than the lower threshold", txtLowerTempLimit);
+                    txtUpperTempLimit.BackColor = Color.Yellow;
+                    txtLowerTempLimit.BackColor = Color.Yellow;
+                    AmbTempLimitsValid = false;               
+                }
+            }
+        }
+
+        private void ValidateAmbHumidityLimit()
+        {
+            bool isUpperNumeric = Double.TryParse(txtUpperHumidLimit.Text, out double requestedUpperLimit);
+            bool isLowerNumeric = Double.TryParse(txtLowerHumidLimit.Text, out double requestedLowerLimit);
+
+            AmbHumidValidation.Hide(txtLowerHumidLimit);
+
+            if (!isUpperNumeric)
+            {
+                AmbHumidValidation.Show("Upper ambient humidity threshold must be a number", txtLowerHumidLimit);
+                txtUpperHumidLimit.BackColor = Color.Yellow;
+                AmbHumidLimitsValid = false;
+            }
+            else if (!isLowerNumeric)
+            {
+                AmbHumidValidation.Show("Lower ambient humidity threshold must be a number", txtLowerHumidLimit);
+                txtLowerHumidLimit.BackColor = Color.Yellow;
+                AmbHumidLimitsValid = false;
+            }
+            else
+            {
+                if (requestedLowerLimit <= requestedUpperLimit)
+                {
+                    txtUpperHumidLimit.BackColor = Color.White;
+                    AmbHumidLimitsValid = true;
+                    AmbHumidValidation.Hide(txtLowerHumidLimit);
+                    txtLowerHumidLimit.BackColor = Color.White;
+                }
+                else
+                {
+                    AmbHumidValidation.Show("Upper ambient humidity threshold cannot be less than the lower threshold", txtLowerHumidLimit);
+                    txtUpperHumidLimit.BackColor = Color.Yellow;
+                    txtLowerHumidLimit.BackColor = Color.Yellow;
+                    AmbHumidLimitsValid = false;
+                }
+            }
         }
 
         private void UpperSWStopsLimitText_TextChanged(object sender, EventArgs e)
         {
-            ValidateUpperLimit();
-            ValidateLowerLimit();
+            ValidateUpperSWStopLimit();
+            ValidateLowerSWStopLimit();
         }
 
         private void LowerSWStopsLimitText_TextChanged(object sender, EventArgs e)
         {
-            ValidateUpperLimit();
-            ValidateLowerLimit(); 
-
+            ValidateUpperSWStopLimit();
+            ValidateLowerSWStopLimit(); 
         }
 
+        private void AmbTempHumidSensOverride_Click(object sender, EventArgs e)
+        {
+            if (!rtController.overrides.overrideAmbientTempHumidity)
+            {
+                AmbTempHumidSensOverride.Text = "OVERRIDING";
+                AmbTempHumidSensOverride.BackColor = System.Drawing.Color.Red;
+
+                rtController.setOverride("ambient temperature and humidity", true);
+            }
+            else if (rtController.overrides.overrideAmbientTempHumidity)
+            {
+                AmbTempHumidSensOverride.Text = "ENABLED";
+                AmbTempHumidSensOverride.BackColor = System.Drawing.Color.LimeGreen;
+
+                rtController.setOverride("ambient temperature and humidity", false);
+            }
+        }
+
+        private void txtUpperTempLimit_TextChanged(object sender, EventArgs e)
+        {
+            ValidateAmbTempLimit();
+        }
+
+        private void txtLowerTempLimit_TextChanged(object sender, EventArgs e)
+        {
+            ValidateAmbTempLimit();
+        }
+
+        private void txtUpperHumidLimit_TextChanged(object sender, EventArgs e)
+        {
+            ValidateAmbHumidityLimit();
+        }
+
+        private void txtLowerHumidLimit_TextChanged(object sender, EventArgs e)
+        {
+            ValidateAmbHumidityLimit();
+        }
+
+        private void btnToggleFan_Click(object sender, EventArgs e)
+        {
+            bool fanIsOn = rtController.RadioTelescope.SensorNetworkServer.FanIsOn;
+            rtController.RadioTelescope.SensorNetworkServer.SetFanOnOrOff = !fanIsOn;
+        }
+
+        private void UpdateAccelConfigFields()
+        {
+            int index = comboAccelLocation.SelectedIndex;
+            AccelerometerConfig accelConfig;
+
+            // Pick selected accelerometer
+            switch (index)
+            {
+                // Counterbalance Accelerometer
+                case 0:
+                    accelConfig = SensorNetworkConfig.CbAccelConfig;
+                    break;
+    
+                // Elevation Accelerometer
+                case 1:
+                    accelConfig = SensorNetworkConfig.ElAccelConfig;
+                    break;
+
+                // Azimuth Accelerometer
+                case 2:
+                    accelConfig = SensorNetworkConfig.AzAccelConfig;
+                    break;
+
+                // Invalid index
+                default:
+                    return;
+            }
+
+            // Update fields with the selected accelerometer config
+            comboSamplingSpeed.Text = accelConfig.SamplingFrequency.ToString();
+            comboGRange.Text = "±" + accelConfig.GRange.ToString();
+            numFIFOSize.Value = accelConfig.FIFOSize;
+            txtX.Text = accelConfig.XOffset.ToString();
+            txtY.Text = accelConfig.YOffset.ToString();
+            txtZ.Text = accelConfig.ZOffset.ToString();
+            chkBitResolution.Checked = accelConfig.FullBitResolution;
+
+            
+        }
+
+        private void UpdatePeriodConfigField()
+        {
+            int index = comboTimingSelect.SelectedIndex;
+
+            // Get selected period and update 
+            switch (index)
+            {
+                // Timer
+                case 0:
+                    txtPeriod.Text = SensorNetworkConfig.TimerPeriod.ToString();
+                    break;
+
+                // Ethernet
+                case 1:
+                    txtPeriod.Text = SensorNetworkConfig.EthernetPeriod.ToString();
+                    break;
+
+                // Temperature
+                case 2:
+                    txtPeriod.Text = SensorNetworkConfig.TemperaturePeriod.ToString();
+                    break;
+
+                // Encoder
+                case 3:
+                    txtPeriod.Text = SensorNetworkConfig.EncoderPeriod.ToString();
+                    break;
+
+                // Invalid index
+                default:
+                    return;
+            }
+        }
+
+        private void comboAccelLocation_Click(object sender, EventArgs e)
+        {
+            int index = comboAccelLocation.SelectedIndex;
+            AccelerometerConfig accelConfig;
+            // Pick selected accelerometer
+            switch (index)
+            {
+                // Counterbalance Accelerometer
+                case 0:
+                    accelConfig = SensorNetworkConfig.CbAccelConfig;
+                    break;
+
+                // Elevation Accelerometer
+                case 1:
+                    accelConfig = SensorNetworkConfig.ElAccelConfig;
+                    break;
+
+                // Azimuth Accelerometer
+                case 2:
+                    accelConfig = SensorNetworkConfig.AzAccelConfig;
+                    break;
+
+                // Invalid index
+                default:
+                    return;
+            }
+
+            // Update the accelerometer config for the active accelerometer (the other accelerometer configs would have already been updated at this point)
+            accelConfig.SamplingFrequency = double.Parse(comboSamplingSpeed.Text);
+            accelConfig.GRange = int.Parse(comboGRange.Text.Substring(1));
+            accelConfig.FIFOSize = (int)numFIFOSize.Value;
+            accelConfig.XOffset = int.Parse(txtX.Text);
+            accelConfig.YOffset = int.Parse(txtY.Text);
+            accelConfig.ZOffset = int.Parse(txtZ.Text);
+            accelConfig.FullBitResolution = chkBitResolution.Checked;
+        }
+
+        private void comboTimingSelect_Click(object sender, EventArgs e)
+        {
+            int index = comboTimingSelect.SelectedIndex;
+
+            // Get selected period and update 
+            switch (index)
+            {
+                // Timer
+                case 0:
+                    SensorNetworkConfig.TimerPeriod = int.Parse(txtPeriod.Text);
+                    break;
+
+                // Ethernet
+                case 1:
+                    SensorNetworkConfig.EthernetPeriod = int.Parse(txtPeriod.Text);
+                    break;
+
+                // Temperature
+                case 2:
+                    SensorNetworkConfig.TemperaturePeriod = int.Parse(txtPeriod.Text);
+                    break;
+
+                // Encoder
+                case 3:
+                    SensorNetworkConfig.EncoderPeriod = int.Parse(txtPeriod.Text);
+                    break;
+
+                // Invalid index
+                default:
+                    return;
+            }
+        }
+
+        private void comboAccelLocation_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateAccelConfigFields();
+        }
+
+        private void comboTimingSelect_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdatePeriodConfigField();
+        }
+
+        private void txtX_TextChanged(object sender, EventArgs e)
+        {
+            XOffsetValid = false;
+
+            if (int.TryParse(txtX.Text, out int result))
+            {
+                XOffsetValid = Validator.IsBetween(int.Parse(txtX.Text), SensorNetworkConstants.MinAccelOffset, SensorNetworkConstants.MaxAccelOffset);
+            }
+
+            if (XOffsetValid)
+            {
+                txtX.BackColor = Color.White;
+                AccelOffsetsValidation.Hide(txtX);
+
+                // If the other tooltip is not in error, the button may be clicked
+                if (InitTimeoutValid && DataTimeoutValid && YOffsetValid && ZOffsetValid && PeriodValid) UpdateSensorInitiliazation.Enabled = true;
+
+                if (YOffsetValid && ZOffsetValid) comboAccelLocation.Enabled = true;
+            }
+            else
+            {
+                txtX.BackColor = Color.Yellow;
+                AccelOffsetsValidation.Show($"Must be an integer between {SensorNetworkConstants.MinAccelOffset} and {SensorNetworkConstants.MaxAccelOffset}.", txtX, 2000);
+                UpdateSensorInitiliazation.Enabled = false;
+                comboAccelLocation.Enabled = false;
+            }
+        }
+
+        private void txtY_TextChanged(object sender, EventArgs e)
+        {
+            YOffsetValid = false;
+
+            if (int.TryParse(txtY.Text, out int result))
+            {
+                YOffsetValid = Validator.IsBetween(int.Parse(txtY.Text), SensorNetworkConstants.MinAccelOffset, SensorNetworkConstants.MaxAccelOffset);
+            }
+
+            if (YOffsetValid)
+            {
+                txtY.BackColor = Color.White;
+                AccelOffsetsValidation.Hide(txtY);
+
+                // If the other tooltip is not in error, the button may be clicked
+                if (InitTimeoutValid && DataTimeoutValid && XOffsetValid && ZOffsetValid && PeriodValid) UpdateSensorInitiliazation.Enabled = true;
+
+                if (XOffsetValid && ZOffsetValid) comboAccelLocation.Enabled = true;
+            }
+            else
+            {
+                txtY.BackColor = Color.Yellow;
+                AccelOffsetsValidation.Show($"Must be an integer between {SensorNetworkConstants.MinAccelOffset} and {SensorNetworkConstants.MaxAccelOffset}.", txtY, 2000);
+                UpdateSensorInitiliazation.Enabled = false;
+                comboAccelLocation.Enabled = false;
+            }
+        }
+
+        private void txtZ_TextChanged(object sender, EventArgs e)
+        {
+            ZOffsetValid = false;
+
+            if (int.TryParse(txtZ.Text, out int result))
+            {
+                ZOffsetValid = Validator.IsBetween(int.Parse(txtZ.Text), SensorNetworkConstants.MinAccelOffset, SensorNetworkConstants.MaxAccelOffset);
+            }
+
+            if (ZOffsetValid)
+            {
+                txtZ.BackColor = Color.White;
+                AccelOffsetsValidation.Hide(txtZ);
+
+                // If the other tooltip is not in error, the button may be clicked
+                if (InitTimeoutValid && DataTimeoutValid && YOffsetValid && XOffsetValid && PeriodValid) UpdateSensorInitiliazation.Enabled = true;
+
+                if (XOffsetValid && YOffsetValid) comboAccelLocation.Enabled = true;
+            }
+            else
+            {
+                txtZ.BackColor = Color.Yellow;
+                AccelOffsetsValidation.Show($"Must be an integer between {SensorNetworkConstants.MinAccelOffset} and {SensorNetworkConstants.MaxAccelOffset}.", txtZ, 2000);
+                UpdateSensorInitiliazation.Enabled = false;
+                comboAccelLocation.Enabled = false;
+            }
+        }
+
+        private void txtPeriod_TextChanged(object sender, EventArgs e)
+        {
+            PeriodValid = false;
+
+            if (int.TryParse(txtPeriod.Text, out int result))
+            {
+                PeriodValid = int.Parse(txtPeriod.Text) > 0;
+            }
+
+            if (PeriodValid)
+            {
+                txtPeriod.BackColor = Color.White;
+                AccelOffsetsValidation.Hide(txtPeriod);
+
+                // If the other tooltip is not in error, the button may be clicked
+                if (InitTimeoutValid && DataTimeoutValid && YOffsetValid && ZOffsetValid && XOffsetValid) UpdateSensorInitiliazation.Enabled = true;
+
+                comboTimingSelect.Enabled = true;
+            }
+            else
+            {
+                txtPeriod.BackColor = Color.Yellow;
+                AccelOffsetsValidation.Show($"Must be an integer greater than 0.", txtPeriod, 2000);
+                UpdateSensorInitiliazation.Enabled = false;
+                comboTimingSelect.Enabled = false;
+            }
+        }
     }
 }

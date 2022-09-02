@@ -62,34 +62,26 @@ namespace ControlRoomApplication.Controllers.Communications
             return Task.FromResult(success);
         }
 
-        public static Task<bool> sendToUser(User u, string subject, string body, string sender, string AttachmentPath = null, bool testflag = false)
+        // Case for when we want to add multiple attachments to an email
+        public static Task<bool> sendToUser(User u, string subject, string body, string sender, List<string> AttachmentPath = null, bool testflag = false)
         {
             bool success = false;
 
-            Thread t = new Thread(() =>
+            try
             {
-                try
-                {
-                    EmailNotifications.sendEmail(u, subject, body, sender, AttachmentPath);
-                    success = true;
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine($"ERROR: Email could not send: {e}");
-                    success = false;
-                }
-            });
-
-            t.Priority = ThreadPriority.Lowest;
-            t.Start();
-
-            // If it is a unit test, we want to wait for the thread to finish running before returning a value
-            if (testflag) t.Join();
+                EmailNotifications.sendEmail(u, subject, body, sender, AttachmentPath);
+                success = true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"ERROR: Email could not send: {e}");
+                success = false;
+            }
 
             return Task.FromResult(success);
         }
 
-        private static void sendEmail(User user, string subject, string body, string sender, string AttachPath = null)
+        private static void sendEmail(User user, string subject, string body, string sender, List<string> AttachPath = null)
         {
             using (var client = new AmazonSimpleEmailServiceClient(RegionEndpoint.USEast2))
             {
@@ -145,27 +137,36 @@ namespace ControlRoomApplication.Controllers.Communications
                         subject,
                         body);
 
-                    using (Attachment data = new Attachment(AttachPath, MediaTypeNames.Application.Octet))
-                    {
-                        ContentDisposition disposition = data.ContentDisposition;
-                        disposition.CreationDate = System.IO.File.GetCreationTime(AttachPath);
-                        disposition.ModificationDate = System.IO.File.GetLastWriteTime(AttachPath);
-                        disposition.ReadDate = System.IO.File.GetLastAccessTime(AttachPath);
-
-                        message.Attachments.Add(data);
-
-                        request.RawMessage.Data = SendAttachmentHelper.ConvertMailMessageToMemoryStream(message);
-                    }
                     try
                     {
-                        Console.WriteLine("Sending email using Amazon SES...");
-                        var response = client.SendRawEmail(request);
-                        Console.WriteLine("The email was sent successfully.");
+                        for (int i = 0; i < AttachPath.Count; i++)
+                        {
+                            Attachment data = new Attachment(AttachPath[i], MediaTypeNames.Application.Octet);
+                            ContentDisposition disposition = data.ContentDisposition;
+                            disposition.CreationDate = System.IO.File.GetCreationTime(AttachPath[i]);
+                            disposition.ModificationDate = System.IO.File.GetLastWriteTime(AttachPath[i]);
+                            disposition.ReadDate = System.IO.File.GetLastAccessTime(AttachPath[i]);
+
+                            message.Attachments.Add(data);
+                        }
+
+                        request.RawMessage.Data = SendAttachmentHelper.ConvertMailMessageToMemoryStream(message);
+
+                        try
+                        {
+                            Console.WriteLine("Sending email using Amazon SES...");
+                            var response = client.SendRawEmail(request);
+                            Console.WriteLine("The email was sent successfully.");
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine("The email was not sent.");
+                            Console.WriteLine($"Error: {e}");
+                        }
                     }
-                    catch (Exception e)
+                    finally
                     {
-                        Console.WriteLine("The email was not sent.");
-                        Console.WriteLine($"Error: {e}");
+                        message.Attachments.Dispose();
                     }
                 }
             }

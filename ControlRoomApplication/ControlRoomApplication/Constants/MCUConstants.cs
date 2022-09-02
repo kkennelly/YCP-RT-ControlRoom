@@ -17,6 +17,22 @@
         public const int ACTUAL_MCU_MOVE_PEAK_VELOCITY_WITH_GEARING = 100_000;
         public const ushort ACTUAL_MCU_MOVE_ACCELERATION_WITH_GEARING = 50;
 
+        /// <summary>
+        /// A scaling factor used to get the correct number of motor ticks needed for a move. This is also used to allign the motor encoders correctly with
+        /// the actual orientation.
+        /// </summary>
+        public const double AZIMUTH_DISCREPANCY_SCALING_FACTOR = 360 / 349.975;
+
+        /// <summary>
+        /// The target number of degrees to stop within
+        /// </summary>
+        public const double TARGET_STOP_DISTANCE = 5;   // Degrees
+
+        /// <summary>
+        /// The maximum allowed acceleration/deceleration value in the MCU
+        /// </summary>
+        public const ushort ACTUAL_MCU_PEAK_ACCELERATION = 5000;   // steps/s/ms
+
 
         /// <summary>
         /// this enum represents the data that comes out of the MCU starting in position <see cref="ACTUAL_MCU_READ_INPUT_REGISTER_START_ADDRESS"/> = 0  of its registers

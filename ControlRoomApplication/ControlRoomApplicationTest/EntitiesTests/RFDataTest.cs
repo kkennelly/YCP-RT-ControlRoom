@@ -39,13 +39,13 @@ namespace ControlRoomApplicationTest.EntitiesTests
             intensity = 123456789;
 
             rfdata.Id = id;
-            rfdata.TimeCaptured = timeCaptured;
+            rfdata.time_captured = timeCaptured;
             rfdata.Intensity = intensity;
             rfdata.Appointment = appt;
             rfdata.appointment_id = apptId;
 
             Assert.AreEqual(id, rfdata.Id);
-            Assert.AreEqual(timeCaptured, rfdata.TimeCaptured);
+            Assert.AreEqual(timeCaptured, rfdata.time_captured);
             Assert.AreEqual(intensity, rfdata.Intensity);
             Assert.AreEqual(appt.start_time.Date, rfdata.Appointment.start_time.Date);
         }
@@ -64,7 +64,7 @@ namespace ControlRoomApplicationTest.EntitiesTests
             RFData data = RFData.GenerateFrom(response);
 
             Assert.IsTrue(data != null);
-            Assert.AreEqual(response.DateTimeCaptured, data.TimeCaptured);
+            Assert.AreEqual(response.DateTimeCaptured, data.time_captured);
             Assert.AreEqual(response.DecimalData, data.Intensity);
         }
 
@@ -108,15 +108,15 @@ namespace ControlRoomApplicationTest.EntitiesTests
             Assert.IsTrue(rfDatas != null);
 
             Assert.IsTrue(rfDatas[0] != null);
-            Assert.AreEqual(date1.Date, rfDatas[0].TimeCaptured.Date);
+            Assert.AreEqual(date1.Date, rfDatas[0].time_captured.Date);
             Assert.AreEqual(response1.DecimalData, rfDatas[0].Intensity);
 
             Assert.IsTrue(rfDatas[1] != null);
-            Assert.AreEqual(date2.Date, rfDatas[1].TimeCaptured.Date);
+            Assert.AreEqual(date2.Date, rfDatas[1].time_captured.Date);
             Assert.AreEqual(response2.DecimalData, rfDatas[1].Intensity);
 
             Assert.IsTrue(rfDatas[2] != null);
-            Assert.AreEqual(date3.Date, rfDatas[2].TimeCaptured.Date);
+            Assert.AreEqual(date3.Date, rfDatas[2].time_captured.Date);
             Assert.AreEqual(response3.DecimalData, rfDatas[2].Intensity);
         }
     }

@@ -59,6 +59,8 @@ namespace ControlRoomApplicationTest.CommunicationTests
 
             AbstractWeatherStation WS = new SimulationWeatherStation(1000);
 
+            RadioTelescope.WeatherStation = WS;
+
             ControlRoom = new ControlRoom(WS, 80);
 
             ControlRoom.mobileControlServer.rtController = RtController;
@@ -736,9 +738,9 @@ namespace ControlRoomApplicationTest.CommunicationTests
         }
 
         [TestMethod]
-        public void TestProcessMessage_TestRequestMCU()
+        public void TestProcessMessage_TestRequestMVMT_DATA()
         {
-            string command = "1.1 | REQUEST | MVMT_DATA | 12:00:00 ";
+            string command = "1.1 | REQUEST | MVMT_DATA | 12:00:00";
 
             ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", command);
             ExecuteTCPCommandResult resetResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] { result.parsedString });
@@ -754,6 +756,24 @@ namespace ControlRoomApplicationTest.CommunicationTests
             ExecuteTCPCommandResult mvmtResult = (ExecuteTCPCommandResult)PrivListener.Invoke("ExecuteRLCommand", new object[] { result.parsedString });
             Assert.AreEqual(ParseTCPCommandResultEnum.Success, result.parseTCPCommandResultEnum);
             Assert.AreEqual(MovementResult.Success, mvmtResult.movementResult);
+        }
+
+        [TestMethod]
+        public void TestProcessMessage_NonCommandSent()
+        {
+            string definitelyACommandAndNotAMaliciousAttemptToBreachDataOrSomethingSoDontThinkThat = "lmao give me ip";
+
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", definitelyACommandAndNotAMaliciousAttemptToBreachDataOrSomethingSoDontThinkThat);
+            Assert.AreEqual(ParseTCPCommandResultEnum.MissingCommandArgs, result.parseTCPCommandResultEnum);
+        }
+
+        [TestMethod]
+        public void TestProcessMessage_NonCommandSentWithPipes()
+        {
+            string definitelyACommandAndNotAMaliciousAttemptToBreachDataOrSomethingSoDontThinkThat = "lmao|give|me|ip";
+
+            ParseTCPCommandResult result = (ParseTCPCommandResult)PrivListener.Invoke("ParseRLString", definitelyACommandAndNotAMaliciousAttemptToBreachDataOrSomethingSoDontThinkThat);
+            Assert.AreEqual(ParseTCPCommandResultEnum.InvalidVersion, result.parseTCPCommandResultEnum);
         }
     }
 }

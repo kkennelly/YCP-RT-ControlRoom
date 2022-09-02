@@ -92,6 +92,30 @@
     <Reference Include="FftSharp, Version=1.0.8.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\FftSharp.1.0.8\lib\netstandard2.0\FftSharp.dll</HintPath>
     </Reference>
+    <Reference Include="FirebaseAdmin, Version=2.3.0.0, Culture=neutral, PublicKeyToken=97c8d00c348326ed, processorArchitecture=MSIL">
+      <HintPath>..\packages\FirebaseAdmin.2.3.0\lib\net461\FirebaseAdmin.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Api.Gax, Version=3.2.0.0, Culture=neutral, PublicKeyToken=3ec5ea7f18953e47, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Api.Gax.3.2.0\lib\net461\Google.Api.Gax.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Api.Gax.Rest, Version=3.2.0.0, Culture=neutral, PublicKeyToken=3ec5ea7f18953e47, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Api.Gax.Rest.3.2.0\lib\net461\Google.Api.Gax.Rest.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis, Version=1.49.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Apis.1.49.0\lib\net45\Google.Apis.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis.Auth, Version=1.49.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Apis.Auth.1.49.0\lib\net45\Google.Apis.Auth.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis.Auth.PlatformServices, Version=1.49.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Apis.Auth.1.49.0\lib\net45\Google.Apis.Auth.PlatformServices.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis.Core, Version=1.49.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Apis.Core.1.49.0\lib\net45\Google.Apis.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis.PlatformServices, Version=1.49.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Apis.1.49.0\lib\net45\Google.Apis.PlatformServices.dll</HintPath>
+    </Reference>
     <Reference Include="Google.Protobuf, Version=3.8.0.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
       <HintPath>..\packages\Google.Protobuf.3.8.0\lib\net45\Google.Protobuf.dll</HintPath>
     </Reference>
@@ -100,6 +124,9 @@
     </Reference>
     <Reference Include="log4net, Version=2.0.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.15\lib\net45\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.1.0.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Microsoft.VisualStudio.TestPlatform.TestFramework, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -119,7 +146,7 @@
     </Reference>
     <Reference Include="netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.4.4.10\lib\net45\NLog.dll</HintPath>
@@ -140,6 +167,12 @@
       <HintPath>..\packages\ScottPlot.WinForms.4.0.48\lib\net461\ScottPlot.WinForms.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Collections.Immutable, Version=1.2.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Collections.Immutable.1.7.1\lib\net461\System.Collections.Immutable.dll</HintPath>
+    </Reference>
     <Reference Include="System.Collections.NonGeneric, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Collections.NonGeneric.4.3.0\lib\net46\System.Collections.NonGeneric.dll</HintPath>
       <Private>True</Private>
@@ -171,6 +204,16 @@
       <HintPath>..\packages\System.IO.FileSystem.Primitives.4.3.0\lib\net46\System.IO.FileSystem.Primitives.dll</HintPath>
     </Reference>
     <Reference Include="System.Management" />
+    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.3\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
     <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
     </Reference>
@@ -178,6 +221,9 @@
     <Reference Include="System.Security" />
     <Reference Include="System.Threading.Overlapped, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Threading.Overlapped.4.3.0\lib\net46\System.Threading.Overlapped.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.2\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="System.Threading.Thread, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Threading.Thread.4.3.0\lib\net46\System.Threading.Thread.dll</HintPath>
@@ -244,6 +290,7 @@
     <Compile Include="Controllers\SensorNetwork\Enumerations\AccelerometerErrorCodes.cs" />
     <Compile Include="Controllers\SensorNetwork\Enumerations\AccelerometerSelfTestState.cs" />
     <Compile Include="Controllers\SensorNetwork\Enumerations\AzimuthEncoderErrorCodes.cs" />
+    <Compile Include="Controllers\SensorNetwork\Enumerations\AmbientTempHumidityErrorCodes.cs" />
     <Compile Include="Controllers\SensorNetwork\Enumerations\TemperatureErrorCodes.cs" />
     <Compile Include="Controllers\SensorNetwork\PacketDecodingTools.cs" />
     <Compile Include="Controllers\SensorNetwork\Enumerations\SensorInitializationEnum.cs" />
@@ -269,7 +316,9 @@
     <Compile Include="Entities\Acceleration\CounterbalanceAccelerationBlob.cs" />
     <Compile Include="Entities\Acceleration\ElevationAccelerationBlob.cs" />
     <Compile Include="Entities\Acceleration\AzimuthAccelerationBlob.cs" />
+    <Compile Include="Entities\AppointmentCalibration\AppointmentCalibration.cs" />
     <Compile Include="Entities\Appointment\AppointmentPriorityEnum.cs" />
+    <Compile Include="Entities\AppointmentCalibration\AppointmentCalibrationTypeEnum.cs" />
     <Compile Include="Entities\Appointment\AppointmentStatusEnum.cs" />
     <Compile Include="Entities\Appointment\AppointmentTypeEnum.cs" />
     <Compile Include="Entities\CelestialBody\CelestialBodyStatusEnum.cs" />
@@ -277,6 +326,7 @@
     <Compile Include="Entities\DiagnosticData\Acceleration.cs" />
     <Compile Include="Controllers\SensorNetwork\Enumerations\SensorNetworkSensorStatus.cs" />
     <Compile Include="Entities\DiagnosticData\Temperature.cs" />
+    <Compile Include="Entities\DiagnosticData\Humidity.cs" />
     <Compile Include="Entities\Exceptions\MCUExceptions.cs" />
     <Compile Include="Entities\Location\SensorLocationEnum.cs" />
     <Compile Include="Entities\Log\Log.cs" />
@@ -286,6 +336,7 @@
     <Compile Include="Entities\RadioTelescope\RadioTelescopeDirectionEnum.cs" />
     <Compile Include="Entities\RadioTelescope\RadioTelescopeTypeEnum.cs" />
     <Compile Include="Entities\RadioTelescope\RadioTelescopeConfig.cs" />
+    <Compile Include="Entities\SensorNetworkConfig\AccelerometerConfig.cs" />
     <Compile Include="Entities\SensorNetworkConfig\SensorNetworkConfig.cs" />
     <Compile Include="Entities\Sensor\Sensor.cs" />
     <Compile Include="Entities\Sensor\SensorItemEnum.cs" />
@@ -336,6 +387,9 @@
     <Compile Include="Entities\WeatherStation\WeatherThreshold.cs" />
     <Compile Include="Entities\WeatherStation\WeatherData.cs" />
     <Compile Include="Entities\WeatherStation\WeatherStation.cs" />
+    <Compile Include="GUI\DropDownEnums\PLCDropdown.cs" />
+    <Compile Include="GUI\DropDownEnums\SpectraCyberDropdown.cs" />
+    <Compile Include="GUI\DropDownEnums\WeatherStationDropdown.cs" />
     <Compile Include="GUI\InputDialogs\CustomOrientationInputDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -418,6 +472,9 @@
       <SubType>Designer</SubType>
     </None>
     <None Include=".travis.yml" />
+    <None Include="Constants\rtmobile-v2-528c5-firebase-adminsdk-n5z8d-ff80743be4.json" />
+    <None Include="Controllers\SensorNetwork\Simulation\SimulationCSVData\TestAmbHumidity.csv" />
+    <None Include="Controllers\SensorNetwork\Simulation\SimulationCSVData\TestAmbTemp.csv" />
     <None Include="Controllers\SensorNetwork\Simulation\SimulationCSVData\TestAzAccX.csv" />
     <None Include="Controllers\SensorNetwork\Simulation\SimulationCSVData\TestAzAccY.csv" />
     <None Include="Controllers\SensorNetwork\Simulation\SimulationCSVData\TestAzAccZ.csv" />

@@ -28,6 +28,13 @@ namespace ControlRoomApplication.Constants
         /// </summary>
         public const double MIN_SOFTWARE_STOP_EL_DEGREES = -5.0;
 
+        // Absolute and Motor Discrepancy
+
+        /// <summary>
+        /// Make sure that the motors/absolute encoders are within a specific range of one another (in degrees)
+        /// </summary>
+        public const double MOTOR_ABSOLUTE_ENCODER_DISCREPANCY = 10.0;
+
         // constants used for user input validation
         public const int MAX_PORT_VALUE = 65535;
 
@@ -59,11 +66,9 @@ namespace ControlRoomApplication.Constants
         /// </summary>
         public static readonly int MAX_ATTEMPTS = 9;
 
-
-
-
-
-
-
+        /// <summary>
+        /// The amount of time (ms) that we want to run the spectra cyber scan for during calibration 
+        /// </summary>
+        public static readonly int CALIBRATION_MS = 5000;
     }
 }

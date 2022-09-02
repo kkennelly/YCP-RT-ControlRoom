@@ -270,8 +270,6 @@ AWSConstants.cs
 /ControlRoomApplication/ControlRoomApplication/Constants/AESConstants.cs
 
 # Sensitive push notification data
-/ControlRoomApplication/ControlRoomApplication/Controllers/Communications/pushNotification.cs
-\ControlRoomApplication\ControlRoom\Application\Controllers\Communications\pushNotification.cs
 /ControlRoomApplication/ControlRoomApplication/Controllers/Communications/EmailPartConstants.cs
 \ControlRoomApplication\ControlRoom\Application\Controllers\Communications\EmailPartConstants.cs
 
@@ -279,3 +277,4 @@ AWSConstants.cs
 # Gradle stuff
 /.gradle
 ControlRoomApplication/ControlRoomApplicationTest/ControlRoomApplicationTest.csproj
+ControlRoomApplication/ControlRoomApplication/Constants/rtmobile-v2-528c5-firebase-adminsdk-n5z8d-ff80743be4.json

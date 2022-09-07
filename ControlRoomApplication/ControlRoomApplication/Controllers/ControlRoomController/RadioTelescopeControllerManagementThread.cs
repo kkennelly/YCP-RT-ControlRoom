@@ -653,6 +653,10 @@ namespace ControlRoomApplication.Controllers
         /// </summary>
         public bool checkCurrentSensorAndOverrideStatus()
         {
+            /*
+             * Elevation encode can  move out of range, if so, then change to the other sensor 
+             * User SensorNetworkServerStatus instead of Sensors
+             */
             // loop through all the current sensors
             foreach (Sensor curSensor in Sensors)
             {

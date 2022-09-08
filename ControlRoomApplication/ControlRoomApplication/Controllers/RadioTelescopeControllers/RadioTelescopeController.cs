@@ -54,6 +54,8 @@ namespace ControlRoomApplication.Controllers
         public bool UseCounterbalance;
         public bool UseElevationAbsEncoder;
         public bool UseMotorEncoder;
+        public bool CanUseCounterbalance;
+        public bool CanUseElevationAbsEncoder;
 
         private static readonly log4net.ILog logger =
             log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
@@ -81,6 +83,8 @@ namespace ControlRoomApplication.Controllers
             UseCounterbalance = false;
             UseElevationAbsEncoder = false;
             UseMotorEncoder = false;
+            CanUseCounterbalance = false;
+            CanUseElevationAbsEncoder = false;
 
             MaxAzTempThreshold = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.AZ_MOTOR_TEMP);
             MaxElTempThreshold = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.ELEV_MOTOR_TEMP);

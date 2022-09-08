@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using ControlRoomApplication.Controllers.Communications;
 using ControlRoomApplication.GUI;
 using ControlRoomApplication.Entities.DiagnosticData;
+using ControlRoomApplication.Controllers.SensorNetwork.Simulation;
 
 namespace ControlRoomApplication.Main
 {
@@ -1117,12 +1118,9 @@ namespace ControlRoomApplication.Main
 
         private void useCounterbalanceCheckbox_Click(object sender, EventArgs e)
         {
-            SensorNetworkSensorStatus cbAccelStatus = rtController.RadioTelescope.SensorNetworkServer.SensorStatuses.CounterbalanceAccelerometerStatus;
-            SensorNetworkSensorStatus elAbsEncStatus = rtController.RadioTelescope.SensorNetworkServer.SensorStatuses.ElevationAbsoluteEncoderStatus;
-
             if (UseCounterbalanceCheckbox.Checked == true)
             {
-                if (cbAccelStatus == SensorNetworkSensorStatus.Error) 
+                if (!rtController.CanUseCounterbalance) 
                 {
                     MessageBox.Show("The counterbalance accelerometer is experiencing an error and cannot be used.");
                 }
@@ -1135,7 +1133,7 @@ namespace ControlRoomApplication.Main
             }
             else
             { 
-                if (elAbsEncStatus == SensorNetworkSensorStatus.Error) 
+                if (!rtController.CanUseElevationAbsEncoder) 
                 { 
                     MessageBox.Show("The elevation absolute encoder is experiencing an error and cannot be used.");
                 }

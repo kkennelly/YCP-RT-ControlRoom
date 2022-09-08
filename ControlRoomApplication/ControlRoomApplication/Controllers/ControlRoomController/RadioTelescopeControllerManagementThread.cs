@@ -12,6 +12,7 @@ using ControlRoomApplication.Controllers.PLCCommunication.PLCDrivers.MCUManager;
 using ControlRoomApplication.Controllers.PLCCommunication.PLCDrivers.MCUManager.Enumerations;
 using ControlRoomApplication.Constants;
 using System.Linq;
+using ControlRoomApplication.Controllers.SensorNetwork.Simulation;
 
 namespace ControlRoomApplication.Controllers
 {
@@ -653,22 +654,15 @@ namespace ControlRoomApplication.Controllers
         /// </summary>
         public bool checkCurrentSensorAndOverrideStatus()
         {
-            /*
-             * Elevation encode can  move out of range, if so, then change to the other sensor 
-             * User SensorNetworkServerStatus instead of Sensors
-             */
             // loop through all the current sensors
+
+            CheckAndSwitchElevationDevice();
+            
             foreach (Sensor curSensor in Sensors)
             {
                 // if the sensor is in the ALARM state
                 if (curSensor.Status == SensorStatusEnum.ALARM)
                 {
-                    // check to see if one of the sensors is either the elevation absolute encoder or the counterbalance accelerometer 
-                    if (curSensor.Item == SensorItemEnum.ELEVATION_ABS_ENCODER || curSensor.Item == SensorItemEnum.COUNTER_BALANCE_VIBRATION)
-                    {
-                        SwitchElevationDevice(curSensor);
-                    }
-
                     // check to see if there is an override for that sensor
                     if (ActiveOverrides.Find(i => i.Item == curSensor.Item) == null)
                     {
@@ -692,6 +686,63 @@ namespace ControlRoomApplication.Controllers
             return true;
         }
 
+        /// <summary>
+        /// Check the elevation absolute encoder and the counterbalance accelerometer statuses. If one fails, use the other. If both fail, then use the motor encoder. 
+        /// </summary>
+        public void CheckAndSwitchElevationDevice()
+        {
+            SensorStatuses sensorStatuses = RTController.RadioTelescope.SensorNetworkServer.SensorStatuses;
+
+            // Check if a device has failed, then if so, change to the appropriate device
+            if (sensorStatuses.ElevationAbsoluteEncoderStatus == Entities.DiagnosticData.SensorNetworkSensorStatus.Error ||
+                CheckOutOfRangeAbsEncoder())
+            {
+                RTController.CanUseElevationAbsEncoder = false;
+                RTController.UseElevationAbsEncoder = false;
+
+                if (RTController.CanUseCounterbalance)
+                {
+                    RTController.UseCounterbalance = true;
+                }
+                else
+                {
+                    RTController.UseMotorEncoder = true;
+                }
+            }
+            else
+            {
+                RTController.CanUseElevationAbsEncoder = true;
+            }
+
+            if (sensorStatuses.CounterbalanceAccelerometerStatus == Entities.DiagnosticData.SensorNetworkSensorStatus.Error)
+            {
+                RTController.CanUseCounterbalance = false;
+                RTController.UseCounterbalance = false;
+
+                if (RTController.CanUseElevationAbsEncoder)
+                {
+                    RTController.UseElevationAbsEncoder = true;
+                }
+                else
+                {
+                    RTController.UseMotorEncoder = true;
+                }
+            }
+            else
+            {
+                RTController.CanUseCounterbalance = true;
+            }
+        }
+
+        /// <summary>
+        /// Check the current position of the elevation absolute encoder and return if it is out of range 
+        /// </summary>
+        /// <returns></returns>
+        public bool CheckOutOfRangeAbsEncoder()
+        {
+            Double elevation = RTController.GetAbsoluteOrientation().Elevation;
+            return (elevation < 0 || elevation > 92);
+        }
         /// <summary>
         /// Switch the device that is used to read elevation data in the event of one or both failing 
         /// </summary>

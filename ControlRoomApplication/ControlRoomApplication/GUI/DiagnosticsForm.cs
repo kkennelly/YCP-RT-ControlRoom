@@ -100,6 +100,9 @@ namespace ControlRoomApplication.GUI
 
         private int rtId;
 
+        bool testForSC = false;
+        int testForSCCounter = 0; 
+
         private Acceleration[] azOld;
         private Acceleration[] elOld;
         private Acceleration[] cbOld;
@@ -234,12 +237,19 @@ namespace ControlRoomApplication.GUI
         /// Gets and displays the current statuses of the hardware components for the specified configuration.
         /// </summary>
         private void GetHardwareStatuses() {
-            if (rtController.RadioTelescope.SpectraCyberController.IsConsideredAlive()) {
+            if (!testForSC/*rtController.RadioTelescope.SpectraCyberController.IsConsideredAlive()*/) {
                 statuses[0] = "Online";
+                //testForSC = true; 
+            } else
+            {
+                statuses[0] = "NEW Offline"; 
             }
 
             if (controlRoom.WeatherStation.IsConsideredAlive()) {
                 statuses[1] = "Online";
+            } else
+            {
+                statuses[1] = "NEW Offline"; 
             }
         }
 
@@ -459,6 +469,13 @@ namespace ControlRoomApplication.GUI
             lbGateStat.Text = rtController.RadioTelescope.PLCDriver.plcInput.Gate_Sensor.ToString();
 
             GetHardwareStatuses();
+            dataGridView1.Rows[0].Cells[1].Value = statuses[0];
+            testForSCCounter++;
+            if (testForSCCounter == 30)
+            {
+                testForSCCounter = 0;
+                testForSC = !testForSC; 
+            }
 
             SetCurrentWeatherData();
 

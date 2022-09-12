@@ -62,6 +62,8 @@ namespace ControlRoomApplication.Entities
             double MillisecondsSinceLastCheckIn = (DateTime.UtcNow - LastCheckedIn).TotalMilliseconds;
             ReleaseControl();
 
+            LastCheckedIn = DateTime.UtcNow;
+
             return MillisecondsSinceLastCheckIn <= HeartbeatConstants.MAXIMUM_ALLOWABLE_DIFFERENCE_IN_LAST_HEARD_MS;
         }
 

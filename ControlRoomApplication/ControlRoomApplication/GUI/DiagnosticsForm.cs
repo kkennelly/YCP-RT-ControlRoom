@@ -237,7 +237,7 @@ namespace ControlRoomApplication.GUI
         /// Gets and displays the current statuses of the hardware components for the specified configuration.
         /// </summary>
         private void GetHardwareStatuses() {
-            if (!testForSC/*rtController.RadioTelescope.SpectraCyberController.IsConsideredAlive()*/) {
+            if (rtController.RadioTelescope.SpectraCyberController.IsConsideredAlive()) {
                 statuses[0] = "Online";
                 //testForSC = true; 
             } else

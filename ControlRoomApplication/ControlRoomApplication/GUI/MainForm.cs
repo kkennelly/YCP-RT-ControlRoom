@@ -714,7 +714,7 @@ namespace ControlRoomApplication.Main
             {
                 loopBackBox.Checked = false;
                 this.txtWSCOMPort.Text = "222"; //default WS COM port # is 221
-                this.txtSpectraPort.Text = "777";
+                this.txtSpectraPort.Text = "8"; // Value used to be 777, but the USB's port is currently set to 8
                 this.txtMcuCOMPort.Text = "502"; //default MCU Port
                 this.txtPLCIP.Text = "192.168.0.50";//default IP address
                 this.txtRemoteListenerCOMPort.Text = "80";

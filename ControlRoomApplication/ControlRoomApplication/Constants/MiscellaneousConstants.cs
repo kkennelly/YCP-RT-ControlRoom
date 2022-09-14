@@ -70,5 +70,10 @@ namespace ControlRoomApplication.Constants
         /// The amount of time (ms) that we want to run the spectra cyber scan for during calibration 
         /// </summary>
         public static readonly int CALIBRATION_MS = 5000;
+
+        /*
+         * min elevation ME: -60 ABE: -7.12
+         * max elevation ME: 48.96, progresses down to 39.17 ABE: 82.38
+         */
     }
 }

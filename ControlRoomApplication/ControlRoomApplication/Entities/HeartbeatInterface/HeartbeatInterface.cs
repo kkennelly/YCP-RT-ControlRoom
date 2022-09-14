@@ -64,7 +64,9 @@ namespace ControlRoomApplication.Entities
 
             LastCheckedIn = DateTime.UtcNow;
 
-            return MillisecondsSinceLastCheckIn <= HeartbeatConstants.MAXIMUM_ALLOWABLE_DIFFERENCE_IN_LAST_HEARD_MS;
+            bool alive = MillisecondsSinceLastCheckIn <= HeartbeatConstants.MAXIMUM_ALLOWABLE_DIFFERENCE_IN_LAST_HEARD_MS;
+
+            return alive;
         }
 
         public void BringDownDueToMiscommunication()

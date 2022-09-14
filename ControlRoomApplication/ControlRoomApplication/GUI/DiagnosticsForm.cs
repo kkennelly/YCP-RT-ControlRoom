@@ -100,9 +100,6 @@ namespace ControlRoomApplication.GUI
 
         private int rtId;
 
-        bool testForSC = false;
-        int testForSCCounter = 0; 
-
         private Acceleration[] azOld;
         private Acceleration[] elOld;
         private Acceleration[] cbOld;
@@ -237,20 +234,24 @@ namespace ControlRoomApplication.GUI
         /// Gets and displays the current statuses of the hardware components for the specified configuration.
         /// </summary>
         private void GetHardwareStatuses() {
+
+            // Check if the SpectraCyber returns a valid single scan. 
             SpectraCyberResponse resp = rtController.RadioTelescope.SpectraCyberController.DoSpectraCyberScan();
 
             if (resp.Valid)
             {
+                // A valid scan shows that the SC is online. 
                 statuses[0] = "Online";
             }
             else
             {
                 statuses[0] = "Offline";
 
+                // Since the SpectraCyber is currently offline, we want to try to close the port and reopen it.
+                // This will allow the Control Room to reconnect to the SC Hardware. 
                 try
                 {
                     rtController.RadioTelescope.SpectraCyberController.BringDown();
-                    
                 } 
                 catch (Exception ex)
                 {
@@ -267,13 +268,22 @@ namespace ControlRoomApplication.GUI
                 }
             }
 
+            // Check if the WeatherStation is online. 
             if (controlRoom.WeatherStation.IsConsideredAlive()) {
                 statuses[1] = "Online";
             } else
             {
                 statuses[1] = "Offline"; 
             }
-            
+
+            // Check if the MCU is online. 
+            if (rtController.RadioTelescope.PLCDriver.TestIfComponentIsAlive())
+            {
+                statuses[2] = "Online"; 
+            } else
+            {
+                statuses[2] = "Offline"; 
+            }
         }
 
         public delegate void SetStartTimeTextCallback(string text);
@@ -491,13 +501,29 @@ namespace ControlRoomApplication.GUI
             lbEstopStat.Text = rtController.RadioTelescope.PLCDriver.plcInput.Estop.ToString();
             lbGateStat.Text = rtController.RadioTelescope.PLCDriver.plcInput.Gate_Sensor.ToString();
 
+            // Update Online/Offline statuses for SpectraCyber, Weather Station, and MCU. 
+            // This updates their values in the table on the Diagnostic Form. 
             GetHardwareStatuses();
             dataGridView1.Rows[0].Cells[1].Value = statuses[0];
-            testForSCCounter++;
-            if (testForSCCounter == 30)
+            for(int i = 0; i < dataGridView1.RowCount; i++)
             {
-                testForSCCounter = 0;
-                testForSC = !testForSC; 
+                // Need to iterate over each Row's first column to see what device is in that row. 
+                String col0 = (String) dataGridView1.Rows[i].Cells[0].Value;
+                switch (col0)
+                {
+                    case "SpectraCyber":
+                        dataGridView1.Rows[i].Cells[1].Value = statuses[0]; 
+                        break;
+                    case "Weather Station":
+                        dataGridView1.Rows[i].Cells[1].Value = statuses[1];
+                        break;
+                    case "MCU":
+                        dataGridView1.Rows[i].Cells[1].Value = statuses[2];
+                        break;
+                    default:
+                        break; 
+                }
+
             }
 
             SetCurrentWeatherData();

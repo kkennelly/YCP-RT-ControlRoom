@@ -237,27 +237,43 @@ namespace ControlRoomApplication.GUI
         /// Gets and displays the current statuses of the hardware components for the specified configuration.
         /// </summary>
         private void GetHardwareStatuses() {
+            SpectraCyberResponse resp = rtController.RadioTelescope.SpectraCyberController.DoSpectraCyberScan();
 
-            SpectraCyberRequest req = new SpectraCyberRequest(SpectraCyberCommandTypeEnum.DATA_REQUEST, "Test", true, 4);
-            SpectraCyberResponse resp = new SpectraCyberResponse();
-
-            SpectraCyberController spct = rtController.RadioTelescope.SpectraCyberController; 
-            
-
-            if (rtController.RadioTelescope.SpectraCyberController.TestIfComponentIsAlive()) {
-                statuses[0] = "Online";
-                //testForSC = true; 
-            } else
+            if (resp.Valid)
             {
-                statuses[0] = "NEW Offline"; 
+                statuses[0] = "Online";
+            }
+            else
+            {
+                statuses[0] = "Offline";
+
+                try
+                {
+                    rtController.RadioTelescope.SpectraCyberController.BringDown();
+                    
+                } 
+                catch (Exception ex)
+                {
+                    logger.Info(Utilities.GetTimeStamp() + ": Failed to bring down SpectraCyber COM port");
+                }
+
+                try
+                {
+                    rtController.RadioTelescope.SpectraCyberController.BringUp();
+                }
+                catch (Exception ex)
+                {
+                    logger.Info(Utilities.GetTimeStamp() + ": Failed to bring up SpectraCyber COM port");
+                }
             }
 
             if (controlRoom.WeatherStation.IsConsideredAlive()) {
                 statuses[1] = "Online";
             } else
             {
-                statuses[1] = "NEW Offline"; 
+                statuses[1] = "Offline"; 
             }
+            
         }
 
         public delegate void SetStartTimeTextCallback(string text);

@@ -474,7 +474,7 @@ namespace ControlRoomApplication.Controllers
             }
 
             return new SpectraCyberRequest(
-                SpectraCyberCommandTypeEnum.DATA_REQUEST,
+                SpectraCyberCommandTypeEnum.GENERAL_COMMUNICATION,
                 commandString,
                 waitForReply,
                 numChars

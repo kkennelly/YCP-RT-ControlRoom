@@ -110,6 +110,8 @@ namespace ControlRoomApplication.GUI
         // This is being passed through so the Weather Station override bool can be modified
         private readonly MainForm mainF;
 
+        CancellationTokenSource cts;
+
         private string[] statuses = { "Offline", "Offline", "Offline", "Offline" };
         private static readonly log4net.ILog logger =
             log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
@@ -135,7 +137,7 @@ namespace ControlRoomApplication.GUI
             dataGridView1.Columns[0].HeaderText = "Hardware";
             dataGridView1.Columns[1].HeaderText = "Status";
 
-            GetHardwareStatuses();
+            //GetHardwareStatuses();
             string[] spectraCyberRow = { "SpectraCyber", statuses[0] };
             string[] weatherStationRow = { "Weather Station", statuses[1] };
             string[] mcuRow = { "MCU", statuses[2] };
@@ -216,6 +218,12 @@ namespace ControlRoomApplication.GUI
             elOld = new Acceleration[0];
             cbOld = new Acceleration[0];
 
+            cts = new CancellationTokenSource();
+            ThreadPool.QueueUserWorkItem(new WaitCallback(GetHardwareStatuses), cts.Token);
+            Thread.Sleep(2500);
+
+            this.FormClosed += new FormClosedEventHandler(DiagnosticsForm_Closed);
+
             logger.Info(Utilities.GetTimeStamp() + ": DiagnosticsForm Initalized");
         }
 
@@ -233,56 +241,69 @@ namespace ControlRoomApplication.GUI
         /// <summary>
         /// Gets and displays the current statuses of the hardware components for the specified configuration.
         /// </summary>
-        private void GetHardwareStatuses() {
+        private void GetHardwareStatuses(object obj) {
 
-            // Check if the SpectraCyber returns a valid single scan. 
-            SpectraCyberResponse resp = rtController.RadioTelescope.SpectraCyberController.DoSpectraCyberScan();
+            CancellationToken token = (CancellationToken) obj;
 
-            if (resp.Valid)
+            while (true)
             {
-                // A valid scan shows that the SC is online. 
-                statuses[0] = "Online";
-            }
-            else
-            {
-                statuses[0] = "Offline";
+                if (token.IsCancellationRequested)
+                {
+                    break;
+                }
+                // Check if the SpectraCyber returns a valid single scan. 
+                SpectraCyberResponse resp = rtController.RadioTelescope.SpectraCyberController.DoSpectraCyberScan();
 
-                // Since the SpectraCyber is currently offline, we want to try to close the port and reopen it.
-                // This will allow the Control Room to reconnect to the SC Hardware. 
-                try
+                if (resp.Valid)
                 {
-                    rtController.RadioTelescope.SpectraCyberController.BringDown();
-                } 
-                catch (Exception ex)
+                    // A valid scan shows that the SC is online. 
+                    statuses[0] = "Online";
+                }
+                else
                 {
-                    logger.Info(Utilities.GetTimeStamp() + ": Failed to bring down SpectraCyber COM port");
+                    statuses[0] = "Offline";
+
+                    // Since the SpectraCyber is currently offline, we want to try to close the port and reopen it.
+                    // This will allow the Control Room to reconnect to the SC Hardware. 
+                    try
+                    {
+                        rtController.RadioTelescope.SpectraCyberController.BringDown();
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Info(Utilities.GetTimeStamp() + ": Failed to bring down SpectraCyber COM port");
+                    }
+
+                    try
+                    {
+                        rtController.RadioTelescope.SpectraCyberController.BringUp();
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Info(Utilities.GetTimeStamp() + ": Failed to bring up SpectraCyber COM port");
+                    }
                 }
 
-                try
+                // Check if the WeatherStation is online. 
+                if (controlRoom.WeatherStation.IsConsideredAlive())
                 {
-                    rtController.RadioTelescope.SpectraCyberController.BringUp();
+                    statuses[1] = "Online";
                 }
-                catch (Exception ex)
+                else
                 {
-                    logger.Info(Utilities.GetTimeStamp() + ": Failed to bring up SpectraCyber COM port");
+                    statuses[1] = "Offline";
                 }
-            }
 
-            // Check if the WeatherStation is online. 
-            if (controlRoom.WeatherStation.IsConsideredAlive()) {
-                statuses[1] = "Online";
-            } else
-            {
-                statuses[1] = "Offline"; 
-            }
+                // Check if the MCU is online. 
+                if (rtController.RadioTelescope.PLCDriver.TestIfComponentIsAlive())
+                {
+                    statuses[2] = "Online"; 
+                } else
+                {
+                    statuses[2] = "Offline"; 
+                }
 
-            // Check if the MCU is online. 
-            if (rtController.RadioTelescope.PLCDriver.TestIfComponentIsAlive())
-            {
-                statuses[2] = "Online"; 
-            } else
-            {
-                statuses[2] = "Offline"; 
+                Thread.Sleep(1000);
             }
         }
 
@@ -503,7 +524,7 @@ namespace ControlRoomApplication.GUI
 
             // Update Online/Offline statuses for SpectraCyber, Weather Station, and MCU. 
             // This updates their values in the table on the Diagnostic Form. 
-            GetHardwareStatuses();
+            //GetHardwareStatuses();
             dataGridView1.Rows[0].Cells[1].Value = statuses[0];
             for(int i = 0; i < dataGridView1.RowCount; i++)
             {
@@ -523,7 +544,6 @@ namespace ControlRoomApplication.GUI
                     default:
                         break; 
                 }
-
             }
 
             SetCurrentWeatherData();
@@ -1048,6 +1068,13 @@ namespace ControlRoomApplication.GUI
             controlRoom.RTControllerManagementThreads[0].ActiveOverrides.Add(new Override(SensorItemEnum.WIND, "Control Room Computer"));
             controlRoom.RTControllerManagementThreads[0].checkCurrentSensorAndOverrideStatus();
           
+        }
+
+        private void DiagnosticsForm_Closed(Object sender, FormClosedEventArgs e)
+        {
+            cts.Cancel();
+            Thread.Sleep(2500);
+            cts.Dispose();
         }
 
         // Getter for RadioTelescopeController

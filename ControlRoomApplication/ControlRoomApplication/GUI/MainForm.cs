@@ -53,7 +53,9 @@ namespace ControlRoomApplication.Main
         
         // form
         RTControlFormData formData;
-        
+
+        RadioTelescopeControllerManagementThread ManagementThread; 
+
         enum TempSensorType
         {
             Production,
@@ -360,7 +362,7 @@ namespace ControlRoomApplication.Main
 
                     // Start RT controller's threaded management
                     logger.Info(Utilities.GetTimeStamp() + ": Starting RT controller's threaded management");
-                    RadioTelescopeControllerManagementThread ManagementThread = MainControlRoomController.ControlRoom.RTControllerManagementThreads[MainControlRoomController.ControlRoom.RTControllerManagementThreads.Count - 1];
+                    ManagementThread = MainControlRoomController.ControlRoom.RTControllerManagementThreads[MainControlRoomController.ControlRoom.RTControllerManagementThreads.Count - 1];
 
                     // add telescope to database
                     //DatabaseOperations.AddRadioTelescope(ARadioTelescope);
@@ -430,6 +432,14 @@ namespace ControlRoomApplication.Main
         /// </summary>
         private void button2_Click(object sender, EventArgs e)
         {
+            HandleShutDown(); 
+        }
+
+        /// <summary>
+        /// Handles shut down routine for Control Room App.
+        /// </summary>
+        private void HandleShutDown()
+        {
             logger.Info(Utilities.GetTimeStamp() + ": Shut Down Telescope Button Clicked");
 
             // Loop through the list of telescope controllers and call their respective bring down sequences.
@@ -460,15 +470,7 @@ namespace ControlRoomApplication.Main
 
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
-            for (int i = 0; i < ProgramRTControllerList.Count; i++)
-            {
-                //Turn off Telescope in database
-                ProgramRTControllerList[i].RadioTelescope.online = 0;
-                ProgramRTControllerList[i].RadioTelescope.SensorNetworkServer.EndSensorMonitoringRoutine();
-                DatabaseOperations.UpdateTelescope(ProgramRTControllerList[i].RadioTelescope);
-                ProgramRTControllerList[i].ShutdownRadioTelescope();
-            }
-
+            HandleShutDown();
         }
 
         /// <summary>

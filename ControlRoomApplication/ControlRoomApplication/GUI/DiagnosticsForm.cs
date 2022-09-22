@@ -1970,5 +1970,10 @@ namespace ControlRoomApplication.GUI
                 comboTimingSelect.Enabled = false;
             }
         }
+
+        private void SetMCUErrorButton_Click(object sender, EventArgs e)
+        {
+            rtController.RadioTelescope.PLCDriver.CheckMCUErrors();
+        }
     }
 }

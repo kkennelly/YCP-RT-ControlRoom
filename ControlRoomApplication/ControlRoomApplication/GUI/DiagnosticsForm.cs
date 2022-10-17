@@ -932,12 +932,21 @@ namespace ControlRoomApplication.GUI
                 ElivationLimitSwitch0.Text = "OVERRIDING";
                 ElivationLimitSwitch0.BackColor = System.Drawing.Color.Red;
                 rtController.setOverride("elevation proximity (1)", true);
+
+                // Override the limit switch on PLC. 
+                // Need to get current value in event both limit overrides are on. 
+                ushort El0Override = (ushort) (rtController.RadioTelescope.PLCDriver.getregvalue((ushort)PLC_modbus_server_register_mapping.LIMIT_OVERRIDE) + (ushort) 1);
+                rtController.RadioTelescope.PLCDriver.setregvalue((ushort) PLC_modbus_server_register_mapping.LIMIT_OVERRIDE, El0Override); 
             }
             else if (rtController.overrides.overrideElevatProx0)
             {
                 ElivationLimitSwitch0.Text = "ENABLED";
                 ElivationLimitSwitch0.BackColor = System.Drawing.Color.LimeGreen;
                 rtController.setOverride("elevation proximity (1)", false);
+
+                // Turn off override for 0 degree limit switch. 
+                ushort LimitSwitch0OverrideOff = (ushort)(rtController.RadioTelescope.PLCDriver.getregvalue((ushort)PLC_modbus_server_register_mapping.LIMIT_OVERRIDE) - (ushort)1);
+                rtController.RadioTelescope.PLCDriver.setregvalue((ushort)PLC_modbus_server_register_mapping.LIMIT_OVERRIDE, LimitSwitch0OverrideOff);
             }
         }
 
@@ -948,12 +957,20 @@ namespace ControlRoomApplication.GUI
                 ElevationLimitSwitch90.Text = "OVERRIDING";
                 ElevationLimitSwitch90.BackColor = System.Drawing.Color.Red;
                 rtController.setOverride("elevation proximity (2)", true);
+
+                // Override the limit switch on PLC. 
+                ushort El90Override = (ushort)(rtController.RadioTelescope.PLCDriver.getregvalue((ushort)PLC_modbus_server_register_mapping.LIMIT_OVERRIDE) + (ushort) 256);
+                rtController.RadioTelescope.PLCDriver.setregvalue((ushort)PLC_modbus_server_register_mapping.LIMIT_OVERRIDE, El90Override);
             }
             else
             {
                 ElevationLimitSwitch90.Text = "ENABLED";
                 ElevationLimitSwitch90.BackColor = System.Drawing.Color.LimeGreen;
                 rtController.setOverride("elevation proximity (2)", false);
+
+                // Turn off override for 90 degree limit switch. 
+                ushort LimitSwitch90OverrideOff = (ushort)(rtController.RadioTelescope.PLCDriver.getregvalue((ushort)PLC_modbus_server_register_mapping.LIMIT_OVERRIDE) - (ushort)256);
+                rtController.RadioTelescope.PLCDriver.setregvalue((ushort)PLC_modbus_server_register_mapping.LIMIT_OVERRIDE, LimitSwitch90OverrideOff);
             }
         }
 

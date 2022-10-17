@@ -15,8 +15,9 @@ namespace ControlRoomApplication.Entities
     {
         /// <summary>
         /// <item><description><para><em>OUT</em></para></description></item>
-        /// the PLC will not honor any requests to override the limits,
-        /// this is only a formality and testing
+        /// the PLC will not honor any requests to override the elevation limits,
+        /// this is only a formality and testing.
+        /// First 8 bits store value for 90 degree limit, last 8 bits store value for 0 degree limit. 
         /// </summary>
         LIMIT_OVERRIDE = 0+1,
         /// <summary>

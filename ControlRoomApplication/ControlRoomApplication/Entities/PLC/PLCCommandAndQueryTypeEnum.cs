@@ -37,7 +37,7 @@ namespace ControlRoomApplication.Entities
         /// </summary>
         CTRL_HEART_BEAT = 3+1,
         /// <summary>
-        ///  <item><description><para><em>OUT</em></para></description></item>
+        ///  <item><description><para><em>OUT</em></para></description></item>0+1
         ///  when this word is changed the PLC will shutDown the MCU
         /// </summary>
         MCU_RESET = 4+1,

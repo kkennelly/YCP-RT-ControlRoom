@@ -52,15 +52,15 @@ namespace ControlRoomApplication.Controllers.Communications
             };
 
             // Send a message to the device corresponding to the provided
-            string response = FirebaseMessaging.DefaultInstance.SendAsync(message).Result;
-
+           // string response = FirebaseMessaging.DefaultInstance.SendAsync(message).Result;
+           /*
             if (!testflag)
             {
                 // Response is a message ID string.
                 Console.WriteLine("Successfully sent message: " + response);
                 logger.Debug(Utilities.GetTimeStamp() + ": Notification sent: " + bodyText);
             }
-
+           */
             return true;
         }
     }

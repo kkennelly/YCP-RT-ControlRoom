@@ -935,6 +935,10 @@ namespace ControlRoomApplication.GUI
 
                 // Override the limit switch on PLC. 
                 // Need to get current value in event both limit overrides are on. 
+                // 0: Both LS Overrides off
+                // 1: LS 0 Override on
+                // 256: LS 90 Override on
+                // 257: Both LS Overrides on
                 ushort El0Override = (ushort) (rtController.RadioTelescope.PLCDriver.getregvalue((ushort)PLC_modbus_server_register_mapping.LIMIT_OVERRIDE) + (ushort) 1);
                 rtController.RadioTelescope.PLCDriver.setregvalue((ushort) PLC_modbus_server_register_mapping.LIMIT_OVERRIDE, El0Override); 
             }

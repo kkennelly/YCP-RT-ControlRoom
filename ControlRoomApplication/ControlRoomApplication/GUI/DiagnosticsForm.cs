@@ -161,8 +161,15 @@ namespace ControlRoomApplication.GUI
             bool currAZ = rtController.overrides.overrideAzimuthMotTemp;
             bool currEL = rtController.overrides.overrideElevatMotTemp;
             bool currAmbTempHumidity = rtController.overrides.overrideAmbientTempHumidity;
-            bool currElProx0 = rtController.overrides.overrideElevatProx0;
-            bool currElProx90 = rtController.overrides.overrideElevatProx90;
+
+            // Robby: Manually initializing the buttons to ENABLED for LS Overrides for a test
+            // I have been unable to update the DB values that are called here to false due to an unknown SQL password on the CR PC.
+            bool currElProx0 = false; //rtController.overrides.overrideElevatProx0;
+            bool currElProx90 = false; // rtController.overrides.overrideElevatProx90;
+
+            // Manually set LS Override to 0 on the PLC (off) 
+            rtController.RadioTelescope.PLCDriver.setregvalue((ushort)PLC_modbus_server_register_mapping.LIMIT_OVERRIDE, (ushort) 0);
+
             bool currAzimuthAbsEncoder = rtController.overrides.overrideAzimuthAbsEncoder;
             bool currElevationAbsEncoder = rtController.overrides.overrideElevationAbsEncoder;
             bool currAzimuthAccelerometer = rtController.overrides.overrideAzimuthAccelerometer;
@@ -170,6 +177,8 @@ namespace ControlRoomApplication.GUI
             bool currCounterbalanceAccelerometer = rtController.overrides.overrideCounterbalanceAccelerometer;
             UpdateOverrideButtons(currMain, currWS, currAZ, currEL, currAmbTempHumidity, currElProx0, currElProx90, 
                 currAzimuthAbsEncoder, currElevationAbsEncoder, currAzimuthAccelerometer, currElevationAccelerometer, currCounterbalanceAccelerometer);
+
+
 
             SensorSettingsThread = new BackgroundWorker();
             SensorSettingsThread.DoWork += new DoWorkEventHandler(SensorSettingsRoutine);
@@ -939,8 +948,8 @@ namespace ControlRoomApplication.GUI
                 // 1: LS 0 Override on
                 // 256: LS 90 Override on
                 // 257: Both LS Overrides on
-                ushort current = (ushort)(rtController.RadioTelescope.PLCDriver.getregvalue((ushort)PLC_modbus_server_register_mapping.LIMIT_OVERRIDE))
-                ushort El0Override = (ushort)(current + 1); ;
+                ushort current = (ushort)(rtController.RadioTelescope.PLCDriver.getregvalue((ushort)PLC_modbus_server_register_mapping.LIMIT_OVERRIDE)); 
+                ushort El0Override = (ushort)(current + 1);
                 rtController.RadioTelescope.PLCDriver.setregvalue((ushort) PLC_modbus_server_register_mapping.LIMIT_OVERRIDE, El0Override); 
             }
             else if (rtController.overrides.overrideElevatProx0)

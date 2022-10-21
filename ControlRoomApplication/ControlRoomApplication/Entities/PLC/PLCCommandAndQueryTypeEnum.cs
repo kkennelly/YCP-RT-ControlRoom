@@ -19,7 +19,7 @@ namespace ControlRoomApplication.Entities
         /// this is only a formality and testing.
         /// First 8 bits store value for 90 degree limit, last 8 bits store value for 0 degree limit. 
         /// </summary>
-        LIMIT_OVERRIDE = 0+1,
+        LIMIT_OVERRIDE = 22+1,
         /// <summary>
         /// <item><description><para><em>OUT</em></para></description></item>
         /// when this is set the elescope will still move even with the gate open

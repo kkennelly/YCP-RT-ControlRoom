@@ -161,11 +161,8 @@ namespace ControlRoomApplication.GUI
             bool currAZ = rtController.overrides.overrideAzimuthMotTemp;
             bool currEL = rtController.overrides.overrideElevatMotTemp;
             bool currAmbTempHumidity = rtController.overrides.overrideAmbientTempHumidity;
-
-            // Robby: Manually initializing the buttons to ENABLED for LS Overrides for a test
-            // I have been unable to update the DB values that are called here to false due to an unknown SQL password on the CR PC.
-            bool currElProx0 = false; //rtController.overrides.overrideElevatProx0;
-            bool currElProx90 = false; // rtController.overrides.overrideElevatProx90;
+            bool currElProx0 = rtController.overrides.overrideElevatProx0;
+            bool currElProx90 = rtController.overrides.overrideElevatProx90;
 
             // Manually set LS Override to 0 on the PLC (off) 
             rtController.RadioTelescope.PLCDriver.setregvalue((ushort)PLC_modbus_server_register_mapping.LIMIT_OVERRIDE, (ushort) 0);
@@ -978,7 +975,7 @@ namespace ControlRoomApplication.GUI
                 ushort El90Override = (ushort)(current + 256);
                 rtController.RadioTelescope.PLCDriver.setregvalue((ushort)PLC_modbus_server_register_mapping.LIMIT_OVERRIDE, El90Override);
             }
-            else
+            else if (rtController.overrides.overrideElevatProx90)
             {
                 ElevationLimitSwitch90.Text = "ENABLED";
                 ElevationLimitSwitch90.BackColor = System.Drawing.Color.LimeGreen;

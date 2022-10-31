@@ -258,9 +258,10 @@ namespace ControlRoomApplication.GUI
                     break;
                 }
                 // Check if the SpectraCyber returns a valid single scan. 
-                SpectraCyberResponse resp = rtController.RadioTelescope.SpectraCyberController.DoSpectraCyberScan();
+                //SpectraCyberResponse resp = rtController.RadioTelescope.SpectraCyberController.DoSpectraCyberScan();
 
-                if (resp.Valid)
+                // Trying previous method: 
+                if (rtController.RadioTelescope.SpectraCyberController.TestIfComponentIsAlive())
                 {
                     // A valid scan shows that the SC is online. 
                     statuses[0] = "Online";
@@ -309,7 +310,7 @@ namespace ControlRoomApplication.GUI
                     statuses[2] = "Offline"; 
                 }
 
-                Thread.Sleep(1000);
+                Thread.Sleep(3000);
             }
         }
 

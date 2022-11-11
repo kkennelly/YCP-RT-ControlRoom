@@ -36,6 +36,8 @@ namespace ControlRoomApplication.Controllers
         private bool AllSensorsSafe;
         public bool EnableSoftwareStops;
 
+        public bool PNEnabled;
+
         private double MaxElTempThreshold;
         private double MaxAzTempThreshold;
 
@@ -863,8 +865,8 @@ namespace ControlRoomApplication.Controllers
                     // Might want to consider weather station overrides
                     sensors.weather_station = (SByte)SensorStatusEnum.ALARM;
 
-                    PushNotification.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are too high: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
-                    EmailNotifications.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are too high: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
+                    PushNotification.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are too high: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH, PNEnabled);
+                    EmailNotifications.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are too high: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH, PNEnabled);
                 }
                 // Slightly potentially tragic wind speed
                 else if (windSpeedStatus == 1)
@@ -873,8 +875,8 @@ namespace ControlRoomApplication.Controllers
                     // Might want to consider weather station overrides
                     sensors.weather_station = (SByte)SensorStatusEnum.WARNING;
 
-                    PushNotification.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are in Warning Range: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
-                    EmailNotifications.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are in Warning Range: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
+                    PushNotification.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are in Warning Range: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH, PNEnabled);
+                    EmailNotifications.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are in Warning Range: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH, PNEnabled);
                 }
                 
                 // Check elevation absolute encoder, set to ALERT if timed out
@@ -1005,8 +1007,10 @@ namespace ControlRoomApplication.Controllers
                 {
                     logger.Info(Utilities.GetTimeStamp() + ": " + s + " motor temperature BELOW stable temperature by " + Math.Truncate(SimulationConstants.STABLE_MOTOR_TEMP - t.temp) + " degrees Fahrenheit.");
 
-                    PushNotification.sendToAllAdmins("MOTOR TEMPERATURE", s + " motor temperature BELOW stable temperature by " + Math.Truncate(SimulationConstants.STABLE_MOTOR_TEMP - t.temp) + " degrees Fahrenheit.");
-                    EmailNotifications.sendToAllAdmins("MOTOR TEMPERATURE", s + " motor temperature BELOW stable temperature by " + Math.Truncate(SimulationConstants.STABLE_MOTOR_TEMP - t.temp) + " degrees Fahrenheit.");
+                    PushNotification.sendToAllAdmins("MOTOR TEMPERATURE", s + " motor temperature BELOW stable temperature by " + 
+                        Math.Truncate(SimulationConstants.STABLE_MOTOR_TEMP - t.temp) + " degrees Fahrenheit.", PNEnabled);
+                    EmailNotifications.sendToAllAdmins("MOTOR TEMPERATURE", s + " motor temperature BELOW stable temperature by " + 
+                        Math.Truncate(SimulationConstants.STABLE_MOTOR_TEMP - t.temp) + " degrees Fahrenheit.", PNEnabled);
                 }
 
                 // Only overrides if switch is true
@@ -1019,8 +1023,8 @@ namespace ControlRoomApplication.Controllers
                 {
                     logger.Info(Utilities.GetTimeStamp() + ": " + s + " motor temperature OVERHEATING by " + Math.Truncate(t.temp - max) + " degrees Fahrenheit.");
 
-                    PushNotification.sendToAllAdmins("MOTOR TEMPERATURE", s + " motor temperature OVERHEATING by " + Math.Truncate(t.temp - max) + " degrees Fahrenheit.");
-                    EmailNotifications.sendToAllAdmins("MOTOR TEMPERATURE", s + " motor temperature OVERHEATING by " + Math.Truncate(t.temp - max) + " degrees Fahrenheit.");
+                    PushNotification.sendToAllAdmins("MOTOR TEMPERATURE", s + " motor temperature OVERHEATING by " + Math.Truncate(t.temp - max) + " degrees Fahrenheit.", PNEnabled);
+                    EmailNotifications.sendToAllAdmins("MOTOR TEMPERATURE", s + " motor temperature OVERHEATING by " + Math.Truncate(t.temp - max) + " degrees Fahrenheit.", PNEnabled);
                 }
 
                 // Only overrides if switch is true
@@ -1030,8 +1034,8 @@ namespace ControlRoomApplication.Controllers
             else if (t.temp <= SimulationConstants.MAX_MOTOR_TEMP && t.temp >= SimulationConstants.MIN_MOTOR_TEMP && !lastIsSafe) {
                 logger.Info(Utilities.GetTimeStamp() + ": " + s + " motor temperature stable.");
 
-                PushNotification.sendToAllAdmins("MOTOR TEMPERATURE", s + " motor temperature stable.");
-                EmailNotifications.sendToAllAdmins("MOTOR TEMPERATURE", s + " motor temperature stable.");
+                PushNotification.sendToAllAdmins("MOTOR TEMPERATURE", s + " motor temperature stable.", PNEnabled);
+                EmailNotifications.sendToAllAdmins("MOTOR TEMPERATURE", s + " motor temperature stable.", PNEnabled);
             }
 
             return true;
@@ -1064,15 +1068,15 @@ namespace ControlRoomApplication.Controllers
             {
                 logger.Info(Utilities.GetTimeStamp() + ": Overriding " + sensor + " sensor.");
 
-                PushNotification.sendToAllAdmins("SENSOR OVERRIDES", "Overriding " + sensor + " sensor.");
-                EmailNotifications.sendToAllAdmins("SENSOR OVERRIDES", "Overriding " + sensor + " sensor.");
+                PushNotification.sendToAllAdmins("SENSOR OVERRIDES", "Overriding " + sensor + " sensor.", PNEnabled);
+                EmailNotifications.sendToAllAdmins("SENSOR OVERRIDES", "Overriding " + sensor + " sensor.", PNEnabled);
             }
             else
             {
                 logger.Info(Utilities.GetTimeStamp() + ": Enabled " + sensor + " sensor.");
 
-                PushNotification.sendToAllAdmins("SENSOR OVERRIDES", "Enabled " + sensor + " sensor.");
-                EmailNotifications.sendToAllAdmins("SENSOR OVERRIDES", "Enabled " + sensor + " sensor.");
+                PushNotification.sendToAllAdmins("SENSOR OVERRIDES", "Enabled " + sensor + " sensor.", PNEnabled);
+                EmailNotifications.sendToAllAdmins("SENSOR OVERRIDES", "Enabled " + sensor + " sensor.", PNEnabled);
             }
         }
 
@@ -1159,8 +1163,8 @@ namespace ControlRoomApplication.Controllers
                     if (result != MovementResult.Success)
                     {
                         logger.Info($"{Utilities.GetTimeStamp()}: Automatic snow dump FAILED with error message: {result.ToString()}");
-                        PushNotification.sendToAllAdmins("Snow Dump Failed", $"Automatic snow dump FAILED with error message: {result.ToString()}");
-                        EmailNotifications.sendToAllAdmins("Snow Dump Failed", $"Automatic snow dump FAILED with error message: {result.ToString()}");
+                        PushNotification.sendToAllAdmins("Snow Dump Failed", $"Automatic snow dump FAILED with error message: {result.ToString()}", PNEnabled);
+                        EmailNotifications.sendToAllAdmins("Snow Dump Failed", $"Automatic snow dump FAILED with error message: {result.ToString()}", PNEnabled);
                     }
                     else
                     {

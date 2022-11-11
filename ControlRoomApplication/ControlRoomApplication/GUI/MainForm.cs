@@ -50,6 +50,7 @@ namespace ControlRoomApplication.Main
         public bool SensorNetworkServerPortBool = false;
         public bool SensorNetworkClientIPBool = false;
         public bool SensorNetworkClientPortBool = false;
+        public bool PNEnabled = false; 
         
         // form
         RTControlFormData formData;
@@ -120,6 +121,7 @@ namespace ControlRoomApplication.Main
             shutdownButton.BackColor = System.Drawing.Color.Gainsboro;
             shutdownButton.Enabled = false;
             loopBackBox.Enabled = true;
+            pushNotifBox.Enabled = false;
 
             comboSensorNetworkBox.SelectedIndex = (int)SensorNetworkDropdown.SimulatedSensorNetwork;
             comboSpectraCyberBox.SelectedIndex = (int)SpectraCyberDropdown.SimulatedSpectraCyber;
@@ -294,6 +296,8 @@ namespace ControlRoomApplication.Main
                 txtRemoteListenerCOMPort.Enabled = true;
                 txtPLCPort.Enabled = true;
                 txtSpectraPort.Enabled = true;
+
+                pushNotifBox.Enabled = true; 
 
                 if (txtPLCPort.Text != null
                     && txtPLCIP.Text != null
@@ -1361,6 +1365,32 @@ namespace ControlRoomApplication.Main
             {
                 txtSpectraPort.BackColor = System.Drawing.Color.LightGray;
                 this.WCOMPortToolTip.Hide(label8);
+            }
+        }
+
+        private void PNBox_CheckedChanged(object sender, EventArgs e)
+        {
+            PNEnabled = pushNotifBox.Checked ? true : false;
+
+            // Update PLC, MCU, RadioTelescopeController, and SensorNetwork Push Notification values
+            KeyValuePair< RadioTelescope, AbstractPLCDriver > rtAPLC = AbstractRTDriverPairList[current_rt_id - 1]; 
+            RadioTelescope currentRT = rtAPLC.Key;
+            RadioTelescopeController rtc = ProgramRTControllerList[current_rt_id - 1]; 
+
+            try
+            {
+                // Only update values if using ProductionPLC 
+                if(currentRT.PLCDriver.GetType() is ProductionPLCDriver)
+                {
+                    ProductionPLCDriver p = (ProductionPLCDriver) currentRT.PLCDriver;
+                    p.SetPushNotificationEnabled(PNEnabled); 
+                }
+                currentRT.SensorNetworkServer.PNEnabled = PNEnabled; 
+                rtc.PNEnabled = PNEnabled;
+
+            } catch (Exception ex)
+            {
+                logger.Info(Utilities.GetTimeStamp() + ": Error updating Push Notification values in PLC, MCU, RadioTelescopeController, and/or SensorNetwork.");
             }
         }
     }

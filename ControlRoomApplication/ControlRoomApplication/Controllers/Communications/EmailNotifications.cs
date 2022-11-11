@@ -14,8 +14,14 @@ namespace ControlRoomApplication.Controllers.Communications
 {
     public class EmailNotifications
     {
-        public static Task<bool> sendToAllAdmins(string subject, string body, string sender = "system@ycpradiotelescope.com", bool testflag = false)
+        public static Task<bool> sendToAllAdmins(string subject, string body, bool PNEnabled, string sender = "system@ycpradiotelescope.com", bool testflag = false)
         {
+            // We should only send an email if Push Notifications are enabled. 
+            if (!PNEnabled)
+            {
+                return null; 
+            }
+
             bool success = false;
 
             Thread t = new Thread(() =>

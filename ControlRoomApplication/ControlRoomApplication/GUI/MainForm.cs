@@ -1372,21 +1372,25 @@ namespace ControlRoomApplication.Main
         {
             PNEnabled = pushNotifBox.Checked ? true : false;
 
-            // Update PLC, MCU, RadioTelescopeController, and SensorNetwork Push Notification values
-            KeyValuePair< RadioTelescope, AbstractPLCDriver > rtAPLC = AbstractRTDriverPairList[current_rt_id - 1]; 
+            // Update PLC, MCU, RadioTelescopeController, and SensorNetwork Push Notification values            
+            KeyValuePair< RadioTelescope, AbstractPLCDriver > rtAPLC = AbstractRTDriverPairList[0]; 
             RadioTelescope currentRT = rtAPLC.Key;
-            RadioTelescopeController rtc = ProgramRTControllerList[current_rt_id - 1]; 
+            RadioTelescopeController rtc = ProgramRTControllerList[0]; 
 
             try
             {
                 // Only update values if using ProductionPLC 
-                if(currentRT.PLCDriver.GetType() is ProductionPLCDriver)
+                var rttype = currentRT.PLCDriver.GetType(); 
+                if (currentRT.PLCDriver.GetType().Name is "ProductionPLCDriver")
                 {
                     ProductionPLCDriver p = (ProductionPLCDriver) currentRT.PLCDriver;
                     p.SetPushNotificationEnabled(PNEnabled); 
                 }
                 currentRT.SensorNetworkServer.PNEnabled = PNEnabled; 
                 rtc.PNEnabled = PNEnabled;
+
+                string PNStatus = PNEnabled ? "enabled." : "disabled."; 
+                logger.Info(Utilities.GetTimeStamp() + ": Push/Email Notifications have been " + PNStatus);
 
             } catch (Exception ex)
             {

@@ -13,6 +13,7 @@ using System.Diagnostics;
 using ControlRoomApplication.Controllers.PLCCommunication.PLCDrivers.MCUManager;
 using ControlRoomApplication.Controllers.PLCCommunication.PLCDrivers.MCUManager.Enumerations;
 using ControlRoomApplication.Entities.DiagnosticData;
+using ControlRoomApplication.Entities.Encoder;
 
 namespace ControlRoomApplication.Controllers
 {
@@ -52,6 +53,8 @@ namespace ControlRoomApplication.Controllers
 
         private static readonly log4net.ILog logger =
             log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+        private EncoderAverages EncoderAverages { get; set; }
 
         /// <summary>
         /// Constructor that takes an AbstractRadioTelescope object and sets the
@@ -1420,16 +1423,31 @@ namespace ControlRoomApplication.Controllers
         /// <param name="absolute"> The current orientation of the absolute encoders </param>
         public bool CompareMotorAndAbsoluteEncoders(Orientation motor, Orientation absolute)
         {
-            // This calculates edge cases for when the azimuth goes from 360 degrees to 0
-            double diff = Math.Abs(motor.Azimuth - absolute.Azimuth);
-            diff = Math.Abs((diff + 180) % 360 - 180);
-
-            // Compare discrepancy of current orientations and keep below constant
-            if (Math.Abs(motor.Elevation - absolute.Elevation) <= MiscellaneousConstants.MOTOR_ABSOLUTE_ENCODER_DISCREPANCY && 
-                diff <= MiscellaneousConstants.MOTOR_ABSOLUTE_ENCODER_DISCREPANCY)
+            if (EncoderAverages.AddOrientation(absolute, motor))
+            {
+                EncoderAverages.NumErrors = 0;
                 return true;
-            else 
-                return false;
+            }
+            else
+            {
+                EncoderAverages.NumErrors++;
+                if (EncoderAverages.NumErrors >= EncoderAverages.maxErrors)
+                {
+                    return false;
+                }
+                return true;
+            }
+
+            //// This calculates edge cases for when the azimuth goes from 360 degrees to 0
+            //double diff = Math.Abs(motor.Azimuth - absolute.Azimuth);
+            //diff = Math.Abs((diff + 180) % 360 - 180);
+
+            //// Compare discrepancy of current orientations and keep below constant
+            //if (Math.Abs(motor.Elevation - absolute.Elevation) <= MiscellaneousConstants.MOTOR_ABSOLUTE_ENCODER_DISCREPANCY && 
+            //    diff <= MiscellaneousConstants.MOTOR_ABSOLUTE_ENCODER_DISCREPANCY)
+            //    return true;
+            //else 
+            //    return false;
         }
     }
 }

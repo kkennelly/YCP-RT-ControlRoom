@@ -48,6 +48,7 @@ namespace ControlRoomApplication.Entities.Encoder
                     MotorEncoder.Dequeue();
                 }
 
+                // TODO: MAKE THIS FUCKING ENQUEUE THESE STUPID ASS FUCKING VALUES, IT JUST ENQUES EMPTY BALLS ASS VALUES WHAT THE FUCK
                 AbsoluteEncoder.Enqueue(absolute);
                 MotorEncoder.Enqueue(motor);
 
@@ -81,8 +82,9 @@ namespace ControlRoomApplication.Entities.Encoder
                 motorAverage.Azimuth /= MotorEncoder.Count;
                 motorAverage.Elevation /= MotorEncoder.Count;
 
-                if (Math.Abs(absolute.Azimuth - absoluteAverage.Azimuth) > _maxDegrees || 
-                    Math.Abs(absolute.Elevation - absoluteAverage.Elevation) > _maxDegrees ||
+                if (
+                    //Math.Abs(absolute.Azimuth - absoluteAverage.Azimuth) > _maxDegrees || 
+                    //Math.Abs(absolute.Elevation - absoluteAverage.Elevation) > _maxDegrees ||
                     Math.Abs(motor.Azimuth - motorAverage.Azimuth) > _maxDegrees ||
                     Math.Abs(motor.Elevation - motorAverage.Elevation) > _maxDegrees)
                 {

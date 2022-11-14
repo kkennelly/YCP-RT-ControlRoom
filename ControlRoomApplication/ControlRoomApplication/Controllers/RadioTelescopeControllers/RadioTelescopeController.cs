@@ -54,7 +54,7 @@ namespace ControlRoomApplication.Controllers
         private static readonly log4net.ILog logger =
             log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        private EncoderAverages EncoderAverages { get; set; }
+        private EncoderAverages EncoderAverages = new EncoderAverages();
 
         /// <summary>
         /// Constructor that takes an AbstractRadioTelescope object and sets the

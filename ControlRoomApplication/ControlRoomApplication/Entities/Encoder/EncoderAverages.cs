@@ -49,8 +49,8 @@ namespace ControlRoomApplication.Entities.Encoder
                 }
 
                 // TODO: MAKE THIS FUCKING ENQUEUE THESE STUPID ASS FUCKING VALUES, IT JUST ENQUES EMPTY BALLS ASS VALUES WHAT THE FUCK
-                AbsoluteEncoder.Enqueue(new Orientation { Azimuth = absolute.Azimuth, Elevation = absolute.Elevation, Id = absolute.Id });
-                MotorEncoder.Enqueue(new Orientation { Azimuth = motor.Azimuth, Elevation = motor.Elevation, Id = motor.Id });
+                AbsoluteEncoder.Enqueue(absolute);
+                MotorEncoder.Enqueue(motor);
 
                 return true;
             }

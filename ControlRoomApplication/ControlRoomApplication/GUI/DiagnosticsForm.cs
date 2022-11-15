@@ -936,7 +936,7 @@ namespace ControlRoomApplication.GUI
         {
             if (!rtController.overrides.overrideElevatProx0)
             {
-                ElivationLimitSwitch0.Text = "OVERRIDING";
+                ElivationLimitSwitch0.Text = "DISABLED";
                 ElivationLimitSwitch0.BackColor = System.Drawing.Color.Red;
                 rtController.setOverride("elevation proximity (1)", true);
 
@@ -967,7 +967,7 @@ namespace ControlRoomApplication.GUI
         {
             if (!rtController.overrides.overrideElevatProx90)
             {
-                ElevationLimitSwitch90.Text = "OVERRIDING";
+                ElevationLimitSwitch90.Text = "DISABLED";
                 ElevationLimitSwitch90.BackColor = System.Drawing.Color.Red;
                 rtController.setOverride("elevation proximity (2)", true);
 
@@ -1259,7 +1259,7 @@ namespace ControlRoomApplication.GUI
             // Elevation Limit Switch 0 Degrees Override
             if(currElProx0)
             {
-                ElivationLimitSwitch0.Text = "OVERRIDING";
+                ElivationLimitSwitch0.Text = "DISABLED";
                 ElivationLimitSwitch0.BackColor = System.Drawing.Color.Red;
             }
             else
@@ -1271,7 +1271,7 @@ namespace ControlRoomApplication.GUI
             // Elevation Limit Switch 90 Degrees Override
             if (currElProx90)
             {
-                ElevationLimitSwitch90.Text = "OVERRIDING";
+                ElevationLimitSwitch90.Text = "DISABLED";
                 ElevationLimitSwitch90.BackColor = System.Drawing.Color.Red;
             }
             else

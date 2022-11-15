@@ -1313,6 +1313,20 @@ namespace ControlRoomApplication.Controllers
                     RadioTelescope.PLCDriver.InterruptMovementAndWaitUntilStopped(true, true);
                     logger.Info(Utilities.GetTimeStamp() + ": Software-stop hit!");
                 }
+
+                // Interrupts telescope from moving up if Upper LS is disabled & from moving down if Lower LS is disabled. 
+                // NOTE: The Positive/Negative enum values were swapped previously. Hence, upward movement is currently considered
+                //          negative and vice versa. 
+                if(direction == RadioTelescopeDirectionEnum.ClockwiseOrNegative && overrides.overrideElevatProx90)
+                {
+                    RadioTelescope.PLCDriver.InterruptMovementAndWaitUntilStopped(true, true);
+                    logger.Info(Utilities.GetTimeStamp() + ": Software-stop hit! Upper LS is disabled. No movements upwards are allowed.");
+                }
+                if (direction == RadioTelescopeDirectionEnum.CounterclockwiseOrPositive && overrides.overrideElevatProx0)
+                {
+                    RadioTelescope.PLCDriver.InterruptMovementAndWaitUntilStopped(true, true);
+                    logger.Info(Utilities.GetTimeStamp() + ": Software-stop hit! Lower LS is disabled. No movements downwards are allowed.");
+                }
             }
         }
 

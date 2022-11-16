@@ -48,7 +48,7 @@ namespace ControlRoomApplication.Entities.Encoder
                     MotorEncoder.Dequeue();
                 }
 
-                // TODO: MAKE THIS FUCKING ENQUEUE THESE STUPID ASS FUCKING VALUES, IT JUST ENQUES EMPTY BALLS WIENER DICK-ASS VALUES WHAT THE FUCK EYE WAS TIRED | LGTM *thumbs up*
+                // TODO: Test to make sure that this way of enqueuing new orientations produces non-empty values *thumbs up* LGTM
                 AbsoluteEncoder.Enqueue(new Orientation { Azimuth = absolute.Azimuth, Elevation = absolute.Elevation, Id = absolute.Id });
                 MotorEncoder.Enqueue(new Orientation { Azimuth = motor.Azimuth, Elevation = motor.Elevation, Id = motor.Id });
 

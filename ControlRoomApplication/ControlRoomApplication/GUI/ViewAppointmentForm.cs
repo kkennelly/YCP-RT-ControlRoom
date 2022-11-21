@@ -20,7 +20,25 @@ namespace ControlRoomApplication.GUI
 
             InitializeComponent();
 
+            InitializeDataGrid();
+
             LoadAppointments();
+        }
+        
+        private void InitializeDataGrid()
+        {
+            dataGridView1.ColumnCount = 5;
+            dataGridView1.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+            dataGridView1.CellBorderStyle = DataGridViewCellBorderStyle.Single;
+            dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.DisplayedCellsExceptHeaders;
+            dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dataGridView1.MultiSelect = false;
+            dataGridView1.ColumnHeadersVisible = true;
+
+            dataGridView1.Columns[0].Name = "User";
+            dataGridView1.Columns[1].Name = "Status";
+            dataGridView1.Columns[2].Name = "Start Time";
+            dataGridView1.Columns[3].Name = "End Time";
         }
 
         private void LoadAppointments()
@@ -29,7 +47,9 @@ namespace ControlRoomApplication.GUI
 
             foreach (Entities.Appointment appt in appts)
             {
-                listBox1.Items.Add(appt.ToString());
+                string[] row = { appt.User.ToString(), appt.status.ToString(), appt.start_time.ToShortTimeString(), appt.end_time.ToShortTimeString() };
+
+                dataGridView1.Rows.Add(row);
             }
         }
     }

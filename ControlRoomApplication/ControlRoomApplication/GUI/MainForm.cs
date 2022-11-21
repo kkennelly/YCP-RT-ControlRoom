@@ -121,7 +121,6 @@ namespace ControlRoomApplication.Main
             shutdownButton.BackColor = System.Drawing.Color.Gainsboro;
             shutdownButton.Enabled = false;
             loopBackBox.Enabled = true;
-            pushNotifBox.Enabled = false;
 
             comboSensorNetworkBox.SelectedIndex = (int)SensorNetworkDropdown.SimulatedSensorNetwork;
             comboSpectraCyberBox.SelectedIndex = (int)SpectraCyberDropdown.SimulatedSpectraCyber;
@@ -296,8 +295,6 @@ namespace ControlRoomApplication.Main
                 txtRemoteListenerCOMPort.Enabled = true;
                 txtPLCPort.Enabled = true;
                 txtSpectraPort.Enabled = true;
-
-                pushNotifBox.Enabled = true; 
 
                 if (txtPLCPort.Text != null
                     && txtPLCIP.Text != null
@@ -1368,9 +1365,9 @@ namespace ControlRoomApplication.Main
             }
         }
 
-        private void PNBox_CheckedChanged(object sender, EventArgs e)
+        public void PNBox_CheckedChanged(bool PNE)
         {
-            PNEnabled = pushNotifBox.Checked ? true : false;
+            PNEnabled = PNE;
 
             // Update PLC, MCU, RadioTelescopeController, and SensorNetwork Push Notification values            
             KeyValuePair< RadioTelescope, AbstractPLCDriver > rtAPLC = AbstractRTDriverPairList[0]; 

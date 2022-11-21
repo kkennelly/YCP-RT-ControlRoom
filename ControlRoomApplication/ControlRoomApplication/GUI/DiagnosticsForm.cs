@@ -100,6 +100,8 @@ namespace ControlRoomApplication.GUI
 
         private int rtId;
 
+        bool pushEmailNotifsEnabled = false;
+
         private Acceleration[] azOld;
         private Acceleration[] elOld;
         private Acceleration[] cbOld;
@@ -147,6 +149,8 @@ namespace ControlRoomApplication.GUI
             dataGridView1.Rows.Add(weatherStationRow);
             dataGridView1.Rows.Add(mcuRow);
             dataGridView1.Update();
+
+            PushEmailNotif_checkBox.Enabled = true;
 
             //MCU_Statui.ColumnCount = 2;
             //MCU_Statui.Columns[0].HeaderText = "Status name";
@@ -2062,6 +2066,14 @@ namespace ControlRoomApplication.GUI
                 UpdateSensorInitiliazation.Enabled = false;
                 comboTimingSelect.Enabled = false;
             }
+        }
+
+        private void PushEmailNotif_checkBox_CheckedChanged(object sender, EventArgs e)
+        {
+            pushEmailNotifsEnabled = PushEmailNotif_checkBox.Checked ? true : false;
+
+            // Update value on Main Form and across application. 
+            mainF.PNBox_CheckedChanged(pushEmailNotifsEnabled); 
         }
     }
 }

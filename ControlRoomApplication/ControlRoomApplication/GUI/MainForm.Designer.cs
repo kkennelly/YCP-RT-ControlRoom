@@ -48,7 +48,6 @@
             this.LocalIPCombo = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.simulationSettingsGroupbox = new System.Windows.Forms.GroupBox();
-            this.pushNotifBox = new System.Windows.Forms.CheckBox();
             this.label8 = new System.Windows.Forms.Label();
             this.txtSpectraPort = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -277,7 +276,6 @@
             // simulationSettingsGroupbox
             // 
             this.simulationSettingsGroupbox.BackColor = System.Drawing.Color.Gray;
-            this.simulationSettingsGroupbox.Controls.Add(this.pushNotifBox);
             this.simulationSettingsGroupbox.Controls.Add(this.label8);
             this.simulationSettingsGroupbox.Controls.Add(this.txtSpectraPort);
             this.simulationSettingsGroupbox.Controls.Add(this.comboWeatherStationBox);
@@ -299,17 +297,6 @@
             this.simulationSettingsGroupbox.TabStop = false;
             this.simulationSettingsGroupbox.Text = "Individual Component Simulation settings";
             this.simulationSettingsGroupbox.Enter += new System.EventHandler(this.simulationSettingsGroupbox_Enter);
-            // 
-            // pushNotifBox
-            // 
-            this.pushNotifBox.AutoSize = true;
-            this.pushNotifBox.Location = new System.Drawing.Point(347, 169);
-            this.pushNotifBox.Name = "pushNotifBox";
-            this.pushNotifBox.Size = new System.Drawing.Size(189, 20);
-            this.pushNotifBox.TabIndex = 25;
-            this.pushNotifBox.Text = "Push Notifications Enabled";
-            this.pushNotifBox.UseVisualStyleBackColor = true;
-            this.pushNotifBox.CheckedChanged += new System.EventHandler(this.PNBox_CheckedChanged);
             // 
             // label8
             // 
@@ -685,7 +672,6 @@
         private System.Windows.Forms.TextBox sensorNetworkServerIPAddress;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TextBox txtSpectraPort;
-        private System.Windows.Forms.CheckBox pushNotifBox;
 
 
 

@@ -940,15 +940,8 @@ namespace ControlRoomApplication.GUI
                 ElivationLimitSwitch0.BackColor = System.Drawing.Color.Red;
                 rtController.setOverride("elevation proximity (1)", true);
 
-                // Override the limit switch on PLC. 
-                // Need to get current value in event both limit overrides are on. 
-                // 0: Both LS Overrides off
-                // 1: LS 0 Override on
-                // 256: LS 90 Override on
-                // 257: Both LS Overrides on
-                ushort current = (ushort)(rtController.RadioTelescope.PLCDriver.getregvalue((ushort)PLC_modbus_server_register_mapping.LIMIT_OVERRIDE)); 
-                ushort El0Override = (ushort)(current + 1);
-                rtController.RadioTelescope.PLCDriver.setregvalue((ushort) PLC_modbus_server_register_mapping.LIMIT_OVERRIDE, El0Override); 
+                // Write to PLC. 
+                LimitSwitchHandlePLC();
             }
             else if (rtController.overrides.overrideElevatProx0)
             {
@@ -956,10 +949,8 @@ namespace ControlRoomApplication.GUI
                 ElivationLimitSwitch0.BackColor = System.Drawing.Color.LimeGreen;
                 rtController.setOverride("elevation proximity (1)", false);
 
-                // Turn off override for 0 degree limit switch. 
-                ushort current = (ushort)(rtController.RadioTelescope.PLCDriver.getregvalue((ushort)PLC_modbus_server_register_mapping.LIMIT_OVERRIDE)); 
-                ushort LimitSwitch0OverrideOff = (ushort) ( current - 1 );
-                rtController.RadioTelescope.PLCDriver.setregvalue((ushort)PLC_modbus_server_register_mapping.LIMIT_OVERRIDE, LimitSwitch0OverrideOff);
+                // Write to PLC. 
+                LimitSwitchHandlePLC();
             }
         }
 
@@ -971,10 +962,8 @@ namespace ControlRoomApplication.GUI
                 ElevationLimitSwitch90.BackColor = System.Drawing.Color.Red;
                 rtController.setOverride("elevation proximity (2)", true);
 
-                // Override the limit switch on PLC. 
-                ushort current = (ushort)(rtController.RadioTelescope.PLCDriver.getregvalue((ushort)PLC_modbus_server_register_mapping.LIMIT_OVERRIDE));
-                ushort El90Override = (ushort)(current + 256);
-                rtController.RadioTelescope.PLCDriver.setregvalue((ushort)PLC_modbus_server_register_mapping.LIMIT_OVERRIDE, El90Override);
+                // Write to PLC. 
+                LimitSwitchHandlePLC();
             }
             else if (rtController.overrides.overrideElevatProx90)
             {
@@ -982,11 +971,45 @@ namespace ControlRoomApplication.GUI
                 ElevationLimitSwitch90.BackColor = System.Drawing.Color.LimeGreen;
                 rtController.setOverride("elevation proximity (2)", false);
 
-                // Turn off override for 90 degree limit switch. 
-                ushort current = (ushort)(rtController.RadioTelescope.PLCDriver.getregvalue((ushort)PLC_modbus_server_register_mapping.LIMIT_OVERRIDE));
-                ushort LimitSwitch90OverrideOff = (ushort)(current - 256);
-                rtController.RadioTelescope.PLCDriver.setregvalue((ushort)PLC_modbus_server_register_mapping.LIMIT_OVERRIDE, LimitSwitch90OverrideOff);
+                // Write to PLC. 
+                LimitSwitchHandlePLC(); 
+                
             }
+        }
+
+        private void LimitSwitchHandlePLC()
+        {
+            // 4 cases to consider when disabling limit switches on PLC. 
+            // 0: Both Limit switches are enabled.
+            // 1: LS 0 is disabled
+            // 256: LS 90 is disabled
+            // 257: Both LS are disabled.
+
+            ushort LSOverride = 0; 
+
+            if(!rtController.overrides.overrideElevatProx0 && !rtController.overrides.overrideElevatProx90)
+            {
+                // Both LS are enabled. 
+                LSOverride = 0; 
+
+            } else if (rtController.overrides.overrideElevatProx0 && !rtController.overrides.overrideElevatProx90)
+            {
+                // LS 0 is disabled. 
+                LSOverride = 1; 
+
+            } else if (!rtController.overrides.overrideElevatProx0 && rtController.overrides.overrideElevatProx90)
+            {
+                // LS 90 is disabled. 
+                LSOverride = 256; 
+
+            } else if (rtController.overrides.overrideElevatProx0 && rtController.overrides.overrideElevatProx90)
+            {
+                // Both LS are disabled. 
+                LSOverride = 257; 
+            }
+
+            // Write the value to the PLC Register. 
+            rtController.RadioTelescope.PLCDriver.setregvalue((ushort)PLC_modbus_server_register_mapping.LIMIT_OVERRIDE, LSOverride);
         }
 
         private void diagnosticScriptCombo_SelectedIndexChanged(object sender, EventArgs e)

@@ -31,6 +31,7 @@ namespace ControlRoomApplication.GUI
             dataGridView1.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
             dataGridView1.CellBorderStyle = DataGridViewCellBorderStyle.Single;
             dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.DisplayedCellsExceptHeaders;
+            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridView1.ReadOnly = true;
             dataGridView1.MultiSelect = false;
@@ -48,7 +49,12 @@ namespace ControlRoomApplication.GUI
 
             foreach (Entities.Appointment appt in appts)
             {
-                string[] row = { appt.User.first_name + " " + appt.User.last_name, appt.status.ToString(), appt.start_time.ToLongDateString(), appt.end_time.ToLongDateString() };
+                string[] row = { 
+                    appt.User.first_name + " " + appt.User.last_name, 
+                    appt.status.ToString(), 
+                    appt.start_time.ToShortDateString() + " " + appt.start_time.ToShortTimeString(), 
+                    appt.end_time.ToShortDateString() + " " + appt.end_time.ToShortTimeString() 
+                };
 
                 dataGridView1.Rows.Add(row);
             }

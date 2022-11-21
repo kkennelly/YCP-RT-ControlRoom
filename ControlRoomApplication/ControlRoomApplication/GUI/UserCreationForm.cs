@@ -37,6 +37,13 @@ namespace ControlRoomApplication.GUI
             };
 
             // Work with the backend team to insert a new user into the database
+            Database.DatabaseOperations.AddUser(userModel);
+
+            MessageBox.Show("Successfully added user!");
+        }
+
+        private void ProfilePictureInput_TextChanged(object sender, EventArgs e)
+        {
 
         }
     }

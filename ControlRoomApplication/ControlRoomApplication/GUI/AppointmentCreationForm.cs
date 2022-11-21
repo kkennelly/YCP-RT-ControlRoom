@@ -29,7 +29,7 @@ namespace ControlRoomApplication.GUI
                 status = StatusInput.Text,
                 telescope_id = int.Parse(TelescopeIdInput.Text),
                 Public = int.Parse(PublicInput.Text),
-                orientation_id = int.Parse(OrientationIdInput.Text).,
+                orientation_id = int.Parse(OrientationIdInput.Text),
                 spectracyber_config_id = int.Parse(SpectraCyberConfigIdInput.Text),
                 type = TypeInput.Text,
                 celestial_body_id = int.Parse(CelestialBodyIdInput.Text),

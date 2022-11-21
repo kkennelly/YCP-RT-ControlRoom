@@ -12,8 +12,11 @@ namespace ControlRoomApplication.GUI
 {
     public partial class AppointmentControlForm : Form
     {
-        public AppointmentControlForm()
+        private int id;
+
+        public AppointmentControlForm(int id)
         {
+            this.id = id;
             InitializeComponent();
         }
 
@@ -29,6 +32,13 @@ namespace ControlRoomApplication.GUI
             var addUserForm = new UserCreationForm();
 
             addUserForm.Show();
+        }
+
+        private void ViewApptButton_Click(object sender, EventArgs e)
+        {
+            var viewApptForm = new ViewAppointmentForm(id);
+
+            viewApptForm.Show();
         }
     }
 }

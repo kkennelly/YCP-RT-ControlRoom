@@ -120,6 +120,8 @@ namespace ControlRoomApplication.Main
             shutdownButton.BackColor = System.Drawing.Color.Gainsboro;
             shutdownButton.Enabled = false;
             loopBackBox.Enabled = true;
+            btnApptControl.BackColor = System.Drawing.Color.DarkGray;
+            btnApptControl.Enabled = false; 
 
             comboSensorNetworkBox.SelectedIndex = (int)SensorNetworkDropdown.SimulatedSensorNetwork;
             comboSpectraCyberBox.SelectedIndex = (int)SpectraCyberDropdown.SimulatedSpectraCyber;
@@ -294,6 +296,9 @@ namespace ControlRoomApplication.Main
                 txtRemoteListenerCOMPort.Enabled = true;
                 txtPLCPort.Enabled = true;
                 txtSpectraPort.Enabled = true;
+
+                btnApptControl.BackColor = System.Drawing.Color.LightGray;
+                btnApptControl.Enabled = true;
 
                 if (txtPLCPort.Text != null
                     && txtPLCIP.Text != null
@@ -1362,6 +1367,13 @@ namespace ControlRoomApplication.Main
                 txtSpectraPort.BackColor = System.Drawing.Color.LightGray;
                 this.WCOMPortToolTip.Hide(label8);
             }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            var apptControlForm = new AppointmentControlForm(current_rt_id);
+
+            apptControlForm.Show();
         }
     }
 }

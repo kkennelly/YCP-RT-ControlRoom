@@ -452,6 +452,12 @@
     <Compile Include="GUI\UserCreationForm.Designer.cs">
       <DependentUpon>UserCreationForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="GUI\ViewAppointmentForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\ViewAppointmentForm.Designer.cs">
+      <DependentUpon>ViewAppointmentForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\201904150402332_LoggingUpdgrades.cs" />
     <Compile Include="Migrations\201904150402332_LoggingUpdgrades.Designer.cs">
       <DependentUpon>201904150402332_LoggingUpdgrades.cs</DependentUpon>
@@ -561,6 +567,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\UserCreationForm.resx">
       <DependentUpon>UserCreationForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\ViewAppointmentForm.resx">
+      <DependentUpon>ViewAppointmentForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201904150402332_LoggingUpdgrades.resx">
       <DependentUpon>201904150402332_LoggingUpdgrades.cs</DependentUpon>

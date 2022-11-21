@@ -74,6 +74,7 @@
             this.PLCPortToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.RLPortToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.WCOMPortToolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.btnApptControl = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.simulationSettingsGroupbox.SuspendLayout();
             this.portGroupbox.SuspendLayout();
@@ -536,7 +537,7 @@
             this.acceptSettings.Location = new System.Drawing.Point(539, 262);
             this.acceptSettings.Margin = new System.Windows.Forms.Padding(2);
             this.acceptSettings.Name = "acceptSettings";
-            this.acceptSettings.Size = new System.Drawing.Size(352, 51);
+            this.acceptSettings.Size = new System.Drawing.Size(179, 51);
             this.acceptSettings.TabIndex = 23;
             this.acceptSettings.Text = "Finalize settings";
             this.acceptSettings.UseVisualStyleBackColor = false;
@@ -583,12 +584,26 @@
             // 
             this.WCOMPortToolTip.Popup += new System.Windows.Forms.PopupEventHandler(this.WCOMPortToolTip_Popup);
             // 
+            // btnApptControl
+            // 
+            this.btnApptControl.BackColor = System.Drawing.Color.LightGray;
+            this.btnApptControl.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnApptControl.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnApptControl.Location = new System.Drawing.Point(726, 262);
+            this.btnApptControl.Name = "btnApptControl";
+            this.btnApptControl.Size = new System.Drawing.Size(167, 51);
+            this.btnApptControl.TabIndex = 29;
+            this.btnApptControl.Text = "Appointment Control";
+            this.btnApptControl.UseVisualStyleBackColor = false;
+            this.btnApptControl.Click += new System.EventHandler(this.button1_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Gray;
             this.ClientSize = new System.Drawing.Size(911, 432);
+            this.Controls.Add(this.btnApptControl);
             this.Controls.Add(this.helpButton);
             this.Controls.Add(this.startRTGroupbox);
             this.Controls.Add(this.acceptSettings);
@@ -657,6 +672,7 @@
         private System.Windows.Forms.TextBox sensorNetworkServerIPAddress;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TextBox txtSpectraPort;
+        private System.Windows.Forms.Button btnApptControl;
 
 
 

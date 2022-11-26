@@ -193,6 +193,37 @@ namespace ControlRoomApplication.Controllers
                     logger.Info(Utilities.GetTimeStamp() + ": Waiting for next Appointment");
                 }
 
+                // Checks if Appointment is overdue.
+                // We consider appointments that have a start_time over one minute
+                // from the current time as overdue.
+
+                if(NextAppointment != null)
+                {
+                    // Get start time of appointment. 
+                    DateTime start = NextAppointment.start_time;
+
+                    // Get current time based on PC's local time. 
+                    DateTime current = DateTime.Now;
+
+                    // Compare current time to appointment.  
+                    TimeSpan diff = start - current;
+
+                    // If appointment is 1+ min overdue, cancel appointment. 
+                    // We know it is overdue if the TimeSpan is greater than -1 minute.
+                    if (diff.Minutes <= -1)
+                    {
+                        logger.Info(Utilities.GetTimeStamp() + ": Appointment is overdue. Cancelling appointment...");
+                        // Cancel the appointment. 
+                        NextAppointment._Status = AppointmentStatusEnum.CANCELED;
+
+                        // Update the appointment. 
+                        DatabaseOperations.UpdateAppointment(NextAppointment); 
+
+                        // Continue to the next appointment. 
+                        continue; 
+                    }
+                }
+
                 if (NextAppointment != null)
                 {
                     logger.Info(Utilities.GetTimeStamp() + ": Starting appointment...");

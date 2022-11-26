@@ -122,14 +122,18 @@ namespace ControlRoomApplication.Database
             }
         }
 
+        /// <summary>
+        /// Adds the specified user to the database
+        /// </summary>
+        /// <param name="user"></param>
         public static void AddUser(User user)
         {
             using (RTDbContext Context = InitializeDatabaseContext())
             {
                 Context.Users.Add(user);
+                SaveContext(Context);
             }
         }
-
 
         //Update telescope to online 
         public static void UpdateTelescope(RadioTelescope radioTelescope)

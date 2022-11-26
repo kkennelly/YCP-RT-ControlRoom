@@ -1,6 +1,6 @@
 ﻿namespace ControlRoomApplication.GUI
 {
-    partial class ViewAppointmentForm
+    partial class ViewUsersForm
     {
         /// <summary>
         /// Required designer variable.
@@ -38,11 +38,11 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(248, 19);
+            this.label1.Location = new System.Drawing.Point(278, 19);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(108, 20);
+            this.label1.Size = new System.Drawing.Size(51, 20);
             this.label1.TabIndex = 0;
-            this.label1.Text = "Appointments";
+            this.label1.Text = "Users";
             // 
             // btnOK
             // 
@@ -62,7 +62,7 @@
             this.dataGridView1.Size = new System.Drawing.Size(582, 279);
             this.dataGridView1.TabIndex = 3;
             // 
-            // ViewAppointmentForm
+            // ViewUsersForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -70,7 +70,7 @@
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.label1);
-            this.Name = "ViewAppointmentForm";
+            this.Name = "ViewUsersForm";
             this.Text = "ViewAppointmentForm";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);

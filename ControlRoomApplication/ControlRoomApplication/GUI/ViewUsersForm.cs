@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ControlRoomApplication.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -10,24 +11,20 @@ using System.Windows.Forms;
 
 namespace ControlRoomApplication.GUI
 {
-    public partial class ViewAppointmentForm : Form
+    public partial class ViewUsersForm : Form
     {
-        private int id;
-
-        public ViewAppointmentForm(int id)
+        public ViewUsersForm()
         {
-            this.id = id;
-
             InitializeComponent();
 
             InitializeDataGrid();
 
-            LoadAppointments();
+            LoadUsers();
         }
         
         private void InitializeDataGrid()
         {
-            dataGridView1.ColumnCount = 5;
+            dataGridView1.ColumnCount = 4;
             dataGridView1.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
             dataGridView1.CellBorderStyle = DataGridViewCellBorderStyle.Single;
             dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.DisplayedCellsExceptHeaders;
@@ -37,23 +34,23 @@ namespace ControlRoomApplication.GUI
             dataGridView1.MultiSelect = false;
             dataGridView1.ColumnHeadersVisible = true;
 
-            dataGridView1.Columns[0].Name = "User";
-            dataGridView1.Columns[1].Name = "Status";
-            dataGridView1.Columns[2].Name = "Start Time";
-            dataGridView1.Columns[3].Name = "End Time";
+            dataGridView1.Columns[0].Name = "ID";
+            dataGridView1.Columns[1].Name = "Name";
+            dataGridView1.Columns[2].Name = "Email";
+            dataGridView1.Columns[3].Name = "Phone #";
         }
 
-        private void LoadAppointments()
+        private void LoadUsers()
         {
-            List<Entities.Appointment> appts = Database.DatabaseOperations.GetListOfAppointmentsForRadioTelescope(id);
+            List<User> users = Database.DatabaseOperations.GetAllUsers();
 
-            foreach (Entities.Appointment appt in appts)
+            foreach (User user in users)
             {
-                string[] row = { 
-                    appt.User.first_name + " " + appt.User.last_name, 
-                    appt.status.ToString(), 
-                    appt.start_time.ToShortDateString() + " " + appt.start_time.ToShortTimeString(), 
-                    appt.end_time.ToShortDateString() + " " + appt.end_time.ToShortTimeString() 
+                string[] row = {
+                    user.Id.ToString(),
+                    user.first_name + " " + user.last_name,
+                    user.email_address,
+                    user.phone_number
                 };
 
                 dataGridView1.Rows.Add(row);

@@ -13,6 +13,7 @@ namespace ControlRoomApplication.GUI
 {
     public partial class UserCreationForm : Form
     {
+        private User _user;
         public UserCreationForm()
         {
             InitializeComponent();
@@ -20,7 +21,7 @@ namespace ControlRoomApplication.GUI
 
         private void CreateUserBtn_Click(object sender, EventArgs e)
         {
-            var userModel = new User
+            _user = new User
             {
                 first_name = FirstNameInput.Text,
                 last_name = LastNameInput.Text,
@@ -36,15 +37,22 @@ namespace ControlRoomApplication.GUI
                 firebase_id = FirebaseInput.Text
             };
 
-            // Work with the backend team to insert a new user into the database
-            Database.DatabaseOperations.AddUser(userModel);
+            DialogResult = DialogResult.OK;
+        }
 
-            MessageBox.Show("Successfully added user!");
+        public User GetUser()
+        {
+            return _user;
         }
 
         private void ProfilePictureInput_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void CancelBtn_Click(object sender, EventArgs e)
+        {
+            DialogResult = DialogResult.Cancel;
         }
     }
 }

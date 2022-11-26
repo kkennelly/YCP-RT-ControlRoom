@@ -38,7 +38,7 @@ namespace ControlRoomApplication.GUI
             // AddUserBtn
             // 
             this.AddUserBtn.Location = new System.Drawing.Point(106, 92);
-            this.AddUserBtn.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.AddUserBtn.Margin = new System.Windows.Forms.Padding(2);
             this.AddUserBtn.Name = "AddUserBtn";
             this.AddUserBtn.Size = new System.Drawing.Size(149, 30);
             this.AddUserBtn.TabIndex = 0;
@@ -49,7 +49,7 @@ namespace ControlRoomApplication.GUI
             // AddApptBtn
             // 
             this.AddApptBtn.Location = new System.Drawing.Point(106, 58);
-            this.AddApptBtn.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.AddApptBtn.Margin = new System.Windows.Forms.Padding(2);
             this.AddApptBtn.Name = "AddApptBtn";
             this.AddApptBtn.Size = new System.Drawing.Size(149, 30);
             this.AddApptBtn.TabIndex = 1;
@@ -60,7 +60,7 @@ namespace ControlRoomApplication.GUI
             // ViewApptButton
             // 
             this.ViewApptButton.Location = new System.Drawing.Point(106, 126);
-            this.ViewApptButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.ViewApptButton.Margin = new System.Windows.Forms.Padding(2);
             this.ViewApptButton.Name = "ViewApptButton";
             this.ViewApptButton.Size = new System.Drawing.Size(149, 30);
             this.ViewApptButton.TabIndex = 2;
@@ -71,12 +71,13 @@ namespace ControlRoomApplication.GUI
             // ViewUserBtn
             // 
             this.ViewUserBtn.Location = new System.Drawing.Point(106, 160);
-            this.ViewUserBtn.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.ViewUserBtn.Margin = new System.Windows.Forms.Padding(2);
             this.ViewUserBtn.Name = "ViewUserBtn";
             this.ViewUserBtn.Size = new System.Drawing.Size(149, 30);
             this.ViewUserBtn.TabIndex = 3;
             this.ViewUserBtn.Text = "View Users";
             this.ViewUserBtn.UseVisualStyleBackColor = true;
+            this.ViewUserBtn.Click += new System.EventHandler(this.ViewUserBtn_Click);
             // 
             // AppointmentControlForm
             // 
@@ -87,7 +88,7 @@ namespace ControlRoomApplication.GUI
             this.Controls.Add(this.ViewApptButton);
             this.Controls.Add(this.AddApptBtn);
             this.Controls.Add(this.AddUserBtn);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "AppointmentControlForm";
             this.Text = "AppointmentControlForm";
             this.ResumeLayout(false);

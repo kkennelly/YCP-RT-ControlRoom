@@ -24,14 +24,27 @@ namespace ControlRoomApplication.GUI
         {
             var addApptForm = new AppointmentCreationForm();
 
-            addApptForm.Show();
+            if (addApptForm.ShowDialog() == DialogResult.OK)
+            {
+                // Add appointment from data 
+            }   
         }
 
         private void AddUserBtn_Click(object sender, EventArgs e)
         {
             var addUserForm = new UserCreationForm();
 
-            addUserForm.Show();
+            if (addUserForm.ShowDialog() == DialogResult.OK)
+            {
+                // Work with the backend team to insert a new user into the database
+                Database.DatabaseOperations.AddUser(addUserForm.GetUser());
+
+                MessageBox.Show("Successfully added user!");
+            } 
+            else
+            {
+                addUserForm.Dispose();
+            }
         }
 
         private void ViewApptButton_Click(object sender, EventArgs e)
@@ -39,6 +52,13 @@ namespace ControlRoomApplication.GUI
             var viewApptForm = new ViewAppointmentForm(id);
 
             viewApptForm.Show();
+        }
+
+        private void ViewUserBtn_Click(object sender, EventArgs e)
+        {
+            var viewUsersForm = new ViewUsersForm();
+
+            viewUsersForm.Show();
         }
     }
 }

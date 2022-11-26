@@ -54,6 +54,7 @@ namespace ControlRoomApplication.GUI
             this.FirebaseLabel = new System.Windows.Forms.Label();
             this.FirebaseInput = new System.Windows.Forms.TextBox();
             this.CreateUserBtn = new System.Windows.Forms.Button();
+            this.CancelBtn = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // ProfilePictureLabel
@@ -169,7 +170,7 @@ namespace ControlRoomApplication.GUI
             // PictureApprovedInput
             // 
             this.PictureApprovedInput.Location = new System.Drawing.Point(181, 190);
-            this.PictureApprovedInput.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.PictureApprovedInput.Margin = new System.Windows.Forms.Padding(2);
             this.PictureApprovedInput.Name = "PictureApprovedInput";
             this.PictureApprovedInput.Size = new System.Drawing.Size(76, 20);
             this.PictureApprovedInput.TabIndex = 33;
@@ -177,7 +178,7 @@ namespace ControlRoomApplication.GUI
             // LastNameInput
             // 
             this.LastNameInput.Location = new System.Drawing.Point(411, 44);
-            this.LastNameInput.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.LastNameInput.Margin = new System.Windows.Forms.Padding(2);
             this.LastNameInput.Name = "LastNameInput";
             this.LastNameInput.Size = new System.Drawing.Size(76, 20);
             this.LastNameInput.TabIndex = 32;
@@ -185,7 +186,7 @@ namespace ControlRoomApplication.GUI
             // CompanyInput
             // 
             this.CompanyInput.Location = new System.Drawing.Point(411, 79);
-            this.CompanyInput.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.CompanyInput.Margin = new System.Windows.Forms.Padding(2);
             this.CompanyInput.Name = "CompanyInput";
             this.CompanyInput.Size = new System.Drawing.Size(76, 20);
             this.CompanyInput.TabIndex = 31;
@@ -193,7 +194,7 @@ namespace ControlRoomApplication.GUI
             // ProfilePictureInput
             // 
             this.ProfilePictureInput.Location = new System.Drawing.Point(411, 190);
-            this.ProfilePictureInput.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.ProfilePictureInput.Margin = new System.Windows.Forms.Padding(2);
             this.ProfilePictureInput.Name = "ProfilePictureInput";
             this.ProfilePictureInput.Size = new System.Drawing.Size(76, 20);
             this.ProfilePictureInput.TabIndex = 30;
@@ -202,7 +203,7 @@ namespace ControlRoomApplication.GUI
             // NotificationTypeInput
             // 
             this.NotificationTypeInput.Location = new System.Drawing.Point(181, 226);
-            this.NotificationTypeInput.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.NotificationTypeInput.Margin = new System.Windows.Forms.Padding(2);
             this.NotificationTypeInput.Name = "NotificationTypeInput";
             this.NotificationTypeInput.Size = new System.Drawing.Size(76, 20);
             this.NotificationTypeInput.TabIndex = 29;
@@ -210,7 +211,7 @@ namespace ControlRoomApplication.GUI
             // StatusInput
             // 
             this.StatusInput.Location = new System.Drawing.Point(411, 153);
-            this.StatusInput.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.StatusInput.Margin = new System.Windows.Forms.Padding(2);
             this.StatusInput.Name = "StatusInput";
             this.StatusInput.Size = new System.Drawing.Size(76, 20);
             this.StatusInput.TabIndex = 28;
@@ -218,7 +219,7 @@ namespace ControlRoomApplication.GUI
             // ActiveInput
             // 
             this.ActiveInput.Location = new System.Drawing.Point(181, 153);
-            this.ActiveInput.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.ActiveInput.Margin = new System.Windows.Forms.Padding(2);
             this.ActiveInput.Name = "ActiveInput";
             this.ActiveInput.Size = new System.Drawing.Size(76, 20);
             this.ActiveInput.TabIndex = 27;
@@ -226,7 +227,7 @@ namespace ControlRoomApplication.GUI
             // PasswordInput
             // 
             this.PasswordInput.Location = new System.Drawing.Point(411, 114);
-            this.PasswordInput.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.PasswordInput.Margin = new System.Windows.Forms.Padding(2);
             this.PasswordInput.Name = "PasswordInput";
             this.PasswordInput.Size = new System.Drawing.Size(76, 20);
             this.PasswordInput.TabIndex = 26;
@@ -234,7 +235,7 @@ namespace ControlRoomApplication.GUI
             // PhoneInput
             // 
             this.PhoneInput.Location = new System.Drawing.Point(181, 114);
-            this.PhoneInput.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.PhoneInput.Margin = new System.Windows.Forms.Padding(2);
             this.PhoneInput.Name = "PhoneInput";
             this.PhoneInput.Size = new System.Drawing.Size(76, 20);
             this.PhoneInput.TabIndex = 25;
@@ -242,7 +243,7 @@ namespace ControlRoomApplication.GUI
             // EmailInput
             // 
             this.EmailInput.Location = new System.Drawing.Point(181, 79);
-            this.EmailInput.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.EmailInput.Margin = new System.Windows.Forms.Padding(2);
             this.EmailInput.Name = "EmailInput";
             this.EmailInput.Size = new System.Drawing.Size(76, 20);
             this.EmailInput.TabIndex = 24;
@@ -250,7 +251,7 @@ namespace ControlRoomApplication.GUI
             // FirstNameInput
             // 
             this.FirstNameInput.Location = new System.Drawing.Point(181, 44);
-            this.FirstNameInput.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.FirstNameInput.Margin = new System.Windows.Forms.Padding(2);
             this.FirstNameInput.Name = "FirstNameInput";
             this.FirstNameInput.Size = new System.Drawing.Size(76, 20);
             this.FirstNameInput.TabIndex = 23;
@@ -268,27 +269,38 @@ namespace ControlRoomApplication.GUI
             // FirebaseInput
             // 
             this.FirebaseInput.Location = new System.Drawing.Point(411, 226);
-            this.FirebaseInput.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.FirebaseInput.Margin = new System.Windows.Forms.Padding(2);
             this.FirebaseInput.Name = "FirebaseInput";
             this.FirebaseInput.Size = new System.Drawing.Size(76, 20);
             this.FirebaseInput.TabIndex = 45;
             // 
             // CreateUserBtn
             // 
-            this.CreateUserBtn.Location = new System.Drawing.Point(232, 278);
-            this.CreateUserBtn.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.CreateUserBtn.Location = new System.Drawing.Point(299, 320);
+            this.CreateUserBtn.Margin = new System.Windows.Forms.Padding(2);
             this.CreateUserBtn.Name = "CreateUserBtn";
-            this.CreateUserBtn.Size = new System.Drawing.Size(143, 54);
+            this.CreateUserBtn.Size = new System.Drawing.Size(109, 21);
             this.CreateUserBtn.TabIndex = 47;
             this.CreateUserBtn.Text = "Create User";
             this.CreateUserBtn.UseVisualStyleBackColor = true;
             this.CreateUserBtn.Click += new System.EventHandler(this.CreateUserBtn_Click);
+            // 
+            // CancelBtn
+            // 
+            this.CancelBtn.Location = new System.Drawing.Point(181, 319);
+            this.CancelBtn.Name = "CancelBtn";
+            this.CancelBtn.Size = new System.Drawing.Size(109, 23);
+            this.CancelBtn.TabIndex = 48;
+            this.CancelBtn.Text = "Cancel";
+            this.CancelBtn.UseVisualStyleBackColor = true;
+            this.CancelBtn.Click += new System.EventHandler(this.CancelBtn_Click);
             // 
             // UserCreationForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(600, 366);
+            this.Controls.Add(this.CancelBtn);
             this.Controls.Add(this.CreateUserBtn);
             this.Controls.Add(this.FirebaseLabel);
             this.Controls.Add(this.FirebaseInput);
@@ -314,7 +326,7 @@ namespace ControlRoomApplication.GUI
             this.Controls.Add(this.PhoneInput);
             this.Controls.Add(this.EmailInput);
             this.Controls.Add(this.FirstNameInput);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "UserCreationForm";
             this.Text = "UserCreationForm";
             this.ResumeLayout(false);
@@ -349,5 +361,6 @@ namespace ControlRoomApplication.GUI
         private System.Windows.Forms.Label FirebaseLabel;
         private System.Windows.Forms.TextBox FirebaseInput;
         private System.Windows.Forms.Button CreateUserBtn;
+        private System.Windows.Forms.Button CancelBtn;
     }
 }

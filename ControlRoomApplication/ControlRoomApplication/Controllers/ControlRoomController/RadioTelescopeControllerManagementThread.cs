@@ -209,8 +209,8 @@ namespace ControlRoomApplication.Controllers
                     TimeSpan diff = start - current;
 
                     // If appointment is 1+ min overdue, cancel appointment. 
-                    // We know it is overdue if the TimeSpan is greater than -1 minute.
-                    if (diff.Minutes <= -1)
+                    // We know it is overdue if the TimeSpan is less than or equal to -1 minutes.
+                    if (diff.TotalMinutes <= -1.0)
                     {
                         logger.Info(Utilities.GetTimeStamp() + ": Appointment is overdue. Cancelling appointment...");
                         // Cancel the appointment. 

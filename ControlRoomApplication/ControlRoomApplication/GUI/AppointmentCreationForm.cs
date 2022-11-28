@@ -71,7 +71,7 @@ namespace ControlRoomApplication.GUI
 
         private void LoadUsers()
         {
-            List<User> users = Database.DatabaseOperations.GetAllUsers();
+            users = Database.DatabaseOperations.GetAllUsers();
 
             foreach (User user in users)
             {

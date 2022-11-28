@@ -33,11 +33,12 @@ namespace ControlRoomApplication.GUI
             this.AddApptBtn = new System.Windows.Forms.Button();
             this.ViewApptButton = new System.Windows.Forms.Button();
             this.ViewUserBtn = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // AddUserBtn
             // 
-            this.AddUserBtn.Location = new System.Drawing.Point(106, 92);
+            this.AddUserBtn.Location = new System.Drawing.Point(118, 107);
             this.AddUserBtn.Margin = new System.Windows.Forms.Padding(2);
             this.AddUserBtn.Name = "AddUserBtn";
             this.AddUserBtn.Size = new System.Drawing.Size(149, 30);
@@ -48,7 +49,7 @@ namespace ControlRoomApplication.GUI
             // 
             // AddApptBtn
             // 
-            this.AddApptBtn.Location = new System.Drawing.Point(106, 58);
+            this.AddApptBtn.Location = new System.Drawing.Point(118, 73);
             this.AddApptBtn.Margin = new System.Windows.Forms.Padding(2);
             this.AddApptBtn.Name = "AddApptBtn";
             this.AddApptBtn.Size = new System.Drawing.Size(149, 30);
@@ -59,7 +60,7 @@ namespace ControlRoomApplication.GUI
             // 
             // ViewApptButton
             // 
-            this.ViewApptButton.Location = new System.Drawing.Point(106, 126);
+            this.ViewApptButton.Location = new System.Drawing.Point(118, 141);
             this.ViewApptButton.Margin = new System.Windows.Forms.Padding(2);
             this.ViewApptButton.Name = "ViewApptButton";
             this.ViewApptButton.Size = new System.Drawing.Size(149, 30);
@@ -70,7 +71,7 @@ namespace ControlRoomApplication.GUI
             // 
             // ViewUserBtn
             // 
-            this.ViewUserBtn.Location = new System.Drawing.Point(106, 160);
+            this.ViewUserBtn.Location = new System.Drawing.Point(118, 175);
             this.ViewUserBtn.Margin = new System.Windows.Forms.Padding(2);
             this.ViewUserBtn.Name = "ViewUserBtn";
             this.ViewUserBtn.Size = new System.Drawing.Size(149, 30);
@@ -79,11 +80,22 @@ namespace ControlRoomApplication.GUI
             this.ViewUserBtn.UseVisualStyleBackColor = true;
             this.ViewUserBtn.Click += new System.EventHandler(this.ViewUserBtn_Click);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(114, 25);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(155, 20);
+            this.label1.TabIndex = 4;
+            this.label1.Text = "Appointment Control";
+            // 
             // AppointmentControlForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(381, 258);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.ViewUserBtn);
             this.Controls.Add(this.ViewApptButton);
             this.Controls.Add(this.AddApptBtn);
@@ -92,6 +104,7 @@ namespace ControlRoomApplication.GUI
             this.Name = "AppointmentControlForm";
             this.Text = "AppointmentControlForm";
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -101,5 +114,6 @@ namespace ControlRoomApplication.GUI
         private System.Windows.Forms.Button AddApptBtn;
         private System.Windows.Forms.Button ViewApptButton;
         private System.Windows.Forms.Button ViewUserBtn;
+        private System.Windows.Forms.Label label1;
     }
 }

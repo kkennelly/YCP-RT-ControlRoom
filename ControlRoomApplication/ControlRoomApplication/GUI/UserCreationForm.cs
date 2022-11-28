@@ -14,6 +14,7 @@ namespace ControlRoomApplication.GUI
     public partial class UserCreationForm : Form
     {
         private User _user;
+
         public UserCreationForm()
         {
             InitializeComponent();
@@ -21,23 +22,30 @@ namespace ControlRoomApplication.GUI
 
         private void CreateUserBtn_Click(object sender, EventArgs e)
         {
-            _user = new User
+            try
             {
-                first_name = FirstNameInput.Text,
-                last_name = LastNameInput.Text,
-                email_address = EmailInput.Text,
-                // No Company? = CompanyInput.Text,
-                phone_number = PhoneInput.Text,
-                // No password? = PasswordInput.Text,
-                // No Active? = ActiveInput.Text,
-                // No Status? = StatusInput.Text,
-                // No Picture Approved? = PictureApprovedInput.Text,
-                // No Picture Input? = ProfilePictureInput.Text,
-                notification_type = NotificationTypeInput.Text,
-                firebase_id = FirebaseInput.Text
-            };
+                _user = new User
+                {
+                    first_name = FirstNameInput.Text,
+                    last_name = LastNameInput.Text,
+                    email_address = EmailInput.Text,
+                    // No Company? = CompanyInput.Text,
+                    phone_number = PhoneInput.Text,
+                    // No password? = PasswordInput.Text,
+                    // No Active? = ActiveInput.Text,
+                    // No Status? = StatusInput.Text,
+                    // No Picture Approved? = PictureApprovedInput.Text,
+                    // No Picture Input? = ProfilePictureInput.Text,
+                    notification_type = NotificationTypeInput.Text,
+                    firebase_id = FirebaseInput.Text
+                };
 
-            DialogResult = DialogResult.OK;
+                DialogResult = DialogResult.OK;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("One or more inputs are invalid", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         public User GetUser()
@@ -53,6 +61,126 @@ namespace ControlRoomApplication.GUI
         private void CancelBtn_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.Cancel;
+        }
+
+        private void UserCreationForm_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void FirstNameInput_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void EmailLabel_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void EmailInput_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void PhoneLabel_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void PhoneInput_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void ActiveLabel_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void ActiveInput_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void ProfilePictureApprovedLabel_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void PictureApprovedInput_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void NotificationTypeLabel_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void NotificationTypeInput_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void LastNameLabel_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void FirstNameLabel_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void LastNameInput_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void CompanyLabel_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void CompanyInput_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void PasswordLabel_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void PasswordInput_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void StatusLabel_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void StatusInput_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void ProfilePictureLabel_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void FirebaseLabel_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void FirebaseInput_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

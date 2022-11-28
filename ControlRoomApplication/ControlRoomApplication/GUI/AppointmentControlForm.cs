@@ -22,12 +22,18 @@ namespace ControlRoomApplication.GUI
 
         private void AddApptBtn_Click(object sender, EventArgs e)
         {
-            var addApptForm = new AppointmentCreationForm();
+            var addApptForm = new AppointmentCreationForm(id);
 
             if (addApptForm.ShowDialog() == DialogResult.OK)
             {
-                // Add appointment from data 
-            }   
+                Database.DatabaseOperations.AddAppointment(addApptForm.GetAppointment());
+
+                MessageBox.Show("Successfully added appointment!");
+            }
+            else
+            {
+                addApptForm.Dispose();
+            }
         }
 
         private void AddUserBtn_Click(object sender, EventArgs e)
@@ -36,7 +42,6 @@ namespace ControlRoomApplication.GUI
 
             if (addUserForm.ShowDialog() == DialogResult.OK)
             {
-                // Work with the backend team to insert a new user into the database
                 Database.DatabaseOperations.AddUser(addUserForm.GetUser());
 
                 MessageBox.Show("Successfully added user!");

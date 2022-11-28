@@ -55,145 +55,160 @@ namespace ControlRoomApplication.GUI
             this.FirebaseInput = new System.Windows.Forms.TextBox();
             this.CreateUserBtn = new System.Windows.Forms.Button();
             this.CancelBtn = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // ProfilePictureLabel
             // 
             this.ProfilePictureLabel.AutoSize = true;
-            this.ProfilePictureLabel.Location = new System.Drawing.Point(334, 193);
+            this.ProfilePictureLabel.Location = new System.Drawing.Point(335, 218);
             this.ProfilePictureLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.ProfilePictureLabel.Name = "ProfilePictureLabel";
             this.ProfilePictureLabel.Size = new System.Drawing.Size(72, 13);
             this.ProfilePictureLabel.TabIndex = 44;
             this.ProfilePictureLabel.Text = "Profile Picture";
+            this.ProfilePictureLabel.Click += new System.EventHandler(this.ProfilePictureLabel_Click);
             // 
             // EmailLabel
             // 
             this.EmailLabel.AutoSize = true;
-            this.EmailLabel.Location = new System.Drawing.Point(145, 81);
+            this.EmailLabel.Location = new System.Drawing.Point(146, 106);
             this.EmailLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.EmailLabel.Name = "EmailLabel";
             this.EmailLabel.Size = new System.Drawing.Size(32, 13);
             this.EmailLabel.TabIndex = 43;
             this.EmailLabel.Text = "Email";
+            this.EmailLabel.Click += new System.EventHandler(this.EmailLabel_Click);
             // 
             // StatusLabel
             // 
             this.StatusLabel.AutoSize = true;
-            this.StatusLabel.Location = new System.Drawing.Point(370, 155);
+            this.StatusLabel.Location = new System.Drawing.Point(371, 180);
             this.StatusLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.StatusLabel.Name = "StatusLabel";
             this.StatusLabel.Size = new System.Drawing.Size(37, 13);
             this.StatusLabel.TabIndex = 42;
             this.StatusLabel.Text = "Status";
+            this.StatusLabel.Click += new System.EventHandler(this.StatusLabel_Click);
             // 
             // PasswordLabel
             // 
             this.PasswordLabel.AutoSize = true;
-            this.PasswordLabel.Location = new System.Drawing.Point(355, 116);
+            this.PasswordLabel.Location = new System.Drawing.Point(356, 141);
             this.PasswordLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.PasswordLabel.Name = "PasswordLabel";
             this.PasswordLabel.Size = new System.Drawing.Size(53, 13);
             this.PasswordLabel.TabIndex = 41;
             this.PasswordLabel.Text = "Password";
+            this.PasswordLabel.Click += new System.EventHandler(this.PasswordLabel_Click);
             // 
             // CompanyLabel
             // 
             this.CompanyLabel.AutoSize = true;
-            this.CompanyLabel.Location = new System.Drawing.Point(356, 81);
+            this.CompanyLabel.Location = new System.Drawing.Point(357, 106);
             this.CompanyLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.CompanyLabel.Name = "CompanyLabel";
             this.CompanyLabel.Size = new System.Drawing.Size(51, 13);
             this.CompanyLabel.TabIndex = 40;
             this.CompanyLabel.Text = "Company";
+            this.CompanyLabel.Click += new System.EventHandler(this.CompanyLabel_Click);
             // 
             // LastNameLabel
             // 
             this.LastNameLabel.AutoSize = true;
-            this.LastNameLabel.Location = new System.Drawing.Point(350, 46);
+            this.LastNameLabel.Location = new System.Drawing.Point(351, 71);
             this.LastNameLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.LastNameLabel.Name = "LastNameLabel";
             this.LastNameLabel.Size = new System.Drawing.Size(58, 13);
             this.LastNameLabel.TabIndex = 39;
             this.LastNameLabel.Text = "Last Name";
+            this.LastNameLabel.Click += new System.EventHandler(this.LastNameLabel_Click);
             // 
             // PhoneLabel
             // 
             this.PhoneLabel.AutoSize = true;
-            this.PhoneLabel.Location = new System.Drawing.Point(99, 116);
+            this.PhoneLabel.Location = new System.Drawing.Point(100, 141);
             this.PhoneLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.PhoneLabel.Name = "PhoneLabel";
             this.PhoneLabel.Size = new System.Drawing.Size(78, 13);
             this.PhoneLabel.TabIndex = 38;
             this.PhoneLabel.Text = "Phone Number";
+            this.PhoneLabel.Click += new System.EventHandler(this.PhoneLabel_Click);
             // 
             // ActiveLabel
             // 
             this.ActiveLabel.AutoSize = true;
-            this.ActiveLabel.Location = new System.Drawing.Point(142, 155);
+            this.ActiveLabel.Location = new System.Drawing.Point(143, 180);
             this.ActiveLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.ActiveLabel.Name = "ActiveLabel";
             this.ActiveLabel.Size = new System.Drawing.Size(37, 13);
             this.ActiveLabel.TabIndex = 37;
             this.ActiveLabel.Text = "Active";
+            this.ActiveLabel.Click += new System.EventHandler(this.ActiveLabel_Click);
             // 
             // ProfilePictureApprovedLabel
             // 
             this.ProfilePictureApprovedLabel.AutoSize = true;
-            this.ProfilePictureApprovedLabel.Location = new System.Drawing.Point(88, 193);
+            this.ProfilePictureApprovedLabel.Location = new System.Drawing.Point(89, 218);
             this.ProfilePictureApprovedLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.ProfilePictureApprovedLabel.Name = "ProfilePictureApprovedLabel";
             this.ProfilePictureApprovedLabel.Size = new System.Drawing.Size(89, 13);
             this.ProfilePictureApprovedLabel.TabIndex = 36;
             this.ProfilePictureApprovedLabel.Text = "Picture Approved";
+            this.ProfilePictureApprovedLabel.Click += new System.EventHandler(this.ProfilePictureApprovedLabel_Click);
             // 
             // NotificationTypeLabel
             // 
             this.NotificationTypeLabel.AutoSize = true;
-            this.NotificationTypeLabel.Location = new System.Drawing.Point(91, 228);
+            this.NotificationTypeLabel.Location = new System.Drawing.Point(92, 253);
             this.NotificationTypeLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.NotificationTypeLabel.Name = "NotificationTypeLabel";
             this.NotificationTypeLabel.Size = new System.Drawing.Size(87, 13);
             this.NotificationTypeLabel.TabIndex = 35;
             this.NotificationTypeLabel.Text = "Notification Type";
+            this.NotificationTypeLabel.Click += new System.EventHandler(this.NotificationTypeLabel_Click);
             // 
             // FirstNameLabel
             // 
             this.FirstNameLabel.AutoSize = true;
-            this.FirstNameLabel.Location = new System.Drawing.Point(119, 46);
+            this.FirstNameLabel.Location = new System.Drawing.Point(120, 71);
             this.FirstNameLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.FirstNameLabel.Name = "FirstNameLabel";
             this.FirstNameLabel.Size = new System.Drawing.Size(57, 13);
             this.FirstNameLabel.TabIndex = 34;
             this.FirstNameLabel.Text = "First Name";
+            this.FirstNameLabel.Click += new System.EventHandler(this.FirstNameLabel_Click);
             // 
             // PictureApprovedInput
             // 
-            this.PictureApprovedInput.Location = new System.Drawing.Point(181, 190);
+            this.PictureApprovedInput.Location = new System.Drawing.Point(182, 215);
             this.PictureApprovedInput.Margin = new System.Windows.Forms.Padding(2);
             this.PictureApprovedInput.Name = "PictureApprovedInput";
             this.PictureApprovedInput.Size = new System.Drawing.Size(76, 20);
             this.PictureApprovedInput.TabIndex = 33;
+            this.PictureApprovedInput.TextChanged += new System.EventHandler(this.PictureApprovedInput_TextChanged);
             // 
             // LastNameInput
             // 
-            this.LastNameInput.Location = new System.Drawing.Point(411, 44);
+            this.LastNameInput.Location = new System.Drawing.Point(412, 69);
             this.LastNameInput.Margin = new System.Windows.Forms.Padding(2);
             this.LastNameInput.Name = "LastNameInput";
             this.LastNameInput.Size = new System.Drawing.Size(76, 20);
             this.LastNameInput.TabIndex = 32;
+            this.LastNameInput.TextChanged += new System.EventHandler(this.LastNameInput_TextChanged);
             // 
             // CompanyInput
             // 
-            this.CompanyInput.Location = new System.Drawing.Point(411, 79);
+            this.CompanyInput.Location = new System.Drawing.Point(412, 104);
             this.CompanyInput.Margin = new System.Windows.Forms.Padding(2);
             this.CompanyInput.Name = "CompanyInput";
             this.CompanyInput.Size = new System.Drawing.Size(76, 20);
             this.CompanyInput.TabIndex = 31;
+            this.CompanyInput.TextChanged += new System.EventHandler(this.CompanyInput_TextChanged);
             // 
             // ProfilePictureInput
             // 
-            this.ProfilePictureInput.Location = new System.Drawing.Point(411, 190);
+            this.ProfilePictureInput.Location = new System.Drawing.Point(412, 215);
             this.ProfilePictureInput.Margin = new System.Windows.Forms.Padding(2);
             this.ProfilePictureInput.Name = "ProfilePictureInput";
             this.ProfilePictureInput.Size = new System.Drawing.Size(76, 20);
@@ -202,81 +217,91 @@ namespace ControlRoomApplication.GUI
             // 
             // NotificationTypeInput
             // 
-            this.NotificationTypeInput.Location = new System.Drawing.Point(181, 226);
+            this.NotificationTypeInput.Location = new System.Drawing.Point(182, 251);
             this.NotificationTypeInput.Margin = new System.Windows.Forms.Padding(2);
             this.NotificationTypeInput.Name = "NotificationTypeInput";
             this.NotificationTypeInput.Size = new System.Drawing.Size(76, 20);
             this.NotificationTypeInput.TabIndex = 29;
+            this.NotificationTypeInput.TextChanged += new System.EventHandler(this.NotificationTypeInput_TextChanged);
             // 
             // StatusInput
             // 
-            this.StatusInput.Location = new System.Drawing.Point(411, 153);
+            this.StatusInput.Location = new System.Drawing.Point(412, 178);
             this.StatusInput.Margin = new System.Windows.Forms.Padding(2);
             this.StatusInput.Name = "StatusInput";
             this.StatusInput.Size = new System.Drawing.Size(76, 20);
             this.StatusInput.TabIndex = 28;
+            this.StatusInput.TextChanged += new System.EventHandler(this.StatusInput_TextChanged);
             // 
             // ActiveInput
             // 
-            this.ActiveInput.Location = new System.Drawing.Point(181, 153);
+            this.ActiveInput.Location = new System.Drawing.Point(182, 178);
             this.ActiveInput.Margin = new System.Windows.Forms.Padding(2);
             this.ActiveInput.Name = "ActiveInput";
             this.ActiveInput.Size = new System.Drawing.Size(76, 20);
             this.ActiveInput.TabIndex = 27;
+            this.ActiveInput.TextChanged += new System.EventHandler(this.ActiveInput_TextChanged);
             // 
             // PasswordInput
             // 
-            this.PasswordInput.Location = new System.Drawing.Point(411, 114);
+            this.PasswordInput.Location = new System.Drawing.Point(412, 139);
             this.PasswordInput.Margin = new System.Windows.Forms.Padding(2);
             this.PasswordInput.Name = "PasswordInput";
+            this.PasswordInput.PasswordChar = '*';
             this.PasswordInput.Size = new System.Drawing.Size(76, 20);
             this.PasswordInput.TabIndex = 26;
+            this.PasswordInput.TextChanged += new System.EventHandler(this.PasswordInput_TextChanged);
             // 
             // PhoneInput
             // 
-            this.PhoneInput.Location = new System.Drawing.Point(181, 114);
+            this.PhoneInput.Location = new System.Drawing.Point(182, 139);
             this.PhoneInput.Margin = new System.Windows.Forms.Padding(2);
             this.PhoneInput.Name = "PhoneInput";
             this.PhoneInput.Size = new System.Drawing.Size(76, 20);
             this.PhoneInput.TabIndex = 25;
+            this.PhoneInput.TextChanged += new System.EventHandler(this.PhoneInput_TextChanged);
             // 
             // EmailInput
             // 
-            this.EmailInput.Location = new System.Drawing.Point(181, 79);
+            this.EmailInput.Location = new System.Drawing.Point(182, 104);
             this.EmailInput.Margin = new System.Windows.Forms.Padding(2);
             this.EmailInput.Name = "EmailInput";
             this.EmailInput.Size = new System.Drawing.Size(76, 20);
             this.EmailInput.TabIndex = 24;
+            this.EmailInput.TextChanged += new System.EventHandler(this.EmailInput_TextChanged);
             // 
             // FirstNameInput
             // 
-            this.FirstNameInput.Location = new System.Drawing.Point(181, 44);
+            this.FirstNameInput.Location = new System.Drawing.Point(182, 69);
             this.FirstNameInput.Margin = new System.Windows.Forms.Padding(2);
             this.FirstNameInput.Name = "FirstNameInput";
             this.FirstNameInput.Size = new System.Drawing.Size(76, 20);
             this.FirstNameInput.TabIndex = 23;
+            this.FirstNameInput.TextChanged += new System.EventHandler(this.FirstNameInput_TextChanged);
             // 
             // FirebaseLabel
             // 
             this.FirebaseLabel.AutoSize = true;
-            this.FirebaseLabel.Location = new System.Drawing.Point(346, 228);
+            this.FirebaseLabel.Location = new System.Drawing.Point(347, 253);
             this.FirebaseLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.FirebaseLabel.Name = "FirebaseLabel";
             this.FirebaseLabel.Size = new System.Drawing.Size(61, 13);
             this.FirebaseLabel.TabIndex = 46;
             this.FirebaseLabel.Text = "Firebase ID";
+            this.FirebaseLabel.Click += new System.EventHandler(this.FirebaseLabel_Click);
             // 
             // FirebaseInput
             // 
-            this.FirebaseInput.Location = new System.Drawing.Point(411, 226);
+            this.FirebaseInput.Location = new System.Drawing.Point(412, 251);
             this.FirebaseInput.Margin = new System.Windows.Forms.Padding(2);
             this.FirebaseInput.Name = "FirebaseInput";
             this.FirebaseInput.Size = new System.Drawing.Size(76, 20);
             this.FirebaseInput.TabIndex = 45;
+            this.FirebaseInput.TextChanged += new System.EventHandler(this.FirebaseInput_TextChanged);
             // 
             // CreateUserBtn
             // 
-            this.CreateUserBtn.Location = new System.Drawing.Point(299, 320);
+            this.CreateUserBtn.Location = new System.Drawing.Point(305, 299);
             this.CreateUserBtn.Margin = new System.Windows.Forms.Padding(2);
             this.CreateUserBtn.Name = "CreateUserBtn";
             this.CreateUserBtn.Size = new System.Drawing.Size(109, 21);
@@ -287,19 +312,30 @@ namespace ControlRoomApplication.GUI
             // 
             // CancelBtn
             // 
-            this.CancelBtn.Location = new System.Drawing.Point(181, 319);
+            this.CancelBtn.Location = new System.Drawing.Point(191, 299);
             this.CancelBtn.Name = "CancelBtn";
-            this.CancelBtn.Size = new System.Drawing.Size(109, 23);
+            this.CancelBtn.Size = new System.Drawing.Size(109, 21);
             this.CancelBtn.TabIndex = 48;
             this.CancelBtn.Text = "Cancel";
             this.CancelBtn.UseVisualStyleBackColor = true;
             this.CancelBtn.Click += new System.EventHandler(this.CancelBtn_Click);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(264, 22);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(76, 20);
+            this.label1.TabIndex = 49;
+            this.label1.Text = "Add User";
+            // 
             // UserCreationForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(600, 366);
+            this.ClientSize = new System.Drawing.Size(600, 344);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.CancelBtn);
             this.Controls.Add(this.CreateUserBtn);
             this.Controls.Add(this.FirebaseLabel);
@@ -329,6 +365,7 @@ namespace ControlRoomApplication.GUI
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "UserCreationForm";
             this.Text = "UserCreationForm";
+            this.Load += new System.EventHandler(this.UserCreationForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -362,5 +399,6 @@ namespace ControlRoomApplication.GUI
         private System.Windows.Forms.TextBox FirebaseInput;
         private System.Windows.Forms.Button CreateUserBtn;
         private System.Windows.Forms.Button CancelBtn;
+        private System.Windows.Forms.Label label1;
     }
 }

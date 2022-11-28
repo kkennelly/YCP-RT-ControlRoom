@@ -203,14 +203,14 @@ namespace ControlRoomApplication.Controllers
                     DateTime start = NextAppointment.start_time;
 
                     // Get current time based on PC's local time. 
-                    DateTime current = DateTime.Now;
+                    DateTime current = DateTime.UtcNow;
 
                     // Compare current time to appointment.  
-                    TimeSpan diff = start - current;
+                    TimeSpan diff = current.Subtract(start);
 
                     // If appointment is 1+ min overdue, cancel appointment. 
                     // We know it is overdue if the TimeSpan is less than or equal to a negative number of minutes.
-                    if (diff.TotalMinutes <= -MiscellaneousConstants.OVERDUE_APPOINTMENT_MINUTES)
+                    if (diff.TotalMinutes >= MiscellaneousConstants.OVERDUE_APPOINTMENT_MINUTES)
                     {
                         logger.Info(Utilities.GetTimeStamp() + ": Appointment is overdue. Cancelling appointment...");
                         // Cancel the appointment. 

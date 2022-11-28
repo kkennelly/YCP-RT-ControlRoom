@@ -196,7 +196,6 @@ namespace ControlRoomApplication.Controllers
                 // Checks if Appointment is overdue.
                 // We consider appointments that have a start_time over one minute
                 // from the current time as overdue.
-
                 if(NextAppointment != null)
                 {
                     // Get start time of appointment. 
@@ -208,19 +207,43 @@ namespace ControlRoomApplication.Controllers
                     // Compare current time to appointment.  
                     TimeSpan diff = current.Subtract(start);
 
-                    // If appointment is 1+ min overdue, cancel appointment. 
                     // We know it is overdue if the TimeSpan is less than or equal to a negative number of minutes.
                     if (diff.TotalMinutes >= MiscellaneousConstants.OVERDUE_APPOINTMENT_MINUTES)
                     {
-                        logger.Info(Utilities.GetTimeStamp() + ": Appointment is overdue. Cancelling appointment...");
-                        // Cancel the appointment. 
-                        NextAppointment._Status = AppointmentStatusEnum.CANCELED;
+                        // If the end time has not been reached yet, we can still run the appointment. However, still
+                        // notify the user about the late start.                         
+                        if(NextAppointment.end_time.CompareTo(DateTime.UtcNow) > 0)
+                        {
+                            logger.Info(Utilities.GetTimeStamp() + ": Appointment is overdue, but end time has not passed. The appointment will start, but may not finish on time.");
+                            // Notify the user about the late start. 
+                            string subject = Utilities.GetTimeStamp() + ": Radio Telescope Appointment Delayed";
+                            string body = "Your appointment scheduled for " + NextAppointment.start_time.ToString() + " was delayed due to the " +
+                                "Radio Telescope Control Room having been offline. Your appointment will end at the scheduled time and may end " +
+                                "before it has time to finish. Apologies for any inconvienence.";
+                            logger.Info(Utilities.GetTimeStamp() + ": Notifying user...");
+                            //EmailNotifications.sendToUser(NextAppointment.User, subject, body, "system@ycpradiotelescope.com");
+                        } 
+                        else
+                        {
+                            // In the case that the end time has already passed, cancel the appointment and notify the user. 
+                            logger.Info(Utilities.GetTimeStamp() + ": Appointment is overdue and end time has passed. Cancelling appointment...");
 
-                        // Update the appointment. 
-                        DatabaseOperations.UpdateAppointment(NextAppointment); 
+                            // Cancel the appointment. 
+                            NextAppointment._Status = AppointmentStatusEnum.CANCELED;
 
-                        // Continue to the next appointment. 
-                        continue; 
+                            // Update the appointment. 
+                            DatabaseOperations.UpdateAppointment(NextAppointment);
+
+                            // Notify the user via email. 
+                            string subject = Utilities.GetTimeStamp() + ": Radio Telescope Appointment Cancelled";
+                            string body = "Your appointment scheduled for " + NextAppointment.start_time.ToString() + " has been cancelled due to the " +
+                                "Radio Telescope Control Room having been offline. Apologies for any inconvienence.";
+                            logger.Info(Utilities.GetTimeStamp() + ": Notifying user...");
+                            //EmailNotifications.sendToUser(NextAppointment.User, subject, body, "system@ycpradiotelescope.com"); 
+
+                            // Continue to the next appointment. 
+                            continue;
+                        }
                     }
                 }
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ControlRoomApplication.Entities.Encoder
 {
-    class EncoderAverages
+    public class EncoderAverages
     {
         // Capacity is the number of readings we want to compare
         private const int _capacity = 10;

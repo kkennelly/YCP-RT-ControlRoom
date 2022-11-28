@@ -29,7 +29,6 @@ namespace ControlRoomApplication.GUI
         /// </summary>
         private void InitializeComponent()
         {
-            this.TypeInput = new System.Windows.Forms.TextBox();
             this.StatusInput = new System.Windows.Forms.TextBox();
             this.CelestialBodyIdInput = new System.Windows.Forms.TextBox();
             this.SpectraCyberConfigIdInput = new System.Windows.Forms.TextBox();
@@ -53,16 +52,8 @@ namespace ControlRoomApplication.GUI
             this.PublicInput = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
             this.PriorityInputList = new System.Windows.Forms.ComboBox();
+            this.TypeInputList = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
-            // 
-            // TypeInput
-            // 
-            this.TypeInput.Location = new System.Drawing.Point(433, 127);
-            this.TypeInput.Margin = new System.Windows.Forms.Padding(2);
-            this.TypeInput.Name = "TypeInput";
-            this.TypeInput.Size = new System.Drawing.Size(76, 20);
-            this.TypeInput.TabIndex = 3;
-            this.TypeInput.TextChanged += new System.EventHandler(this.TypeInput_TextChanged);
             // 
             // StatusInput
             // 
@@ -277,11 +268,20 @@ namespace ControlRoomApplication.GUI
             this.PriorityInputList.Size = new System.Drawing.Size(75, 21);
             this.PriorityInputList.TabIndex = 29;
             // 
+            // TypeInputList
+            // 
+            this.TypeInputList.FormattingEnabled = true;
+            this.TypeInputList.Location = new System.Drawing.Point(433, 127);
+            this.TypeInputList.Name = "TypeInputList";
+            this.TypeInputList.Size = new System.Drawing.Size(75, 21);
+            this.TypeInputList.TabIndex = 30;
+            // 
             // AppointmentCreationForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(547, 321);
+            this.Controls.Add(this.TypeInputList);
             this.Controls.Add(this.PriorityInputList);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.PublicInput);
@@ -305,7 +305,6 @@ namespace ControlRoomApplication.GUI
             this.Controls.Add(this.SpectraCyberConfigIdInput);
             this.Controls.Add(this.CelestialBodyIdInput);
             this.Controls.Add(this.StatusInput);
-            this.Controls.Add(this.TypeInput);
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "AppointmentCreationForm";
             this.Text = "AppointmentCreationForm";
@@ -315,7 +314,6 @@ namespace ControlRoomApplication.GUI
         }
 
         #endregion
-        private System.Windows.Forms.TextBox TypeInput;
         private System.Windows.Forms.TextBox StatusInput;
         private System.Windows.Forms.TextBox CelestialBodyIdInput;
         private System.Windows.Forms.TextBox SpectraCyberConfigIdInput;
@@ -339,5 +337,6 @@ namespace ControlRoomApplication.GUI
         private System.Windows.Forms.CheckBox PublicInput;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ComboBox PriorityInputList;
+        private System.Windows.Forms.ComboBox TypeInputList;
     }
 }

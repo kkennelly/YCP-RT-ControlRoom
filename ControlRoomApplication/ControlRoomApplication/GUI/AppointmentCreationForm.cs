@@ -45,7 +45,7 @@ namespace ControlRoomApplication.GUI
                     Public = Convert.ToInt16(PublicInput.Checked),
                     orientation_id = int.Parse(OrientationIdInput.Text),
                     spectracyber_config_id = int.Parse(SpectraCyberConfigIdInput.Text),
-                    type = TypeInput.Text,
+                    type = TypeInputList.Text,
                     celestial_body_id = int.Parse(CelestialBodyIdInput.Text),
                     priority = PriorityInputList.Text
                 };
@@ -83,6 +83,15 @@ namespace ControlRoomApplication.GUI
         {
             PriorityInputList.Items.Add(AppointmentPriorityEnum.PRIMARY.ToString());
             PriorityInputList.Items.Add(AppointmentPriorityEnum.SECONDARY.ToString());
+        }
+
+        private void LoadTypes()
+        {
+            TypeInputList.Items.Add(AppointmentTypeEnum.POINT.ToString());
+            TypeInputList.Items.Add(AppointmentTypeEnum.RASTER.ToString());
+            TypeInputList.Items.Add(AppointmentTypeEnum.CELESTIAL_BODY.ToString());
+            TypeInputList.Items.Add(AppointmentTypeEnum.DRIFT_SCAN.ToString());
+            TypeInputList.Items.Add(AppointmentTypeEnum.UNDEFINED.ToString());
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)

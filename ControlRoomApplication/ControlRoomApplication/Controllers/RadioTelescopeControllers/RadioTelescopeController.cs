@@ -1433,8 +1433,11 @@ namespace ControlRoomApplication.Controllers
                 EncoderAverages.NumErrors++;
                 if (EncoderAverages.NumErrors >= EncoderAverages.maxErrors)
                 {
+                    EncoderAverages.MotorEncoder.Clear();
+                    EncoderAverages.AbsoluteEncoder.Clear();
                     return false;
                 }
+
                 return true;
             }
 

@@ -69,7 +69,7 @@ namespace ControlRoomApplication.GUI
             this.CelestialBodyIdInput.Location = new System.Drawing.Point(433, 162);
             this.CelestialBodyIdInput.Margin = new System.Windows.Forms.Padding(2);
             this.CelestialBodyIdInput.Name = "CelestialBodyIdInput";
-            this.CelestialBodyIdInput.Size = new System.Drawing.Size(76, 20);
+            this.CelestialBodyIdInput.Size = new System.Drawing.Size(102, 20);
             this.CelestialBodyIdInput.TabIndex = 5;
             // 
             // SpectraCyberConfigIdInput
@@ -77,7 +77,7 @@ namespace ControlRoomApplication.GUI
             this.SpectraCyberConfigIdInput.Location = new System.Drawing.Point(433, 95);
             this.SpectraCyberConfigIdInput.Margin = new System.Windows.Forms.Padding(2);
             this.SpectraCyberConfigIdInput.Name = "SpectraCyberConfigIdInput";
-            this.SpectraCyberConfigIdInput.Size = new System.Drawing.Size(76, 20);
+            this.SpectraCyberConfigIdInput.Size = new System.Drawing.Size(102, 20);
             this.SpectraCyberConfigIdInput.TabIndex = 8;
             // 
             // OrientationIdInput
@@ -85,7 +85,7 @@ namespace ControlRoomApplication.GUI
             this.OrientationIdInput.Location = new System.Drawing.Point(433, 62);
             this.OrientationIdInput.Margin = new System.Windows.Forms.Padding(2);
             this.OrientationIdInput.Name = "OrientationIdInput";
-            this.OrientationIdInput.Size = new System.Drawing.Size(76, 20);
+            this.OrientationIdInput.Size = new System.Drawing.Size(103, 20);
             this.OrientationIdInput.TabIndex = 9;
             // 
             // TelescopeIdInput
@@ -99,7 +99,7 @@ namespace ControlRoomApplication.GUI
             // 
             // AddApptBtn
             // 
-            this.AddApptBtn.Location = new System.Drawing.Point(273, 277);
+            this.AddApptBtn.Location = new System.Drawing.Point(284, 277);
             this.AddApptBtn.Margin = new System.Windows.Forms.Padding(2);
             this.AddApptBtn.Name = "AddApptBtn";
             this.AddApptBtn.Size = new System.Drawing.Size(110, 23);
@@ -210,7 +210,7 @@ namespace ControlRoomApplication.GUI
             // 
             // CancelBtn
             // 
-            this.CancelBtn.Location = new System.Drawing.Point(158, 277);
+            this.CancelBtn.Location = new System.Drawing.Point(169, 277);
             this.CancelBtn.Name = "CancelBtn";
             this.CancelBtn.Size = new System.Drawing.Size(110, 23);
             this.CancelBtn.TabIndex = 23;
@@ -243,7 +243,7 @@ namespace ControlRoomApplication.GUI
             // PublicInput
             // 
             this.PublicInput.AutoSize = true;
-            this.PublicInput.Location = new System.Drawing.Point(247, 240);
+            this.PublicInput.Location = new System.Drawing.Point(260, 242);
             this.PublicInput.Name = "PublicInput";
             this.PublicInput.Size = new System.Drawing.Size(55, 17);
             this.PublicInput.TabIndex = 27;
@@ -254,7 +254,7 @@ namespace ControlRoomApplication.GUI
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(205, 19);
+            this.label1.Location = new System.Drawing.Point(223, 21);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(133, 20);
             this.label1.TabIndex = 28;
@@ -265,7 +265,7 @@ namespace ControlRoomApplication.GUI
             this.PriorityInputList.FormattingEnabled = true;
             this.PriorityInputList.Location = new System.Drawing.Point(434, 198);
             this.PriorityInputList.Name = "PriorityInputList";
-            this.PriorityInputList.Size = new System.Drawing.Size(75, 21);
+            this.PriorityInputList.Size = new System.Drawing.Size(101, 21);
             this.PriorityInputList.TabIndex = 29;
             // 
             // TypeInputList
@@ -273,14 +273,14 @@ namespace ControlRoomApplication.GUI
             this.TypeInputList.FormattingEnabled = true;
             this.TypeInputList.Location = new System.Drawing.Point(433, 127);
             this.TypeInputList.Name = "TypeInputList";
-            this.TypeInputList.Size = new System.Drawing.Size(75, 21);
+            this.TypeInputList.Size = new System.Drawing.Size(102, 21);
             this.TypeInputList.TabIndex = 30;
             // 
             // AppointmentCreationForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(547, 321);
+            this.ClientSize = new System.Drawing.Size(578, 321);
             this.Controls.Add(this.TypeInputList);
             this.Controls.Add(this.PriorityInputList);
             this.Controls.Add(this.label1);

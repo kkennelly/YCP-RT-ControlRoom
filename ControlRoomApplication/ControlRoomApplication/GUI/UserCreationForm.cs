@@ -18,6 +18,10 @@ namespace ControlRoomApplication.GUI
         public UserCreationForm()
         {
             InitializeComponent();
+
+            LoadRoles();
+
+            LoadNotificationTypes();
         }
 
         private void CreateUserBtn_Click(object sender, EventArgs e)
@@ -29,15 +33,14 @@ namespace ControlRoomApplication.GUI
                     first_name = FirstNameInput.Text,
                     last_name = LastNameInput.Text,
                     email_address = EmailInput.Text,
-                    // No Company? = CompanyInput.Text,
                     phone_number = PhoneInput.Text,
+                    UR = new UserRole(?, (UserRoleEnum) RoleInput.SelectedItem),
+                    notification_type = NotificationTypeInput.Text
                     // No password? = PasswordInput.Text,
                     // No Active? = ActiveInput.Text,
                     // No Status? = StatusInput.Text,
                     // No Picture Approved? = PictureApprovedInput.Text,
                     // No Picture Input? = ProfilePictureInput.Text,
-                    notification_type = NotificationTypeInput.Text,
-                    firebase_id = FirebaseInput.Text
                 };
 
                 DialogResult = DialogResult.OK;
@@ -51,6 +54,22 @@ namespace ControlRoomApplication.GUI
         public User GetUser()
         {
             return _user;
+        }
+
+        private void LoadRoles()
+        {
+            RoleInput.Items.Add(UserRoleEnum.ADMIN);
+            RoleInput.Items.Add(UserRoleEnum.STUDENT);
+            RoleInput.Items.Add(UserRoleEnum.GUEST);
+            RoleInput.Items.Add(UserRoleEnum.MEMBER);
+            RoleInput.Items.Add(UserRoleEnum.RESEARCHER);
+        }
+
+        private void LoadNotificationTypes()
+        {
+            NotificationTypeInput.Items.Add(NotificationTypeEnum.EMAIL);
+            NotificationTypeInput.Items.Add(NotificationTypeEnum.SMS);
+            NotificationTypeInput.Items.Add(NotificationTypeEnum.ALL);
         }
 
         private void ProfilePictureInput_TextChanged(object sender, EventArgs e)

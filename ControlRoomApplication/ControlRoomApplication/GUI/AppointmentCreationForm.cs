@@ -28,6 +28,8 @@ namespace ControlRoomApplication.GUI
             LoadUsers();
 
             LoadPriorities();
+
+            LoadTypes();
         }
 
         private void AddApptBtn_Click(object sender, EventArgs e)
@@ -37,7 +39,8 @@ namespace ControlRoomApplication.GUI
             {
                 _appt = new Appointment
                 {
-                    user_id = users.Find(user => (user.first_name + " " + user.last_name).Equals(UsernameInputList.Text)).Id,
+                    //user_id = users.Find(user => (user.first_name + " " + user.last_name).Equals(UsernameInputList.Text)).Id,
+                    User = users.Find(user => (user.first_name + " " + user.last_name).Equals(UsernameInputList.Text)),
                     start_time = StartTimeInput.Value,
                     end_time = EndTimeInput.Value,
                     status = StatusInput.Text,

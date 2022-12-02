@@ -81,8 +81,8 @@ namespace ControlRoomApplication.Entities.Encoder
             if (AbsoluteEncoder.Count >= _capacity || MotorEncoder.Count >= _capacity)
             {
                 if (
-                    //Math.Abs(absolute.Azimuth - absoluteAverage.Azimuth) > _maxDegrees || 
-                    //Math.Abs(absolute.Elevation - absoluteAverage.Elevation) > _maxDegrees ||
+                    Math.Abs(absolute.Azimuth - absoluteAzAvg) > _maxDegrees ||
+                    Math.Abs(absolute.Elevation - absoluteElAvg) > _maxDegrees ||
                     Math.Abs(((motor.Azimuth + 180) % 360 - 180) - motorAzAvg) > _maxDegrees ||
                     Math.Abs(Math.Abs(motor.Elevation) - motorElAvg) > _maxDegrees)
                 {

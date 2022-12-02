@@ -548,6 +548,10 @@ namespace ControlRoomApplication.Controllers
                 FinalCalibrationOffset = RadioTelescope.CalibrationOrientation;
                 RadioTelescope.PLCDriver.SetFinalOffset(FinalCalibrationOffset);
 
+                // Reset the Encoder Average queues
+                EncoderAverages.AbsoluteEncoder.Clear();
+                EncoderAverages.MotorEncoder.Clear();
+
                 if (RadioTelescope.PLCDriver.CurrentMovementPriority == priority) RadioTelescope.PLCDriver.CurrentMovementPriority = MovementPriority.None;
 
                 Monitor.Exit(MovementLock);
@@ -1423,14 +1427,8 @@ namespace ControlRoomApplication.Controllers
         /// <param name="absolute"> The current orientation of the absolute encoders </param>
         public bool CompareMotorAndAbsoluteEncoders(Orientation motor, Orientation absolute)
         {
-            if (EncoderAverages.AddOrientation(absolute, motor))
+            if (!EncoderAverages.AddOrientation(absolute, motor))
             {
-                EncoderAverages.NumErrors = 0;
-                return true;
-            }
-            else
-            {
-                EncoderAverages.NumErrors++;
                 if (EncoderAverages.NumErrors >= EncoderAverages.maxErrors)
                 {
                     EncoderAverages.MotorEncoder.Clear();
@@ -1441,6 +1439,7 @@ namespace ControlRoomApplication.Controllers
                 return true;
             }
 
+            return true;
             //// This calculates edge cases for when the azimuth goes from 360 degrees to 0
             //double diff = Math.Abs(motor.Azimuth - absolute.Azimuth);
             //diff = Math.Abs((diff + 180) % 360 - 180);

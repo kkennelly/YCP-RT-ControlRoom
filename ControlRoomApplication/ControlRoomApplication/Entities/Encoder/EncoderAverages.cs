@@ -68,8 +68,18 @@ namespace ControlRoomApplication.Entities.Encoder
                 motorAzAvg += ((motor.Azimuth + 180) % 360 - 180) / _capacity;
                 motorElAvg += (Math.Abs(motor.Elevation) / _capacity);
 
+                NumErrors = (NumErrors > 0) ? NumErrors - 1 : 0;
+
+                Console.WriteLine("************BROKE ERROR CHAIN****************");
+
                 return true;
             }
+
+            if (NumErrors == 0)
+                Console.WriteLine("*************STARTED ERROR CHAIN****************");
+            NumErrors++;
+            if (NumErrors == maxErrors / 2)
+                Console.WriteLine("****************CRITICAL NUM ERRORS***************");
 
             return false;
         }
@@ -81,10 +91,10 @@ namespace ControlRoomApplication.Entities.Encoder
             if (AbsoluteEncoder.Count >= _capacity || MotorEncoder.Count >= _capacity)
             {
                 if (
-                    Math.Abs(absolute.Azimuth - absoluteAzAvg) > _maxDegrees ||
-                    Math.Abs(absolute.Elevation - absoluteElAvg) > _maxDegrees ||
-                    Math.Abs(((motor.Azimuth + 180) % 360 - 180) - motorAzAvg) > _maxDegrees ||
-                    Math.Abs(Math.Abs(motor.Elevation) - motorElAvg) > _maxDegrees)
+                    Math.Abs(absolute.Azimuth - absoluteAzAvg) > _maxDegrees*NumErrors ||
+                    Math.Abs(absolute.Elevation - absoluteElAvg) > _maxDegrees*NumErrors ||
+                    Math.Abs(((motor.Azimuth + 180) % 360 - 180) - motorAzAvg) > _maxDegrees*NumErrors ||
+                    Math.Abs(Math.Abs(motor.Elevation) - motorElAvg) > _maxDegrees*NumErrors)
                 {
                     return false;
                 }

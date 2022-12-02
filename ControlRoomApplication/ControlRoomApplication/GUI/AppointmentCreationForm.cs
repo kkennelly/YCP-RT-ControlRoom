@@ -69,7 +69,7 @@ namespace ControlRoomApplication.GUI
         private void LoadDefaultValues()
         {
             TelescopeIdInput.Text = id.ToString();
-            StatusInput.Text = AppointmentStatusEnum.REQUESTED.ToString();
+            StatusInput.Text = AppointmentStatusEnum.SCHEDULED.ToString();
         }
 
         private void LoadUsers()

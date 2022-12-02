@@ -126,11 +126,13 @@ namespace ControlRoomApplication.Database
         /// Adds the specified user to the database
         /// </summary>
         /// <param name="user"></param>
-        public static void AddUser(User user)
+        public static void AddUser(User user, string userRole)
         {
             using (RTDbContext Context = InitializeDatabaseContext())
             {
                 Context.Users.Add(user);
+                SaveContext(Context);
+                Context.Database.ExecuteSqlCommand($"INSERT INTO user_role SET user_id = '{user.Id}', role = '" + userRole + "'");
                 SaveContext(Context);
             }
         }

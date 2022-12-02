@@ -24,7 +24,7 @@ namespace ControlRoomApplication.GUI
         
         private void InitializeDataGrid()
         {
-            dataGridView1.ColumnCount = 4;
+            dataGridView1.ColumnCount = 5;
             dataGridView1.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
             dataGridView1.CellBorderStyle = DataGridViewCellBorderStyle.Single;
             dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.DisplayedCellsExceptHeaders;
@@ -38,6 +38,7 @@ namespace ControlRoomApplication.GUI
             dataGridView1.Columns[1].Name = "Name";
             dataGridView1.Columns[2].Name = "Email";
             dataGridView1.Columns[3].Name = "Phone #";
+            dataGridView1.Columns[4].Name = "Role";
         }
 
         private void LoadUsers()
@@ -50,7 +51,8 @@ namespace ControlRoomApplication.GUI
                     user.Id.ToString(),
                     user.first_name + " " + user.last_name,
                     user.email_address,
-                    user.phone_number
+                    user.phone_number,
+                    user.UR.user_role
                 };
 
                 dataGridView1.Rows.Add(row);

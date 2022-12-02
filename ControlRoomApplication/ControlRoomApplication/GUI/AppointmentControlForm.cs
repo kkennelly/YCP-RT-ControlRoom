@@ -42,7 +42,7 @@ namespace ControlRoomApplication.GUI
 
             if (addUserForm.ShowDialog() == DialogResult.OK)
             {
-                Database.DatabaseOperations.AddUser(addUserForm.GetUser());
+                Database.DatabaseOperations.AddUser(addUserForm.GetUser(), addUserForm.GetUserRole());
 
                 MessageBox.Show("Successfully added user!");
             } 

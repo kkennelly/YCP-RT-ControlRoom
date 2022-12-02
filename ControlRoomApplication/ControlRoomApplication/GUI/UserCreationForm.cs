@@ -34,7 +34,7 @@ namespace ControlRoomApplication.GUI
                     last_name = LastNameInput.Text,
                     email_address = EmailInput.Text,
                     phone_number = PhoneInput.Text,
-                    UR = new UserRole(?, (UserRoleEnum) RoleInput.SelectedItem),
+                    //UR = new UserRole(?, (UserRoleEnum) RoleInput.SelectedItem),
                     notification_type = NotificationTypeInput.Text
                     // No password? = PasswordInput.Text,
                     // No Active? = ActiveInput.Text,
@@ -55,21 +55,25 @@ namespace ControlRoomApplication.GUI
         {
             return _user;
         }
+        public string GetUserRole()
+        {
+            return RoleInput.Text;
+        }
 
         private void LoadRoles()
         {
-            RoleInput.Items.Add(UserRoleEnum.ADMIN);
-            RoleInput.Items.Add(UserRoleEnum.STUDENT);
-            RoleInput.Items.Add(UserRoleEnum.GUEST);
-            RoleInput.Items.Add(UserRoleEnum.MEMBER);
-            RoleInput.Items.Add(UserRoleEnum.RESEARCHER);
+            RoleInput.Items.Add(UserRoleEnum.ADMIN.ToString());
+            RoleInput.Items.Add(UserRoleEnum.STUDENT.ToString());
+            RoleInput.Items.Add(UserRoleEnum.GUEST.ToString());
+            RoleInput.Items.Add(UserRoleEnum.MEMBER.ToString());
+            RoleInput.Items.Add(UserRoleEnum.RESEARCHER.ToString());
         }
 
         private void LoadNotificationTypes()
         {
-            NotificationTypeInput.Items.Add(NotificationTypeEnum.EMAIL);
-            NotificationTypeInput.Items.Add(NotificationTypeEnum.SMS);
-            NotificationTypeInput.Items.Add(NotificationTypeEnum.ALL);
+            NotificationTypeInput.Items.Add(NotificationTypeEnum.EMAIL.ToString());
+            NotificationTypeInput.Items.Add(NotificationTypeEnum.SMS.ToString());
+            NotificationTypeInput.Items.Add(NotificationTypeEnum.ALL.ToString());
         }
 
         private void ProfilePictureInput_TextChanged(object sender, EventArgs e)

@@ -446,6 +446,12 @@
       <DependentUpon>ManualControl.cs</DependentUpon>
     </Compile>
     <Compile Include="GUI\RTControlFormData.cs" />
+    <Compile Include="GUI\SpectraCyberConfigCreationForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\SpectraCyberConfigCreationForm.Designer.cs">
+      <DependentUpon>SpectraCyberConfigCreationForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="GUI\UserCreationForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -570,6 +576,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\SpectraCyberConfigCreationForm.resx">
+      <DependentUpon>SpectraCyberConfigCreationForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\UserCreationForm.resx">
       <DependentUpon>UserCreationForm.cs</DependentUpon>

@@ -31,7 +31,6 @@ namespace ControlRoomApplication.GUI
         {
             this.StatusInput = new System.Windows.Forms.TextBox();
             this.CelestialBodyIdInput = new System.Windows.Forms.TextBox();
-            this.SpectraCyberConfigIdInput = new System.Windows.Forms.TextBox();
             this.OrientationIdInput = new System.Windows.Forms.TextBox();
             this.TelescopeIdInput = new System.Windows.Forms.TextBox();
             this.AddApptBtn = new System.Windows.Forms.Button();
@@ -53,6 +52,7 @@ namespace ControlRoomApplication.GUI
             this.label1 = new System.Windows.Forms.Label();
             this.PriorityInputList = new System.Windows.Forms.ComboBox();
             this.TypeInputList = new System.Windows.Forms.ComboBox();
+            this.SpectraCyberConfigInputList = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // StatusInput
@@ -71,14 +71,6 @@ namespace ControlRoomApplication.GUI
             this.CelestialBodyIdInput.Name = "CelestialBodyIdInput";
             this.CelestialBodyIdInput.Size = new System.Drawing.Size(102, 20);
             this.CelestialBodyIdInput.TabIndex = 5;
-            // 
-            // SpectraCyberConfigIdInput
-            // 
-            this.SpectraCyberConfigIdInput.Location = new System.Drawing.Point(433, 95);
-            this.SpectraCyberConfigIdInput.Margin = new System.Windows.Forms.Padding(2);
-            this.SpectraCyberConfigIdInput.Name = "SpectraCyberConfigIdInput";
-            this.SpectraCyberConfigIdInput.Size = new System.Drawing.Size(102, 20);
-            this.SpectraCyberConfigIdInput.TabIndex = 8;
             // 
             // OrientationIdInput
             // 
@@ -99,7 +91,7 @@ namespace ControlRoomApplication.GUI
             // 
             // AddApptBtn
             // 
-            this.AddApptBtn.Location = new System.Drawing.Point(284, 277);
+            this.AddApptBtn.Location = new System.Drawing.Point(300, 277);
             this.AddApptBtn.Margin = new System.Windows.Forms.Padding(2);
             this.AddApptBtn.Name = "AddApptBtn";
             this.AddApptBtn.Size = new System.Drawing.Size(110, 23);
@@ -210,7 +202,7 @@ namespace ControlRoomApplication.GUI
             // 
             // CancelBtn
             // 
-            this.CancelBtn.Location = new System.Drawing.Point(169, 277);
+            this.CancelBtn.Location = new System.Drawing.Point(182, 277);
             this.CancelBtn.Name = "CancelBtn";
             this.CancelBtn.Size = new System.Drawing.Size(110, 23);
             this.CancelBtn.TabIndex = 23;
@@ -254,7 +246,7 @@ namespace ControlRoomApplication.GUI
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(223, 21);
+            this.label1.Location = new System.Drawing.Point(229, 19);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(133, 20);
             this.label1.TabIndex = 28;
@@ -276,11 +268,20 @@ namespace ControlRoomApplication.GUI
             this.TypeInputList.Size = new System.Drawing.Size(102, 21);
             this.TypeInputList.TabIndex = 30;
             // 
+            // SpectraCyberConfigInputList
+            // 
+            this.SpectraCyberConfigInputList.FormattingEnabled = true;
+            this.SpectraCyberConfigInputList.Location = new System.Drawing.Point(433, 92);
+            this.SpectraCyberConfigInputList.Name = "SpectraCyberConfigInputList";
+            this.SpectraCyberConfigInputList.Size = new System.Drawing.Size(103, 21);
+            this.SpectraCyberConfigInputList.TabIndex = 31;
+            // 
             // AppointmentCreationForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(578, 321);
+            this.Controls.Add(this.SpectraCyberConfigInputList);
             this.Controls.Add(this.TypeInputList);
             this.Controls.Add(this.PriorityInputList);
             this.Controls.Add(this.label1);
@@ -302,7 +303,6 @@ namespace ControlRoomApplication.GUI
             this.Controls.Add(this.AddApptBtn);
             this.Controls.Add(this.TelescopeIdInput);
             this.Controls.Add(this.OrientationIdInput);
-            this.Controls.Add(this.SpectraCyberConfigIdInput);
             this.Controls.Add(this.CelestialBodyIdInput);
             this.Controls.Add(this.StatusInput);
             this.Margin = new System.Windows.Forms.Padding(2);
@@ -316,7 +316,6 @@ namespace ControlRoomApplication.GUI
         #endregion
         private System.Windows.Forms.TextBox StatusInput;
         private System.Windows.Forms.TextBox CelestialBodyIdInput;
-        private System.Windows.Forms.TextBox SpectraCyberConfigIdInput;
         private System.Windows.Forms.TextBox OrientationIdInput;
         private System.Windows.Forms.TextBox TelescopeIdInput;
         private System.Windows.Forms.Button AddApptBtn;
@@ -338,5 +337,6 @@ namespace ControlRoomApplication.GUI
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ComboBox PriorityInputList;
         private System.Windows.Forms.ComboBox TypeInputList;
+        private System.Windows.Forms.ComboBox SpectraCyberConfigInputList;
     }
 }

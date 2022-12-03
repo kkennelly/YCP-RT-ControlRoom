@@ -280,6 +280,10 @@ namespace ControlRoomApplication.Database
             return AdminUsers;
         }
 
+        /// <summary>
+        /// Returns a list of all user roles from the user_role table 
+        /// </summary>
+        /// <returns></returns>
         public static List<UserRole> GetUserRoles()
         {
             List<UserRole> userRoles = new List<UserRole>();
@@ -290,6 +294,22 @@ namespace ControlRoomApplication.Database
             }
 
             return userRoles;
+        }
+
+        /// <summary>
+        /// Returns a list of all SpectraCyber Configurations from the spectracyber_config table 
+        /// </summary>
+        /// <returns></returns>
+        public static List<SpectraCyberConfig> GetAllSpectraCyberConfigs()
+        {
+            List<SpectraCyberConfig> configs = new List<SpectraCyberConfig>();
+
+            using (RTDbContext Context = InitializeDatabaseContext())
+            {
+                configs = Context.SpectraCyberConfigs.SqlQuery("SELECT * FROM spectracyber_config").ToList<SpectraCyberConfig>();
+            }
+
+            return configs;
         }
 
         /// <summary>

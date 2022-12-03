@@ -110,6 +110,8 @@ namespace ControlRoomApplication.GUI
         // This is being passed through so the Weather Station override bool can be modified
         private readonly MainForm mainF;
 
+        CancellationTokenSource cts;
+
         private string[] statuses = { "Offline", "Offline", "Offline", "Offline" };
         private static readonly log4net.ILog logger =
             log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
@@ -135,7 +137,7 @@ namespace ControlRoomApplication.GUI
             dataGridView1.Columns[0].HeaderText = "Hardware";
             dataGridView1.Columns[1].HeaderText = "Status";
 
-            GetHardwareStatuses();
+            //GetHardwareStatuses();
             string[] spectraCyberRow = { "SpectraCyber", statuses[0] };
             string[] weatherStationRow = { "Weather Station", statuses[1] };
             string[] mcuRow = { "MCU", statuses[2] };
@@ -216,6 +218,12 @@ namespace ControlRoomApplication.GUI
             elOld = new Acceleration[0];
             cbOld = new Acceleration[0];
 
+            cts = new CancellationTokenSource();
+            ThreadPool.QueueUserWorkItem(new WaitCallback(GetHardwareStatuses), cts.Token);
+            Thread.Sleep(2500);
+
+            this.FormClosed += new FormClosedEventHandler(DiagnosticsForm_Closed);
+
             logger.Info(Utilities.GetTimeStamp() + ": DiagnosticsForm Initalized");
         }
 
@@ -233,13 +241,69 @@ namespace ControlRoomApplication.GUI
         /// <summary>
         /// Gets and displays the current statuses of the hardware components for the specified configuration.
         /// </summary>
-        private void GetHardwareStatuses() {
-            if (rtController.RadioTelescope.SpectraCyberController.IsConsideredAlive()) {
-                statuses[0] = "Online";
-            }
+        private void GetHardwareStatuses(object obj) {
 
-            if (controlRoom.WeatherStation.IsConsideredAlive()) {
-                statuses[1] = "Online";
+            CancellationToken token = (CancellationToken) obj;
+
+            while (true)
+            {
+                if (token.IsCancellationRequested)
+                {
+                    break;
+                }
+                // Check if the SpectraCyber returns a valid single scan. 
+                SpectraCyberResponse resp = rtController.RadioTelescope.SpectraCyberController.DoSpectraCyberScan();
+
+                if (resp.Valid)
+                {
+                    // A valid scan shows that the SC is online. 
+                    statuses[0] = "Online";
+                }
+                else
+                {
+                    statuses[0] = "Offline";
+
+                    // Since the SpectraCyber is currently offline, we want to try to close the port and reopen it.
+                    // This will allow the Control Room to reconnect to the SC Hardware. 
+                    try
+                    {
+                        rtController.RadioTelescope.SpectraCyberController.BringDown();
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Info(Utilities.GetTimeStamp() + ": Failed to bring down SpectraCyber COM port");
+                    }
+
+                    try
+                    {
+                        rtController.RadioTelescope.SpectraCyberController.BringUp();
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Info(Utilities.GetTimeStamp() + ": Failed to bring up SpectraCyber COM port");
+                    }
+                }
+
+                // Check if the WeatherStation is online. 
+                if (controlRoom.WeatherStation.IsConsideredAlive())
+                {
+                    statuses[1] = "Online";
+                }
+                else
+                {
+                    statuses[1] = "Offline";
+                }
+
+                // Check if the MCU is online. 
+                if (rtController.RadioTelescope.PLCDriver.TestIfComponentIsAlive())
+                {
+                    statuses[2] = "Online"; 
+                } else
+                {
+                    statuses[2] = "Offline"; 
+                }
+
+                Thread.Sleep(1000);
             }
         }
 
@@ -458,7 +522,29 @@ namespace ControlRoomApplication.GUI
             lbEstopStat.Text = rtController.RadioTelescope.PLCDriver.plcInput.Estop.ToString();
             lbGateStat.Text = rtController.RadioTelescope.PLCDriver.plcInput.Gate_Sensor.ToString();
 
-            GetHardwareStatuses();
+            // Update Online/Offline statuses for SpectraCyber, Weather Station, and MCU. 
+            // This updates their values in the table on the Diagnostic Form. 
+            //GetHardwareStatuses();
+            dataGridView1.Rows[0].Cells[1].Value = statuses[0];
+            for(int i = 0; i < dataGridView1.RowCount; i++)
+            {
+                // Need to iterate over each Row's first column to see what device is in that row. 
+                String col0 = (String) dataGridView1.Rows[i].Cells[0].Value;
+                switch (col0)
+                {
+                    case "SpectraCyber":
+                        dataGridView1.Rows[i].Cells[1].Value = statuses[0]; 
+                        break;
+                    case "Weather Station":
+                        dataGridView1.Rows[i].Cells[1].Value = statuses[1];
+                        break;
+                    case "MCU":
+                        dataGridView1.Rows[i].Cells[1].Value = statuses[2];
+                        break;
+                    default:
+                        break; 
+                }
+            }
 
             SetCurrentWeatherData();
 
@@ -843,7 +929,7 @@ namespace ControlRoomApplication.GUI
         {
             if (!rtController.overrides.overrideElevatProx0)
             {
-                ElivationLimitSwitch0.Text = "OVERRIDING";
+                ElivationLimitSwitch0.Text = "DISABLED";
                 ElivationLimitSwitch0.BackColor = System.Drawing.Color.Red;
                 rtController.setOverride("elevation proximity (1)", true);
             }
@@ -859,7 +945,7 @@ namespace ControlRoomApplication.GUI
         {
             if (!rtController.overrides.overrideElevatProx90)
             {
-                ElevationLimitSwitch90.Text = "OVERRIDING";
+                ElevationLimitSwitch90.Text = "DISABLED";
                 ElevationLimitSwitch90.BackColor = System.Drawing.Color.Red;
                 rtController.setOverride("elevation proximity (2)", true);
             }
@@ -982,6 +1068,13 @@ namespace ControlRoomApplication.GUI
             controlRoom.RTControllerManagementThreads[0].ActiveOverrides.Add(new Override(SensorItemEnum.WIND, "Control Room Computer"));
             controlRoom.RTControllerManagementThreads[0].checkCurrentSensorAndOverrideStatus();
           
+        }
+
+        private void DiagnosticsForm_Closed(Object sender, FormClosedEventArgs e)
+        {
+            cts.Cancel();
+            Thread.Sleep(2500);
+            cts.Dispose();
         }
 
         // Getter for RadioTelescopeController
@@ -1134,7 +1227,7 @@ namespace ControlRoomApplication.GUI
             // Elevation Limit Switch 0 Degrees Override
             if(currElProx0)
             {
-                ElivationLimitSwitch0.Text = "OVERRIDING";
+                ElivationLimitSwitch0.Text = "DISABLED";
                 ElivationLimitSwitch0.BackColor = System.Drawing.Color.Red;
             }
             else
@@ -1146,7 +1239,7 @@ namespace ControlRoomApplication.GUI
             // Elevation Limit Switch 90 Degrees Override
             if (currElProx90)
             {
-                ElevationLimitSwitch90.Text = "OVERRIDING";
+                ElevationLimitSwitch90.Text = "DISABLED";
                 ElevationLimitSwitch90.BackColor = System.Drawing.Color.Red;
             }
             else

@@ -207,6 +207,7 @@ namespace ControlRoomApplication.Controllers
                     {
                         // Something went wrong, return the response
                         SerialCommsFailed = true;
+                        response.Valid = false;
                         return;
                     }
 

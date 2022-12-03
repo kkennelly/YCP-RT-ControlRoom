@@ -18,6 +18,12 @@
         public const ushort ACTUAL_MCU_MOVE_ACCELERATION_WITH_GEARING = 50;
 
         /// <summary>
+        /// A scaling factor used to get the correct number of motor ticks needed for a move. This is also used to allign the motor encoders correctly with
+        /// the actual orientation.
+        /// </summary>
+        public const double AZIMUTH_DISCREPANCY_SCALING_FACTOR = 360 / 349.975;
+
+        /// <summary>
         /// The target number of degrees to stop within
         /// </summary>
         public const double TARGET_STOP_DISTANCE = 5;   // Degrees

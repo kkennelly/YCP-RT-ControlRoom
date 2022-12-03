@@ -436,9 +436,19 @@ namespace ControlRoomApplication.Controllers
         }
 
         private bool Int_to_bool(int val) {
+            /*
             if (val == 0) {
                 return false;
             } else { return true; }
+            */
+
+            try
+            {
+                return Convert.ToBoolean(val);
+            } catch (Exception ex)
+            {
+                return false;
+            }
         }
 
 

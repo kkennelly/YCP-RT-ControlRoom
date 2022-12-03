@@ -214,7 +214,9 @@ namespace ControlRoomApplication.Main
             {
                 threads[0].EndAppointment();
             }).Start();
-            
+
+            // Disables manual control on page close
+            formData.manualControlEnabled = false; 
 
             timer1.Enabled = false;
         }

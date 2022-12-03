@@ -351,9 +351,12 @@ namespace ControlRoomApplication.Simulators.Hardware.PLC_MCU {
         }
         
         private ushort BoolToInt(bool i ) {
+            /*
             if(!i) {
                 return 0;
             } else return 1;
+            */
+            return Convert.ToUInt16(i);
         }
 
     }

@@ -44,16 +44,24 @@ namespace ControlRoomApplication.GUI
         private void LoadUsers()
         {
             List<User> users = Database.DatabaseOperations.GetAllUsers();
+            List<UserRole> userRoles = Database.DatabaseOperations.GetUserRoles();
 
             foreach (User user in users)
             {
-                string[] row = {
-                    user.Id.ToString(),
-                    user.first_name + " " + user.last_name,
-                    user.email_address,
-                    user.phone_number,
-                    user.UR.user_role
-                };
+                string[] row = new string[5];
+                row[0] = user.Id.ToString();
+                row[1] = user.first_name + " " + user.last_name;
+                row[2] = user.email_address;
+                row[3] = user.phone_number;
+
+                try
+                {
+                    row[4] = userRoles.Find(userRole => userRole.user_id == user.Id).role;
+                }
+                catch (NullReferenceException ex)
+                {
+                    row[4] = "N/A";
+                }
 
                 dataGridView1.Rows.Add(row);
             }

@@ -27,7 +27,7 @@ namespace ControlRoomApplication.GUI
         
         private void InitializeDataGrid()
         {
-            dataGridView1.ColumnCount = 5;
+            dataGridView1.ColumnCount = 4;
             dataGridView1.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
             dataGridView1.CellBorderStyle = DataGridViewCellBorderStyle.Single;
             dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.DisplayedCellsExceptHeaders;

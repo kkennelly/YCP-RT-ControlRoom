@@ -242,7 +242,7 @@ namespace ControlRoomApplication.Database
 
             using (RTDbContext Context = InitializeDatabaseContext())
             {
-                AllUsers = Context.Users.SqlQuery("Select * from user").ToList<User>();
+                AllUsers = Context.Users.SqlQuery("SELECT * FROM user").ToList<User>();
 
                 if (AllUsers.Count() == 0)
                 {
@@ -278,6 +278,18 @@ namespace ControlRoomApplication.Database
                 u.UR = ur;
             }
             return AdminUsers;
+        }
+
+        public static List<UserRole> GetUserRoles()
+        {
+            List<UserRole> userRoles = new List<UserRole>();
+
+            using (RTDbContext Context = InitializeDatabaseContext())
+            {
+                userRoles = Context.UserRoles.SqlQuery("SELECT * FROM user_role").ToList<UserRole>();
+            }
+
+            return userRoles;
         }
 
         /// <summary>

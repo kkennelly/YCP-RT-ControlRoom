@@ -685,7 +685,7 @@ namespace ControlRoomApplication.GUI
                 azimuthAccChart.ChartAreas[0].AxisX.Minimum = double.NaN;
                 azimuthAccChart.ChartAreas[0].AxisX.Maximum = double.NaN;
 
-                if (azOld != null && Acceleration.SequenceEquals(azOld, azimuthAccel))
+                if (azOld != null && !Acceleration.SequenceEquals(azOld, azimuthAccel))
                 {
                     for (int i = 0; i < azimuthAccel.Length; i++)
                     {
@@ -734,7 +734,7 @@ namespace ControlRoomApplication.GUI
                 elevationAccChart.ChartAreas[0].AxisX.Minimum = double.NaN;
                 elevationAccChart.ChartAreas[0].AxisX.Maximum = double.NaN;
 
-                if (elOld != null && Acceleration.SequenceEquals(elOld, eleAccel))
+                if (elOld != null && !Acceleration.SequenceEquals(elOld, eleAccel))
                 {
                     for (int i = 0; i < eleAccel.Length; i++)
                     {
@@ -782,7 +782,7 @@ namespace ControlRoomApplication.GUI
                 counterBalanceAccChart.ChartAreas[0].AxisX.Minimum = double.NaN;
                 counterBalanceAccChart.ChartAreas[0].AxisX.Maximum = double.NaN;
 
-                if (cbOld != null && Acceleration.SequenceEquals(cbOld, cbAccel))
+                if (cbOld != null && !Acceleration.SequenceEquals(cbOld, cbAccel))
                 {
                     for (int i = 0; i < cbAccel.Length; i++)
                     {

@@ -635,7 +635,7 @@ namespace ControlRoomApplication.Controllers
         /// </summary>
         private void StopReadingRFData()
         {
-            logger.Info(Utilities.GetTimeStamp() + ": Stoping Reading of RTData");
+            logger.Info(Utilities.GetTimeStamp() + ": Stopping Reading of RTData");
             RTController.RadioTelescope.SpectraCyberController.StopScan();
             RTController.RadioTelescope.SpectraCyberController.RemoveActiveAppointmentID();
             RTController.RadioTelescope.SpectraCyberController.SetSpectraCyberModeType(SpectraCyberModeTypeEnum.UNKNOWN);

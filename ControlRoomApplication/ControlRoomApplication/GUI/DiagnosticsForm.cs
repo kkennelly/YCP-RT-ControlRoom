@@ -167,6 +167,10 @@ namespace ControlRoomApplication.GUI
             bool currAmbTempHumidity = rtController.overrides.overrideAmbientTempHumidity;
             bool currElProx0 = rtController.overrides.overrideElevatProx0;
             bool currElProx90 = rtController.overrides.overrideElevatProx90;
+
+            // Manually set LS Override to 0 on the PLC (off) 
+            rtController.RadioTelescope.PLCDriver.setregvalue((ushort)PLC_modbus_server_register_mapping.LIMIT_OVERRIDE, (ushort) 0);
+
             bool currAzimuthAbsEncoder = rtController.overrides.overrideAzimuthAbsEncoder;
             bool currElevationAbsEncoder = rtController.overrides.overrideElevationAbsEncoder;
             bool currAzimuthAccelerometer = rtController.overrides.overrideAzimuthAccelerometer;
@@ -174,6 +178,8 @@ namespace ControlRoomApplication.GUI
             bool currCounterbalanceAccelerometer = rtController.overrides.overrideCounterbalanceAccelerometer;
             UpdateOverrideButtons(currMain, currWS, currAZ, currEL, currAmbTempHumidity, currElProx0, currElProx90, 
                 currAzimuthAbsEncoder, currElevationAbsEncoder, currAzimuthAccelerometer, currElevationAccelerometer, currCounterbalanceAccelerometer);
+
+
 
             SensorSettingsThread = new BackgroundWorker();
             SensorSettingsThread.DoWork += new DoWorkEventHandler(SensorSettingsRoutine);
@@ -256,9 +262,10 @@ namespace ControlRoomApplication.GUI
                     break;
                 }
                 // Check if the SpectraCyber returns a valid single scan. 
-                SpectraCyberResponse resp = rtController.RadioTelescope.SpectraCyberController.DoSpectraCyberScan();
+                //SpectraCyberResponse resp = rtController.RadioTelescope.SpectraCyberController.DoSpectraCyberScan();
 
-                if (resp.Valid)
+                // Trying previous method: 
+                if (rtController.RadioTelescope.SpectraCyberController.TestIfComponentIsAlive())
                 {
                     // A valid scan shows that the SC is online. 
                     statuses[0] = "Online";
@@ -307,7 +314,7 @@ namespace ControlRoomApplication.GUI
                     statuses[2] = "Offline"; 
                 }
 
-                Thread.Sleep(1000);
+                Thread.Sleep(3000);
             }
         }
 
@@ -936,12 +943,18 @@ namespace ControlRoomApplication.GUI
                 ElivationLimitSwitch0.Text = "DISABLED";
                 ElivationLimitSwitch0.BackColor = System.Drawing.Color.Red;
                 rtController.setOverride("elevation proximity (1)", true);
+
+                // Write to PLC. 
+                LimitSwitchHandlePLC();
             }
             else if (rtController.overrides.overrideElevatProx0)
             {
                 ElivationLimitSwitch0.Text = "ENABLED";
                 ElivationLimitSwitch0.BackColor = System.Drawing.Color.LimeGreen;
                 rtController.setOverride("elevation proximity (1)", false);
+
+                // Write to PLC. 
+                LimitSwitchHandlePLC();
             }
         }
 
@@ -952,13 +965,55 @@ namespace ControlRoomApplication.GUI
                 ElevationLimitSwitch90.Text = "DISABLED";
                 ElevationLimitSwitch90.BackColor = System.Drawing.Color.Red;
                 rtController.setOverride("elevation proximity (2)", true);
+
+                // Write to PLC. 
+                LimitSwitchHandlePLC();
             }
-            else
+            else if (rtController.overrides.overrideElevatProx90)
             {
                 ElevationLimitSwitch90.Text = "ENABLED";
                 ElevationLimitSwitch90.BackColor = System.Drawing.Color.LimeGreen;
                 rtController.setOverride("elevation proximity (2)", false);
+
+                // Write to PLC. 
+                LimitSwitchHandlePLC(); 
+                
             }
+        }
+
+        private void LimitSwitchHandlePLC()
+        {
+            // 4 cases to consider when disabling limit switches on PLC. 
+            // 0: Both Limit switches are enabled.
+            // 1: LS 0 is disabled
+            // 256: LS 90 is disabled
+            // 257: Both LS are disabled.
+
+            ushort LSOverride = 0; 
+
+            if(!rtController.overrides.overrideElevatProx0 && !rtController.overrides.overrideElevatProx90)
+            {
+                // Both LS are enabled. 
+                LSOverride = 0; 
+
+            } else if (rtController.overrides.overrideElevatProx0 && !rtController.overrides.overrideElevatProx90)
+            {
+                // LS 0 is disabled. 
+                LSOverride = 1; 
+
+            } else if (!rtController.overrides.overrideElevatProx0 && rtController.overrides.overrideElevatProx90)
+            {
+                // LS 90 is disabled. 
+                LSOverride = 256; 
+
+            } else if (rtController.overrides.overrideElevatProx0 && rtController.overrides.overrideElevatProx90)
+            {
+                // Both LS are disabled. 
+                LSOverride = 257; 
+            }
+
+            // Write the value to the PLC Register. 
+            rtController.RadioTelescope.PLCDriver.setregvalue((ushort)PLC_modbus_server_register_mapping.LIMIT_OVERRIDE, LSOverride);
         }
 
         private void diagnosticScriptCombo_SelectedIndexChanged(object sender, EventArgs e)

@@ -16,15 +16,17 @@ namespace ControlRoomApplication.GUI
     {
         private Appointment _appt;
         private List<User> users;
-        private int id;
+        private int _id;
+
+        private bool _isDrift, _isPoint, _isCelestialBody;
 
         public AppointmentCreationForm(int id)
         {
-            this.id = id;
+            this._id = id;
+
+            _isDrift = _isPoint = _isCelestialBody = false;
 
             InitializeComponent();
-
-            LoadDefaultValues();
 
             LoadUsers();
 
@@ -34,8 +36,17 @@ namespace ControlRoomApplication.GUI
 
             LoadSpectraCyberConfigs();
 
+            LoadCoordinates();
+
+            LoadOrientations();
+
+            ResetAppointmentType();
+
             // Event listeners 
             TypeInputList.TextChanged += new EventHandler(TypeInputList_TextChanged);
+            SpectraCyberConfigInputList.TextChanged += new EventHandler(SpectraCyberConfigInputList_TextChanged);
+            CoordinateInputList.TextChanged += new EventHandler(CoordinateInputList_TextChanged);
+            OrientationInputList.TextChanged += new EventHandler(OrientationInputList_TextChanged);
         }
 
         private void AddApptBtn_Click(object sender, EventArgs e)
@@ -45,19 +56,32 @@ namespace ControlRoomApplication.GUI
             {
                 _appt = new Appointment
                 {
-                    //user_id = users.Find(user => (user.first_name + " " + user.last_name).Equals(UsernameInputList.Text)).Id,
                     User = users.Find(user => (user.first_name + " " + user.last_name).Equals(UsernameInputList.Text)),
                     start_time = StartTimeInput.Value,
                     end_time = EndTimeInput.Value,
-                    status = StatusInput.Text,
-                    telescope_id = int.Parse(TelescopeIdInput.Text),
+                    status = AppointmentStatusEnum.SCHEDULED.ToString(),
+                    telescope_id = _id,
                     Public = Convert.ToInt16(PublicInput.Checked),
-                    orientation_id = int.Parse(OrientationIdInput.Text),
                     spectracyber_config_id = (int) SpectraCyberConfigInputList.SelectedItem,
                     type = TypeInputList.Text,
-                    celestial_body_id = int.Parse(CelestialBodyIdInput.Text),
                     priority = PriorityInputList.Text
                 };
+
+                if (!_isDrift)
+                {
+                    if (_isCelestialBody)
+                    {
+                        _appt.celestial_body_id = int.Parse(CelestialBodyIdInput.Text.Split('|')[0]);
+                    }
+
+                    // Add coordinate(s) 
+
+                }
+                else
+                {
+                    _appt.orientation_id = int.Parse(OrientationInputList.Text.Split('|')[0]);
+                }
+
 
                 DialogResult = DialogResult.OK;
             } 
@@ -70,12 +94,6 @@ namespace ControlRoomApplication.GUI
         public Appointment GetAppointment()
         {
             return _appt;
-        }
-
-        private void LoadDefaultValues()
-        {
-            TelescopeIdInput.Text = id.ToString();
-            StatusInput.Text = AppointmentStatusEnum.SCHEDULED.ToString();
         }
 
         private void LoadUsers()
@@ -105,54 +123,166 @@ namespace ControlRoomApplication.GUI
 
         private void LoadSpectraCyberConfigs()
         {
-            List<SpectraCyberConfig> configs = Database.DatabaseOperations.GetAllSpectraCyberConfigs();
-            
-            foreach (SpectraCyberConfig config in configs)
-            {
-                SpectraCyberConfigInputList.Items.Add(config.Id);
-            }
+            SpectraCyberConfigInputList.Items.Clear();
 
             SpectraCyberConfigInputList.Items.Add("New config");
+
+            List<SpectraCyberConfig> configs = Database.DatabaseOperations.GetAllSpectraCyberConfigs();
+
+            foreach (SpectraCyberConfig config in configs)
+            {
+                SpectraCyberConfigInputList.Items.Add(config.ToString());
+            }
+        }
+
+        private void LoadCoordinates()
+        {
+            CoordinateInputList.Items.Clear();
+
+            CoordinateInputList.Items.Add("New coordinate");
+
+            List<Coordinate> coordinates = Database.DatabaseOperations.GetAllCoordinates();
+            
+            foreach(Coordinate coord in coordinates)
+            {
+                CoordinateInputList.Items.Add(coord.ToString());
+            }
+        }
+
+        private void LoadOrientations()
+        {
+            OrientationInputList.Items.Clear();
+
+            OrientationInputList.Items.Add("New orientation");
+
+            List<Entities.Orientation> orientations = Database.DatabaseOperations.GetAllOrientations();
+
+            foreach (Entities.Orientation orientation in orientations)
+            {
+                OrientationInputList.Items.Add(orientation.ToString());
+            }
+        }
+
+        private void ResetAppointmentType()
+        {
+            CelestialBodyLabel.Hide();
+            OrientationLabel.Hide();
+            CoordinateLabel.Hide();
+
+            CoordinateInputList.Hide();
+            CelestialBodyIdInput.Hide();
+            OrientationInputList.Hide();
+
+            _isDrift = _isCelestialBody = false;
         }
 
         private void TypeInputList_TextChanged(object sender, EventArgs e)
         {
+            ResetAppointmentType();
+            
+
             switch (TypeInputList.SelectedIndex)
             {
-                case 0: // POINT
-                    // display the coordinate input form 
-                    Regex rx = new Regex(@"^[+-]?([0-9]+\.?[0-9]*|\.[0-9]+),[+-]?([0-9]+\.?[0-9]*|\.[0-9]+)$"); // Regex statement to validate input (Format of #,#)
-                    
+                case 4: // DRIFT
+                    _isDrift = true;
+
+                    OrientationLabel.Show();
+                    OrientationInputList.Show();
                     break;
+
                 case 2: // CELESTIAL_BODY
-                    // display the celestial body input form 
+                    _isCelestialBody = true;
 
+                    CelestialBodyLabel.Show();
+                    CelestialBodyIdInput.Show();
                     break;
-                default:
-                    // hide both the coordinate and celetial body elements 
 
+                default: // anything else 
+                    CoordinateLabel.Show();
+                    CoordinateInputList.Show();
                     break;
-            }   
+            }
         }
 
         private void SpectraCyberConfigInputList_TextChanged(object sender, EventArgs e)
         {
-            var scForm = new SpectraCyberConfigCreationForm();
+            if (SpectraCyberConfigInputList.SelectedIndex == 0) // New config
+            { 
+                var scForm = new SpectraCyberConfigCreationForm();
 
-            if (scForm.ShowDialog() == DialogResult.OK)
-            {
-                SpectraCyberConfig config = new SpectraCyberConfig
+                if (scForm.ShowDialog() == DialogResult.OK)
                 {
-                    mode = scForm._mode,
-                    IntegrationTime = scForm._integrationTime,
-                    OffsetVoltage = scForm._offsetVoltage,
-                    IFGain = scForm._ifGain,
-                    DCGain = scForm._dcGain
-                };
+                    SpectraCyberConfig config = new SpectraCyberConfig
+                    {
+                        mode = scForm._mode.ToString(),
+                        IntegrationTime = scForm._integrationTime,
+                        OffsetVoltage = scForm._offsetVoltage,
+                        IFGain = scForm._ifGain,
+                        DCGain = scForm._dcGain
+                    };
+
+                    Database.DatabaseOperations.AddSpectraCyberConfig(config);
+                    MessageBox.Show("Successfully added SpectraCyber Configuration!");
+
+                    LoadSpectraCyberConfigs();
+                }
+                else
+                {
+                    scForm.Dispose();
+                }
             }
-            else
+        }
+
+        private void CoordinateInputList_TextChanged(object sender, EventArgs e)
+        {
+
+            if (CoordinateInputList.SelectedIndex == 0)
             {
-                scForm.Dispose();
+                var coordinateForm = new CoordinateCreationForm();
+
+                if (coordinateForm.ShowDialog() == DialogResult.OK)
+                {
+                    Coordinate coordinate = new Coordinate
+                    {
+                        RightAscension = coordinateForm._rightAscension,
+                        Declination = coordinateForm._declination,
+                    };
+
+                    Database.DatabaseOperations.AddCoordinate(coordinate);
+                    MessageBox.Show("Successfully added coordinate!");
+
+                    LoadCoordinates();
+                }
+                else
+                {
+                    coordinateForm.Dispose();
+                }
+            }
+        }
+
+        private void OrientationInputList_TextChanged(object sender, EventArgs e)
+        {
+            if (OrientationInputList.SelectedIndex == 0)
+            {
+                var orientationForm = new OrientationCreationForm();
+
+                if (orientationForm.ShowDialog() == DialogResult.OK)
+                {
+                    Entities.Orientation orientation = new Entities.Orientation
+                    {
+                        Azimuth = orientationForm._azimuth,
+                        Elevation = orientationForm._elevation
+                    };
+
+                    Database.DatabaseOperations.AddOrientation(orientation);
+                    MessageBox.Show("Successfully added orientation!");
+
+                    LoadOrientations();
+                }
+                else
+                {
+                    orientationForm.Dispose();
+                }
             }
         }
 

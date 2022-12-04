@@ -37,5 +37,10 @@ namespace ControlRoomApplication.Entities
         
         [Column("appointment_id")]
         public int apptId { get; set; }
+
+        public override string ToString()
+        {
+            return Id + "| RA: " + RightAscension + " D: " + Declination;
+        }
     }
 }

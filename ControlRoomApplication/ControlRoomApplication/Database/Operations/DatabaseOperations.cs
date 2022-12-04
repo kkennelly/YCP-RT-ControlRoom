@@ -137,6 +137,45 @@ namespace ControlRoomApplication.Database
             }
         }
 
+        /// <summary>
+        /// Add a spectracyber config to the database
+        /// </summary>
+        /// <param name="config"></param>
+        public static void AddSpectraCyberConfig(SpectraCyberConfig config)
+        {
+            using (RTDbContext Context = InitializeDatabaseContext())
+            {
+                Context.SpectraCyberConfigs.Add(config);
+                SaveContext(Context);
+            }
+        }
+
+        /// <summary>
+        /// Add a coordinate to the database 
+        /// </summary>
+        /// <param name="coordinate"></param>
+        public static void AddCoordinate(Coordinate coordinate)
+        {
+            using (RTDbContext Context = InitializeDatabaseContext())
+            {
+                Context.Coordinates.Add(coordinate);
+                SaveContext(Context);
+            }
+        }
+
+        /// <summary>
+        /// Add an orientation to the database
+        /// </summary>
+        /// <param name="radioTelescope"></param>
+        public static void AddOrientation(Orientation orientation)
+        {
+            using (RTDbContext Context = InitializeDatabaseContext())
+            {
+                Context.Orientations.Add(orientation);
+                SaveContext(Context);
+            }
+        }
+
         //Update telescope to online 
         public static void UpdateTelescope(RadioTelescope radioTelescope)
         {
@@ -310,6 +349,38 @@ namespace ControlRoomApplication.Database
             }
 
             return configs;
+        }
+
+        /// <summary>
+        /// Returns a list of all coordinates from the coordinate table
+        /// </summary>
+        /// <returns></returns>
+        public static List<Coordinate> GetAllCoordinates()
+        {
+            List<Coordinate> coordinates = new List<Coordinate>();
+
+            using (RTDbContext Context = InitializeDatabaseContext())
+            {
+                coordinates = Context.Coordinates.SqlQuery("SELECT * FROM coordinate").ToList<Coordinate>();
+            }
+
+            return coordinates;
+        }
+
+        /// <summary>
+        /// Returns a list of all orientations from the orientation table 
+        /// </summary>
+        /// <returns></returns>
+        public static List<Orientation> GetAllOrientations()
+        {
+            List<Orientation> orientations = new List<Orientation>();
+
+            using (RTDbContext Context = InitializeDatabaseContext())
+            {
+                orientations = Context.Orientations.SqlQuery("SELECT * FROM orientation").ToList<Orientation>();
+            }
+
+            return orientations;
         }
 
         /// <summary>

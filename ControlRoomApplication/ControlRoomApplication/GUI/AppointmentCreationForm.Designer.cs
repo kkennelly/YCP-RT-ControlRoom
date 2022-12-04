@@ -29,14 +29,9 @@ namespace ControlRoomApplication.GUI
         /// </summary>
         private void InitializeComponent()
         {
-            this.StatusInput = new System.Windows.Forms.TextBox();
             this.CelestialBodyIdInput = new System.Windows.Forms.TextBox();
-            this.OrientationIdInput = new System.Windows.Forms.TextBox();
-            this.TelescopeIdInput = new System.Windows.Forms.TextBox();
             this.AddApptBtn = new System.Windows.Forms.Button();
             this.UserLabel = new System.Windows.Forms.Label();
-            this.TelescopeIDLabel = new System.Windows.Forms.Label();
-            this.StatusLabel = new System.Windows.Forms.Label();
             this.EndTimeLabel = new System.Windows.Forms.Label();
             this.OrientationLabel = new System.Windows.Forms.Label();
             this.SpectraCyberConfigLabel = new System.Windows.Forms.Label();
@@ -53,16 +48,10 @@ namespace ControlRoomApplication.GUI
             this.PriorityInputList = new System.Windows.Forms.ComboBox();
             this.TypeInputList = new System.Windows.Forms.ComboBox();
             this.SpectraCyberConfigInputList = new System.Windows.Forms.ComboBox();
+            this.CoordinateLabel = new System.Windows.Forms.Label();
+            this.CoordinateInputList = new System.Windows.Forms.ComboBox();
+            this.OrientationInputList = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
-            // 
-            // StatusInput
-            // 
-            this.StatusInput.Enabled = false;
-            this.StatusInput.Location = new System.Drawing.Point(92, 166);
-            this.StatusInput.Margin = new System.Windows.Forms.Padding(2);
-            this.StatusInput.Name = "StatusInput";
-            this.StatusInput.Size = new System.Drawing.Size(76, 20);
-            this.StatusInput.TabIndex = 4;
             // 
             // CelestialBodyIdInput
             // 
@@ -71,23 +60,6 @@ namespace ControlRoomApplication.GUI
             this.CelestialBodyIdInput.Name = "CelestialBodyIdInput";
             this.CelestialBodyIdInput.Size = new System.Drawing.Size(102, 20);
             this.CelestialBodyIdInput.TabIndex = 5;
-            // 
-            // OrientationIdInput
-            // 
-            this.OrientationIdInput.Location = new System.Drawing.Point(433, 62);
-            this.OrientationIdInput.Margin = new System.Windows.Forms.Padding(2);
-            this.OrientationIdInput.Name = "OrientationIdInput";
-            this.OrientationIdInput.Size = new System.Drawing.Size(103, 20);
-            this.OrientationIdInput.TabIndex = 9;
-            // 
-            // TelescopeIdInput
-            // 
-            this.TelescopeIdInput.Enabled = false;
-            this.TelescopeIdInput.Location = new System.Drawing.Point(92, 203);
-            this.TelescopeIdInput.Margin = new System.Windows.Forms.Padding(2);
-            this.TelescopeIdInput.Name = "TelescopeIdInput";
-            this.TelescopeIdInput.Size = new System.Drawing.Size(76, 20);
-            this.TelescopeIdInput.TabIndex = 10;
             // 
             // AddApptBtn
             // 
@@ -110,26 +82,6 @@ namespace ControlRoomApplication.GUI
             this.UserLabel.TabIndex = 12;
             this.UserLabel.Text = "User";
             // 
-            // TelescopeIDLabel
-            // 
-            this.TelescopeIDLabel.AutoSize = true;
-            this.TelescopeIDLabel.Location = new System.Drawing.Point(17, 206);
-            this.TelescopeIDLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.TelescopeIDLabel.Name = "TelescopeIDLabel";
-            this.TelescopeIDLabel.Size = new System.Drawing.Size(71, 13);
-            this.TelescopeIDLabel.TabIndex = 14;
-            this.TelescopeIDLabel.Text = "Telescope ID";
-            // 
-            // StatusLabel
-            // 
-            this.StatusLabel.AutoSize = true;
-            this.StatusLabel.Location = new System.Drawing.Point(51, 169);
-            this.StatusLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.StatusLabel.Name = "StatusLabel";
-            this.StatusLabel.Size = new System.Drawing.Size(37, 13);
-            this.StatusLabel.TabIndex = 15;
-            this.StatusLabel.Text = "Status";
-            // 
             // EndTimeLabel
             // 
             this.EndTimeLabel.AutoSize = true;
@@ -143,27 +95,27 @@ namespace ControlRoomApplication.GUI
             // OrientationLabel
             // 
             this.OrientationLabel.AutoSize = true;
-            this.OrientationLabel.Location = new System.Drawing.Point(357, 62);
+            this.OrientationLabel.Location = new System.Drawing.Point(370, 200);
             this.OrientationLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.OrientationLabel.Name = "OrientationLabel";
-            this.OrientationLabel.Size = new System.Drawing.Size(72, 13);
+            this.OrientationLabel.Size = new System.Drawing.Size(58, 13);
             this.OrientationLabel.TabIndex = 17;
-            this.OrientationLabel.Text = "Orientation ID";
+            this.OrientationLabel.Text = "Orientation";
             // 
             // SpectraCyberConfigLabel
             // 
             this.SpectraCyberConfigLabel.AutoSize = true;
-            this.SpectraCyberConfigLabel.Location = new System.Drawing.Point(311, 95);
+            this.SpectraCyberConfigLabel.Location = new System.Drawing.Point(324, 59);
             this.SpectraCyberConfigLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.SpectraCyberConfigLabel.Name = "SpectraCyberConfigLabel";
-            this.SpectraCyberConfigLabel.Size = new System.Drawing.Size(118, 13);
+            this.SpectraCyberConfigLabel.Size = new System.Drawing.Size(104, 13);
             this.SpectraCyberConfigLabel.TabIndex = 18;
-            this.SpectraCyberConfigLabel.Text = "SpectraCyber Config ID";
+            this.SpectraCyberConfigLabel.Text = "SpectraCyber Config";
             // 
             // TypeLabel
             // 
             this.TypeLabel.AutoSize = true;
-            this.TypeLabel.Location = new System.Drawing.Point(398, 130);
+            this.TypeLabel.Location = new System.Drawing.Point(397, 95);
             this.TypeLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.TypeLabel.Name = "TypeLabel";
             this.TypeLabel.Size = new System.Drawing.Size(31, 13);
@@ -173,12 +125,12 @@ namespace ControlRoomApplication.GUI
             // CelestialBodyLabel
             // 
             this.CelestialBodyLabel.AutoSize = true;
-            this.CelestialBodyLabel.Location = new System.Drawing.Point(342, 166);
+            this.CelestialBodyLabel.Location = new System.Drawing.Point(355, 166);
             this.CelestialBodyLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.CelestialBodyLabel.Name = "CelestialBodyLabel";
-            this.CelestialBodyLabel.Size = new System.Drawing.Size(87, 13);
+            this.CelestialBodyLabel.Size = new System.Drawing.Size(73, 13);
             this.CelestialBodyLabel.TabIndex = 20;
-            this.CelestialBodyLabel.Text = "Celestial Body ID";
+            this.CelestialBodyLabel.Text = "Celestial Body";
             // 
             // StartTimeLabel
             // 
@@ -193,7 +145,7 @@ namespace ControlRoomApplication.GUI
             // PriorityLabel
             // 
             this.PriorityLabel.AutoSize = true;
-            this.PriorityLabel.Location = new System.Drawing.Point(391, 203);
+            this.PriorityLabel.Location = new System.Drawing.Point(49, 169);
             this.PriorityLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.PriorityLabel.Name = "PriorityLabel";
             this.PriorityLabel.Size = new System.Drawing.Size(38, 13);
@@ -255,7 +207,7 @@ namespace ControlRoomApplication.GUI
             // PriorityInputList
             // 
             this.PriorityInputList.FormattingEnabled = true;
-            this.PriorityInputList.Location = new System.Drawing.Point(434, 198);
+            this.PriorityInputList.Location = new System.Drawing.Point(92, 166);
             this.PriorityInputList.Name = "PriorityInputList";
             this.PriorityInputList.Size = new System.Drawing.Size(101, 21);
             this.PriorityInputList.TabIndex = 29;
@@ -263,7 +215,7 @@ namespace ControlRoomApplication.GUI
             // TypeInputList
             // 
             this.TypeInputList.FormattingEnabled = true;
-            this.TypeInputList.Location = new System.Drawing.Point(433, 127);
+            this.TypeInputList.Location = new System.Drawing.Point(433, 92);
             this.TypeInputList.Name = "TypeInputList";
             this.TypeInputList.Size = new System.Drawing.Size(102, 21);
             this.TypeInputList.TabIndex = 30;
@@ -271,16 +223,44 @@ namespace ControlRoomApplication.GUI
             // SpectraCyberConfigInputList
             // 
             this.SpectraCyberConfigInputList.FormattingEnabled = true;
-            this.SpectraCyberConfigInputList.Location = new System.Drawing.Point(433, 92);
+            this.SpectraCyberConfigInputList.Location = new System.Drawing.Point(433, 56);
             this.SpectraCyberConfigInputList.Name = "SpectraCyberConfigInputList";
             this.SpectraCyberConfigInputList.Size = new System.Drawing.Size(103, 21);
             this.SpectraCyberConfigInputList.TabIndex = 31;
+            // 
+            // CoordinateLabel
+            // 
+            this.CoordinateLabel.AutoSize = true;
+            this.CoordinateLabel.Location = new System.Drawing.Point(370, 130);
+            this.CoordinateLabel.Name = "CoordinateLabel";
+            this.CoordinateLabel.Size = new System.Drawing.Size(58, 13);
+            this.CoordinateLabel.TabIndex = 32;
+            this.CoordinateLabel.Text = "Coordinate";
+            // 
+            // CoordinateInputList
+            // 
+            this.CoordinateInputList.FormattingEnabled = true;
+            this.CoordinateInputList.Location = new System.Drawing.Point(433, 127);
+            this.CoordinateInputList.Name = "CoordinateInputList";
+            this.CoordinateInputList.Size = new System.Drawing.Size(103, 21);
+            this.CoordinateInputList.TabIndex = 33;
+            // 
+            // OrientationInputList
+            // 
+            this.OrientationInputList.FormattingEnabled = true;
+            this.OrientationInputList.Location = new System.Drawing.Point(433, 197);
+            this.OrientationInputList.Name = "OrientationInputList";
+            this.OrientationInputList.Size = new System.Drawing.Size(103, 21);
+            this.OrientationInputList.TabIndex = 34;
             // 
             // AppointmentCreationForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(578, 321);
+            this.Controls.Add(this.OrientationInputList);
+            this.Controls.Add(this.CoordinateInputList);
+            this.Controls.Add(this.CoordinateLabel);
             this.Controls.Add(this.SpectraCyberConfigInputList);
             this.Controls.Add(this.TypeInputList);
             this.Controls.Add(this.PriorityInputList);
@@ -297,14 +277,9 @@ namespace ControlRoomApplication.GUI
             this.Controls.Add(this.SpectraCyberConfigLabel);
             this.Controls.Add(this.OrientationLabel);
             this.Controls.Add(this.EndTimeLabel);
-            this.Controls.Add(this.StatusLabel);
-            this.Controls.Add(this.TelescopeIDLabel);
             this.Controls.Add(this.UserLabel);
             this.Controls.Add(this.AddApptBtn);
-            this.Controls.Add(this.TelescopeIdInput);
-            this.Controls.Add(this.OrientationIdInput);
             this.Controls.Add(this.CelestialBodyIdInput);
-            this.Controls.Add(this.StatusInput);
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "AppointmentCreationForm";
             this.Text = "AppointmentCreationForm";
@@ -314,14 +289,9 @@ namespace ControlRoomApplication.GUI
         }
 
         #endregion
-        private System.Windows.Forms.TextBox StatusInput;
         private System.Windows.Forms.TextBox CelestialBodyIdInput;
-        private System.Windows.Forms.TextBox OrientationIdInput;
-        private System.Windows.Forms.TextBox TelescopeIdInput;
         private System.Windows.Forms.Button AddApptBtn;
         private System.Windows.Forms.Label UserLabel;
-        private System.Windows.Forms.Label TelescopeIDLabel;
-        private System.Windows.Forms.Label StatusLabel;
         private System.Windows.Forms.Label EndTimeLabel;
         private System.Windows.Forms.Label OrientationLabel;
         private System.Windows.Forms.Label SpectraCyberConfigLabel;
@@ -338,5 +308,8 @@ namespace ControlRoomApplication.GUI
         private System.Windows.Forms.ComboBox PriorityInputList;
         private System.Windows.Forms.ComboBox TypeInputList;
         private System.Windows.Forms.ComboBox SpectraCyberConfigInputList;
+        private System.Windows.Forms.Label CoordinateLabel;
+        private System.Windows.Forms.ComboBox CoordinateInputList;
+        private System.Windows.Forms.ComboBox OrientationInputList;
     }
 }

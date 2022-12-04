@@ -399,6 +399,12 @@
     <Compile Include="GUI\AppointmentCreationForm.Designer.cs">
       <DependentUpon>AppointmentCreationForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="GUI\CoordinateCreationForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\CoordinateCreationForm.Designer.cs">
+      <DependentUpon>CoordinateCreationForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="GUI\DropDownEnums\PLCDropdown.cs" />
     <Compile Include="GUI\DropDownEnums\SpectraCyberDropdown.cs" />
     <Compile Include="GUI\DropDownEnums\WeatherStationDropdown.cs" />
@@ -432,6 +438,12 @@
     </Compile>
     <Compile Include="GUI\InputDialogs\InputDialog.Designer.cs">
       <DependentUpon>InputDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\OrientationCreationForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\OrientationCreationForm.Designer.cs">
+      <DependentUpon>OrientationCreationForm.cs</DependentUpon>
     </Compile>
     <Compile Include="GUI\RTControlForm.cs">
       <SubType>Form</SubType>
@@ -553,6 +565,9 @@
     <EmbeddedResource Include="GUI\AppointmentCreationForm.resx">
       <DependentUpon>AppointmentCreationForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="GUI\CoordinateCreationForm.resx">
+      <DependentUpon>CoordinateCreationForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GUI\InputDialogs\CustomOrientationInputDialog.resx">
       <DependentUpon>CustomOrientationInputDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -567,6 +582,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\InputDialogs\InputDialog.resx">
       <DependentUpon>InputDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\OrientationCreationForm.resx">
+      <DependentUpon>OrientationCreationForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\RTControlForm.resx">
       <DependentUpon>RTControlForm.cs</DependentUpon>

@@ -80,5 +80,10 @@ namespace ControlRoomApplication.Entities
         {
             return new Orientation(Azimuth, Elevation);
         }
+
+        public override string ToString()
+        {
+            return Id + "| A: " + Azimuth + " E: " + Elevation;
+        }
     }
 }

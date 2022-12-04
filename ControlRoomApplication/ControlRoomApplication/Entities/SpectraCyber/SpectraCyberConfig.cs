@@ -158,5 +158,10 @@ namespace ControlRoomApplication.Entities
         {
             return Id.GetHashCode();
         }
+
+        public override string ToString()
+        {
+            return Id + "| IT: " + IntegrationTime + " OV: " + OffsetVoltage + " IFG: " + IFGain + " DCG: " + DCGain + "B: " + bandwidth; 
+        }
     }
 }

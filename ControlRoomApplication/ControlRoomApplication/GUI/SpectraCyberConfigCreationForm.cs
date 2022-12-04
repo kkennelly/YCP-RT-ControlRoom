@@ -13,11 +13,12 @@ namespace ControlRoomApplication.GUI
 {
     public partial class SpectraCyberConfigCreationForm : Form
     {
-        public double _integrationTime { get; set; }
+        public SpectraCyberModeTypeEnum _mode { get; set; }
+        public SpectraCyberIntegrationTimeEnum _integrationTime { get; set; }
         public double _offsetVoltage { get; set; }
         public double _ifGain { get; set; }
-        public int _dcGain { get; set; }
-        public int _bandwidth { get; set; }
+        public SpectraCyberDCGainEnum _dcGain { get; set; }
+        public SpectraCyberBandwidthEnum _bandwidth { get; set; }
 
         public SpectraCyberConfigCreationForm()
         {
@@ -73,11 +74,12 @@ namespace ControlRoomApplication.GUI
 
             try
             {
-                _integrationTime = SpectraCyberIntegrationTimeEnumHelper.GetDoubleValue((SpectraCyberIntegrationTimeEnum) IntegrationTimeInputList.SelectedItem);
+                _mode = (SpectraCyberModeTypeEnum) ModeInputList.SelectedItem;
+                _integrationTime = (SpectraCyberIntegrationTimeEnum) IntegrationTimeInputList.SelectedItem;
                 _offsetVoltage = Convert.ToDouble(OffsetVoltageInput.Text);
                 _ifGain = Convert.ToDouble(IFGainInput.Text);
-                _dcGain = SpectraCyberDCGainEnumHelper.GetIntegerValue((SpectraCyberDCGainEnum) DCGainInputList.SelectedItem);
-                _bandwidth = Convert.ToInt16((SpectraCyberBandwidthEnum) BandwidthInputList.SelectedItem);
+                _dcGain = (SpectraCyberDCGainEnum) DCGainInputList.SelectedItem;
+                _bandwidth = (SpectraCyberBandwidthEnum) BandwidthInputList.SelectedItem;
             }
             catch (Exception ex)
             {

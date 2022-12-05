@@ -40,8 +40,8 @@ namespace ControlRoomApplication.GUI
             this.StartTimeLabel = new System.Windows.Forms.Label();
             this.PriorityLabel = new System.Windows.Forms.Label();
             this.CancelBtn = new System.Windows.Forms.Button();
-            this.StartTimeInput = new System.Windows.Forms.DateTimePicker();
-            this.EndTimeInput = new System.Windows.Forms.DateTimePicker();
+            this.StartDateInput = new System.Windows.Forms.DateTimePicker();
+            this.EndDateInput = new System.Windows.Forms.DateTimePicker();
             this.UsernameInputList = new System.Windows.Forms.ComboBox();
             this.PublicInput = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -51,6 +51,10 @@ namespace ControlRoomApplication.GUI
             this.CoordinateLabel = new System.Windows.Forms.Label();
             this.CoordinateInputList = new System.Windows.Forms.ComboBox();
             this.OrientationInputList = new System.Windows.Forms.ComboBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.StartTimeInput = new System.Windows.Forms.DateTimePicker();
+            this.EndTimeInput = new System.Windows.Forms.DateTimePicker();
             this.SuspendLayout();
             // 
             // CelestialBodyIdInput
@@ -85,12 +89,12 @@ namespace ControlRoomApplication.GUI
             // EndTimeLabel
             // 
             this.EndTimeLabel.AutoSize = true;
-            this.EndTimeLabel.Location = new System.Drawing.Point(36, 130);
+            this.EndTimeLabel.Location = new System.Drawing.Point(35, 166);
             this.EndTimeLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.EndTimeLabel.Name = "EndTimeLabel";
             this.EndTimeLabel.Size = new System.Drawing.Size(52, 13);
             this.EndTimeLabel.TabIndex = 16;
-            this.EndTimeLabel.Text = "End Time";
+            this.EndTimeLabel.Text = "End Date";
             // 
             // OrientationLabel
             // 
@@ -135,17 +139,17 @@ namespace ControlRoomApplication.GUI
             // StartTimeLabel
             // 
             this.StartTimeLabel.AutoSize = true;
-            this.StartTimeLabel.Location = new System.Drawing.Point(33, 95);
+            this.StartTimeLabel.Location = new System.Drawing.Point(32, 100);
             this.StartTimeLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.StartTimeLabel.Name = "StartTimeLabel";
             this.StartTimeLabel.Size = new System.Drawing.Size(55, 13);
             this.StartTimeLabel.TabIndex = 21;
-            this.StartTimeLabel.Text = "Start Time";
+            this.StartTimeLabel.Text = "Start Date";
             // 
             // PriorityLabel
             // 
             this.PriorityLabel.AutoSize = true;
-            this.PriorityLabel.Location = new System.Drawing.Point(49, 169);
+            this.PriorityLabel.Location = new System.Drawing.Point(50, 231);
             this.PriorityLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.PriorityLabel.Name = "PriorityLabel";
             this.PriorityLabel.Size = new System.Drawing.Size(38, 13);
@@ -162,19 +166,19 @@ namespace ControlRoomApplication.GUI
             this.CancelBtn.UseVisualStyleBackColor = true;
             this.CancelBtn.Click += new System.EventHandler(this.CancelBtn_Click);
             // 
-            // StartTimeInput
+            // StartDateInput
             // 
-            this.StartTimeInput.Location = new System.Drawing.Point(92, 95);
-            this.StartTimeInput.Name = "StartTimeInput";
-            this.StartTimeInput.Size = new System.Drawing.Size(200, 20);
-            this.StartTimeInput.TabIndex = 24;
+            this.StartDateInput.Location = new System.Drawing.Point(92, 95);
+            this.StartDateInput.Name = "StartDateInput";
+            this.StartDateInput.Size = new System.Drawing.Size(200, 20);
+            this.StartDateInput.TabIndex = 24;
             // 
-            // EndTimeInput
+            // EndDateInput
             // 
-            this.EndTimeInput.Location = new System.Drawing.Point(92, 130);
-            this.EndTimeInput.Name = "EndTimeInput";
-            this.EndTimeInput.Size = new System.Drawing.Size(200, 20);
-            this.EndTimeInput.TabIndex = 25;
+            this.EndDateInput.Location = new System.Drawing.Point(92, 162);
+            this.EndDateInput.Name = "EndDateInput";
+            this.EndDateInput.Size = new System.Drawing.Size(200, 20);
+            this.EndDateInput.TabIndex = 25;
             // 
             // UsernameInputList
             // 
@@ -187,7 +191,7 @@ namespace ControlRoomApplication.GUI
             // PublicInput
             // 
             this.PublicInput.AutoSize = true;
-            this.PublicInput.Location = new System.Drawing.Point(260, 242);
+            this.PublicInput.Location = new System.Drawing.Point(446, 241);
             this.PublicInput.Name = "PublicInput";
             this.PublicInput.Size = new System.Drawing.Size(55, 17);
             this.PublicInput.TabIndex = 27;
@@ -207,7 +211,7 @@ namespace ControlRoomApplication.GUI
             // PriorityInputList
             // 
             this.PriorityInputList.FormattingEnabled = true;
-            this.PriorityInputList.Location = new System.Drawing.Point(92, 166);
+            this.PriorityInputList.Location = new System.Drawing.Point(93, 228);
             this.PriorityInputList.Name = "PriorityInputList";
             this.PriorityInputList.Size = new System.Drawing.Size(101, 21);
             this.PriorityInputList.TabIndex = 29;
@@ -253,11 +257,52 @@ namespace ControlRoomApplication.GUI
             this.OrientationInputList.Size = new System.Drawing.Size(103, 21);
             this.OrientationInputList.TabIndex = 34;
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(32, 127);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(55, 13);
+            this.label2.TabIndex = 35;
+            this.label2.Text = "Start Time";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(35, 197);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(52, 13);
+            this.label3.TabIndex = 36;
+            this.label3.Text = "End Time";
+            this.label3.Click += new System.EventHandler(this.label3_Click);
+            // 
+            // StartTimeInput
+            // 
+            this.StartTimeInput.Format = System.Windows.Forms.DateTimePickerFormat.Time;
+            this.StartTimeInput.Location = new System.Drawing.Point(92, 123);
+            this.StartTimeInput.Name = "StartTimeInput";
+            this.StartTimeInput.ShowUpDown = true;
+            this.StartTimeInput.Size = new System.Drawing.Size(89, 20);
+            this.StartTimeInput.TabIndex = 37;
+            // 
+            // EndTimeInput
+            // 
+            this.EndTimeInput.Format = System.Windows.Forms.DateTimePickerFormat.Time;
+            this.EndTimeInput.Location = new System.Drawing.Point(92, 191);
+            this.EndTimeInput.Name = "EndTimeInput";
+            this.EndTimeInput.ShowUpDown = true;
+            this.EndTimeInput.Size = new System.Drawing.Size(89, 20);
+            this.EndTimeInput.TabIndex = 38;
+            // 
             // AppointmentCreationForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(578, 321);
+            this.Controls.Add(this.EndTimeInput);
+            this.Controls.Add(this.StartTimeInput);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.OrientationInputList);
             this.Controls.Add(this.CoordinateInputList);
             this.Controls.Add(this.CoordinateLabel);
@@ -267,8 +312,8 @@ namespace ControlRoomApplication.GUI
             this.Controls.Add(this.label1);
             this.Controls.Add(this.PublicInput);
             this.Controls.Add(this.UsernameInputList);
-            this.Controls.Add(this.EndTimeInput);
-            this.Controls.Add(this.StartTimeInput);
+            this.Controls.Add(this.EndDateInput);
+            this.Controls.Add(this.StartDateInput);
             this.Controls.Add(this.CancelBtn);
             this.Controls.Add(this.PriorityLabel);
             this.Controls.Add(this.StartTimeLabel);
@@ -300,8 +345,8 @@ namespace ControlRoomApplication.GUI
         private System.Windows.Forms.Label StartTimeLabel;
         private System.Windows.Forms.Label PriorityLabel;
         private System.Windows.Forms.Button CancelBtn;
-        private System.Windows.Forms.DateTimePicker StartTimeInput;
-        private System.Windows.Forms.DateTimePicker EndTimeInput;
+        private System.Windows.Forms.DateTimePicker StartDateInput;
+        private System.Windows.Forms.DateTimePicker EndDateInput;
         private System.Windows.Forms.ComboBox UsernameInputList;
         private System.Windows.Forms.CheckBox PublicInput;
         private System.Windows.Forms.Label label1;
@@ -311,5 +356,9 @@ namespace ControlRoomApplication.GUI
         private System.Windows.Forms.Label CoordinateLabel;
         private System.Windows.Forms.ComboBox CoordinateInputList;
         private System.Windows.Forms.ComboBox OrientationInputList;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.DateTimePicker StartTimeInput;
+        private System.Windows.Forms.DateTimePicker EndTimeInput;
     }
 }

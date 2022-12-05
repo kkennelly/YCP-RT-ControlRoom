@@ -57,8 +57,8 @@ namespace ControlRoomApplication.GUI
                 _appt = new Appointment
                 {
                     User = users.Find(user => (user.first_name + " " + user.last_name).Equals(UsernameInputList.Text)),
-                    start_time = StartTimeInput.Value,
-                    end_time = EndTimeInput.Value,
+                    start_time = StartDateInput.Value + StartTimeInput.Value.TimeOfDay,
+                    end_time = EndDateInput.Value + EndTimeInput.Value.TimeOfDay,
                     status = AppointmentStatusEnum.SCHEDULED.ToString(),
                     telescope_id = _id,
                     Public = Convert.ToInt16(PublicInput.Checked),
@@ -284,6 +284,11 @@ namespace ControlRoomApplication.GUI
                     orientationForm.Dispose();
                 }
             }
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)

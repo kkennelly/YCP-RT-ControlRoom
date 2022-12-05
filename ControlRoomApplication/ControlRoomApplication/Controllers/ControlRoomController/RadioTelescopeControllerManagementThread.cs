@@ -12,6 +12,7 @@ using ControlRoomApplication.Controllers.PLCCommunication.PLCDrivers.MCUManager;
 using ControlRoomApplication.Controllers.PLCCommunication.PLCDrivers.MCUManager.Enumerations;
 using ControlRoomApplication.Constants;
 using System.Linq;
+using ControlRoomApplication.Controllers.SensorNetwork.Simulation;
 
 namespace ControlRoomApplication.Controllers
 {
@@ -104,7 +105,11 @@ namespace ControlRoomApplication.Controllers
             OverallSensorStatus = true;
 
             Sensors.Add(new Sensor(SensorItemEnum.WIND, SensorStatusEnum.NORMAL));
-           
+
+            // Add the eleveation aboslute encoder and the counterbalance accelerometer to the list of sensors to check for failures
+            Sensors.Add(new Sensor(SensorItemEnum.ELEVATION_ABS_ENCODER, SensorStatusEnum.NORMAL));
+            Sensors.Add(new Sensor(SensorItemEnum.COUNTER_BALANCE_VIBRATION, SensorStatusEnum.NORMAL));
+
             // Commented out because we will not be using this functionality in the future.
             // We will switch to connecting to a server on the cloud
             // Kate Kennelly 2/14/2020
@@ -704,6 +709,9 @@ namespace ControlRoomApplication.Controllers
         public bool checkCurrentSensorAndOverrideStatus()
         {
             // loop through all the current sensors
+
+            CheckAndSwitchElevationDevice();
+            
             foreach (Sensor curSensor in Sensors)
             {
                 // if the sensor is in the ALARM state
@@ -732,5 +740,101 @@ namespace ControlRoomApplication.Controllers
             return true;
         }
 
+        /// <summary>
+        /// Check the elevation absolute encoder and the counterbalance accelerometer statuses. If one fails, use the other. If both fail, then use the motor encoder. 
+        /// </summary>
+        public void CheckAndSwitchElevationDevice()
+        {
+            SensorStatuses sensorStatuses = RTController.RadioTelescope.SensorNetworkServer.SensorStatuses;
+
+            // Check if a device has failed, then if so, change to the appropriate device
+            if (sensorStatuses.ElevationAbsoluteEncoderStatus == Entities.DiagnosticData.SensorNetworkSensorStatus.Error ||
+                CheckOutOfRangeAbsEncoder())
+            {
+                RTController.CanUseElevationAbsEncoder = false;
+                RTController.UseElevationAbsEncoder = false;
+
+                if (RTController.CanUseCounterbalance)
+                {
+                    RTController.UseCounterbalance = true;
+                }
+                else
+                {
+                    RTController.UseMotorEncoder = true;
+                }
+            }
+            else
+            {
+                RTController.CanUseElevationAbsEncoder = true;
+            }
+
+            if (sensorStatuses.CounterbalanceAccelerometerStatus == Entities.DiagnosticData.SensorNetworkSensorStatus.Error)
+            {
+                RTController.CanUseCounterbalance = false;
+                RTController.UseCounterbalance = false;
+
+                if (RTController.CanUseElevationAbsEncoder)
+                {
+                    RTController.UseElevationAbsEncoder = true;
+                }
+                else
+                {
+                    RTController.UseMotorEncoder = true;
+                }
+            }
+            else
+            {
+                RTController.CanUseCounterbalance = true;
+            }
+        }
+
+        /// <summary>
+        /// Check the current position of the elevation absolute encoder and return if it is out of range 
+        /// </summary>
+        /// <returns></returns>
+        public bool CheckOutOfRangeAbsEncoder()
+        {
+            Double elevation = RTController.GetAbsoluteOrientation().Elevation;
+            return (elevation < 0 || elevation > 92);
+        }
+        /// <summary>
+        /// Switch the device that is used to read elevation data in the event of one or both failing 
+        /// </summary>
+        /// <param name="sensor"></param>
+        public void SwitchElevationDevice(Sensor sensor)
+        {
+            Sensor altSensor;
+            if (sensor.Item == SensorItemEnum.ELEVATION_ABS_ENCODER)
+            {
+                RTController.UseElevationAbsEncoder = false;
+
+                altSensor = Sensors.Find(Sensor => Sensor.Item == SensorItemEnum.COUNTER_BALANCE_VIBRATION);
+                if (altSensor.Status != SensorStatusEnum.ALARM)
+                {
+                    RTController.UseCounterbalance = true;
+                    RTController.UseMotorEncoder = false;
+                }
+                else if (altSensor.Status == SensorStatusEnum.ALARM)    // Both are failing, hence use the motor encoder 
+                {
+                    RTController.UseCounterbalance = false;
+                    RTController.UseMotorEncoder = true;
+                }
+            }
+            else    // Sensor is the Counterbalance Accelerometer 
+            {
+                RTController.UseCounterbalance = false;
+
+                altSensor = Sensors.Find(Sensor => Sensor.Item == SensorItemEnum.ELEVATION_ABS_ENCODER);
+                if (altSensor.Status != SensorStatusEnum.ALARM) {
+                    RTController.UseElevationAbsEncoder = true;
+                    RTController.UseMotorEncoder = false;
+                }
+                else if (altSensor.Status == SensorStatusEnum.ALARM)    // Both are failing, hence use the motor encoder 
+                {
+                    RTController.UseElevationAbsEncoder = false;
+                    RTController.UseMotorEncoder = true;
+                }
+            }
+        }
     }
 }

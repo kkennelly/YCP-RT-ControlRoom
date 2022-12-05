@@ -53,6 +53,13 @@ namespace ControlRoomApplication.Controllers
         // Snow dump timer
         private static System.Timers.Timer snowDumpTimer;
 
+        // Absolute encoder or counterbalance accelerometer usage
+        public bool UseCounterbalance;
+        public bool UseElevationAbsEncoder;
+        public bool UseMotorEncoder;
+        public bool CanUseCounterbalance;
+        public bool CanUseElevationAbsEncoder;
+
         private static readonly log4net.ILog logger =
             log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -78,6 +85,11 @@ namespace ControlRoomApplication.Controllers
             MonitoringSensors = true;
             AllSensorsSafe = true;
             EnableSoftwareStops = true;
+            UseCounterbalance = false;
+            UseElevationAbsEncoder = false;
+            UseMotorEncoder = false;
+            CanUseCounterbalance = false;
+            CanUseElevationAbsEncoder = false;
 
             MaxAzTempThreshold = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.AZ_MOTOR_TEMP);
             MaxElTempThreshold = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.ELEV_MOTOR_TEMP);
@@ -325,7 +337,7 @@ namespace ControlRoomApplication.Controllers
 
         /// <summary>
         /// Gets the elevation readings used by the software stops. When the simulation sensor network is in use,
-        /// the motor positions are used, otherwise the sensor network's absolute orientation reading is used.
+        /// the motor positions are used, otherwise the sensor network's absolute orientation reading is used if the UseCounterbalance flag is false 
         /// </summary>
         /// /// <returns></returns>
         private double GetSoftwareStopElevation()
@@ -336,7 +348,18 @@ namespace ControlRoomApplication.Controllers
             }
             else
             {
-                return GetAbsoluteOrientation().Elevation;
+                if (UseCounterbalance)
+                {
+                    return RadioTelescope.SensorNetworkServer.CurrentCBAccelElevationPosition;
+                }
+                else if (UseElevationAbsEncoder)
+                {
+                    return RadioTelescope.SensorNetworkServer.CurrentAbsoluteOrientation.Elevation;
+                }
+                else
+                {
+                    return RadioTelescope.SensorNetworkServer.CurrentElevationMotorAccl[0].acc;
+                }
             }
         }
 

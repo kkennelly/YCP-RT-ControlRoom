@@ -101,6 +101,7 @@ namespace ControlRoomApplication.Main
             this.IFGainToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.frequencyToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.offsetVoltageToolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.UseCounterbalanceCheckbox = new System.Windows.Forms.CheckBox();
             this.RAIncGroupbox.SuspendLayout();
             this.overRideGroupbox.SuspendLayout();
             this.decIncGroupbox.SuspendLayout();
@@ -355,6 +356,7 @@ namespace ControlRoomApplication.Main
             // overRideGroupbox
             // 
             this.overRideGroupbox.BackColor = System.Drawing.Color.Gainsboro;
+            this.overRideGroupbox.Controls.Add(this.UseCounterbalanceCheckbox);
             this.overRideGroupbox.Controls.Add(this.stopRT);
             this.overRideGroupbox.Controls.Add(this.SoftwareStopsCheckBox);
             this.overRideGroupbox.Controls.Add(this.label8);
@@ -986,6 +988,17 @@ namespace ControlRoomApplication.Main
             this.scanTypeComboBox.TabIndex = 25;
             this.scanTypeComboBox.SelectedIndexChanged += new System.EventHandler(this.scanTypeComboBox_SelectedIndexChanged);
             // 
+            // UseCounterbalanceCheckbox
+            // 
+            this.UseCounterbalanceCheckbox.AutoSize = true;
+            this.UseCounterbalanceCheckbox.Location = new System.Drawing.Point(16, 175);
+            this.UseCounterbalanceCheckbox.Name = "UseCounterbalanceCheckbox";
+            this.UseCounterbalanceCheckbox.Size = new System.Drawing.Size(132, 17);
+            this.UseCounterbalanceCheckbox.TabIndex = 39;
+            this.UseCounterbalanceCheckbox.Text = "Use CB accelerometer";
+            this.UseCounterbalanceCheckbox.UseVisualStyleBackColor = true;
+            this.UseCounterbalanceCheckbox.Click += new System.EventHandler(this.useCounterbalanceCheckbox_Click);
+            // 
             // FreeControlForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1091,5 +1104,6 @@ namespace ControlRoomApplication.Main
         private System.Windows.Forms.TrackBar speedTrackBar;
         private System.Windows.Forms.CheckBox SoftwareStopsCheckBox;
         private System.Windows.Forms.Button stopRT;
+        private System.Windows.Forms.CheckBox UseCounterbalanceCheckbox;
     }
 }

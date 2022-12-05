@@ -16,6 +16,8 @@ using ControlRoomApplication.Controllers.PLCCommunication.PLCDrivers.MCUManager;
 using System.Threading.Tasks;
 using ControlRoomApplication.Controllers.Communications;
 using ControlRoomApplication.GUI;
+using ControlRoomApplication.Entities.DiagnosticData;
+using ControlRoomApplication.Controllers.SensorNetwork.Simulation;
 
 namespace ControlRoomApplication.Main
 {
@@ -329,6 +331,8 @@ namespace ControlRoomApplication.Main
 
                 ActualRATextBox.Text = ConvertedPosition.RightAscension.ToString("0.##");
                 ActualDecTextBox.Text = ConvertedPosition.Declination.ToString("0.##");
+
+                UpdateCounterbalanceCheckbox();
             });
         }
 
@@ -1100,6 +1104,50 @@ namespace ControlRoomApplication.Main
                 formData.speed = Double.Parse(speedTextBox.Text);
             });
             
+        }
+
+        private void UpdateCounterbalanceCheckbox()
+        {
+            if (!rtController.UseCounterbalance)
+            {
+                UseCounterbalanceCheckbox.Checked = false;
+            }
+            else
+            {
+                UseCounterbalanceCheckbox.Checked = true;
+            }
+        }
+
+        private void useCounterbalanceCheckbox_Click(object sender, EventArgs e)
+        {
+            if (UseCounterbalanceCheckbox.Checked == true)
+            {
+                if (!rtController.CanUseCounterbalance) 
+                {
+                    MessageBox.Show("The counterbalance accelerometer is experiencing an error and cannot be used.");
+                }
+                else 
+                {
+                    rtController.UseCounterbalance = true;
+                    rtController.UseElevationAbsEncoder = false;
+                    rtController.UseMotorEncoder = false;
+                }
+            }
+            else
+            { 
+                if (!rtController.CanUseElevationAbsEncoder) 
+                { 
+                    MessageBox.Show("The elevation absolute encoder is experiencing an error and cannot be used.");
+                }
+                else 
+                {
+                    rtController.UseElevationAbsEncoder = true;
+                    rtController.UseCounterbalance = false;
+                    rtController.UseMotorEncoder = false;
+                }
+            }
+
+            UpdateCounterbalanceCheckbox();
         }
 
         private bool allScanInputsValid()

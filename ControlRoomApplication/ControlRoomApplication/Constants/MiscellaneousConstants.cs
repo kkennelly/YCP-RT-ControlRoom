@@ -75,5 +75,10 @@ namespace ControlRoomApplication.Constants
         /// The number of minutes since an appointment's start time in which it is considered overdue. 
         /// </summary>
         public static readonly double OVERDUE_APPOINTMENT_MINUTES = 1.0; 
+
+        /*
+         * min elevation ME: -60 ABE: -7.12
+         * max elevation ME: 48.96, progresses down to 39.17 ABE: 82.38
+         */
     }
 }

@@ -106,8 +106,11 @@ namespace ControlRoomApplication.Database
                 if (Context.SpectraCyberConfigs.Any(t => t.Id == appt.SpectraCyberConfig.Id) == false)
                     Context.SpectraCyberConfigs.Add(appt.SpectraCyberConfig);
 
-                Context.Entry(appt.Telescope).State = EntityState.Unchanged;
-                
+                if(appt.Telescope != null)
+                {
+                    Context.Entry(appt.Telescope).State = EntityState.Unchanged;
+                }
+
                 Context.Appointments.Add(appt);
                 SaveContext(Context);
 

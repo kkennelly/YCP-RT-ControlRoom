@@ -26,6 +26,8 @@ namespace ControlRoomApplication.GUI
 
             _isDrift = _isPoint = _isCelestialBody = false;
 
+            _appt = new Appointment();
+
             InitializeComponent();
 
             LoadUsers();
@@ -65,18 +67,16 @@ namespace ControlRoomApplication.GUI
                     string type = TypeInputList.Text;
                     string priority = PriorityInputList.Text;
                 */
-                _appt = new Appointment
-                {
-                    User = users.Find(u => (u.first_name + " " + u.last_name).Equals(UsernameInputList.Text)),
-                    start_time = StartDateInput.Value + StartTimeInput.Value.TimeOfDay,
-                    end_time = EndDateInput.Value + EndTimeInput.Value.TimeOfDay,
-                    status = AppointmentStatusEnum.SCHEDULED.ToString(),
-                    telescope_id = _id,
-                    Public = Convert.ToInt16(PublicInput.Checked),
-                    spectracyber_config_id = int.Parse(((string) SpectraCyberConfigInputList.SelectedItem).Split('|')[0]),
-                    type = TypeInputList.Text,
-                    priority = PriorityInputList.Text
-                };
+
+                _appt.User = users.Find(u => (u.first_name + " " + u.last_name).Equals(UsernameInputList.Text));
+                _appt.start_time = StartDateInput.Value + StartTimeInput.Value.TimeOfDay;
+                _appt.end_time = EndDateInput.Value + EndTimeInput.Value.TimeOfDay;
+                _appt.status = AppointmentStatusEnum.SCHEDULED.ToString();
+                _appt.telescope_id = _id;
+                _appt.Public = Convert.ToInt16(PublicInput.Checked);
+                _appt.spectracyber_config_id = int.Parse(((string) SpectraCyberConfigInputList.SelectedItem).Split('|')[0]);
+                _appt.type = TypeInputList.Text;
+                _appt.priority = PriorityInputList.Text; 
 
                 if (!_isDrift)
                 {
@@ -86,11 +86,14 @@ namespace ControlRoomApplication.GUI
                     }
                     else
                     {
-                        _appt.celestial_body_id = 3;
+                        CelestialBody cb = new CelestialBody();
+                        cb.Coordinate = new Coordinate(3, 3);
+                        _appt.CelestialBody = cb; 
                     }
 
                     // Add coordinate(s) 
                     _appt.Coordinates.Add(new Coordinate(3, 3));
+                    _appt.Orientation = new Entities.Orientation(0.0, 0.0); 
                 }
                 else
                 {
@@ -237,7 +240,8 @@ namespace ControlRoomApplication.GUI
                     };
 
                     Database.DatabaseOperations.AddSpectraCyberConfig(config);
-                    MessageBox.Show("Successfully added SpectraCyber Configuration!");
+                    _appt.SpectraCyberConfig = config;
+                    MessageBox.Show("Successfully added SpectraCyber Configuration to DB and Appointment!");
 
                     LoadSpectraCyberConfigs();
                 }
@@ -245,6 +249,10 @@ namespace ControlRoomApplication.GUI
                 {
                     scForm.Dispose();
                 }
+            } else
+            {
+                List<SpectraCyberConfig> configs = Database.DatabaseOperations.GetAllSpectraCyberConfigs();
+                _appt.SpectraCyberConfig = configs[SpectraCyberConfigInputList.SelectedIndex]; 
             }
         }
 
@@ -264,7 +272,8 @@ namespace ControlRoomApplication.GUI
                     };
 
                     Database.DatabaseOperations.AddCoordinate(coordinate);
-                    MessageBox.Show("Successfully added coordinate!");
+                    _appt.Coordinates.Add(coordinate);
+                    MessageBox.Show("Successfully added coordinate to DB and Appointment!");
 
                     LoadCoordinates();
                 }
@@ -272,6 +281,10 @@ namespace ControlRoomApplication.GUI
                 {
                     coordinateForm.Dispose();
                 }
+            } else
+            {
+                List<Coordinate> coords = Database.DatabaseOperations.GetAllCoordinates();
+                _appt.Coordinates.Add(coords[CoordinateInputList.SelectedIndex]);
             }
         }
 
@@ -290,7 +303,8 @@ namespace ControlRoomApplication.GUI
                     };
 
                     Database.DatabaseOperations.AddOrientation(orientation);
-                    MessageBox.Show("Successfully added orientation!");
+                    _appt.Orientation = orientation;
+                    MessageBox.Show("Successfully added orientation to DB and Appointment!");
 
                     LoadOrientations();
                 }
@@ -298,6 +312,10 @@ namespace ControlRoomApplication.GUI
                 {
                     orientationForm.Dispose();
                 }
+            } else
+            {
+                List<Entities.Orientation> orientations = Database.DatabaseOperations.GetAllOrientations();
+                _appt.Orientation = orientations[OrientationInputList.SelectedIndex];
             }
         }
 

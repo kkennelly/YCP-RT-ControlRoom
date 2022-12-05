@@ -34,6 +34,7 @@ namespace ControlRoomApplication.Controllers {
         private TcpClient MCUTCPClient;
         private MCUConfigurationAxys Current_AZConfiguration;
         private MCUConfigurationAxys Current_ELConfiguration;
+        private bool MCUDisconnected = false;
         /// <summary>
         /// this value should not be changed from outside the MCU class
         /// </summary>
@@ -44,6 +45,7 @@ namespace ControlRoomApplication.Controllers {
         private int McuPort;
         private string McuIp;
         private RadioTelescopeTypeEnum telescopeType;
+        public bool PNEnabled = false;
 
         public MCUManager(string ip, int port) {
             McuPort = port;
@@ -67,8 +69,9 @@ namespace ControlRoomApplication.Controllers {
             {
                 MCUTCPClient = new TcpClient(McuIp, McuPort);
             }
-            catch
+            catch (Exception e)
             {
+                logger.Info($"{Utilities.GetTimeStamp()}: Cannot initialize the MCU/TCP Client with exception: {e.Message}");
                 return false;
             }
 
@@ -76,12 +79,13 @@ namespace ControlRoomApplication.Controllers {
             {
                 MCUModbusMaster = ModbusIpMaster.CreateIp(MCUTCPClient);
             }
-            catch
+            catch (Exception e)
             {
+                logger.Info($"{Utilities.GetTimeStamp()}: Cannot initialize the MCUModbus Server with exception: {e.Message}");
                 return false;
             }
 
-            logger.Info(Utilities.GetTimeStamp() + ": Successfully connected to the MCU and the Modbus Master!");
+            logger.Info($"{Utilities.GetTimeStamp()}: Successfully connected to the MCU and the Modbus Master!");
 
             return true;
         }
@@ -95,13 +99,21 @@ namespace ControlRoomApplication.Controllers {
         public ushort[] ReadMCURegisters(ushort address, ushort length)
         {
             ushort[] value = new ushort[length];
-            try
-            {
-                value = MCUModbusMaster.ReadHoldingRegistersAsync(address, length).GetAwaiter().GetResult();
-            }
 
-            // This may happen if we lose connection to the MCU
-            catch (InvalidOperationException)
+            if (!MCUDisconnected)
+            {
+                try
+                {
+                    // When the control room is disconnected from the modbus server, attempting to set value will cause an exception to be thrown in mscorlib.dll by the NModbus4 API, we cannot remove this message :(
+                    value = MCUModbusMaster.ReadHoldingRegistersAsync(address, length).GetAwaiter().GetResult();
+                }
+                catch (Exception e)
+                {
+                    logger.Info($"{Utilities.GetTimeStamp()}: MCU Read Registers Exception: {e.Message}");
+                    value = new ushort[50];
+                }
+            }
+            else
             {
                 value = new ushort[50];
             }
@@ -147,18 +159,35 @@ namespace ControlRoomApplication.Controllers {
         private void HeartbeatMonitor() {
 
             int lastHeartBeat = 0;
+            int disconnectionTries = 0;
+            bool longDisconnect = false;
             DateTime lastConnectAttempt = DateTime.Now;
             bool inError = false;
 
             while(HeartbeatMonitorRunning) {
+                ushort[] networkStatus;
 
-                ushort[] networkStatus = ReadMCURegisters((ushort)MCUConstants.MCUOutputRegs.NetworkConnectivity, 1);
+                // Check the network status of the telescope
+                try
+                {
+                    // When the control room is disconnected from the modbus server, attempting to set value will cause an exception to be thrown in mscorlib.dll by the NModbus4 API,
+                    // we cannot remove this message :(
+                    networkStatus = MCUModbusMaster.ReadHoldingRegistersAsync((ushort)MCUConstants.MCUOutputRegs.NetworkConnectivity, 1).GetAwaiter().GetResult();
+                }
+                catch (Exception e)
+                {
+                    logger.Info($"{Utilities.GetTimeStamp()}: MCU Disconnection Exception: {e.Message}");
+                    networkStatus = new ushort[50];
+                }
 
-                // If the network status length is 50, it means the network has disconnected, and we must attempt to reconnect
+                // On network disconnection, set the global variable accordingly to not ping the dead modbus server,
+                // check every two seconds for a reconnection, then once every 10 seconds after the first 10 have elapsed
                 if (networkStatus.Length == 50)
                 {
-                    // Only try to connect if it's been more than 5 seconds since the last attempt
-                    if ((DateTime.Now - lastConnectAttempt) > TimeSpan.FromSeconds(5))
+                    MCUDisconnected = true;
+
+                    // Only try to connect if it's been more than 2 seconds since the last attempt
+                    if ((DateTime.Now - lastConnectAttempt) > TimeSpan.FromSeconds(2))
                     {
                         // We no longer know if the motors have been homed (MCU could have powered off)
                         MotorsHomed = false;
@@ -171,9 +200,20 @@ namespace ControlRoomApplication.Controllers {
                         ConnectToModbusServer();
                         lastConnectAttempt = DateTime.Now;
                     }
+
+                    if (disconnectionTries > 4)
+                    {
+                        longDisconnect = true;
+                    }
+
+                    disconnectionTries++;
+
+                    Thread.Sleep(longDisconnect ? 10000 : 2000);
                 }
                 else
                 {
+                    MCUDisconnected = false;
+
                     // This heartbeat bit flips between 0 and 1 every 500ms to ensure that the MCU is still alive
                     // and doing MCU stuff
                     int currentHeartBeat = (networkStatus[0] >> (ushort)MCUNetworkStatus.MCUHeartBeat) & 1;
@@ -189,6 +229,9 @@ namespace ControlRoomApplication.Controllers {
                     {
                         inError = false;
                     }
+
+                    longDisconnect = false;
+                    disconnectionTries = 0;
                 }
 
                 Task.Delay(250).Wait();

@@ -102,6 +102,10 @@ namespace ControlRoomApplication.Controllers
             }
 
             logger.Info(Utilities.GetTimeStamp() + ": [SpectraCyberController] Successfully started SpectraCyber communication and communication thread.");
+
+            // Since Spectra Cyber is online, we want to note that the SerialComm has not failed. 
+            SerialCommsFailed = false; 
+
             return true;
         }
 
@@ -207,6 +211,7 @@ namespace ControlRoomApplication.Controllers
                     {
                         // Something went wrong, return the response
                         SerialCommsFailed = true;
+                        response.Valid = false;
                         return;
                     }
 
@@ -269,7 +274,26 @@ namespace ControlRoomApplication.Controllers
             {
                 case SpectraCyberScanScheduleMode.UNKNOWN:
                 case SpectraCyberScanScheduleMode.OFF:
-                    return DoSpectraCyberScan().Valid;
+                    // Attempting a scan is fine when the Scan Type is defined. If scan type is unknown, check
+                    // if we are currently running an appointment. 
+                    try
+                    {
+                        return DoSpectraCyberScan().Valid;
+                    }
+                    catch (Exception e)
+                    {
+                        // Check if there is an active appointment. Sometimes, the Scan Type gets set to Unknown, which causes DoSpectraCyberScan
+                        // to throw an error. 
+                        if (SpectraCyber.ActiveAppointment is null)
+                        {
+                            return false;
+                        }
+                        else
+                        {
+                            return true;
+                        }
+                    }
+                    //return DoSpectraCyberScan().Valid;
 
                 case SpectraCyberScanScheduleMode.SINGLE_SCAN:
                     return true;

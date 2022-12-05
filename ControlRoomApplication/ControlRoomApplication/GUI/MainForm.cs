@@ -50,10 +50,13 @@ namespace ControlRoomApplication.Main
         public bool SensorNetworkServerPortBool = false;
         public bool SensorNetworkClientIPBool = false;
         public bool SensorNetworkClientPortBool = false;
+        public bool PNEnabled = false; 
         
         // form
         RTControlFormData formData;
-        
+
+        RadioTelescopeControllerManagementThread ManagementThread; 
+
         enum TempSensorType
         {
             Production,
@@ -360,7 +363,7 @@ namespace ControlRoomApplication.Main
 
                     // Start RT controller's threaded management
                     logger.Info(Utilities.GetTimeStamp() + ": Starting RT controller's threaded management");
-                    RadioTelescopeControllerManagementThread ManagementThread = MainControlRoomController.ControlRoom.RTControllerManagementThreads[MainControlRoomController.ControlRoom.RTControllerManagementThreads.Count - 1];
+                    ManagementThread = MainControlRoomController.ControlRoom.RTControllerManagementThreads[MainControlRoomController.ControlRoom.RTControllerManagementThreads.Count - 1];
 
                     // add telescope to database
                     //DatabaseOperations.AddRadioTelescope(ARadioTelescope);
@@ -430,6 +433,14 @@ namespace ControlRoomApplication.Main
         /// </summary>
         private void button2_Click(object sender, EventArgs e)
         {
+            HandleShutDown(); 
+        }
+
+        /// <summary>
+        /// Handles shut down routine for Control Room App.
+        /// </summary>
+        private void HandleShutDown()
+        {
             logger.Info(Utilities.GetTimeStamp() + ": Shut Down Telescope Button Clicked");
 
             // Loop through the list of telescope controllers and call their respective bring down sequences.
@@ -460,15 +471,7 @@ namespace ControlRoomApplication.Main
 
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
-            for (int i = 0; i < ProgramRTControllerList.Count; i++)
-            {
-                //Turn off Telescope in database
-                ProgramRTControllerList[i].RadioTelescope.online = 0;
-                ProgramRTControllerList[i].RadioTelescope.SensorNetworkServer.EndSensorMonitoringRoutine();
-                DatabaseOperations.UpdateTelescope(ProgramRTControllerList[i].RadioTelescope);
-                ProgramRTControllerList[i].ShutdownRadioTelescope();
-            }
-
+            HandleShutDown();
         }
 
         /// <summary>
@@ -714,7 +717,7 @@ namespace ControlRoomApplication.Main
             {
                 loopBackBox.Checked = false;
                 this.txtWSCOMPort.Text = "222"; //default WS COM port # is 221
-                this.txtSpectraPort.Text = "777";
+                this.txtSpectraPort.Text = "8"; // Value used to be 777, but the USB's port is currently set to 8
                 this.txtMcuCOMPort.Text = "502"; //default MCU Port
                 this.txtPLCIP.Text = "192.168.0.50";//default IP address
                 this.txtRemoteListenerCOMPort.Text = "80";
@@ -1359,6 +1362,36 @@ namespace ControlRoomApplication.Main
             {
                 txtSpectraPort.BackColor = System.Drawing.Color.LightGray;
                 this.WCOMPortToolTip.Hide(label8);
+            }
+        }
+
+        public void PNBox_CheckedChanged(bool PNE)
+        {
+            PNEnabled = PNE;
+
+            // Update PLC, MCU, RadioTelescopeController, and SensorNetwork Push Notification values            
+            KeyValuePair< RadioTelescope, AbstractPLCDriver > rtAPLC = AbstractRTDriverPairList[0]; 
+            RadioTelescope currentRT = rtAPLC.Key;
+            RadioTelescopeController rtc = ProgramRTControllerList[0]; 
+
+            try
+            {
+                // Only update values if using ProductionPLC 
+                var rttype = currentRT.PLCDriver.GetType(); 
+                if (currentRT.PLCDriver.GetType().Name is "ProductionPLCDriver")
+                {
+                    ProductionPLCDriver p = (ProductionPLCDriver) currentRT.PLCDriver;
+                    p.SetPushNotificationEnabled(PNEnabled); 
+                }
+                currentRT.SensorNetworkServer.PNEnabled = PNEnabled; 
+                rtc.PNEnabled = PNEnabled;
+
+                string PNStatus = PNEnabled ? "enabled." : "disabled."; 
+                logger.Info(Utilities.GetTimeStamp() + ": Push/Email Notifications have been " + PNStatus);
+
+            } catch (Exception ex)
+            {
+                logger.Info(Utilities.GetTimeStamp() + ": Error updating Push Notification values in PLC, MCU, RadioTelescopeController, and/or SensorNetwork.");
             }
         }
     }

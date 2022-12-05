@@ -54,15 +54,26 @@ namespace ControlRoomApplication.GUI
             // Create appointment model
             try
             {
+                /*
+                User user  = users.Find(u => (u.first_name + " " + u.last_name).Equals(UsernameInputList.Text));
+                    DateTime start_time = StartDateInput.Value + StartTimeInput.Value.TimeOfDay;
+                    DateTime end_time = EndDateInput.Value + EndTimeInput.Value.TimeOfDay;
+                    string status = AppointmentStatusEnum.SCHEDULED.ToString();
+                    int telescope_id = _id;
+                    int Public = Convert.ToInt16(PublicInput.Checked);
+                    int spectracyber_config_id = int.Parse(((string)SpectraCyberConfigInputList.SelectedItem).Split('|')[0]);
+                    string type = TypeInputList.Text;
+                    string priority = PriorityInputList.Text;
+                */
                 _appt = new Appointment
                 {
-                    User = users.Find(user => (user.first_name + " " + user.last_name).Equals(UsernameInputList.Text)),
+                    User = users.Find(u => (u.first_name + " " + u.last_name).Equals(UsernameInputList.Text)),
                     start_time = StartDateInput.Value + StartTimeInput.Value.TimeOfDay,
                     end_time = EndDateInput.Value + EndTimeInput.Value.TimeOfDay,
                     status = AppointmentStatusEnum.SCHEDULED.ToString(),
                     telescope_id = _id,
                     Public = Convert.ToInt16(PublicInput.Checked),
-                    spectracyber_config_id = (int) SpectraCyberConfigInputList.SelectedItem,
+                    spectracyber_config_id = int.Parse(((string) SpectraCyberConfigInputList.SelectedItem).Split('|')[0]),
                     type = TypeInputList.Text,
                     priority = PriorityInputList.Text
                 };
@@ -73,9 +84,13 @@ namespace ControlRoomApplication.GUI
                     {
                         _appt.celestial_body_id = int.Parse(CelestialBodyIdInput.Text.Split('|')[0]);
                     }
+                    else
+                    {
+                        _appt.celestial_body_id = 3;
+                    }
 
                     // Add coordinate(s) 
-
+                    _appt.Coordinates.Add(new Coordinate(3, 3));
                 }
                 else
                 {

@@ -223,10 +223,10 @@ namespace ControlRoomApplication.Main
 
         private void PosDecButton_Click(object sender, EventArgs e)
         {
-            logger.Info(Utilities.GetTimeStamp() + ": Positive Declination Button Clicked");
-            Coordinate new_coord = new Coordinate(TargetCoordinate.RightAscension, TargetCoordinate.Declination + Increment);
+            logger.Info(Utilities.GetTimeStamp() + ": Positive declination Button Clicked");
+            Coordinate new_coord = new Coordinate(TargetCoordinate.right_ascension, TargetCoordinate.declination + Increment);
             Entities.Orientation test_orientation = CoordCalc.CoordinateToOrientation(new_coord, DateTime.UtcNow);
-            if(test_orientation.Azimuth > 0 && test_orientation.Elevation > 0)
+            if(test_orientation.azimuth > 0 && test_orientation.elevation > 0)
             {
                 TargetCoordinate = new_coord;
                 CoordMove();
@@ -239,10 +239,10 @@ namespace ControlRoomApplication.Main
 
         private void NegDecButton_Click(object sender, EventArgs e)
         {
-            logger.Info(Utilities.GetTimeStamp() + ": Negitive Declination Button Clicked");
-            Coordinate new_coord = new Coordinate(TargetCoordinate.RightAscension, TargetCoordinate.Declination - Increment);
+            logger.Info(Utilities.GetTimeStamp() + ": Negitive declination Button Clicked");
+            Coordinate new_coord = new Coordinate(TargetCoordinate.right_ascension, TargetCoordinate.declination - Increment);
             Entities.Orientation test_orientation = CoordCalc.CoordinateToOrientation(new_coord, DateTime.UtcNow);
-            if (test_orientation.Azimuth > 0 && test_orientation.Elevation > 0)
+            if (test_orientation.azimuth > 0 && test_orientation.elevation > 0)
             {
                 TargetCoordinate = new_coord;
                 CoordMove();
@@ -256,9 +256,9 @@ namespace ControlRoomApplication.Main
         private void NegRAButton_Click(object sender, EventArgs e)
         {
             logger.Info(Utilities.GetTimeStamp() + ": Negitive Right Ascension Button Clicked");
-            Coordinate new_coord = new Coordinate(TargetCoordinate.RightAscension - Increment, TargetCoordinate.Declination);
+            Coordinate new_coord = new Coordinate(TargetCoordinate.right_ascension - Increment, TargetCoordinate.declination);
             Entities.Orientation test_orientation = CoordCalc.CoordinateToOrientation(new_coord, DateTime.UtcNow);
-            if (test_orientation.Azimuth > 0 && test_orientation.Elevation > 0)
+            if (test_orientation.azimuth > 0 && test_orientation.elevation > 0)
             {
                 TargetCoordinate = new_coord;
                 CoordMove();
@@ -272,9 +272,9 @@ namespace ControlRoomApplication.Main
         private void PosRAButton_Click(object sender, EventArgs e)
         {
             logger.Info(Utilities.GetTimeStamp() + ": Positive Right Ascension Button Clicked");
-            Coordinate new_coord = new Coordinate(TargetCoordinate.RightAscension + Increment, TargetCoordinate.Declination);
+            Coordinate new_coord = new Coordinate(TargetCoordinate.right_ascension + Increment, TargetCoordinate.declination);
             Entities.Orientation test_orientation = CoordCalc.CoordinateToOrientation(new_coord, DateTime.UtcNow);
-            if (test_orientation.Azimuth >= 0 && test_orientation.Elevation >= 0)
+            if (test_orientation.azimuth >= 0 && test_orientation.elevation >= 0)
             {
                 TargetCoordinate = new_coord;
                 CoordMove();
@@ -308,8 +308,8 @@ namespace ControlRoomApplication.Main
 
         private void UpdateText()
         {
-            string RA = TargetCoordinate.RightAscension.ToString("0.##");
-            string Dec = TargetCoordinate.Declination.ToString("0.##");
+            string RA = TargetCoordinate.right_ascension.ToString("0.##");
+            string Dec = TargetCoordinate.declination.ToString("0.##");
             logger.Info(Utilities.GetTimeStamp() + ": UpdateText, Target Coordinate = RA:" + RA + ", Dec:" + Dec);
             
             TargetRATextBox.Text = RA;
@@ -324,11 +324,11 @@ namespace ControlRoomApplication.Main
             Coordinate ConvertedPosition = CoordCalc.OrientationToCoordinate(currentOrienation, DateTime.UtcNow);
 
             Utilities.WriteToGUIFromThread(this, () => {
-                label4.Text = String.Format("{0:N2}", currentOrienation.Azimuth);
-                label5.Text = String.Format("{0:N2}", currentOrienation.Elevation);
+                label4.Text = String.Format("{0:N2}", currentOrienation.azimuth);
+                label5.Text = String.Format("{0:N2}", currentOrienation.elevation);
 
-                ActualRATextBox.Text = ConvertedPosition.RightAscension.ToString("0.##");
-                ActualDecTextBox.Text = ConvertedPosition.Declination.ToString("0.##");
+                ActualRATextBox.Text = ConvertedPosition.right_ascension.ToString("0.##");
+                ActualDecTextBox.Text = ConvertedPosition.declination.ToString("0.##");
             });
         }
 
@@ -402,7 +402,7 @@ namespace ControlRoomApplication.Main
                 double.TryParse(TargetDecTextBox.Text, out newDec);
                 Coordinate new_coord = new Coordinate(newRA, newDec);
                 Entities.Orientation test_orientation = CoordCalc.CoordinateToOrientation(new_coord, DateTime.UtcNow);
-                if (test_orientation.Azimuth >= 0 && test_orientation.Elevation >= 0)
+                if (test_orientation.azimuth >= 0 && test_orientation.elevation >= 0)
                 {
                     TargetCoordinate = new_coord;
                     CoordMove();

@@ -886,8 +886,8 @@ namespace ControlRoomApplication.Controllers
             int AZ_Speed = ConversionHelper.DPSToSPS(ConversionHelper.RPMToDPS(0.6), MotorConstants.GEARING_RATIO_AZIMUTH);
 
             Orientation currentOrientation = rtController.GetCurrentOrientation();
-            int positionTranslationAZ = ConversionHelper.DegreesToSteps(targetOrientation.Azimuth - currentOrientation.Azimuth, MotorConstants.GEARING_RATIO_AZIMUTH);
-            int positionTranslationEL = ConversionHelper.DegreesToSteps((targetOrientation.Elevation - currentOrientation.Elevation), MotorConstants.GEARING_RATIO_ELEVATION);
+            int positionTranslationAZ = ConversionHelper.DegreesToSteps(targetOrientation.azimuth - currentOrientation.azimuth, MotorConstants.GEARING_RATIO_AZIMUTH);
+            int positionTranslationEL = ConversionHelper.DegreesToSteps((targetOrientation.elevation - currentOrientation.elevation), MotorConstants.GEARING_RATIO_ELEVATION);
 
             int timeToMoveEl = MCUManager.EstimateMovementTime(EL_Speed, positionTranslationEL);
             int timeToMoveAz = MCUManager.EstimateMovementTime(AZ_Speed, positionTranslationAZ);
@@ -905,8 +905,8 @@ namespace ControlRoomApplication.Controllers
             int EL_Speed = ConversionHelper.DPSToSPS(ConversionHelper.RPMToDPS(0.6), MotorConstants.GEARING_RATIO_ELEVATION);
             int AZ_Speed = ConversionHelper.DPSToSPS(ConversionHelper.RPMToDPS(0.6), MotorConstants.GEARING_RATIO_AZIMUTH);
 
-            int positionTranslationAZ = ConversionHelper.DegreesToSteps(movingBy.Azimuth, MotorConstants.GEARING_RATIO_AZIMUTH);
-            int positionTranslationEL = ConversionHelper.DegreesToSteps(movingBy.Elevation, MotorConstants.GEARING_RATIO_ELEVATION);
+            int positionTranslationAZ = ConversionHelper.DegreesToSteps(movingBy.azimuth, MotorConstants.GEARING_RATIO_AZIMUTH);
+            int positionTranslationEL = ConversionHelper.DegreesToSteps(movingBy.elevation, MotorConstants.GEARING_RATIO_ELEVATION);
 
             int timeToMoveEl = MCUManager.EstimateMovementTime(EL_Speed, positionTranslationEL);
             int timeToMoveAz = MCUManager.EstimateMovementTime(AZ_Speed, positionTranslationAZ);
@@ -959,7 +959,7 @@ namespace ControlRoomApplication.Controllers
         {
             Orientation currentPos = rtController.GetCurrentOrientation();
             string currentlyMoving = rtController.RadioTelescope.PLCDriver.MotorsCurrentlyMoving().ToString().ToUpper();
-            string sendBack = "MOVING: " + currentlyMoving + " | " + "AZ: " + currentPos.Azimuth + " | " + "EL: " + currentPos.Elevation;
+            string sendBack = "MOVING: " + currentlyMoving + " | " + "AZ: " + currentPos.azimuth + " | " + "EL: " + currentPos.elevation;
 
             // Send back MCU data if TCP version is 1.1 or greater 
             if (versionNum >= 1.1)

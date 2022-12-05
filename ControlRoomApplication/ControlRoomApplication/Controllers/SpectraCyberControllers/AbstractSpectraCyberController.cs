@@ -82,11 +82,11 @@ namespace ControlRoomApplication.Controllers
             SetSpectraCyberModeType(config._Mode);
             if(config._Mode == SpectraCyberModeTypeEnum.CONTINUUM)
             {
-                success = SetContinuumIntegrationTime(config.IntegrationTime) && SetContinuumOffsetVoltage(config.OffsetVoltage);
+                success = SetContinuumIntegrationTime(config.IntegrationTime) && SetContinuumOffsetVoltage(config.offset_voltage);
             }
             else if(config._Mode == SpectraCyberModeTypeEnum.SPECTRAL)
             {
-                success = SetSpectralOffsetVoltage(config.OffsetVoltage) && SetSpectralIntegrationTime(config.IntegrationTime);
+                success = SetSpectralOffsetVoltage(config.offset_voltage) && SetSpectralIntegrationTime(config.IntegrationTime);
             }
             else
             {

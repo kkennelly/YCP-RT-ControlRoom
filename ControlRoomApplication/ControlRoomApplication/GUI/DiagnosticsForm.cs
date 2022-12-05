@@ -362,8 +362,8 @@ namespace ControlRoomApplication.GUI
 
             Entities.Orientation currAbsOrientation = rtController.GetAbsoluteOrientation();
 
-            _azEncoderDegrees = currAbsOrientation.Azimuth;
-            _elEncoderDegrees = currAbsOrientation.Elevation;
+            _azEncoderDegrees = currAbsOrientation.azimuth;
+            _elEncoderDegrees = currAbsOrientation.elevation;
             lblAzAbsPos.Text = Math.Round(_azEncoderDegrees, 2).ToString();
 
             // Check if elevation encoder is timed out, output ERR if so, otherwise output current position
@@ -904,10 +904,10 @@ namespace ControlRoomApplication.GUI
             switch (caseSwitch)
             {
                 case 1: // Elevation Lower Limit Switch
-                    rtController.MoveRadioTelescopeToOrientation(new Entities.Orientation(currOrientation.Azimuth, -14), MovementPriority.Manual);
+                    rtController.MoveRadioTelescopeToOrientation(new Entities.Orientation(currOrientation.azimuth, -14), MovementPriority.Manual);
                     break;
                 case 2: // Elevation Upper Limit Switch
-                    rtController.MoveRadioTelescopeToOrientation(new Entities.Orientation(currOrientation.Azimuth, 92), MovementPriority.Manual);
+                    rtController.MoveRadioTelescopeToOrientation(new Entities.Orientation(currOrientation.azimuth, 92), MovementPriority.Manual);
                     break;
                 default:
 

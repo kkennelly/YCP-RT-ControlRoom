@@ -449,13 +449,13 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
                         // Elevation absolute encoder
                         if (elEncoderSize > 0)
                         {
-                            CurrentAbsoluteOrientation.Elevation = GetElevationAxisPositionFromBytes(ref k, data, AbsoluteOrientationOffset.Elevation, CurrentAbsoluteOrientation.Elevation);
+                            CurrentAbsoluteOrientation.elevation = GetElevationAxisPositionFromBytes(ref k, data, AbsoluteOrientationOffset.elevation, CurrentAbsoluteOrientation.elevation);
                         }
 
                         // Azimuth absolute encoder
                         if (azEncoderSize > 0)
                         {
-                            CurrentAbsoluteOrientation.Azimuth = GetAzimuthAxisPositionFromBytes(ref k, data, AbsoluteOrientationOffset.Azimuth, CurrentAbsoluteOrientation.Azimuth);
+                            CurrentAbsoluteOrientation.azimuth = GetAzimuthAxisPositionFromBytes(ref k, data, AbsoluteOrientationOffset.azimuth, CurrentAbsoluteOrientation.azimuth);
                         }
 
                         // Elevation Ambient Temperature

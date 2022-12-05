@@ -220,7 +220,7 @@ namespace ControlRoomApplication.Controllers
                         endTreeCalTime = DateTime.Now;
 
                         // Zenith calibration
-                        RTController.MoveRadioTelescopeToOrientation(new Orientation(RTController.GetCurrentOrientation().Azimuth, 90), MovementPriority.Appointment);
+                        RTController.MoveRadioTelescopeToOrientation(new Orientation(RTController.GetCurrentOrientation().azimuth, 90), MovementPriority.Appointment);
 
                         startZenithCalTime = DateTime.Now;
                         
@@ -294,7 +294,7 @@ namespace ControlRoomApplication.Controllers
                         DateTime startTreeCalTime, endTreeCalTime, startZenithCalTime, endZenithCalTime;
 
                         // Zenith calibration
-                        RTController.MoveRadioTelescopeToOrientation(new Orientation(RTController.GetCurrentOrientation().Azimuth, 90), MovementPriority.Appointment);
+                        RTController.MoveRadioTelescopeToOrientation(new Orientation(RTController.GetCurrentOrientation().azimuth, 90), MovementPriority.Appointment);
 
                         startZenithCalTime = DateTime.Now;
 
@@ -502,14 +502,14 @@ namespace ControlRoomApplication.Controllers
                         // Kate - removed the check for azumith < 0 in the below if statement due to Todd's request
                         // Reason being, we should not have an azimuth below 0 be given to us. That check is in the
                         // method calling this!
-                        if (NextObjectiveOrientation.Elevation < 0)
+                        if (NextObjectiveOrientation.azimuth < 0)
                         {
-                            logger.Warn(Utilities.GetTimeStamp() + ": Invalid Appt: Az = " + NextObjectiveOrientation.Azimuth + ", El = " + NextObjectiveOrientation.Elevation);
+                            logger.Warn(Utilities.GetTimeStamp() + ": Invalid Appt: Az = " + NextObjectiveOrientation.azimuth + ", El = " + NextObjectiveOrientation.elevation);
                             InterruptAppointmentFlag = true;
                             break;
                         }
 
-                        logger.Info(Utilities.GetTimeStamp() + ": Moving to Next Objective: Az = " + NextObjectiveOrientation.Azimuth + ", El = " + NextObjectiveOrientation.Elevation);
+                        logger.Info(Utilities.GetTimeStamp() + ": Moving to Next Objective: Az = " + NextObjectiveOrientation.azimuth + ", El = " + NextObjectiveOrientation.elevation);
                         
                         MovementResult apptMovementResult = RTController.MoveRadioTelescopeToOrientation(NextObjectiveOrientation, MovementPriority.Appointment);
 

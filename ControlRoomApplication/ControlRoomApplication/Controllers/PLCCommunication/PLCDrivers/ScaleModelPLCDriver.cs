@@ -288,15 +288,15 @@ namespace ControlRoomApplication.Controllers {
         public override MovementResult MoveToOrientation(Orientation target_orientation, Orientation current_orientation)
         {
             int positionTranslationAZ, positionTranslationEL;
-            positionTranslationAZ = ConversionHelper.DegreesToSteps((target_orientation.Azimuth - current_orientation.Azimuth), MotorConstants.GEARING_RATIO_AZIMUTH);
-            positionTranslationEL = ConversionHelper.DegreesToSteps((target_orientation.Elevation - current_orientation.Elevation), MotorConstants.GEARING_RATIO_ELEVATION);
+            positionTranslationAZ = ConversionHelper.DegreesToSteps((target_orientation.azimuth - current_orientation.azimuth), MotorConstants.GEARING_RATIO_AZIMUTH);
+            positionTranslationEL = ConversionHelper.DegreesToSteps((target_orientation.elevation - current_orientation.elevation), MotorConstants.GEARING_RATIO_ELEVATION);
 
             int EL_Speed = ConversionHelper.DPSToSPS(ConversionHelper.RPMToDPS(0.2), MotorConstants.GEARING_RATIO_ELEVATION);
             int AZ_Speed = ConversionHelper.DPSToSPS(ConversionHelper.RPMToDPS(0.2), MotorConstants.GEARING_RATIO_AZIMUTH);
 
             //(ObjectivePositionStepsAZ - CurrentPositionStepsAZ), (ObjectivePositionStepsEL - CurrentPositionStepsEL)
-            Console.WriteLine("degrees target az " + target_orientation.Azimuth + " el " + target_orientation.Elevation);
-            Console.WriteLine("degrees curren az " + current_orientation.Azimuth + " el " + current_orientation.Elevation);
+            Console.WriteLine("degrees target az " + target_orientation.azimuth + " el " + target_orientation.elevation);
+            Console.WriteLine("degrees curren az " + current_orientation.azimuth + " el " + current_orientation.elevation);
 
 
             //return sendmovecomand( EL_Speed * 20 , 50 , positionTranslationAZ , positionTranslationEL ).GetAwaiter().GetResult();

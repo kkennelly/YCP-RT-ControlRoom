@@ -889,7 +889,7 @@ namespace ControlRoomApplication.Controllers {
             TimeToMove = ( int)(TimeToMove * 1.2);
             TimeToMove += 100;
 
-            if (targetOrientation.Azimuth == 0.0 || targetOrientation.Azimuth==360.0) TimeToMove += 100;
+            if (targetOrientation.azimuth == 0.0 || targetOrientation.azimuth==360.0) TimeToMove += 100;
    
 
             // Calculate azimuth movement direction
@@ -974,31 +974,31 @@ namespace ControlRoomApplication.Controllers {
                     Thread.Sleep(200);
                     // If this is reached, the motors have stopped and we are now checking that the orientation is correct
                     Orientation encoderOrientation = GetMotorEncoderPosition();
-                    Orientation offsetOrientation = new Orientation(encoderOrientation.Azimuth + FinalPositionOffset.Azimuth, encoderOrientation.Elevation + FinalPositionOffset.Elevation);
+                    Orientation offsetOrientation = new Orientation(encoderOrientation.azimuth + FinalPositionOffset.azimuth, encoderOrientation.elevation + FinalPositionOffset.elevation);
 
-                    while (offsetOrientation.Azimuth > 360) offsetOrientation.Azimuth -= 360;
-                    while (offsetOrientation.Azimuth < 0) offsetOrientation.Azimuth += 360;
+                    while (offsetOrientation.azimuth > 360) offsetOrientation.azimuth -= 360;
+                    while (offsetOrientation.azimuth < 0) offsetOrientation.azimuth += 360;
 
                     // Check if target or offset orientations are close to the 360 degree line. If the orientations stradle 360 degrees (ex 359.99 and 0.01),
                     // add the offset to them to shift their positions and subtract 360 from the one that is greater so that the orientation check is
                     // accurate (ex to 0.09 and 0.19)
-                    if (targetOrientation.Azimuth + 0.1 >= 360 && offsetOrientation.Azimuth - 0.1 <= 0)
+                    if (targetOrientation.azimuth + 0.1 >= 360 && offsetOrientation.azimuth - 0.1 <= 0)
                     {
-                        targetOrientation.Azimuth += 0.1 - 360;
-                        offsetOrientation.Azimuth += 0.1;
+                        targetOrientation.azimuth += 0.1 - 360;
+                        offsetOrientation.azimuth += 0.1;
                     }
-                    else if (offsetOrientation.Azimuth + 0.1 >= 360 && targetOrientation.Azimuth - 0.1 <= 0)
+                    else if (offsetOrientation.azimuth + 0.1 >= 360 && targetOrientation.azimuth - 0.1 <= 0)
                     {
-                        targetOrientation.Azimuth += 0.1;
-                        offsetOrientation.Azimuth += 0.1 - 360;
+                        targetOrientation.azimuth += 0.1;
+                        offsetOrientation.azimuth += 0.1 - 360;
                     }
 
-                    if ((targetOrientation.Azimuth == 0.0 || targetOrientation.Azimuth==360.0) && (offsetOrientation.Azimuth > 359.9 || offsetOrientation.Azimuth < 0.1))
+                    if ((targetOrientation.azimuth == 0.0 || targetOrientation.azimuth==360.0) && (offsetOrientation.azimuth > 359.9 || offsetOrientation.azimuth < 0.1))
                     {
                         result = MovementResult.Success;
                     }
 
-                   else if (Math.Abs(offsetOrientation.Azimuth - targetOrientation.Azimuth) <= 0.1 && Math.Abs(offsetOrientation.Elevation - targetOrientation.Elevation) <= 0.1)
+                   else if (Math.Abs(offsetOrientation.azimuth - targetOrientation.azimuth) <= 0.1 && Math.Abs(offsetOrientation.elevation - targetOrientation.elevation) <= 0.1)
                    {
                         result = MovementResult.Success;
                    }

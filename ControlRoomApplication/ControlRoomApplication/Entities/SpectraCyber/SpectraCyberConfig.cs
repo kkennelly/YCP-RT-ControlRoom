@@ -12,8 +12,8 @@ namespace ControlRoomApplication.Entities
         {
             _Mode = mode;
             IntegrationTime = integration_time;
-            OffsetVoltage = offset_voltage;
-            IFGain = if_gain;
+            this.offset_voltage = offset_voltage;
+            this.if_gain = if_gain;
             DCGain = dc_gain;
             Bandwidth = bandwidth;
         }
@@ -22,8 +22,8 @@ namespace ControlRoomApplication.Entities
         {
             _Mode = mode;
             IntegrationTime = SpectraCyberIntegrationTimeEnum.MID_TIME_SPAN;
-            OffsetVoltage = 0;
-            IFGain = 10;
+            offset_voltage = 0;
+            if_gain = 10;
             DCGain = SpectraCyberDCGainEnum.X1;
             Bandwidth = SpectraCyberBandwidthEnum.SMALL_BANDWIDTH;
         }
@@ -75,7 +75,7 @@ namespace ControlRoomApplication.Entities
 
         [Required]
         [Column("integration_time")]
-        public double time
+        public double integration_time
         {
             get
             {
@@ -89,11 +89,11 @@ namespace ControlRoomApplication.Entities
 
         [Required]
         [Column("offset_voltage")]
-        public double OffsetVoltage { get; set; }
+        public double offset_voltage { get; set; }
 
         [Required]
         [Column("if_gain")]
-        public double IFGain { get; set; }
+        public double if_gain { get; set; }
 
         [NotMapped]
         public SpectraCyberDCGainEnum DCGain { get; set; }
@@ -145,8 +145,8 @@ namespace ControlRoomApplication.Entities
             }
             return  _Mode == other._Mode && 
                     IntegrationTime == other.IntegrationTime && 
-                    OffsetVoltage == other.OffsetVoltage && 
-                    IFGain == other.IFGain && 
+                    offset_voltage == other.offset_voltage && 
+                    if_gain == other.if_gain && 
                     DCGain == other.DCGain && 
                     Bandwidth == other.Bandwidth;
         }
@@ -161,7 +161,7 @@ namespace ControlRoomApplication.Entities
 
         public override string ToString()
         {
-            return Id + "| IT: " + IntegrationTime + " OV: " + OffsetVoltage + " IFG: " + IFGain + " DCG: " + DCGain + "B: " + bandwidth; 
+            return Id + "| IT: " + IntegrationTime + " OV: " + offset_voltage + " IFG: " + if_gain + " DCG: " + DCGain + "B: " + bandwidth; 
         }
     }
 }

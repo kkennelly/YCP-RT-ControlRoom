@@ -115,7 +115,7 @@ namespace ControlRoomApplication.Database
                 List<Appointment> alist = Context.Appointments.ToList<Appointment>();
                 foreach (Coordinate c in appt.Coordinates)
                 {
-                    c.apptId = alist[alist.Count - 1].Id;
+                    c.appointment_id = alist[alist.Count - 1].Id;
                     Context.Coordinates.AddOrUpdate(c);
                 }
                 SaveContext(Context);
@@ -231,7 +231,7 @@ namespace ControlRoomApplication.Database
                     {
                         foreach(Coordinate c in coordsForAppt)
                         {
-                            if(c.apptId == a.Id) a.Coordinates.Add(c);
+                            if(c.appointment_id == a.Id) a.Coordinates.Add(c);
                         }
                     }
                 }
@@ -641,7 +641,7 @@ namespace ControlRoomApplication.Database
                     Context.Appointments.AddOrUpdate(appt);
 
                     // Retrieve all coordinates for appointment
-                    var coordsForAppt = Context.Coordinates.ToList<Coordinate>().Where(coord => coord.apptId == appt.Id);
+                    var coordsForAppt = Context.Coordinates.ToList<Coordinate>().Where(coord => coord.appointment_id == appt.Id);
 
                     // Delete coordinates
                     foreach(Coordinate c in coordsForAppt)
@@ -656,7 +656,7 @@ namespace ControlRoomApplication.Database
                     // Add coordinates
                     foreach (Coordinate c in appt.Coordinates)
                     {
-                        c.apptId = appt.Id;
+                        c.appointment_id = appt.Id;
                         Context.Coordinates.AddOrUpdate(c);
                     }
 

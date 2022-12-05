@@ -11,8 +11,8 @@ namespace ControlRoomApplication.Entities
     {
         public Orientation(double azimuth, double elevation)
         {
-            Azimuth = azimuth;
-            Elevation = elevation;
+            azimuth = azimuth;
+            elevation = elevation;
         }
 
         public Orientation() : this(0, 0) { }
@@ -23,11 +23,11 @@ namespace ControlRoomApplication.Entities
 
         [Required]
         [Column("azimuth")]
-        public double Azimuth { get; set; }
+        public double azimuth { get; set; }
 
         [Required]
         [Column("elevation")]
-        public double Elevation { get; set; }
+        public double elevation { get; set; }
 
         /// <summary>
         /// Checks if the current Orientation is Equal to another Orientation  
@@ -42,8 +42,8 @@ namespace ControlRoomApplication.Entities
             }
 
             // These are based off of 12 and 10 bit encoder precisions, respectively
-            bool az_equal = Math.Abs(Azimuth - other.Azimuth) < (360.0 / 4096);
-            bool el_equal = Math.Abs(Elevation - other.Elevation) < (360.0 / 1024);
+            bool az_equal = Math.Abs(azimuth - other.azimuth) < (360.0 / 4096);
+            bool el_equal = Math.Abs(elevation - other.elevation) < (360.0 / 1024);
             return az_equal && el_equal;
         }
 
@@ -55,8 +55,8 @@ namespace ControlRoomApplication.Entities
         public bool orientationValid()
         {
             if (
-                Elevation > SimulationConstants.LIMIT_HIGH_EL_DEGREES ||
-                Elevation < SimulationConstants.LIMIT_LOW_EL_DEGREES
+                elevation > SimulationConstants.LIMIT_HIGH_EL_DEGREES ||
+                elevation < SimulationConstants.LIMIT_LOW_EL_DEGREES
                 )
             {
                 return false;
@@ -78,12 +78,12 @@ namespace ControlRoomApplication.Entities
         /// <returns>Returns a new orientation identical to the object in which it was called.</returns>
         public object Clone()
         {
-            return new Orientation(Azimuth, Elevation);
+            return new Orientation(azimuth, elevation);
         }
 
         public override string ToString()
         {
-            return Id + "| A: " + Azimuth + " E: " + Elevation;
+            return Id + "| A: " + azimuth + " E: " + elevation;
         }
     }
 }

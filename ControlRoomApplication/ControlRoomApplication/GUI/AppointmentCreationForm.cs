@@ -183,7 +183,7 @@ namespace ControlRoomApplication.GUI
 
             switch (TypeInputList.SelectedIndex)
             {
-                case 4: // DRIFT
+                case 3: // DRIFT
                     _isDrift = true;
 
                     OrientationLabel.Show();
@@ -216,8 +216,8 @@ namespace ControlRoomApplication.GUI
                     {
                         mode = scForm._mode.ToString(),
                         IntegrationTime = scForm._integrationTime,
-                        OffsetVoltage = scForm._offsetVoltage,
-                        IFGain = scForm._ifGain,
+                        offset_voltage = scForm._offsetVoltage,
+                        if_gain = scForm._ifGain,
                         DCGain = scForm._dcGain
                     };
 
@@ -244,8 +244,8 @@ namespace ControlRoomApplication.GUI
                 {
                     Coordinate coordinate = new Coordinate
                     {
-                        RightAscension = coordinateForm._rightAscension,
-                        Declination = coordinateForm._declination,
+                        right_ascension = coordinateForm._rightAscension,
+                        declination = coordinateForm._declination,
                     };
 
                     Database.DatabaseOperations.AddCoordinate(coordinate);
@@ -270,8 +270,8 @@ namespace ControlRoomApplication.GUI
                 {
                     Entities.Orientation orientation = new Entities.Orientation
                     {
-                        Azimuth = orientationForm._azimuth,
-                        Elevation = orientationForm._elevation
+                        azimuth = orientationForm._azimuth,
+                        elevation = orientationForm._elevation
                     };
 
                     Database.DatabaseOperations.AddOrientation(orientation);

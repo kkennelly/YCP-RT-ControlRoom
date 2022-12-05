@@ -28,8 +28,8 @@ namespace ControlRoomApplication.Controllers
 
             double ApparentGreenwichSiderealTime = AASSidereal.ApparentGreenwichSiderealTime(date.Julian);
             double LongtitudeAsHourAngle = AASCoordinateTransformation.DegreesToHours(Location.Longitude);
-            double LocalHourAngle = ApparentGreenwichSiderealTime - LongtitudeAsHourAngle - coordinate.RightAscension;
-            AAS2DCoordinate Horizontal = AASCoordinateTransformation.Equatorial2Horizontal(LocalHourAngle, coordinate.Declination, Location.Latitude);
+            double LocalHourAngle = ApparentGreenwichSiderealTime - LongtitudeAsHourAngle - coordinate.right_ascension;
+            AAS2DCoordinate Horizontal = AASCoordinateTransformation.Equatorial2Horizontal(LocalHourAngle, coordinate.declination, Location.Latitude);
 
             // Since AASharp considers south zero, flip the orientation 180 degrees
             // TODO: Verify that this correctly points us north or south based on our true north offset (issue #391)
@@ -53,13 +53,13 @@ namespace ControlRoomApplication.Controllers
             }
 
             // Since AASharp considers south zero, flip the orientation 180 degrees
-            horizontal.Azimuth += 180;
-            if (horizontal.Azimuth > 360)
+            horizontal.azimuth += 180;
+            if (horizontal.azimuth > 360)
             {
-                horizontal.Azimuth -= 360;
+                horizontal.azimuth -= 360;
             }
             
-            AAS2DCoordinate equatorial = AASCoordinateTransformation.Horizontal2Equatorial(horizontal.Azimuth, horizontal.Elevation, Location.Latitude);
+            AAS2DCoordinate equatorial = AASCoordinateTransformation.Horizontal2Equatorial(horizontal.azimuth, horizontal.elevation, Location.Latitude);
 
             AASDate date = new AASDate(datetime.Year, datetime.Month, datetime.Day, datetime.Hour, datetime.Minute, datetime.Second, true);
             double ApparentGreenwichSiderealTime = AASSidereal.ApparentGreenwichSiderealTime(date.Julian);
@@ -194,8 +194,8 @@ namespace ControlRoomApplication.Controllers
             Coordinate end_coord = coords[1];
 
             // Make sure the coordinates do not overlap
-            if( start_coord.RightAscension == end_coord.RightAscension ||
-                start_coord.Declination == end_coord.Declination)
+            if( start_coord.right_ascension == end_coord.right_ascension ||
+                start_coord.declination == end_coord.declination)
             {
                 throw new ArgumentException("Coordinates cannot overlap");
             }
@@ -211,8 +211,8 @@ namespace ControlRoomApplication.Controllers
             }
 
             // Find the width and the height of the square in coordinates
-            double coord_width = end_coord.RightAscension - start_coord.RightAscension;
-            double coord_height = end_coord.Declination - start_coord.Declination;
+            double coord_width = end_coord.right_ascension - start_coord.right_ascension;
+            double coord_height = end_coord.declination - start_coord.declination;
 
             // Find the coordinate increment per point 
             // (x = RightAscension, y = Declination)
@@ -242,8 +242,8 @@ namespace ControlRoomApplication.Controllers
 
             // Find the new coordinate x and y
             // (x = RightAscension, y = Declination)
-            double x = start_coord.RightAscension + dx;
-            double y = start_coord.Declination + dy;
+            double x = start_coord.right_ascension + dx;
+            double y = start_coord.declination + dy;
 
             //logger.Info(x + ", " + y); // (FOR TESTING)
 

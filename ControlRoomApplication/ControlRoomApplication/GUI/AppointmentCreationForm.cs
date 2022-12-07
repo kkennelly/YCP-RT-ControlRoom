@@ -20,12 +20,15 @@ namespace ControlRoomApplication.GUI
         private Dictionary<int, Entities.Orientation> _orientationDictionary;
         private Dictionary<int, Coordinate> _coordinateDictionary;
         private int _id;
+        private RadioTelescope _telescope;
 
         private bool _isDrift, _isPoint, _isCelestialBody;
 
-        public AppointmentCreationForm(int id)
+        public AppointmentCreationForm(RadioTelescope telescope)
         {
-            this._id = id;
+            _id = telescope.Id;
+
+            _telescope = telescope;
 
             _isDrift = _isPoint = _isCelestialBody = false;
 
@@ -84,6 +87,7 @@ namespace ControlRoomApplication.GUI
 
                 _appt.status = AppointmentStatusEnum.SCHEDULED.ToString();
                 _appt.telescope_id = _id;
+                _appt.Telescope = _telescope;
                 _appt.Public = Convert.ToInt16(PublicInput.Checked);
                 _appt.spectracyber_config_id = int.Parse(((string) SpectraCyberConfigInputList.SelectedItem).Split('|')[0]);
                 _appt.type = TypeInputList.Text;

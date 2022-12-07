@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ControlRoomApplication.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,16 +14,18 @@ namespace ControlRoomApplication.GUI
     public partial class AppointmentControlForm : Form
     {
         private int id;
+        private RadioTelescope _telescope;
 
-        public AppointmentControlForm(int id)
+        public AppointmentControlForm(RadioTelescope telescope)
         {
-            this.id = id;
+            _telescope = telescope;
+            id = telescope.Id;
             InitializeComponent();
         }
 
         private void AddApptBtn_Click(object sender, EventArgs e)
         {
-            var addApptForm = new AppointmentCreationForm(id);
+            var addApptForm = new AppointmentCreationForm(_telescope);
 
             if (addApptForm.ShowDialog() == DialogResult.OK)
             {

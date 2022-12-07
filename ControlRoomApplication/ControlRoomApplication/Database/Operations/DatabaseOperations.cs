@@ -106,7 +106,7 @@ namespace ControlRoomApplication.Database
                 if (Context.SpectraCyberConfigs.Any(t => t.Id == appt.SpectraCyberConfig.Id) == false)
                     Context.SpectraCyberConfigs.Add(appt.SpectraCyberConfig);
 
-                if(appt.Telescope != null)
+                if (appt.Telescope != null)
                 {
                     Context.Entry(appt.Telescope).State = EntityState.Unchanged;
                 }

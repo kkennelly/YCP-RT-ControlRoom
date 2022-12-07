@@ -1372,9 +1372,8 @@ namespace ControlRoomApplication.Main
 
         public void button1_Click(object sender, EventArgs e)
         {
-            var apptControlForm = new AppointmentControlForm(current_rt_id);
+            var apptControlForm = new AppointmentControlForm(AbstractRTDriverPairList[0].Key);
             apptControlForm.Show();
-
         }
 
         public void PNBox_CheckedChanged(bool PNE)

@@ -24,7 +24,6 @@ namespace ControlRoomApplication.Controllers
 
         protected Thread ClientManagmentThread;
 
-        public bool PNEnabled; 
         public LimitSwitchData limitSwitchData;
         public HomeSensorData homeSensorData;
         public MiscPlcInput plcInput;

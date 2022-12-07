@@ -470,9 +470,7 @@ namespace ControlRoomApplication.Controllers
             else
             {
                 // Unknown current mode type
-                // Treat the same as Continuum case. 
-                commandString = "!D000";
-                //throw new ArgumentException("Invalid SpectraCyber mode type: " + SpectraCyber.CurrentModeType.ToString());
+                throw new ArgumentException("Invalid SpectraCyber mode type: " + SpectraCyber.CurrentModeType.ToString());
             }
 
             return new SpectraCyberRequest(

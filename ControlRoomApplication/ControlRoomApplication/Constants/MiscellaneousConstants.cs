@@ -70,10 +70,5 @@ namespace ControlRoomApplication.Constants
         /// The amount of time (ms) that we want to run the spectra cyber scan for during calibration 
         /// </summary>
         public static readonly int CALIBRATION_MS = 5000;
-
-        /// <summary>
-        /// The number of minutes since an appointment's start time in which it is considered overdue. 
-        /// </summary>
-        public static readonly double OVERDUE_APPOINTMENT_MINUTES = 1.0; 
     }
 }

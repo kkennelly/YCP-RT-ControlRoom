@@ -24,15 +24,8 @@ namespace ControlRoomApplication.Controllers.Communications
 
         public static bool firebaseAppCreated = false;
 
-        public static bool sendToAllAdmins(String titleText, String bodyText, bool PNEnabled, bool testflag = false)
+        public static bool sendToAllAdmins(String titleText, String bodyText, bool testflag = false)
         {
-            // We only want to call this method if Push Notifications are enabled on the CR Application
-            if(!PNEnabled)
-            {
-                logger.Debug(Utilities.GetTimeStamp() + ": Push Notifications Disabled. No notification sent.");
-                return true; 
-            }
-            
             if (!firebaseAppCreated)
             {
                 FirebaseApp.Create(new AppOptions()
@@ -59,15 +52,15 @@ namespace ControlRoomApplication.Controllers.Communications
             };
 
             // Send a message to the device corresponding to the provided
-           // string response = FirebaseMessaging.DefaultInstance.SendAsync(message).Result;
-           /*
+            string response = FirebaseMessaging.DefaultInstance.SendAsync(message).Result;
+
             if (!testflag)
             {
                 // Response is a message ID string.
                 Console.WriteLine("Successfully sent message: " + response);
                 logger.Debug(Utilities.GetTimeStamp() + ": Notification sent: " + bodyText);
             }
-           */
+
             return true;
         }
     }

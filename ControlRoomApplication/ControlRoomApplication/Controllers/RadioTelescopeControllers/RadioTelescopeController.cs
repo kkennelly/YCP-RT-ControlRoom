@@ -13,7 +13,6 @@ using System.Diagnostics;
 using ControlRoomApplication.Controllers.PLCCommunication.PLCDrivers.MCUManager;
 using ControlRoomApplication.Controllers.PLCCommunication.PLCDrivers.MCUManager.Enumerations;
 using ControlRoomApplication.Entities.DiagnosticData;
-using ControlRoomApplication.Entities.Encoder;
 
 namespace ControlRoomApplication.Controllers
 {
@@ -37,8 +36,6 @@ namespace ControlRoomApplication.Controllers
         private bool AllSensorsSafe;
         public bool EnableSoftwareStops;
 
-        public bool PNEnabled;
-
         private double MaxElTempThreshold;
         private double MaxAzTempThreshold;
 
@@ -55,8 +52,6 @@ namespace ControlRoomApplication.Controllers
 
         private static readonly log4net.ILog logger =
             log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
-        private EncoderAverages EncoderAverages = new EncoderAverages();
 
         /// <summary>
         /// Constructor that takes an AbstractRadioTelescope object and sets the
@@ -550,10 +545,6 @@ namespace ControlRoomApplication.Controllers
                 FinalCalibrationOffset = RadioTelescope.CalibrationOrientation;
                 RadioTelescope.PLCDriver.SetFinalOffset(FinalCalibrationOffset);
 
-                // Reset the Encoder Average queues
-                EncoderAverages.AbsoluteEncoder.Clear();
-                EncoderAverages.MotorEncoder.Clear();
-
                 if (RadioTelescope.PLCDriver.CurrentMovementPriority == priority) RadioTelescope.PLCDriver.CurrentMovementPriority = MovementPriority.None;
 
                 Monitor.Exit(MovementLock);
@@ -872,8 +863,8 @@ namespace ControlRoomApplication.Controllers
                     // Might want to consider weather station overrides
                     sensors.weather_station = (SByte)SensorStatusEnum.ALARM;
 
-                    PushNotification.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are too high: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH, PNEnabled);
-                    EmailNotifications.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are too high: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH, PNEnabled);
+                    PushNotification.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are too high: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
+                    EmailNotifications.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are too high: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
                 }
                 // Slightly potentially tragic wind speed
                 else if (windSpeedStatus == 1)
@@ -882,8 +873,8 @@ namespace ControlRoomApplication.Controllers
                     // Might want to consider weather station overrides
                     sensors.weather_station = (SByte)SensorStatusEnum.WARNING;
 
-                    PushNotification.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are in Warning Range: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH, PNEnabled);
-                    EmailNotifications.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are in Warning Range: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH, PNEnabled);
+                    PushNotification.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are in Warning Range: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
+                    EmailNotifications.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are in Warning Range: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
                 }
                 
                 // Check elevation absolute encoder, set to ALERT if timed out
@@ -1014,10 +1005,8 @@ namespace ControlRoomApplication.Controllers
                 {
                     logger.Info(Utilities.GetTimeStamp() + ": " + s + " motor temperature BELOW stable temperature by " + Math.Truncate(SimulationConstants.STABLE_MOTOR_TEMP - t.temp) + " degrees Fahrenheit.");
 
-                    PushNotification.sendToAllAdmins("MOTOR TEMPERATURE", s + " motor temperature BELOW stable temperature by " + 
-                        Math.Truncate(SimulationConstants.STABLE_MOTOR_TEMP - t.temp) + " degrees Fahrenheit.", PNEnabled);
-                    EmailNotifications.sendToAllAdmins("MOTOR TEMPERATURE", s + " motor temperature BELOW stable temperature by " + 
-                        Math.Truncate(SimulationConstants.STABLE_MOTOR_TEMP - t.temp) + " degrees Fahrenheit.", PNEnabled);
+                    PushNotification.sendToAllAdmins("MOTOR TEMPERATURE", s + " motor temperature BELOW stable temperature by " + Math.Truncate(SimulationConstants.STABLE_MOTOR_TEMP - t.temp) + " degrees Fahrenheit.");
+                    EmailNotifications.sendToAllAdmins("MOTOR TEMPERATURE", s + " motor temperature BELOW stable temperature by " + Math.Truncate(SimulationConstants.STABLE_MOTOR_TEMP - t.temp) + " degrees Fahrenheit.");
                 }
 
                 // Only overrides if switch is true
@@ -1030,8 +1019,8 @@ namespace ControlRoomApplication.Controllers
                 {
                     logger.Info(Utilities.GetTimeStamp() + ": " + s + " motor temperature OVERHEATING by " + Math.Truncate(t.temp - max) + " degrees Fahrenheit.");
 
-                    PushNotification.sendToAllAdmins("MOTOR TEMPERATURE", s + " motor temperature OVERHEATING by " + Math.Truncate(t.temp - max) + " degrees Fahrenheit.", PNEnabled);
-                    EmailNotifications.sendToAllAdmins("MOTOR TEMPERATURE", s + " motor temperature OVERHEATING by " + Math.Truncate(t.temp - max) + " degrees Fahrenheit.", PNEnabled);
+                    PushNotification.sendToAllAdmins("MOTOR TEMPERATURE", s + " motor temperature OVERHEATING by " + Math.Truncate(t.temp - max) + " degrees Fahrenheit.");
+                    EmailNotifications.sendToAllAdmins("MOTOR TEMPERATURE", s + " motor temperature OVERHEATING by " + Math.Truncate(t.temp - max) + " degrees Fahrenheit.");
                 }
 
                 // Only overrides if switch is true
@@ -1041,8 +1030,8 @@ namespace ControlRoomApplication.Controllers
             else if (t.temp <= SimulationConstants.MAX_MOTOR_TEMP && t.temp >= SimulationConstants.MIN_MOTOR_TEMP && !lastIsSafe) {
                 logger.Info(Utilities.GetTimeStamp() + ": " + s + " motor temperature stable.");
 
-                PushNotification.sendToAllAdmins("MOTOR TEMPERATURE", s + " motor temperature stable.", PNEnabled);
-                EmailNotifications.sendToAllAdmins("MOTOR TEMPERATURE", s + " motor temperature stable.", PNEnabled);
+                PushNotification.sendToAllAdmins("MOTOR TEMPERATURE", s + " motor temperature stable.");
+                EmailNotifications.sendToAllAdmins("MOTOR TEMPERATURE", s + " motor temperature stable.");
             }
 
             return true;
@@ -1075,15 +1064,15 @@ namespace ControlRoomApplication.Controllers
             {
                 logger.Info(Utilities.GetTimeStamp() + ": Overriding " + sensor + " sensor.");
 
-                PushNotification.sendToAllAdmins("SENSOR OVERRIDES", "Overriding " + sensor + " sensor.", PNEnabled);
-                EmailNotifications.sendToAllAdmins("SENSOR OVERRIDES", "Overriding " + sensor + " sensor.", PNEnabled);
+                PushNotification.sendToAllAdmins("SENSOR OVERRIDES", "Overriding " + sensor + " sensor.");
+                EmailNotifications.sendToAllAdmins("SENSOR OVERRIDES", "Overriding " + sensor + " sensor.");
             }
             else
             {
                 logger.Info(Utilities.GetTimeStamp() + ": Enabled " + sensor + " sensor.");
 
-                PushNotification.sendToAllAdmins("SENSOR OVERRIDES", "Enabled " + sensor + " sensor.", PNEnabled);
-                EmailNotifications.sendToAllAdmins("SENSOR OVERRIDES", "Enabled " + sensor + " sensor.", PNEnabled);
+                PushNotification.sendToAllAdmins("SENSOR OVERRIDES", "Enabled " + sensor + " sensor.");
+                EmailNotifications.sendToAllAdmins("SENSOR OVERRIDES", "Enabled " + sensor + " sensor.");
             }
         }
 
@@ -1170,8 +1159,8 @@ namespace ControlRoomApplication.Controllers
                     if (result != MovementResult.Success)
                     {
                         logger.Info($"{Utilities.GetTimeStamp()}: Automatic snow dump FAILED with error message: {result.ToString()}");
-                        PushNotification.sendToAllAdmins("Snow Dump Failed", $"Automatic snow dump FAILED with error message: {result.ToString()}", PNEnabled);
-                        EmailNotifications.sendToAllAdmins("Snow Dump Failed", $"Automatic snow dump FAILED with error message: {result.ToString()}", PNEnabled);
+                        PushNotification.sendToAllAdmins("Snow Dump Failed", $"Automatic snow dump FAILED with error message: {result.ToString()}");
+                        EmailNotifications.sendToAllAdmins("Snow Dump Failed", $"Automatic snow dump FAILED with error message: {result.ToString()}");
                     }
                     else
                     {
@@ -1324,20 +1313,6 @@ namespace ControlRoomApplication.Controllers
                     RadioTelescope.PLCDriver.InterruptMovementAndWaitUntilStopped(true, true);
                     logger.Info(Utilities.GetTimeStamp() + ": Software-stop hit!");
                 }
-
-                // Interrupts telescope from moving up if Upper LS is disabled & from moving down if Lower LS is disabled. 
-                // NOTE: The Positive/Negative enum values were swapped previously. Hence, upward movement is currently considered
-                //          negative and vice versa. 
-                if(direction == RadioTelescopeDirectionEnum.ClockwiseOrNegative && overrides.overrideElevatProx90)
-                {
-                    RadioTelescope.PLCDriver.InterruptMovementAndWaitUntilStopped(true, true);
-                    logger.Info(Utilities.GetTimeStamp() + ": Software-stop hit! Upper LS is disabled. No movements upwards are allowed.");
-                }
-                if (direction == RadioTelescopeDirectionEnum.CounterclockwiseOrPositive && overrides.overrideElevatProx0)
-                {
-                    RadioTelescope.PLCDriver.InterruptMovementAndWaitUntilStopped(true, true);
-                    logger.Info(Utilities.GetTimeStamp() + ": Software-stop hit! Lower LS is disabled. No movements downwards are allowed.");
-                }
             }
         }
 
@@ -1445,29 +1420,16 @@ namespace ControlRoomApplication.Controllers
         /// <param name="absolute"> The current orientation of the absolute encoders </param>
         public bool CompareMotorAndAbsoluteEncoders(Orientation motor, Orientation absolute)
         {
-            if (!EncoderAverages.AddOrientation(absolute, motor))
-            {
-                if (EncoderAverages.NumErrors >= EncoderAverages.maxErrors)
-                {
-                    EncoderAverages.MotorEncoder.Clear();
-                    EncoderAverages.AbsoluteEncoder.Clear();
-                    return false;
-                }
+            // This calculates edge cases for when the azimuth goes from 360 degrees to 0
+            double diff = Math.Abs(motor.azimuth - absolute.azimuth);
+            diff = Math.Abs((diff + 180) % 360 - 180);
 
+            // Compare discrepancy of current orientations and keep below constant
+            if (Math.Abs(motor.elevation - absolute.elevation) <= MiscellaneousConstants.MOTOR_ABSOLUTE_ENCODER_DISCREPANCY && 
+                diff <= MiscellaneousConstants.MOTOR_ABSOLUTE_ENCODER_DISCREPANCY)
                 return true;
-            }
-
-            return true;
-            //// This calculates edge cases for when the azimuth goes from 360 degrees to 0
-            //double diff = Math.Abs(motor.Azimuth - absolute.Azimuth);
-            //diff = Math.Abs((diff + 180) % 360 - 180);
-
-            //// Compare discrepancy of current orientations and keep below constant
-            //if (Math.Abs(motor.Elevation - absolute.Elevation) <= MiscellaneousConstants.MOTOR_ABSOLUTE_ENCODER_DISCREPANCY && 
-            //    diff <= MiscellaneousConstants.MOTOR_ABSOLUTE_ENCODER_DISCREPANCY)
-            //    return true;
-            //else 
-            //    return false;
+            else 
+                return false;
         }
     }
 }

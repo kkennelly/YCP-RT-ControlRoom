@@ -254,11 +254,6 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
         private long ConnectionTimestamp { get; set; }
 
         /// <summary>
-        /// This stores the boolean value for whether Push Notifications are enabled
-        /// </summary>
-        public bool PNEnabled { get; set; }
-
-        /// <summary>
         /// This starts the SensorMonitoringRoutine. Calling this will immediately begin initialization.
         /// </summary>
         /// <returns>If started successfully, return true. Else, return false.</returns>
@@ -354,7 +349,7 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
                     Status = SensorNetworkStatusEnum.InitializationSendingFailed;
                     if(Timeout.Enabled) Timeout.Stop();
 
-                    PushNotification.sendToAllAdmins("Sensor Network Error", $"Status: {Status}", PNEnabled);
+                    PushNotification.sendToAllAdmins("Sensor Network Error", $"Status: {Status}");
                 }
                 else
                 {
@@ -557,7 +552,7 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
                         logger.Error($"{Utilities.GetTimeStamp()}: An error occurred while running the server; please check that the connection is available.");
                         logger.Info($"{Utilities.GetTimeStamp()}: Trying to reconnect to the Sensor Network...");
 
-                        PushNotification.sendToAllAdmins("Sensor Network Error", $"Status: {Status}", PNEnabled);
+                        PushNotification.sendToAllAdmins("Sensor Network Error", $"Status: {Status}");
                     }
                 }
             }
@@ -619,7 +614,7 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
 
             logger.Error($"{Utilities.GetTimeStamp()}: Connection to the Sensor Network timed out! Status: {Status}");
 
-            PushNotification.sendToAllAdmins("Sensor Network Timeout", $"Status: {Status}", PNEnabled);
+            PushNotification.sendToAllAdmins("Sensor Network Timeout", $"Status: {Status}");
         }
 
         /// <summary>

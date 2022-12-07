@@ -38,8 +38,6 @@ namespace ControlRoomApplication.Controllers
         private bool is_test = false;
         private MCUManager MCU;
         private RadioTelescopeTypeEnum telescopeType = RadioTelescopeTypeEnum.NONE;
-        public bool PNEnabled = false;
-
         /// <summary>
         /// set this ONLY if using test driver, removes timouts and delays
         /// </summary>
@@ -326,8 +324,8 @@ namespace ControlRoomApplication.Controllers
                             {
                                 logger.Info(Utilities.GetTimeStamp() + ": Elevation Lower Limit Switch Hit");
 
-                                PushNotification.sendToAllAdmins("LIMIT SWITCH", "Elevation lower limit switch hit", PNEnabled);
-                                EmailNotifications.sendToAllAdmins("LIMIT SWITCH", "Elevation lower limit switch hit", PNEnabled);
+                                PushNotification.sendToAllAdmins("LIMIT SWITCH", "Elevation lower limit switch hit");
+                                EmailNotifications.sendToAllAdmins("LIMIT SWITCH", "Elevation lower limit switch hit");
                             }
                         }
                         break;
@@ -346,8 +344,8 @@ namespace ControlRoomApplication.Controllers
                             {
                                 logger.Info(Utilities.GetTimeStamp() + ": Elevation Upper Limit Switch Hit");
 
-                                PushNotification.sendToAllAdmins("LIMIT SWITCH", "Elevation upper limit switch hit", PNEnabled);
-                                EmailNotifications.sendToAllAdmins("LIMIT SWITCH", "Elevation upper limit switch hit", PNEnabled);
+                                PushNotification.sendToAllAdmins("LIMIT SWITCH", "Elevation upper limit switch hit");
+                                EmailNotifications.sendToAllAdmins("LIMIT SWITCH", "Elevation upper limit switch hit");
                             }
                         }
                         break;
@@ -360,15 +358,15 @@ namespace ControlRoomApplication.Controllers
                             {
                                 logger.Info(Utilities.GetTimeStamp() + ": gate opened");
 
-                                PushNotification.sendToAllAdmins("GATE ACTIVITY", "Gate has been opened.", PNEnabled);
-                                EmailNotifications.sendToAllAdmins("GATE ACTIVITY", "Gate has been opened.", PNEnabled);
+                                PushNotification.sendToAllAdmins("GATE ACTIVITY", "Gate has been opened.");
+                                EmailNotifications.sendToAllAdmins("GATE ACTIVITY", "Gate has been opened.");
                             }
                             else
                             {
                                 logger.Info(Utilities.GetTimeStamp() + ": gate closed");
 
-                                PushNotification.sendToAllAdmins("GATE ACTIVITY", "Gate has been closed.", PNEnabled);
-                                EmailNotifications.sendToAllAdmins("GATE ACTIVITY", "Gate has been closed.", PNEnabled);
+                                PushNotification.sendToAllAdmins("GATE ACTIVITY", "Gate has been closed.");
+                                EmailNotifications.sendToAllAdmins("GATE ACTIVITY", "Gate has been closed.");
                             }
                         }
                         break;
@@ -382,16 +380,16 @@ namespace ControlRoomApplication.Controllers
                                 logger.Info(Utilities.GetTimeStamp() + ": Estop Hit");
                                 CurrentMovementPriority = MovementPriority.Critical;
 
-                                PushNotification.sendToAllAdmins("E-STOP ACTIVITY", "E-stop has been hit.", PNEnabled);
-                                EmailNotifications.sendToAllAdmins("E-STOP ACTIVITY", "E-stop has been hit.", PNEnabled);
+                                PushNotification.sendToAllAdmins("E-STOP ACTIVITY", "E-stop has been hit.");
+                                EmailNotifications.sendToAllAdmins("E-STOP ACTIVITY", "E-stop has been hit.");
                             }
                             else
                             {
                                 logger.Info(Utilities.GetTimeStamp() + ": Estop released");
                                 CurrentMovementPriority = MovementPriority.None;
 
-                                PushNotification.sendToAllAdmins("E-STOP ACTIVITY", "E-stop has been released.", PNEnabled);
-                                EmailNotifications.sendToAllAdmins("E-STOP ACTIVITY", "E-stop has been released.", PNEnabled);
+                                PushNotification.sendToAllAdmins("E-STOP ACTIVITY", "E-stop has been released.");
+                                EmailNotifications.sendToAllAdmins("E-STOP ACTIVITY", "E-stop has been released.");
                             }
                         }
                         break;
@@ -770,12 +768,6 @@ namespace ControlRoomApplication.Controllers
         public override bool GetMotorsHomed()
         {
             return MCU.MotorsHomed;
-        }
-
-        public void SetPushNotificationEnabled(bool PN)
-        {
-            PNEnabled = PN;
-            MCU.PNEnabled = PN; 
         }
     }
 }

@@ -100,8 +100,6 @@ namespace ControlRoomApplication.GUI
 
         private int rtId;
 
-        bool pushEmailNotifsEnabled = false;
-
         private Acceleration[] azOld;
         private Acceleration[] elOld;
         private Acceleration[] cbOld;
@@ -150,8 +148,6 @@ namespace ControlRoomApplication.GUI
             dataGridView1.Rows.Add(mcuRow);
             dataGridView1.Update();
 
-            PushEmailNotif_checkBox.Enabled = true;
-
             //MCU_Statui.ColumnCount = 2;
             //MCU_Statui.Columns[0].HeaderText = "Status name";
             //MCU_Statui.Columns[1].HeaderText = "value";
@@ -167,10 +163,6 @@ namespace ControlRoomApplication.GUI
             bool currAmbTempHumidity = rtController.overrides.overrideAmbientTempHumidity;
             bool currElProx0 = rtController.overrides.overrideElevatProx0;
             bool currElProx90 = rtController.overrides.overrideElevatProx90;
-
-            // Manually set LS Override to 0 on the PLC (off) 
-            rtController.RadioTelescope.PLCDriver.setregvalue((ushort)PLC_modbus_server_register_mapping.LIMIT_OVERRIDE, (ushort) 0);
-
             bool currAzimuthAbsEncoder = rtController.overrides.overrideAzimuthAbsEncoder;
             bool currElevationAbsEncoder = rtController.overrides.overrideElevationAbsEncoder;
             bool currAzimuthAccelerometer = rtController.overrides.overrideAzimuthAccelerometer;
@@ -178,8 +170,6 @@ namespace ControlRoomApplication.GUI
             bool currCounterbalanceAccelerometer = rtController.overrides.overrideCounterbalanceAccelerometer;
             UpdateOverrideButtons(currMain, currWS, currAZ, currEL, currAmbTempHumidity, currElProx0, currElProx90, 
                 currAzimuthAbsEncoder, currElevationAbsEncoder, currAzimuthAccelerometer, currElevationAccelerometer, currCounterbalanceAccelerometer);
-
-
 
             SensorSettingsThread = new BackgroundWorker();
             SensorSettingsThread.DoWork += new DoWorkEventHandler(SensorSettingsRoutine);
@@ -262,10 +252,9 @@ namespace ControlRoomApplication.GUI
                     break;
                 }
                 // Check if the SpectraCyber returns a valid single scan. 
-                //SpectraCyberResponse resp = rtController.RadioTelescope.SpectraCyberController.DoSpectraCyberScan();
+                SpectraCyberResponse resp = rtController.RadioTelescope.SpectraCyberController.DoSpectraCyberScan();
 
-                // Trying previous method: 
-                if (rtController.RadioTelescope.SpectraCyberController.TestIfComponentIsAlive())
+                if (resp.Valid)
                 {
                     // A valid scan shows that the SC is online. 
                     statuses[0] = "Online";
@@ -314,7 +303,7 @@ namespace ControlRoomApplication.GUI
                     statuses[2] = "Offline"; 
                 }
 
-                Thread.Sleep(3000);
+                Thread.Sleep(1000);
             }
         }
 
@@ -685,7 +674,7 @@ namespace ControlRoomApplication.GUI
                 azimuthAccChart.ChartAreas[0].AxisX.Minimum = double.NaN;
                 azimuthAccChart.ChartAreas[0].AxisX.Maximum = double.NaN;
 
-                if (azOld != null && !Acceleration.SequenceEquals(azOld, azimuthAccel))
+                if (azOld != null && Acceleration.SequenceEquals(azOld, azimuthAccel))
                 {
                     for (int i = 0; i < azimuthAccel.Length; i++)
                     {
@@ -734,7 +723,7 @@ namespace ControlRoomApplication.GUI
                 elevationAccChart.ChartAreas[0].AxisX.Minimum = double.NaN;
                 elevationAccChart.ChartAreas[0].AxisX.Maximum = double.NaN;
 
-                if (elOld != null && !Acceleration.SequenceEquals(elOld, eleAccel))
+                if (elOld != null && Acceleration.SequenceEquals(elOld, eleAccel))
                 {
                     for (int i = 0; i < eleAccel.Length; i++)
                     {
@@ -782,7 +771,7 @@ namespace ControlRoomApplication.GUI
                 counterBalanceAccChart.ChartAreas[0].AxisX.Minimum = double.NaN;
                 counterBalanceAccChart.ChartAreas[0].AxisX.Maximum = double.NaN;
 
-                if (cbOld != null && !Acceleration.SequenceEquals(cbOld, cbAccel))
+                if (cbOld != null && Acceleration.SequenceEquals(cbOld, cbAccel))
                 {
                     for (int i = 0; i < cbAccel.Length; i++)
                     {
@@ -834,7 +823,7 @@ namespace ControlRoomApplication.GUI
         private void btnTest_Click(object sender, System.EventArgs e)
         {
             logger.Debug(Utilities.GetTimeStamp() + ": Test notification being sent");
-            PushNotification.sendToAllAdmins("Test Header", "Test sent from control form", mainF.PNEnabled, false);
+            PushNotification.sendToAllAdmins("Test Header", "Test sent from control form", false);
         }
 
         private void btnAddOneTemp_Click(object sender, System.EventArgs e)
@@ -943,18 +932,12 @@ namespace ControlRoomApplication.GUI
                 ElivationLimitSwitch0.Text = "DISABLED";
                 ElivationLimitSwitch0.BackColor = System.Drawing.Color.Red;
                 rtController.setOverride("elevation proximity (1)", true);
-
-                // Write to PLC. 
-                LimitSwitchHandlePLC();
             }
             else if (rtController.overrides.overrideElevatProx0)
             {
                 ElivationLimitSwitch0.Text = "ENABLED";
                 ElivationLimitSwitch0.BackColor = System.Drawing.Color.LimeGreen;
                 rtController.setOverride("elevation proximity (1)", false);
-
-                // Write to PLC. 
-                LimitSwitchHandlePLC();
             }
         }
 
@@ -965,55 +948,13 @@ namespace ControlRoomApplication.GUI
                 ElevationLimitSwitch90.Text = "DISABLED";
                 ElevationLimitSwitch90.BackColor = System.Drawing.Color.Red;
                 rtController.setOverride("elevation proximity (2)", true);
-
-                // Write to PLC. 
-                LimitSwitchHandlePLC();
             }
-            else if (rtController.overrides.overrideElevatProx90)
+            else
             {
                 ElevationLimitSwitch90.Text = "ENABLED";
                 ElevationLimitSwitch90.BackColor = System.Drawing.Color.LimeGreen;
                 rtController.setOverride("elevation proximity (2)", false);
-
-                // Write to PLC. 
-                LimitSwitchHandlePLC(); 
-                
             }
-        }
-
-        private void LimitSwitchHandlePLC()
-        {
-            // 4 cases to consider when disabling limit switches on PLC. 
-            // 0: Both Limit switches are enabled.
-            // 1: LS 0 is disabled
-            // 256: LS 90 is disabled
-            // 257: Both LS are disabled.
-
-            ushort LSOverride = 0; 
-
-            if(!rtController.overrides.overrideElevatProx0 && !rtController.overrides.overrideElevatProx90)
-            {
-                // Both LS are enabled. 
-                LSOverride = 0; 
-
-            } else if (rtController.overrides.overrideElevatProx0 && !rtController.overrides.overrideElevatProx90)
-            {
-                // LS 0 is disabled. 
-                LSOverride = 1; 
-
-            } else if (!rtController.overrides.overrideElevatProx0 && rtController.overrides.overrideElevatProx90)
-            {
-                // LS 90 is disabled. 
-                LSOverride = 256; 
-
-            } else if (rtController.overrides.overrideElevatProx0 && rtController.overrides.overrideElevatProx90)
-            {
-                // Both LS are disabled. 
-                LSOverride = 257; 
-            }
-
-            // Write the value to the PLC Register. 
-            rtController.RadioTelescope.PLCDriver.setregvalue((ushort)PLC_modbus_server_register_mapping.LIMIT_OVERRIDE, LSOverride);
         }
 
         private void diagnosticScriptCombo_SelectedIndexChanged(object sender, EventArgs e)
@@ -2121,14 +2062,6 @@ namespace ControlRoomApplication.GUI
                 UpdateSensorInitiliazation.Enabled = false;
                 comboTimingSelect.Enabled = false;
             }
-        }
-
-        private void PushEmailNotif_checkBox_CheckedChanged(object sender, EventArgs e)
-        {
-            pushEmailNotifsEnabled = PushEmailNotif_checkBox.Checked ? true : false;
-
-            // Update value on Main Form and across application. 
-            mainF.PNBox_CheckedChanged(pushEmailNotifsEnabled); 
         }
     }
 }

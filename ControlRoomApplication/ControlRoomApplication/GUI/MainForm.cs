@@ -1370,6 +1370,13 @@ namespace ControlRoomApplication.Main
             }
         }
 
+        public void button1_Click(object sender, EventArgs e)
+        {
+            var apptControlForm = new AppointmentControlForm(current_rt_id);
+            apptControlForm.Show();
+
+        }
+
         public void PNBox_CheckedChanged(bool PNE)
         {
             PNEnabled = PNE;

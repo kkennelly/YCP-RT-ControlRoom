@@ -74,8 +74,14 @@ namespace ControlRoomApplication.GUI
                 */
 
                 _appt.User = _users.Find(u => (u.first_name + " " + u.last_name).Equals(UsernameInputList.Text));
-                _appt.start_time = StartDateInput.Value.AddDays(-1) + StartTimeInput.Value.TimeOfDay;
-                _appt.end_time = EndDateInput.Value.AddDays(-1) + EndTimeInput.Value.TimeOfDay;
+                var fuck = StartTimeInput.Value.TimeOfDay;
+                var you = EndTimeInput.Value.TimeOfDay;
+                var _in = StartDateInput.Value;
+                var ass = EndDateInput.Value;
+
+                _appt.start_time = TimeZoneInfo.ConvertTimeToUtc(new DateTime(StartDateInput.Value.Year, StartDateInput.Value.Month, StartDateInput.Value.Day, StartTimeInput.Value.TimeOfDay.Hours, StartTimeInput.Value.Minute, StartTimeInput.Value.Second));
+                _appt.end_time = TimeZoneInfo.ConvertTimeToUtc(new DateTime(EndDateInput.Value.Year, EndDateInput.Value.Month, EndDateInput.Value.Day, EndTimeInput.Value.TimeOfDay.Hours, EndTimeInput.Value.Minute, EndTimeInput.Value.Second));
+
                 _appt.status = AppointmentStatusEnum.SCHEDULED.ToString();
                 _appt.telescope_id = _id;
                 _appt.Public = Convert.ToInt16(PublicInput.Checked);

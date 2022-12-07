@@ -88,10 +88,10 @@
             this.startButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.startButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F);
             this.startButton.ForeColor = System.Drawing.Color.Black;
-            this.startButton.Location = new System.Drawing.Point(263, 84);
-            this.startButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.startButton.Location = new System.Drawing.Point(197, 68);
+            this.startButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.startButton.Name = "startButton";
-            this.startButton.Size = new System.Drawing.Size(227, 49);
+            this.startButton.Size = new System.Drawing.Size(170, 40);
             this.startButton.TabIndex = 6;
             this.startButton.Text = "Start RT";
             this.startButton.UseVisualStyleBackColor = false;
@@ -105,13 +105,13 @@
             this.dataGridView1.BackgroundColor = System.Drawing.Color.Gainsboro;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.GridColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.dataGridView1.Location = new System.Drawing.Point(15, 27);
-            this.dataGridView1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.dataGridView1.Location = new System.Drawing.Point(11, 22);
+            this.dataGridView1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
             this.dataGridView1.RowTemplate.Height = 24;
             this.dataGridView1.RowTemplate.ReadOnly = true;
-            this.dataGridView1.Size = new System.Drawing.Size(679, 283);
+            this.dataGridView1.Size = new System.Drawing.Size(509, 230);
             this.dataGridView1.TabIndex = 7;
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             // 
@@ -121,10 +121,10 @@
             this.shutdownButton.BackColor = System.Drawing.Color.Red;
             this.shutdownButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.shutdownButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F);
-            this.shutdownButton.Location = new System.Drawing.Point(17, 84);
-            this.shutdownButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.shutdownButton.Location = new System.Drawing.Point(13, 68);
+            this.shutdownButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.shutdownButton.Name = "shutdownButton";
-            this.shutdownButton.Size = new System.Drawing.Size(227, 49);
+            this.shutdownButton.Size = new System.Drawing.Size(170, 40);
             this.shutdownButton.TabIndex = 7;
             this.shutdownButton.Text = "Shutdown RT";
             this.shutdownButton.UseVisualStyleBackColor = false;
@@ -135,10 +135,10 @@
             this.txtPLCPort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.txtPLCPort.BackColor = System.Drawing.Color.Gainsboro;
             this.txtPLCPort.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.txtPLCPort.Location = new System.Drawing.Point(332, 60);
-            this.txtPLCPort.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtPLCPort.Location = new System.Drawing.Point(249, 49);
+            this.txtPLCPort.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.txtPLCPort.Name = "txtPLCPort";
-            this.txtPLCPort.Size = new System.Drawing.Size(156, 34);
+            this.txtPLCPort.Size = new System.Drawing.Size(118, 29);
             this.txtPLCPort.TabIndex = 5;
             this.txtPLCPort.TextChanged += new System.EventHandler(this.txtPLCPort_TextChanged);
             // 
@@ -152,10 +152,10 @@
             this.comboSpectraCyberBox.Items.AddRange(new object[] {
             "Production SpectraCyber",
             "Simulated SpectraCyber"});
-            this.comboSpectraCyberBox.Location = new System.Drawing.Point(8, 58);
-            this.comboSpectraCyberBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.comboSpectraCyberBox.Location = new System.Drawing.Point(6, 47);
+            this.comboSpectraCyberBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.comboSpectraCyberBox.Name = "comboSpectraCyberBox";
-            this.comboSpectraCyberBox.Size = new System.Drawing.Size(327, 33);
+            this.comboSpectraCyberBox.Size = new System.Drawing.Size(246, 28);
             this.comboSpectraCyberBox.TabIndex = 2;
             // 
             // txtPLCIP
@@ -163,10 +163,10 @@
             this.txtPLCIP.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.txtPLCIP.BackColor = System.Drawing.Color.Gainsboro;
             this.txtPLCIP.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.txtPLCIP.Location = new System.Drawing.Point(332, 16);
-            this.txtPLCIP.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtPLCIP.Location = new System.Drawing.Point(249, 13);
+            this.txtPLCIP.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.txtPLCIP.Name = "txtPLCIP";
-            this.txtPLCIP.Size = new System.Drawing.Size(156, 34);
+            this.txtPLCIP.Size = new System.Drawing.Size(118, 29);
             this.txtPLCIP.TabIndex = 4;
             this.txtPLCIP.TextChanged += new System.EventHandler(this.txtPLCIP_TextChanged);
             // 
@@ -181,10 +181,10 @@
             "Production Weather Station",
             "Simulated Weather Station",
             "Test Weather Station"});
-            this.comboWeatherStationBox.Location = new System.Drawing.Point(7, 95);
-            this.comboWeatherStationBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.comboWeatherStationBox.Location = new System.Drawing.Point(5, 77);
+            this.comboWeatherStationBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.comboWeatherStationBox.Name = "comboWeatherStationBox";
-            this.comboWeatherStationBox.Size = new System.Drawing.Size(328, 33);
+            this.comboWeatherStationBox.Size = new System.Drawing.Size(247, 28);
             this.comboWeatherStationBox.TabIndex = 1;
             // 
             // comboPLCType
@@ -199,10 +199,10 @@
             "Scale PLC",
             "Simulated PLC",
             "Test PLC"});
-            this.comboPLCType.Location = new System.Drawing.Point(7, 132);
-            this.comboPLCType.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.comboPLCType.Location = new System.Drawing.Point(5, 107);
+            this.comboPLCType.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.comboPLCType.Name = "comboPLCType";
-            this.comboPLCType.Size = new System.Drawing.Size(328, 33);
+            this.comboPLCType.Size = new System.Drawing.Size(247, 28);
             this.comboPLCType.TabIndex = 3;
             this.comboPLCType.SelectedIndexChanged += new System.EventHandler(this.comboPLCType_SelectedIndexChanged);
             // 
@@ -213,10 +213,10 @@
             this.FreeControl.Enabled = false;
             this.FreeControl.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.FreeControl.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F);
-            this.FreeControl.Location = new System.Drawing.Point(17, 18);
-            this.FreeControl.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.FreeControl.Location = new System.Drawing.Point(13, 15);
+            this.FreeControl.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.FreeControl.Name = "FreeControl";
-            this.FreeControl.Size = new System.Drawing.Size(472, 54);
+            this.FreeControl.Size = new System.Drawing.Size(354, 44);
             this.FreeControl.TabIndex = 9;
             this.FreeControl.Text = "Radio Telescope Control";
             this.FreeControl.UseVisualStyleBackColor = false;
@@ -231,19 +231,18 @@
             this.comboSensorNetworkBox.Items.AddRange(new object[] {
             "Production Sensor Network",
             "Simulated Sensor Network"});
-            this.comboSensorNetworkBox.Location = new System.Drawing.Point(8, 21);
-            this.comboSensorNetworkBox.Margin = new System.Windows.Forms.Padding(4);
+            this.comboSensorNetworkBox.Location = new System.Drawing.Point(6, 17);
             this.comboSensorNetworkBox.Name = "comboSensorNetworkBox";
-            this.comboSensorNetworkBox.Size = new System.Drawing.Size(327, 33);
+            this.comboSensorNetworkBox.Size = new System.Drawing.Size(246, 28);
             this.comboSensorNetworkBox.TabIndex = 14;
             this.comboSensorNetworkBox.SelectedIndexChanged += new System.EventHandler(this.comboSensorNetworkBox_SelectedIndexChanged);
             // 
             // loopBackBox
             // 
-            this.loopBackBox.Location = new System.Drawing.Point(719, 270);
-            this.loopBackBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.loopBackBox.Location = new System.Drawing.Point(539, 219);
+            this.loopBackBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.loopBackBox.Name = "loopBackBox";
-            this.loopBackBox.Size = new System.Drawing.Size(213, 53);
+            this.loopBackBox.Size = new System.Drawing.Size(160, 43);
             this.loopBackBox.TabIndex = 28;
             this.loopBackBox.Text = "Loop back (for simulation)";
             this.loopBackBox.UseVisualStyleBackColor = true;
@@ -259,18 +258,19 @@
             this.LocalIPCombo.Items.AddRange(new object[] {
             "RT IP Address",
             "127.0.0.1"});
-            this.LocalIPCombo.Location = new System.Drawing.Point(8, 169);
-            this.LocalIPCombo.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.LocalIPCombo.Location = new System.Drawing.Point(6, 137);
+            this.LocalIPCombo.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.LocalIPCombo.Name = "LocalIPCombo";
-            this.LocalIPCombo.Size = new System.Drawing.Size(327, 33);
+            this.LocalIPCombo.Size = new System.Drawing.Size(246, 28);
             this.LocalIPCombo.TabIndex = 16;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 9);
+            this.label1.Location = new System.Drawing.Point(9, 7);
+            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(334, 16);
+            this.label1.Size = new System.Drawing.Size(271, 13);
             this.label1.TabIndex = 17;
             this.label1.Text = "Click on the IP adress of the RT to open diagnostic form";
             // 
@@ -289,11 +289,9 @@
             this.simulationSettingsGroupbox.Controls.Add(this.txtWSCOMPort);
             this.simulationSettingsGroupbox.Controls.Add(this.txtRemoteListenerCOMPort);
             this.simulationSettingsGroupbox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.simulationSettingsGroupbox.Location = new System.Drawing.Point(16, 318);
-            this.simulationSettingsGroupbox.Margin = new System.Windows.Forms.Padding(4);
+            this.simulationSettingsGroupbox.Location = new System.Drawing.Point(12, 258);
             this.simulationSettingsGroupbox.Name = "simulationSettingsGroupbox";
-            this.simulationSettingsGroupbox.Padding = new System.Windows.Forms.Padding(4);
-            this.simulationSettingsGroupbox.Size = new System.Drawing.Size(665, 209);
+            this.simulationSettingsGroupbox.Size = new System.Drawing.Size(499, 170);
             this.simulationSettingsGroupbox.TabIndex = 18;
             this.simulationSettingsGroupbox.TabStop = false;
             this.simulationSettingsGroupbox.Text = "Individual Component Simulation settings";
@@ -303,10 +301,9 @@
             // 
             this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label8.Location = new System.Drawing.Point(343, 70);
-            this.label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label8.Location = new System.Drawing.Point(257, 57);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(148, 24);
+            this.label8.Size = new System.Drawing.Size(120, 18);
             this.label8.TabIndex = 23;
             this.label8.Text = "Spectra Cyber:";
             this.WCOMPortToolTip.SetToolTip(this.label8, "Enter a valid port number, between 1 and 65536");
@@ -317,10 +314,10 @@
             this.txtSpectraPort.BackColor = System.Drawing.Color.Gainsboro;
             this.txtSpectraPort.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
             this.txtSpectraPort.ForeColor = System.Drawing.Color.DarkGray;
-            this.txtSpectraPort.Location = new System.Drawing.Point(520, 65);
-            this.txtSpectraPort.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtSpectraPort.Location = new System.Drawing.Point(390, 53);
+            this.txtSpectraPort.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.txtSpectraPort.Name = "txtSpectraPort";
-            this.txtSpectraPort.Size = new System.Drawing.Size(137, 34);
+            this.txtSpectraPort.Size = new System.Drawing.Size(104, 29);
             this.txtSpectraPort.TabIndex = 24;
             this.txtSpectraPort.Text = " COM port";
             this.txtSpectraPort.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
@@ -331,10 +328,9 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(343, 26);
-            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label2.Location = new System.Drawing.Point(257, 21);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(160, 24);
+            this.label2.Size = new System.Drawing.Size(132, 18);
             this.label2.TabIndex = 17;
             this.label2.Text = "Weather station:";
             this.WCOMPortToolTip.SetToolTip(this.label2, "Enter a valid port number, between 1 and 65536");
@@ -344,10 +340,9 @@
             // 
             this.RLLabel.AutoSize = true;
             this.RLLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.RLLabel.Location = new System.Drawing.Point(343, 119);
-            this.RLLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.RLLabel.Location = new System.Drawing.Point(257, 97);
             this.RLLabel.Name = "RLLabel";
-            this.RLLabel.Size = new System.Drawing.Size(168, 24);
+            this.RLLabel.Size = new System.Drawing.Size(137, 18);
             this.RLLabel.TabIndex = 17;
             this.RLLabel.Text = "Remote Listener:";
             this.RLPortToolTip.SetToolTip(this.RLLabel, "Enter a valid port number, between 1 and 65536");
@@ -358,10 +353,10 @@
             this.txtWSCOMPort.BackColor = System.Drawing.Color.Gainsboro;
             this.txtWSCOMPort.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
             this.txtWSCOMPort.ForeColor = System.Drawing.Color.DarkGray;
-            this.txtWSCOMPort.Location = new System.Drawing.Point(520, 21);
-            this.txtWSCOMPort.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtWSCOMPort.Location = new System.Drawing.Point(390, 17);
+            this.txtWSCOMPort.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.txtWSCOMPort.Name = "txtWSCOMPort";
-            this.txtWSCOMPort.Size = new System.Drawing.Size(137, 34);
+            this.txtWSCOMPort.Size = new System.Drawing.Size(104, 29);
             this.txtWSCOMPort.TabIndex = 22;
             this.txtWSCOMPort.Text = " COM port";
             this.txtWSCOMPort.TextChanged += new System.EventHandler(this.txtWSCOMPort_TextChanged);
@@ -374,10 +369,10 @@
             this.txtRemoteListenerCOMPort.BackColor = System.Drawing.Color.Gainsboro;
             this.txtRemoteListenerCOMPort.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
             this.txtRemoteListenerCOMPort.ForeColor = System.Drawing.Color.DarkGray;
-            this.txtRemoteListenerCOMPort.Location = new System.Drawing.Point(520, 111);
-            this.txtRemoteListenerCOMPort.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtRemoteListenerCOMPort.Location = new System.Drawing.Point(390, 90);
+            this.txtRemoteListenerCOMPort.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.txtRemoteListenerCOMPort.Name = "txtRemoteListenerCOMPort";
-            this.txtRemoteListenerCOMPort.Size = new System.Drawing.Size(137, 34);
+            this.txtRemoteListenerCOMPort.Size = new System.Drawing.Size(104, 29);
             this.txtRemoteListenerCOMPort.TabIndex = 22;
             this.txtRemoteListenerCOMPort.Text = "COM port";
             this.txtRemoteListenerCOMPort.TextChanged += new System.EventHandler(this.txtRemoteListenerCOMPort_TextChanged);
@@ -388,10 +383,9 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(5, 69);
-            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label3.Location = new System.Drawing.Point(4, 56);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(102, 24);
+            this.label3.Size = new System.Drawing.Size(85, 18);
             this.label3.TabIndex = 19;
             this.label3.Text = " PLC port:";
             this.PLCPortToolTip.SetToolTip(this.label3, "Enter a valid port number, between 1 and 65536");
@@ -401,10 +395,9 @@
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(11, 28);
-            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label4.Location = new System.Drawing.Point(8, 23);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(168, 24);
+            this.label4.Size = new System.Drawing.Size(137, 18);
             this.label4.TabIndex = 20;
             this.label4.Text = "MCU IP Address:";
             this.MCUIPToolTip.SetToolTip(this.label4, "Enter a valid IP Address (in the form xxx.xxx.xxx.xxx)");
@@ -424,11 +417,9 @@
             this.portGroupbox.Controls.Add(this.label4);
             this.portGroupbox.Controls.Add(this.txtPLCIP);
             this.portGroupbox.Controls.Add(this.label3);
-            this.portGroupbox.Location = new System.Drawing.Point(701, 31);
-            this.portGroupbox.Margin = new System.Windows.Forms.Padding(4);
+            this.portGroupbox.Location = new System.Drawing.Point(526, 25);
             this.portGroupbox.Name = "portGroupbox";
-            this.portGroupbox.Padding = new System.Windows.Forms.Padding(4);
-            this.portGroupbox.Size = new System.Drawing.Size(497, 240);
+            this.portGroupbox.Size = new System.Drawing.Size(373, 195);
             this.portGroupbox.TabIndex = 21;
             this.portGroupbox.TabStop = false;
             this.portGroupbox.Text = "System IP Address and Port Numbers";
@@ -438,10 +429,9 @@
             // 
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(12, 199);
-            this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label7.Location = new System.Drawing.Point(9, 162);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(223, 24);
+            this.label7.Size = new System.Drawing.Size(183, 18);
             this.label7.TabIndex = 28;
             this.label7.Text = "Sensor Network Client:";
             this.WCOMPortToolTip.SetToolTip(this.label7, "Enter a valid port number, between 1 and 65536");
@@ -450,10 +440,9 @@
             // 
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(12, 156);
-            this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label6.Location = new System.Drawing.Point(9, 127);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(224, 24);
+            this.label6.Size = new System.Drawing.Size(183, 18);
             this.label6.TabIndex = 27;
             this.label6.Text = "Sensor Network Sever:";
             this.WCOMPortToolTip.SetToolTip(this.label6, "Enter a valid port number, between 1 and 65536");
@@ -463,10 +452,10 @@
             this.sensorNetworkClientPort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.sensorNetworkClientPort.BackColor = System.Drawing.Color.Gainsboro;
             this.sensorNetworkClientPort.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.sensorNetworkClientPort.Location = new System.Drawing.Point(404, 193);
-            this.sensorNetworkClientPort.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.sensorNetworkClientPort.Location = new System.Drawing.Point(303, 157);
+            this.sensorNetworkClientPort.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.sensorNetworkClientPort.Name = "sensorNetworkClientPort";
-            this.sensorNetworkClientPort.Size = new System.Drawing.Size(84, 34);
+            this.sensorNetworkClientPort.Size = new System.Drawing.Size(64, 29);
             this.sensorNetworkClientPort.TabIndex = 26;
             this.sensorNetworkClientPort.TextChanged += new System.EventHandler(this.sensorNetworkClientPort_TextChanged);
             this.sensorNetworkClientPort.Enter += new System.EventHandler(this.sensorNetworkClientPort_Enter);
@@ -477,10 +466,10 @@
             this.sensorNetworkClientIPAddress.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.sensorNetworkClientIPAddress.BackColor = System.Drawing.Color.Gainsboro;
             this.sensorNetworkClientIPAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.sensorNetworkClientIPAddress.Location = new System.Drawing.Point(263, 193);
-            this.sensorNetworkClientIPAddress.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.sensorNetworkClientIPAddress.Location = new System.Drawing.Point(197, 157);
+            this.sensorNetworkClientIPAddress.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.sensorNetworkClientIPAddress.Name = "sensorNetworkClientIPAddress";
-            this.sensorNetworkClientIPAddress.Size = new System.Drawing.Size(137, 34);
+            this.sensorNetworkClientIPAddress.Size = new System.Drawing.Size(104, 29);
             this.sensorNetworkClientIPAddress.TabIndex = 25;
             this.sensorNetworkClientIPAddress.TextChanged += new System.EventHandler(this.sensorNetworkClientIPAddress_TextChanged);
             this.sensorNetworkClientIPAddress.Enter += new System.EventHandler(this.sensorNetworkClientIPAddress_Enter);
@@ -491,10 +480,10 @@
             this.sensorNetworkServerPort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.sensorNetworkServerPort.BackColor = System.Drawing.Color.Gainsboro;
             this.sensorNetworkServerPort.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.sensorNetworkServerPort.Location = new System.Drawing.Point(404, 149);
-            this.sensorNetworkServerPort.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.sensorNetworkServerPort.Location = new System.Drawing.Point(303, 121);
+            this.sensorNetworkServerPort.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.sensorNetworkServerPort.Name = "sensorNetworkServerPort";
-            this.sensorNetworkServerPort.Size = new System.Drawing.Size(84, 34);
+            this.sensorNetworkServerPort.Size = new System.Drawing.Size(64, 29);
             this.sensorNetworkServerPort.TabIndex = 24;
             this.sensorNetworkServerPort.TextChanged += new System.EventHandler(this.sensorNetworkServerPort_TextChanged);
             this.sensorNetworkServerPort.Enter += new System.EventHandler(this.sensorNetworkServerPort_Enter);
@@ -505,10 +494,10 @@
             this.sensorNetworkServerIPAddress.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.sensorNetworkServerIPAddress.BackColor = System.Drawing.Color.Gainsboro;
             this.sensorNetworkServerIPAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.sensorNetworkServerIPAddress.Location = new System.Drawing.Point(263, 149);
-            this.sensorNetworkServerIPAddress.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.sensorNetworkServerIPAddress.Location = new System.Drawing.Point(197, 121);
+            this.sensorNetworkServerIPAddress.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.sensorNetworkServerIPAddress.Name = "sensorNetworkServerIPAddress";
-            this.sensorNetworkServerIPAddress.Size = new System.Drawing.Size(137, 34);
+            this.sensorNetworkServerIPAddress.Size = new System.Drawing.Size(104, 29);
             this.sensorNetworkServerIPAddress.TabIndex = 23;
             this.sensorNetworkServerIPAddress.TextChanged += new System.EventHandler(this.sensorNetworkServerIPAddress_TextChanged);
             this.sensorNetworkServerIPAddress.Enter += new System.EventHandler(this.sensorNetworkServerIPAddress_Enter);
@@ -519,10 +508,10 @@
             this.txtMcuCOMPort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.txtMcuCOMPort.BackColor = System.Drawing.Color.Gainsboro;
             this.txtMcuCOMPort.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.txtMcuCOMPort.Location = new System.Drawing.Point(332, 105);
-            this.txtMcuCOMPort.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtMcuCOMPort.Location = new System.Drawing.Point(249, 85);
+            this.txtMcuCOMPort.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.txtMcuCOMPort.Name = "txtMcuCOMPort";
-            this.txtMcuCOMPort.Size = new System.Drawing.Size(156, 34);
+            this.txtMcuCOMPort.Size = new System.Drawing.Size(118, 29);
             this.txtMcuCOMPort.TabIndex = 18;
             this.txtMcuCOMPort.TextChanged += new System.EventHandler(this.txtMcuCOMPort_TextChanged);
             // 
@@ -530,10 +519,9 @@
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(12, 114);
-            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label5.Location = new System.Drawing.Point(9, 93);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(110, 24);
+            this.label5.Size = new System.Drawing.Size(93, 18);
             this.label5.TabIndex = 21;
             this.label5.Text = "MCU Port: ";
             this.MCUPortToolTip.SetToolTip(this.label5, "Enter a valid port number, between 1 and 65536");
@@ -546,11 +534,10 @@
             this.acceptSettings.Enabled = false;
             this.acceptSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.acceptSettings.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.acceptSettings.Location = new System.Drawing.Point(719, 322);
-            this.acceptSettings.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.acceptSettings.Location = new System.Drawing.Point(539, 256);
+            this.acceptSettings.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.acceptSettings.Name = "acceptSettings";
-            this.acceptSettings.Size = new System.Drawing.Size(469, 63);
-            this.acceptSettings.Size = new System.Drawing.Size(179, 51);
+            this.acceptSettings.Size = new System.Drawing.Size(170, 54);
             this.acceptSettings.TabIndex = 23;
             this.acceptSettings.Text = "Finalize settings";
             this.acceptSettings.UseVisualStyleBackColor = false;
@@ -561,11 +548,9 @@
             this.startRTGroupbox.Controls.Add(this.FreeControl);
             this.startRTGroupbox.Controls.Add(this.shutdownButton);
             this.startRTGroupbox.Controls.Add(this.startButton);
-            this.startRTGroupbox.Location = new System.Drawing.Point(701, 388);
-            this.startRTGroupbox.Margin = new System.Windows.Forms.Padding(4);
+            this.startRTGroupbox.Location = new System.Drawing.Point(526, 315);
             this.startRTGroupbox.Name = "startRTGroupbox";
-            this.startRTGroupbox.Padding = new System.Windows.Forms.Padding(4);
-            this.startRTGroupbox.Size = new System.Drawing.Size(508, 139);
+            this.startRTGroupbox.Size = new System.Drawing.Size(381, 113);
             this.startRTGroupbox.TabIndex = 24;
             this.startRTGroupbox.TabStop = false;
             this.startRTGroupbox.Enter += new System.EventHandler(this.groupBox3_Enter);
@@ -576,10 +561,9 @@
             this.helpButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.helpButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.helpButton.ForeColor = System.Drawing.SystemColors.Desktop;
-            this.helpButton.Location = new System.Drawing.Point(1172, 2);
-            this.helpButton.Margin = new System.Windows.Forms.Padding(4);
+            this.helpButton.Location = new System.Drawing.Point(879, 2);
             this.helpButton.Name = "helpButton";
-            this.helpButton.Size = new System.Drawing.Size(29, 30);
+            this.helpButton.Size = new System.Drawing.Size(22, 24);
             this.helpButton.TabIndex = 27;
             this.helpButton.Text = "?";
             this.helpButton.UseVisualStyleBackColor = false;
@@ -587,10 +571,10 @@
             // 
             // ProdcheckBox
             // 
-            this.ProdcheckBox.Location = new System.Drawing.Point(968, 277);
-            this.ProdcheckBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.ProdcheckBox.Location = new System.Drawing.Point(726, 225);
+            this.ProdcheckBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.ProdcheckBox.Name = "ProdcheckBox";
-            this.ProdcheckBox.Size = new System.Drawing.Size(233, 37);
+            this.ProdcheckBox.Size = new System.Drawing.Size(175, 30);
             this.ProdcheckBox.TabIndex = 28;
             this.ProdcheckBox.Text = "Default Vals (for production)";
             this.ProdcheckBox.UseVisualStyleBackColor = true;
@@ -605,9 +589,10 @@
             this.btnApptControl.BackColor = System.Drawing.Color.LightGray;
             this.btnApptControl.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnApptControl.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnApptControl.Location = new System.Drawing.Point(726, 262);
+            this.btnApptControl.Location = new System.Drawing.Point(726, 256);
+            this.btnApptControl.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnApptControl.Name = "btnApptControl";
-            this.btnApptControl.Size = new System.Drawing.Size(167, 51);
+            this.btnApptControl.Size = new System.Drawing.Size(167, 54);
             this.btnApptControl.TabIndex = 29;
             this.btnApptControl.Text = "Appointment Control";
             this.btnApptControl.UseVisualStyleBackColor = false;
@@ -615,11 +600,10 @@
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Gray;
-            this.ClientSize = new System.Drawing.Size(1215, 532);
-            this.ClientSize = new System.Drawing.Size(911, 432);
+            this.ClientSize = new System.Drawing.Size(904, 441);
             this.Controls.Add(this.btnApptControl);
             this.Controls.Add(this.helpButton);
             this.Controls.Add(this.startRTGroupbox);
@@ -631,8 +615,8 @@
             this.Controls.Add(this.loopBackBox);
             this.Controls.Add(this.ProdcheckBox);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.MinimumSize = new System.Drawing.Size(1221, 436);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.MinimumSize = new System.Drawing.Size(920, 362);
             this.Name = "MainForm";
             this.Text = "MainForm";
             this.Load += new System.EventHandler(this.MainForm_Load);

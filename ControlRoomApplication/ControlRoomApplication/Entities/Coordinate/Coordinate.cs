@@ -16,7 +16,7 @@ namespace ControlRoomApplication.Entities
         public Coordinate() : this(0, 0) { }
 
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        
         public int Id { get; set; }
 
         [Required]
@@ -36,6 +36,7 @@ namespace ControlRoomApplication.Entities
         public int minutes { get; set; }
         
         [Column("appointment_id")]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int appointment_id { get; set; }
 
         public override string ToString()

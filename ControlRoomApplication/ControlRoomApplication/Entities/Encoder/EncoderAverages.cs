@@ -46,27 +46,27 @@ namespace ControlRoomApplication.Entities.Encoder
                     Orientation prevAbsoluteOrientation = AbsoluteEncoder.Dequeue();
 
                     // Update averages by removing old values.
-                    absoluteAzAvg -= ((prevAbsoluteOrientation.Azimuth + 180) % 360 - 180) / _capacity;
-                    absoluteElAvg -= (Math.Abs(prevAbsoluteOrientation.Elevation) / _capacity);
+                    absoluteAzAvg -= ((prevAbsoluteOrientation.azimuth + 180) % 360 - 180) / _capacity;
+                    absoluteElAvg -= (Math.Abs(prevAbsoluteOrientation.elevation) / _capacity);
                 }
                 while (MotorEncoder.Count >= _capacity)
                 {
                     Orientation prevMotorOrientation = MotorEncoder.Dequeue();
 
                     // Update averages based on new values.
-                    motorAzAvg -= ((prevMotorOrientation.Azimuth + 180) % 360 - 180) / _capacity;
-                    motorElAvg -= (Math.Abs(prevMotorOrientation.Elevation) / _capacity);
+                    motorAzAvg -= ((prevMotorOrientation.azimuth + 180) % 360 - 180) / _capacity;
+                    motorElAvg -= (Math.Abs(prevMotorOrientation.elevation) / _capacity);
                 }
 
                 // TODO: Test to make sure that this way of enqueuing new orientations produces non-empty values *thumbs up* LGTM
-                AbsoluteEncoder.Enqueue(new Orientation { Azimuth = absolute.Azimuth, Elevation = absolute.Elevation, Id = absolute.Id });
-                MotorEncoder.Enqueue(new Orientation { Azimuth = motor.Azimuth, Elevation = motor.Elevation, Id = motor.Id });
+                AbsoluteEncoder.Enqueue(new Orientation { azimuth = absolute.azimuth, elevation = absolute.elevation, Id = absolute.Id });
+                MotorEncoder.Enqueue(new Orientation { azimuth = motor.azimuth, elevation = motor.elevation, Id = motor.Id });
 
                 // Add new values to running average.
-                absoluteAzAvg += ((absolute.Azimuth + 180) % 360 - 180) / _capacity;
-                absoluteElAvg += (Math.Abs(absolute.Elevation) / _capacity);
-                motorAzAvg += ((motor.Azimuth + 180) % 360 - 180) / _capacity;
-                motorElAvg += (Math.Abs(motor.Elevation) / _capacity);
+                absoluteAzAvg += ((absolute.azimuth + 180) % 360 - 180) / _capacity;
+                absoluteElAvg += (Math.Abs(absolute.elevation) / _capacity);
+                motorAzAvg += ((motor.azimuth + 180) % 360 - 180) / _capacity;
+                motorElAvg += (Math.Abs(motor.elevation) / _capacity);
 
                 NumErrors--;
 
@@ -87,10 +87,10 @@ namespace ControlRoomApplication.Entities.Encoder
             if (AbsoluteEncoder.Count >= _capacity || MotorEncoder.Count >= _capacity)
             {
                 if (
-                    //Math.Abs(absolute.Azimuth - absoluteAzAvg) > _maxDegrees * NumErrors ||
-                    //Math.Abs(absolute.Elevation - absoluteElAvg) > _maxDegrees * NumErrors ||
-                    Math.Abs(((motor.Azimuth + 180) % 360 - 180) - motorAzAvg) > _maxDegrees * NumErrors ||
-                    Math.Abs(Math.Abs(motor.Elevation) - motorElAvg) > _maxDegrees * NumErrors)
+                    //Math.Abs(absolute.azimuth - absoluteAzAvg) > _maxDegrees * NumErrors ||
+                    //Math.Abs(absolute.elevation - absoluteElAvg) > _maxDegrees * NumErrors ||
+                    Math.Abs(((motor.azimuth + 180) % 360 - 180) - motorAzAvg) > _maxDegrees * NumErrors ||
+                    Math.Abs(Math.Abs(motor.elevation) - motorElAvg) > _maxDegrees * NumErrors)
                 {
                     return false;
                 }

@@ -327,6 +327,7 @@
     <Compile Include="Controllers\SensorNetwork\Enumerations\SensorNetworkSensorStatus.cs" />
     <Compile Include="Entities\DiagnosticData\Temperature.cs" />
     <Compile Include="Entities\DiagnosticData\Humidity.cs" />
+    <Compile Include="Entities\Encoder\EncoderAverages.cs" />
     <Compile Include="Entities\Exceptions\MCUExceptions.cs" />
     <Compile Include="Entities\Location\SensorLocationEnum.cs" />
     <Compile Include="Entities\Log\Log.cs" />

@@ -77,17 +77,14 @@ namespace ControlRoomApplication.GUI
                 */
 
                 _appt.User = _users.Find(u => (u.first_name + " " + u.last_name).Equals(UsernameInputList.Text));
-                var fuck = StartTimeInput.Value.TimeOfDay;
-                var you = EndTimeInput.Value.TimeOfDay;
-                var _in = StartDateInput.Value;
-                var ass = EndDateInput.Value;
+                _appt.user_id = _appt.User.Id; 
 
                 _appt.start_time = TimeZoneInfo.ConvertTimeToUtc(new DateTime(StartDateInput.Value.Year, StartDateInput.Value.Month, StartDateInput.Value.Day, StartTimeInput.Value.TimeOfDay.Hours, StartTimeInput.Value.Minute, StartTimeInput.Value.Second));
                 _appt.end_time = TimeZoneInfo.ConvertTimeToUtc(new DateTime(EndDateInput.Value.Year, EndDateInput.Value.Month, EndDateInput.Value.Day, EndTimeInput.Value.TimeOfDay.Hours, EndTimeInput.Value.Minute, EndTimeInput.Value.Second));
 
                 _appt.status = AppointmentStatusEnum.SCHEDULED.ToString();
                 _appt.telescope_id = _id;
-                _appt.Telescope = _telescope;
+                //_appt.Telescope = _telescope;
                 _appt.Public = Convert.ToInt16(PublicInput.Checked);
                 _appt.spectracyber_config_id = int.Parse(((string) SpectraCyberConfigInputList.SelectedItem).Split('|')[0]);
                 _appt.type = TypeInputList.Text;

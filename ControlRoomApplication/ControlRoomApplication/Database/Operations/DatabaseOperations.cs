@@ -100,11 +100,27 @@ namespace ControlRoomApplication.Database
                         Context.Entry(appt.CelestialBody.Coordinate).State = EntityState.Unchanged;
                     
                     Context.CelestialBodies.Add(appt.CelestialBody);
+                } else
+                {
+                    Context.Entry(appt.CelestialBody.Coordinate).State = EntityState.Unchanged;
+                    Context.Entry(appt.CelestialBody).State = EntityState.Unchanged;
                 }
                 if (Context.Orientations.Any(t => t.Id == appt.Orientation.Id) == false)
+                {
                     Context.Orientations.Add(appt.Orientation);
+                } else
+                {
+                    Context.Entry(appt.Orientation).State = EntityState.Unchanged;
+                }
+                    
                 if (Context.SpectraCyberConfigs.Any(t => t.Id == appt.SpectraCyberConfig.Id) == false)
+                {
                     Context.SpectraCyberConfigs.Add(appt.SpectraCyberConfig);
+                } else
+                {
+                    Context.Entry(appt.SpectraCyberConfig).State = EntityState.Unchanged;
+                }
+                    
 
                 if (appt.Telescope != null)
                 {

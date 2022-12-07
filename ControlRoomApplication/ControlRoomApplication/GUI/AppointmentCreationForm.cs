@@ -15,7 +15,10 @@ namespace ControlRoomApplication.GUI
     public partial class AppointmentCreationForm : Form
     {
         private Appointment _appt;
-        private List<User> users;
+        private List<User> _users;
+        private Dictionary<int, CelestialBody> _cbDictionary;
+        private Dictionary<int, Entities.Orientation> _orientationDictionary;
+        private Dictionary<int, Coordinate> _coordinateDictionary;
         private int _id;
 
         private bool _isDrift, _isPoint, _isCelestialBody;
@@ -41,6 +44,8 @@ namespace ControlRoomApplication.GUI
             LoadCoordinates();
 
             LoadOrientations();
+
+            LoadCelestialBodies();
 
             ResetAppointmentType();
 
@@ -68,38 +73,46 @@ namespace ControlRoomApplication.GUI
                     string priority = PriorityInputList.Text;
                 */
 
-                _appt.User = users.Find(u => (u.first_name + " " + u.last_name).Equals(UsernameInputList.Text));
-                _appt.start_time = StartDateInput.Value + StartTimeInput.Value.TimeOfDay;
-                _appt.end_time = EndDateInput.Value + EndTimeInput.Value.TimeOfDay;
+                _appt.User = _users.Find(u => (u.first_name + " " + u.last_name).Equals(UsernameInputList.Text));
+                _appt.start_time = StartDateInput.Value.AddDays(-1) + StartTimeInput.Value.TimeOfDay;
+                _appt.end_time = EndDateInput.Value.AddDays(-1) + EndTimeInput.Value.TimeOfDay;
                 _appt.status = AppointmentStatusEnum.SCHEDULED.ToString();
                 _appt.telescope_id = _id;
                 _appt.Public = Convert.ToInt16(PublicInput.Checked);
                 _appt.spectracyber_config_id = int.Parse(((string) SpectraCyberConfigInputList.SelectedItem).Split('|')[0]);
                 _appt.type = TypeInputList.Text;
-                _appt.priority = PriorityInputList.Text; 
+                _appt.priority = PriorityInputList.Text;
 
-                if (!_isDrift)
+                if (_isDrift)
                 {
-                    if (_isCelestialBody)
-                    {
-                        _appt.celestial_body_id = int.Parse(CelestialBodyIdInput.Text.Split('|')[0]);
-                    }
-                    else
-                    {
-                        CelestialBody cb = new CelestialBody();
-                        cb.Coordinate = new Coordinate(3, 3);
-                        _appt.CelestialBody = cb; 
-                    }
-
-                    // Add coordinate(s) 
-                    _appt.Coordinates.Add(new Coordinate(3, 3));
-                    _appt.Orientation = new Entities.Orientation(0.0, 0.0); 
+                    int orientationId = int.Parse(OrientationInputList.Text.Split('|')[0]);
+                    _appt.Orientation = _orientationDictionary.First(x => x.Key == orientationId).Value;
+                    _appt.orientation_id = orientationId;
                 }
                 else
                 {
-                    _appt.orientation_id = int.Parse(OrientationInputList.Text.Split('|')[0]);
+                    _appt.Orientation = _orientationDictionary[1];
+                    _appt.orientation_id = _appt.Orientation.Id;
                 }
 
+                if (_isCelestialBody)
+                {
+                    int cbId = int.Parse(CelestialBodiesInputList.Text.Split('|')[0]);
+                    _appt.CelestialBody = _cbDictionary.First(x => x.Key == cbId).Value;
+                    _appt.celestial_body_id = cbId;
+                    _appt.CelestialBody.Coordinate = _coordinateDictionary.First(x => x.Key == _appt.CelestialBody.coordinate_id).Value;
+                }
+                else
+                {
+                    _appt.CelestialBody = _cbDictionary[1];
+                    _appt.celestial_body_id = _appt.CelestialBody.Id;
+                    _appt.CelestialBody.Coordinate = _coordinateDictionary.First(x => x.Key == _appt.CelestialBody.coordinate_id).Value;
+                }
+
+                if (!_isDrift && !_isCelestialBody)
+                {
+                    _appt.Coordinates.Add(_coordinateDictionary.First(x => x.Key == int.Parse(CoordinateInputList.Text.Split('|')[0])).Value);
+                }
 
                 DialogResult = DialogResult.OK;
             } 
@@ -116,9 +129,9 @@ namespace ControlRoomApplication.GUI
 
         private void LoadUsers()
         {
-            users = Database.DatabaseOperations.GetAllUsers();
+            _users = Database.DatabaseOperations.GetAllUsers();
 
-            foreach (User user in users)
+            foreach (User user in _users)
             {
                 UsernameInputList.Items.Add(user.first_name + " " + user.last_name);
             }
@@ -155,6 +168,8 @@ namespace ControlRoomApplication.GUI
 
         private void LoadCoordinates()
         {
+            _coordinateDictionary = new Dictionary<int, Coordinate>();
+
             CoordinateInputList.Items.Clear();
 
             CoordinateInputList.Items.Add("New coordinate");
@@ -164,11 +179,14 @@ namespace ControlRoomApplication.GUI
             foreach(Coordinate coord in coordinates)
             {
                 CoordinateInputList.Items.Add(coord.ToString());
+                _coordinateDictionary.Add(coord.Id, coord);
             }
         }
 
         private void LoadOrientations()
         {
+            _orientationDictionary = new Dictionary<int, Entities.Orientation>();
+
             OrientationInputList.Items.Clear();
 
             OrientationInputList.Items.Add("New orientation");
@@ -178,6 +196,24 @@ namespace ControlRoomApplication.GUI
             foreach (Entities.Orientation orientation in orientations)
             {
                 OrientationInputList.Items.Add(orientation.ToString());
+                _orientationDictionary.Add(orientation.Id, orientation);
+            }
+        }
+
+        private void LoadCelestialBodies()
+        {
+            _cbDictionary = new Dictionary<int, CelestialBody>();
+
+            CelestialBodiesInputList.Items.Clear();
+
+            CelestialBodiesInputList.Items.Add("New celestial body");
+
+            List<CelestialBody> cbs = Database.DatabaseOperations.GetAllCelestialBodies();
+
+            foreach(CelestialBody cb in cbs)
+            {
+                CelestialBodiesInputList.Items.Add(cb.ToString());
+                _cbDictionary.Add(cb.Id, cb);
             }
         }
 
@@ -188,7 +224,7 @@ namespace ControlRoomApplication.GUI
             CoordinateLabel.Hide();
 
             CoordinateInputList.Hide();
-            CelestialBodyIdInput.Hide();
+            CelestialBodiesInputList.Hide();
             OrientationInputList.Hide();
 
             _isDrift = _isCelestialBody = false;
@@ -212,7 +248,7 @@ namespace ControlRoomApplication.GUI
                     _isCelestialBody = true;
 
                     CelestialBodyLabel.Show();
-                    CelestialBodyIdInput.Show();
+                    CelestialBodiesInputList.Show();
                     break;
 
                 default: // anything else 

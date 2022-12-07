@@ -29,7 +29,6 @@ namespace ControlRoomApplication.GUI
         /// </summary>
         private void InitializeComponent()
         {
-            this.CelestialBodyIdInput = new System.Windows.Forms.TextBox();
             this.AddApptBtn = new System.Windows.Forms.Button();
             this.UserLabel = new System.Windows.Forms.Label();
             this.EndTimeLabel = new System.Windows.Forms.Label();
@@ -55,15 +54,8 @@ namespace ControlRoomApplication.GUI
             this.label3 = new System.Windows.Forms.Label();
             this.StartTimeInput = new System.Windows.Forms.DateTimePicker();
             this.EndTimeInput = new System.Windows.Forms.DateTimePicker();
+            this.CelestialBodiesInputList = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
-            // 
-            // CelestialBodyIdInput
-            // 
-            this.CelestialBodyIdInput.Location = new System.Drawing.Point(433, 162);
-            this.CelestialBodyIdInput.Margin = new System.Windows.Forms.Padding(2);
-            this.CelestialBodyIdInput.Name = "CelestialBodyIdInput";
-            this.CelestialBodyIdInput.Size = new System.Drawing.Size(102, 20);
-            this.CelestialBodyIdInput.TabIndex = 5;
             // 
             // AddApptBtn
             // 
@@ -294,11 +286,20 @@ namespace ControlRoomApplication.GUI
             this.EndTimeInput.Size = new System.Drawing.Size(89, 20);
             this.EndTimeInput.TabIndex = 38;
             // 
+            // CelestialBodiesInputList
+            // 
+            this.CelestialBodiesInputList.FormattingEnabled = true;
+            this.CelestialBodiesInputList.Location = new System.Drawing.Point(433, 163);
+            this.CelestialBodiesInputList.Name = "CelestialBodiesInputList";
+            this.CelestialBodiesInputList.Size = new System.Drawing.Size(103, 21);
+            this.CelestialBodiesInputList.TabIndex = 39;
+            // 
             // AppointmentCreationForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(578, 321);
+            this.Controls.Add(this.CelestialBodiesInputList);
             this.Controls.Add(this.EndTimeInput);
             this.Controls.Add(this.StartTimeInput);
             this.Controls.Add(this.label3);
@@ -324,7 +325,6 @@ namespace ControlRoomApplication.GUI
             this.Controls.Add(this.EndTimeLabel);
             this.Controls.Add(this.UserLabel);
             this.Controls.Add(this.AddApptBtn);
-            this.Controls.Add(this.CelestialBodyIdInput);
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "AppointmentCreationForm";
             this.Text = "AppointmentCreationForm";
@@ -334,7 +334,6 @@ namespace ControlRoomApplication.GUI
         }
 
         #endregion
-        private System.Windows.Forms.TextBox CelestialBodyIdInput;
         private System.Windows.Forms.Button AddApptBtn;
         private System.Windows.Forms.Label UserLabel;
         private System.Windows.Forms.Label EndTimeLabel;
@@ -360,5 +359,6 @@ namespace ControlRoomApplication.GUI
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.DateTimePicker StartTimeInput;
         private System.Windows.Forms.DateTimePicker EndTimeInput;
+        private System.Windows.Forms.ComboBox CelestialBodiesInputList;
     }
 }

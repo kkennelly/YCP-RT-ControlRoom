@@ -123,6 +123,7 @@ namespace ControlRoomApplication.Database
                 }
                 SaveContext(Context);
             }
+
         }
 
         /// <summary>
@@ -200,8 +201,6 @@ namespace ControlRoomApplication.Database
                     SaveContext(Context);
 
                 }
-            
-
         }
 
 
@@ -384,6 +383,22 @@ namespace ControlRoomApplication.Database
             }
 
             return orientations;
+        }
+
+        /// <summary>
+        /// Returns a list of all celestial bodies from the celestial bodies table 
+        /// </summary>
+        /// <returns></returns>
+        public static List<CelestialBody> GetAllCelestialBodies()
+        {
+            List<CelestialBody> cbs = new List<CelestialBody>();
+
+            using (RTDbContext Context = InitializeDatabaseContext())
+            {
+                cbs = Context.CelestialBodies.SqlQuery("SELECT * FROM celestial_body").ToList<CelestialBody>();
+            }
+
+            return cbs;
         }
 
         /// <summary>

@@ -45,6 +45,7 @@ namespace ControlRoomApplication.Controllers {
         private int McuPort;
         private string McuIp;
         private RadioTelescopeTypeEnum telescopeType;
+        public bool PNEnabled = false;
 
         public MCUManager(string ip, int port) {
             McuPort = port;

@@ -32,6 +32,8 @@ namespace ControlRoomApplication.Entities
             // Initialize all sensors to enabled by default
             ElevationTemp1Init = true;
             AzimuthTemp1Init = true;
+            ElevationTemp2Init = true;
+            AzimuthTemp2Init = true;
             ElevationAmbientInit = true;
             AzimuthAccelerometerInit = true;
             ElevationAccelerometerInit = true;
@@ -62,6 +64,8 @@ namespace ControlRoomApplication.Entities
             // Initialize all sensors to be disabled
             ElevationTemp1Init = false;
             AzimuthTemp1Init = false;
+            ElevationTemp2Init = false;
+            AzimuthTemp2Init = false;
             ElevationAmbientInit = false;
             AzimuthAccelerometerInit = false;
             ElevationAccelerometerInit = false;
@@ -104,6 +108,15 @@ namespace ControlRoomApplication.Entities
         public bool ElevationTemp1Init { get; set; }
 
         /// <summary>
+        /// This will tell the Sensor Network whether or not to initialize the secondary elevation motor temp sensor.
+        /// We will not receive data for this sensor if it is not initialized.
+        /// true = initialize;
+        /// false = do not initialize
+        /// </summary>
+        [Column("elevation_temp_2_init")]
+        public bool ElevationTemp2Init { get; set; }
+
+        /// <summary>
         /// This will tell the Sensor Network whether or not to initialize the primary azimuth motor temp sensor.
         /// We will not receive data for this sensor if it is not initialized.
         /// true = initialize;
@@ -111,6 +124,15 @@ namespace ControlRoomApplication.Entities
         /// </summary>
         [Column("azimuth_temp_1_init")]
         public bool AzimuthTemp1Init { get; set; }
+
+        /// <summary>
+        /// This will tell the Sensor Network whether or not to initialize the secondary azimuth motor temp sensor.
+        /// We will not receive data for this sensor if it is not initialized.
+        /// true = initialize;
+        /// false = do not initialize
+        /// </summary>
+        [Column("azimuth_temp_2_init")]
+        public bool AzimuthTemp2Init { get; set; }
 
         /// <summary>
         /// This will tell the Sensor Network whether or not to initialize the DHT22 ambient temp and humidity sensor.
@@ -286,6 +308,6 @@ namespace ControlRoomApplication.Entities
             return init;
         }
     }
-    
+
 
 }

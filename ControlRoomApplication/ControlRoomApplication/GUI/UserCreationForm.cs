@@ -67,6 +67,7 @@ namespace ControlRoomApplication.GUI
             RoleInput.Items.Add(UserRoleEnum.GUEST.ToString());
             RoleInput.Items.Add(UserRoleEnum.MEMBER.ToString());
             RoleInput.Items.Add(UserRoleEnum.RESEARCHER.ToString());
+            RoleInput.SelectedIndex = 2; // Added to prevent no-role errors- will now default to GUEST
         }
 
         private void LoadNotificationTypes()

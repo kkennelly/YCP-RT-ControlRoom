@@ -226,6 +226,7 @@ namespace ControlRoomApplication.GUI
             // 
             // NotificationTypeInput
             // 
+            this.NotificationTypeInput.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.NotificationTypeInput.FormattingEnabled = true;
             this.NotificationTypeInput.Location = new System.Drawing.Point(140, 235);
             this.NotificationTypeInput.Name = "NotificationTypeInput";
@@ -243,6 +244,7 @@ namespace ControlRoomApplication.GUI
             // 
             // RoleInput
             // 
+            this.RoleInput.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.RoleInput.FormattingEnabled = true;
             this.RoleInput.Location = new System.Drawing.Point(385, 204);
             this.RoleInput.Name = "RoleInput";

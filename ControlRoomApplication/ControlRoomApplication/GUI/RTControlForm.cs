@@ -330,6 +330,8 @@ namespace ControlRoomApplication.Main
                 ActualRATextBox.Text = ConvertedPosition.right_ascension.ToString("0.##");
                 ActualDecTextBox.Text = ConvertedPosition.declination.ToString("0.##");
             });
+
+            logger.Info(Utilities.GetTimeStamp() + currentOrienation.azimuth + "|" + currentOrienation.elevation);
         }
 
         private void oneForthButton_Click(object sender, EventArgs e)

@@ -174,6 +174,7 @@ namespace ControlRoomApplication.GUI
             // 
             // UsernameInputList
             // 
+            this.UsernameInputList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.UsernameInputList.FormattingEnabled = true;
             this.UsernameInputList.Location = new System.Drawing.Point(93, 59);
             this.UsernameInputList.Name = "UsernameInputList";
@@ -202,6 +203,7 @@ namespace ControlRoomApplication.GUI
             // 
             // PriorityInputList
             // 
+            this.PriorityInputList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.PriorityInputList.FormattingEnabled = true;
             this.PriorityInputList.Location = new System.Drawing.Point(93, 228);
             this.PriorityInputList.Name = "PriorityInputList";
@@ -210,6 +212,7 @@ namespace ControlRoomApplication.GUI
             // 
             // TypeInputList
             // 
+            this.TypeInputList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.TypeInputList.FormattingEnabled = true;
             this.TypeInputList.Location = new System.Drawing.Point(433, 92);
             this.TypeInputList.Name = "TypeInputList";
@@ -218,6 +221,7 @@ namespace ControlRoomApplication.GUI
             // 
             // SpectraCyberConfigInputList
             // 
+            this.SpectraCyberConfigInputList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.SpectraCyberConfigInputList.FormattingEnabled = true;
             this.SpectraCyberConfigInputList.Location = new System.Drawing.Point(433, 56);
             this.SpectraCyberConfigInputList.Name = "SpectraCyberConfigInputList";
@@ -235,6 +239,7 @@ namespace ControlRoomApplication.GUI
             // 
             // CoordinateInputList
             // 
+            this.CoordinateInputList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.CoordinateInputList.FormattingEnabled = true;
             this.CoordinateInputList.Location = new System.Drawing.Point(433, 127);
             this.CoordinateInputList.Name = "CoordinateInputList";
@@ -243,6 +248,7 @@ namespace ControlRoomApplication.GUI
             // 
             // OrientationInputList
             // 
+            this.OrientationInputList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.OrientationInputList.FormattingEnabled = true;
             this.OrientationInputList.Location = new System.Drawing.Point(433, 197);
             this.OrientationInputList.Name = "OrientationInputList";
@@ -288,6 +294,7 @@ namespace ControlRoomApplication.GUI
             // 
             // CelestialBodiesInputList
             // 
+            this.CelestialBodiesInputList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.CelestialBodiesInputList.FormattingEnabled = true;
             this.CelestialBodiesInputList.Location = new System.Drawing.Point(433, 163);
             this.CelestialBodiesInputList.Name = "CelestialBodiesInputList";

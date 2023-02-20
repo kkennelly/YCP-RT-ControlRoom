@@ -111,6 +111,7 @@
             // 
             // ModeInputList
             // 
+            this.ModeInputList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ModeInputList.FormattingEnabled = true;
             this.ModeInputList.Location = new System.Drawing.Point(154, 58);
             this.ModeInputList.Name = "ModeInputList";
@@ -153,6 +154,7 @@
             // 
             // IntegrationTimeInputList
             // 
+            this.IntegrationTimeInputList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.IntegrationTimeInputList.FormattingEnabled = true;
             this.IntegrationTimeInputList.Location = new System.Drawing.Point(154, 90);
             this.IntegrationTimeInputList.Name = "IntegrationTimeInputList";
@@ -161,6 +163,7 @@
             // 
             // DCGainInputList
             // 
+            this.DCGainInputList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.DCGainInputList.FormattingEnabled = true;
             this.DCGainInputList.Location = new System.Drawing.Point(154, 184);
             this.DCGainInputList.Name = "DCGainInputList";
@@ -169,6 +172,7 @@
             // 
             // BandwidthInputList
             // 
+            this.BandwidthInputList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.BandwidthInputList.FormattingEnabled = true;
             this.BandwidthInputList.Location = new System.Drawing.Point(154, 211);
             this.BandwidthInputList.Name = "BandwidthInputList";

@@ -147,7 +147,7 @@ namespace ControlRoomApplication.GUI
             dataGridView1.Rows.Add(weatherStationRow);
             dataGridView1.Rows.Add(mcuRow);
             dataGridView1.Update();
-
+            
             //MCU_Statui.ColumnCount = 2;
             //MCU_Statui.Columns[0].HeaderText = "Status name";
             //MCU_Statui.Columns[1].HeaderText = "value";

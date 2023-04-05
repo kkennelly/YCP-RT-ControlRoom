@@ -44,6 +44,10 @@ namespace ControlRoomApplication.Controllers
         public double MinAmbientHumidityThreshold { get; set; }
         public double MaxAmbientHumidityThreshold { get; set; }
 
+        //if wind is above threshold, inclement weather flag will not allow movement until weather calms down
+        //the second part still needs to be done
+        public bool inclementWeather {get; set;}
+
         // Previous snow dump azimuth -- we need to keep track of this in order to add 45 degrees each time we dump
         private double previousSnowDumpAzimuth;
 
@@ -81,6 +85,8 @@ namespace ControlRoomApplication.Controllers
             MaxAmbientTempThreshold = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.AMBIENT_TEMP);
             MinAmbientHumidityThreshold = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.AMBIENT_HUMIDITY, false);
             MaxAmbientHumidityThreshold = DatabaseOperations.GetThresholdForSensor(SensorItemEnum.AMBIENT_HUMIDITY);
+
+            inclementWeather = false;
 
             previousSnowDumpAzimuth = 0;
 
@@ -207,6 +213,12 @@ namespace ControlRoomApplication.Controllers
         public MovementResult ThermalCalibrateRadioTelescope(MovementPriority priority)
         {
             MovementResult moveResult = MovementResult.None;
+
+            if (inclementWeather)
+            {
+                logger.Info(Utilities.GetTimeStamp() + "telescope is currently locked due to inclement weather");
+                return moveResult;
+            }
 
             // Return if incoming priority is equal to or less than current movement
             if (priority <= RadioTelescope.PLCDriver.CurrentMovementPriority) return MovementResult.AlreadyMoving;
@@ -347,6 +359,12 @@ namespace ControlRoomApplication.Controllers
         {
             MovementResult result = MovementResult.None;
 
+            if (inclementWeather)
+            {
+                logger.Info(Utilities.GetTimeStamp() + "telescope is currently locked due to inclement weather");
+                return result;
+            }
+
             if (EnableSoftwareStops && ((GetSoftwareStopElevation() > RadioTelescope.maxElevationDegrees && orientation.elevation > RadioTelescope.maxElevationDegrees) ||
                 (GetSoftwareStopElevation() < RadioTelescope.minElevationDegrees && orientation.elevation < RadioTelescope.minElevationDegrees))) return MovementResult.SoftwareStopHit;
 
@@ -396,6 +414,12 @@ namespace ControlRoomApplication.Controllers
         {
             MovementResult result = MovementResult.None;
 
+            if (inclementWeather)
+            {
+                logger.Info(Utilities.GetTimeStamp() + "telescope is currently locked due to inclement weather");
+                return result;
+            }
+
             Orientation orientation = CoordinateController.CoordinateToOrientation(coordinate, DateTime.UtcNow);
 
             if (EnableSoftwareStops && (GetSoftwareStopElevation() > RadioTelescope.maxElevationDegrees && orientation.elevation > RadioTelescope.maxElevationDegrees) ||
@@ -439,6 +463,11 @@ namespace ControlRoomApplication.Controllers
         {
             MovementResult result = MovementResult.None;
 
+            if (inclementWeather)
+            {
+                logger.Info(Utilities.GetTimeStamp() + "telescope is currently locked due to inclement weather");
+                return result;
+            }
 
             // Return if incoming priority is equal to or less than current movement
             if (priority <= RadioTelescope.PLCDriver.CurrentMovementPriority) return MovementResult.AlreadyMoving;
@@ -500,6 +529,12 @@ namespace ControlRoomApplication.Controllers
         public MovementResult HomeTelescope(MovementPriority priority)
         {
             MovementResult result = MovementResult.None;
+
+            if (inclementWeather)
+            {
+                logger.Info(Utilities.GetTimeStamp() + "telescope is currently locked due to inclement weather");
+                return result;
+            }
 
             // Return if incoming priority is equal to or less than current movement
             if (priority <= RadioTelescope.PLCDriver.CurrentMovementPriority) return MovementResult.AlreadyMoving;
@@ -566,6 +601,12 @@ namespace ControlRoomApplication.Controllers
         {
             MovementResult result = MovementResult.None;
 
+            if (inclementWeather)
+            {
+                logger.Info(Utilities.GetTimeStamp() + "telescope is currently locked due to inclement weather");
+                return result;
+            }
+
             // Return if incoming priority is equal to or less than current movement
             if (priority <= RadioTelescope.PLCDriver.CurrentMovementPriority) return MovementResult.AlreadyMoving;
 
@@ -625,6 +666,12 @@ namespace ControlRoomApplication.Controllers
         {
             MovementResult result = MovementResult.None;
 
+            if (inclementWeather)
+            {
+                logger.Info(Utilities.GetTimeStamp() + "telescope is currently locked due to inclement weather");
+                return result;
+            }
+
             //may want to check for jogs using the RadioTelescopeAxisEnum.BOTH if a jog on both axes is needed in the future 
             if (EnableSoftwareStops && axis == RadioTelescopeAxisEnum.ELEVATION)
             {
@@ -680,6 +727,12 @@ namespace ControlRoomApplication.Controllers
         public MovementResult ExecuteRadioTelescopeStopJog(MCUCommandType stopType)
         {
             MovementResult result = MovementResult.None;
+
+            if (inclementWeather)
+            {
+                logger.Info(Utilities.GetTimeStamp() + "telescope is currently locked due to inclement weather");
+                return result;
+            }
 
             if (RadioTelescope.PLCDriver.CurrentMovementPriority != MovementPriority.Jog) return result;
 
@@ -854,6 +907,7 @@ namespace ControlRoomApplication.Controllers
 
                 // Check weather
                 int windSpeedStatus = RadioTelescope.WeatherStation.CurrentWindSpeedStatus;
+                logger.Info(Utilities.GetTimeStamp() + " Wind Speed Status: " + windSpeedStatus + " Wind speed: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
                 sensors.weather_station = (SByte)SensorStatusEnum.NORMAL;
 
                 // Tragic wind speed
@@ -863,8 +917,14 @@ namespace ControlRoomApplication.Controllers
                     // Might want to consider weather station overrides
                     sensors.weather_station = (SByte)SensorStatusEnum.ALARM;
 
-                    PushNotification.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are too high: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
-                    EmailNotifications.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are too high: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
+                    if(!inclementWeather)
+                    {
+                        PushNotification.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are too high: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
+                        EmailNotifications.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are too high: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
+                        MovementResult result = ExecuteRadioTelescopeImmediateStop(MovementPriority.Critical);
+                        result = StowRadioTelescope(MovementPriority.Critical);
+                        inclementWeather = true;
+                    }
                 }
                 // Slightly potentially tragic wind speed
                 else if (windSpeedStatus == 1)
@@ -873,8 +933,18 @@ namespace ControlRoomApplication.Controllers
                     // Might want to consider weather station overrides
                     sensors.weather_station = (SByte)SensorStatusEnum.WARNING;
 
-                    PushNotification.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are in Warning Range: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
-                    EmailNotifications.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are in Warning Range: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
+                    if(!inclementWeather)
+                    {
+                        PushNotification.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are in Warning Range: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
+                        EmailNotifications.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are in Warning Range: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
+                    }
+                }
+
+                //neither
+                else if (inclementWeather)
+                {
+                    inclementWeather = false;
+                    MovementResult result = HomeTelescope(MovementPriority.Critical);
                 }
                 
                 // Check elevation absolute encoder, set to ALERT if timed out
@@ -1083,6 +1153,12 @@ namespace ControlRoomApplication.Controllers
         {
             MovementResult result = MovementResult.None;
 
+            if(inclementWeather)
+            {
+                logger.Info(Utilities.GetTimeStamp() + "telescope is currently locked due to inclement weather");
+                return result;
+            }
+
             // Return if incoming priority is equal to or less than current movement
             if (priority <= RadioTelescope.PLCDriver.CurrentMovementPriority) return MovementResult.AlreadyMoving;
 
@@ -1180,6 +1256,12 @@ namespace ControlRoomApplication.Controllers
         public MovementResult ExecuteHardwareMovementScript(MovementPriority priority)
         {
             MovementResult movementResult = MovementResult.None;
+
+            if (inclementWeather)
+            {
+                logger.Info(Utilities.GetTimeStamp() + "telescope is currently locked due to inclement weather");
+                return movementResult;
+            }
 
             // Return if incoming priority is equal to or less than current movement
             if (priority <= RadioTelescope.PLCDriver.CurrentMovementPriority) return MovementResult.AlreadyMoving;
@@ -1323,6 +1405,12 @@ namespace ControlRoomApplication.Controllers
         /// <returns>The result of the movement</returns>
         public MovementResult StowRadioTelescope(MovementPriority priority)
         {
+            if (inclementWeather)
+            {
+                logger.Info(Utilities.GetTimeStamp() + "telescope is currently locked due to inclement weather");
+                return MovementResult.None;
+            }
+
             // If motors are homed
             if (RadioTelescope.PLCDriver.GetMotorsHomed())
             {

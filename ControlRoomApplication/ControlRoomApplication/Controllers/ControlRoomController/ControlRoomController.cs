@@ -34,7 +34,7 @@ namespace ControlRoomApplication.Controllers
         {
             if (AddRadioTelescopeController(rtController))
             {
-                return ControlRoom.RTControllerManagementThreads[ControlRoom.RTControllerManagementThreads.Count - 1].Start();
+                return ControlRoom.RTControllerManagementThreads[ControlRoom.RTControllerManagementThreads.Count - 1].Start(rtController);
             }
             else
             {

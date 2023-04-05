@@ -959,6 +959,18 @@ namespace ControlRoomApplication.Database
         }
 
         /// <summary>
+        /// Adds the wind data
+        /// </summary>
+        public static void AddWindData(WindData wind)
+        {
+            using (RTDbContext Context = InitializeDatabaseContext())
+            {
+                Context.Wind.Add(wind);
+                SaveContext(Context);
+            }
+        }
+
+        /// <summary>
         /// Adds the sensor status data
         /// </summary>
         public static void AddSensorStatusData(SensorStatus sensors)
@@ -1398,7 +1410,7 @@ namespace ControlRoomApplication.Database
         }
 
         /// <summary>
-        /// Routine to retrieve the time interval for dumping snow off of the dish (in minutes) from the database
+        /// Routine to retrieve the time interval for dumping snow off of the dish (in minutes) from the database, and the warning speed
         /// </summary>
         public static WeatherThreshold FetchWeatherThreshold()
         {
@@ -1410,14 +1422,36 @@ namespace ControlRoomApplication.Database
                 if (threshold == null)
                 {
                     logger.Info(Utilities.GetTimeStamp() + ": The WeatherThreshold data could not be found. Creating a new one with default values...");
-                    // default values of 0 windSpeed and 2 hours for snow dump time. If the table is empty, add it
-                    threshold = new WeatherThreshold(0, 120);
+                    // default values of 20 windSpeed and 2 hours for snow dump time. If the table is empty, add it
+                    threshold = new WeatherThreshold(20, 120);
                     AddWeatherThreshold(threshold);
                 }
                 return threshold;
                
             }
             
+        }
+
+        /// <summary>
+        /// Routine to retrieve the max mph before the telescope needs to go into stow for safety from the database
+        /// </summary>
+        public static WeatherThreshold FetchWeatherMaxThreshold()
+        {
+            using (RTDbContext Context = InitializeDatabaseContext())
+            {
+                var threshold = Context.WeatherThreshold.Where(t => t.Id == 2).FirstOrDefault();
+
+                if (threshold == null)
+                {
+                    logger.Info(Utilities.GetTimeStamp() + ": The WeatherThreshold data could not be found. Creating a new one with default values...");
+                    // default values of 30 windSpeed and 2 hours for snow dump time. If the table is empty, add it
+                    threshold = new WeatherThreshold(30, 120);
+                    AddWeatherThreshold(threshold);
+                }
+                return threshold;
+
+            }
+
         }
 
         /// <summary>

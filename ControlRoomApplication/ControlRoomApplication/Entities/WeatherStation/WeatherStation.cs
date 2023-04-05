@@ -9,6 +9,9 @@ using ControlRoomApplication.Database;
 using ControlRoomApplication.Controllers.Sensors;
 using ControlRoomApplication.Util;
 using System.Data.Entity.Core;
+using ControlRoomApplication.Controllers;
+using ControlRoomApplication.Controllers.PLCCommunication.PLCDrivers.MCUManager;
+using ControlRoomApplication.Controllers.PLCCommunication.PLCDrivers.MCUManager.Enumerations;
 
 namespace ControlRoomApplication.Entities.WeatherStation
 {
@@ -30,8 +33,6 @@ namespace ControlRoomApplication.Entities.WeatherStation
 
         private String[] windDirections = { "N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S",
                                                 "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"};
-
-
 
         // declarations of all methods we will use in the dll
 
@@ -72,17 +73,22 @@ namespace ControlRoomApplication.Entities.WeatherStation
 
         Weather_Data data;
 
-        public WeatherStation(int currentWindSpeedScanDelayMS, int commPort = 3)
+        public WeatherStation(int currentWindSpeedScanDelayMS, int commPort = 4)
             : base(currentWindSpeedScanDelayMS)
         {
 
             data = new Weather_Data(0, " ", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
- 
+
             InitializeStation(commPort);
 
             ReloadWeatherDataThread = new Thread(() => { ReloadWeatherDataRoutine(); });
             KeepReloadWeatherDataThreadAlive = true;
             ReloadWeatherDataThread.Start();
+            
+            ReloadWindDataThread = new Thread(() => { ReloadWindDataRoutine(); });
+            KeepReloadWindDataThreadAlive = true;
+            ReloadWindDataThread.Start();
+            
         }
 
         // From the HeartbeatInterface
@@ -126,9 +132,6 @@ namespace ControlRoomApplication.Entities.WeatherStation
             while (KeepReloadWeatherDataThreadAlive) {
                 if (LoadCurrentVantageData_V() != COM_ERROR)
                 {
-                    data.windSpeed = GetWindSpeed_V();
-                    data.windDirectionDegrees = GetWindDir_V();
-                    data.windDirection = ConvertWindDirDegreesToStr(data.windDirectionDegrees);
                     data.dailyRain = GetDailyRain_V();
                     data.rainRate = GetRainRate_V();
                     data.outsideTemp = GetOutsideTemp_V();
@@ -144,7 +147,6 @@ namespace ControlRoomApplication.Entities.WeatherStation
                     // This is here for a workaround to issue #360. We will occasionally get a "Connection failed on open" Entity exception
                     // We have this used to simply retry the database update if the exception occurs. It always (while I was testing, at least) succeeds after the retry.
                     // We may need to remove this in production if we find a different solution for actually eliminating the bug insetad of this workaround
-                    
                     do
                     {
                         try
@@ -171,11 +173,85 @@ namespace ControlRoomApplication.Entities.WeatherStation
                 }
 
 
-                Thread.Sleep(1000);
+                Thread.Sleep(60000);
             }
         }
 
-        public bool RequestToKillReloadWeatherDataRoutine()
+        private void ReloadWindDataRoutine()
+        {
+            bool retrySave = false;
+            int safeWeatherCount = 0;
+
+            while (KeepReloadWindDataThreadAlive)
+            {
+                if (LoadCurrentVantageData_V() != COM_ERROR)
+                {
+                    data.windSpeed = GetWindSpeed_V();
+                    data.windDirectionDegrees = GetWindDir_V();
+                    data.windDirection = ConvertWindDirDegreesToStr(data.windDirectionDegrees);
+
+                    /*if(data.windSpeed >= radioTelescopeController.windThreshold)
+                    {
+                        if(!radioTelescopeController.inclementWeather)
+                        {
+                            //call stow telescope and stop all other movements until otherwise told, and reset safe count if
+                            MovementResult result = radioTelescopeController.ExecuteRadioTelescopeImmediateStop(MovementPriority.Critical);
+                            result = radioTelescopeController.StowRadioTelescope(MovementPriority.Critical);
+                            radioTelescopeController.inclementWeather = true;
+                        }
+
+                        else
+                        {
+                            safeWeatherCount = 0;
+                        }
+                    }
+
+                    else if(radioTelescopeController.inclementWeather && data.windSpeed <= (radioTelescopeController.windThreshold - 5))
+                    {
+                        safeWeatherCount++;
+                        if(safeWeatherCount == 60) //checks every 5 seconds, if safe for 5 minutes, inclement weather has passed
+                        {
+                            radioTelescopeController.inclementWeather = false;
+                            MovementResult result = radioTelescopeController.HomeTelescope(MovementPriority.Critical);
+                        }
+                    }*/
+
+                    // This is here for a workaround to issue #360. We will occasionally get a "Connection failed on open" Entity exception
+                    // We have this used to simply retry the database update if the exception occurs. It always (while I was testing, at least) succeeds after the retry.
+                    // We may need to remove this in production if we find a different solution for actually eliminating the bug insetad of this workaround
+
+                    //potentially get max and avg over course of a minute, and put in database so it does not blow up.
+                    do
+                    {
+                        try
+                        {
+                            DatabaseOperations.AddWindData(WindData.Generate(data));
+                            retrySave = false;
+                            count = 0;
+                        }
+                        catch (EntityException e)
+                        {
+                            count++;
+                            retrySave = true;
+
+                            // We want to retry 4 times, after which we will abandon the update.
+                            if (count == 4)
+                            {
+                                retrySave = false;
+                                count = 0;
+                                logger.Info(Utilities.GetTimeStamp() + " : Failed to update weather station data after 4 tries. Abandoning update...");
+                            }
+                        }
+                    }
+                    while (retrySave);
+                }
+
+
+                Thread.Sleep(5000);
+            }
+        }
+
+            public bool RequestToKillReloadWeatherDataRoutine()
         {
             KeepReloadWeatherDataThreadAlive = false;
 

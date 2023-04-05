@@ -89,7 +89,7 @@ namespace ControlRoomApplication.Controllers
         {
             RTController = controller;
 
-            ManagementThread = new Thread(new ThreadStart(SpinRoutine))
+            ManagementThread = new Thread(new ParameterizedThreadStart(SpinRoutine))
             {
                 Name = "RTControllerManagementThread (ID=" + RadioTelescopeID.ToString() + ")"
             };
@@ -111,15 +111,15 @@ namespace ControlRoomApplication.Controllers
             // TCPListener = new RemoteListener(8090, IPAddress.Parse("10.127.7.112"), controller);
         }
 
-        public bool Start()
+        public bool Start(RadioTelescopeController controller)
         {
             KeepThreadAlive = true;
 
             try
             {
-               // Sensors.Add(new Sensor(SensorItemEnum.WIND_SPEED, SensorStatusEnum.NORMAL));
-                
-                ManagementThread.Start();
+                // Sensors.Add(new Sensor(SensorItemEnum.WIND_SPEED, SensorStatusEnum.NORMAL));
+
+                ManagementThread.Start(controller);
             }
             catch (Exception e)
             {
@@ -175,8 +175,9 @@ namespace ControlRoomApplication.Controllers
             InterruptAppointmentFlag = true;
         }
 
-        private void SpinRoutine()
+        private void SpinRoutine(Object controller)
         {
+            RadioTelescopeController c = (RadioTelescopeController)controller;
             bool KeepAlive = KeepThreadAlive;
 
             // Let MCU connect
@@ -185,6 +186,12 @@ namespace ControlRoomApplication.Controllers
 
             while (KeepAlive)
             {
+                if(c.inclementWeather)
+                {
+                    Thread.Sleep(60000);
+                    continue;
+                }
+
                 NextAppointment = WaitForNextAppointment();
 
                 //Compares the ID of each appointment to see if they have changed

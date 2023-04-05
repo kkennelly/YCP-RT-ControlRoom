@@ -30,7 +30,6 @@ namespace ControlRoomApplication.GUI
         private void InitializeComponent()
         {
             this.EmailLabel = new System.Windows.Forms.Label();
-            this.PasswordLabel = new System.Windows.Forms.Label();
             this.CompanyLabel = new System.Windows.Forms.Label();
             this.LastNameLabel = new System.Windows.Forms.Label();
             this.PhoneLabel = new System.Windows.Forms.Label();
@@ -38,7 +37,6 @@ namespace ControlRoomApplication.GUI
             this.FirstNameLabel = new System.Windows.Forms.Label();
             this.LastNameInput = new System.Windows.Forms.TextBox();
             this.CompanyInput = new System.Windows.Forms.TextBox();
-            this.PasswordInput = new System.Windows.Forms.TextBox();
             this.PhoneInput = new System.Windows.Forms.TextBox();
             this.EmailInput = new System.Windows.Forms.TextBox();
             this.FirstNameInput = new System.Windows.Forms.TextBox();
@@ -61,17 +59,6 @@ namespace ControlRoomApplication.GUI
             this.EmailLabel.TabIndex = 43;
             this.EmailLabel.Text = "Email";
             this.EmailLabel.Click += new System.EventHandler(this.EmailLabel_Click);
-            // 
-            // PasswordLabel
-            // 
-            this.PasswordLabel.AutoSize = true;
-            this.PasswordLabel.Location = new System.Drawing.Point(82, 208);
-            this.PasswordLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.PasswordLabel.Name = "PasswordLabel";
-            this.PasswordLabel.Size = new System.Drawing.Size(53, 13);
-            this.PasswordLabel.TabIndex = 41;
-            this.PasswordLabel.Text = "Password";
-            this.PasswordLabel.Click += new System.EventHandler(this.PasswordLabel_Click);
             // 
             // CompanyLabel
             // 
@@ -109,7 +96,7 @@ namespace ControlRoomApplication.GUI
             // NotificationTypeLabel
             // 
             this.NotificationTypeLabel.AutoSize = true;
-            this.NotificationTypeLabel.Location = new System.Drawing.Point(48, 238);
+            this.NotificationTypeLabel.Location = new System.Drawing.Point(72, 208);
             this.NotificationTypeLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.NotificationTypeLabel.Name = "NotificationTypeLabel";
             this.NotificationTypeLabel.Size = new System.Drawing.Size(87, 13);
@@ -145,16 +132,6 @@ namespace ControlRoomApplication.GUI
             this.CompanyInput.Size = new System.Drawing.Size(143, 20);
             this.CompanyInput.TabIndex = 31;
             this.CompanyInput.TextChanged += new System.EventHandler(this.CompanyInput_TextChanged);
-            // 
-            // PasswordInput
-            // 
-            this.PasswordInput.Location = new System.Drawing.Point(140, 205);
-            this.PasswordInput.Margin = new System.Windows.Forms.Padding(2);
-            this.PasswordInput.Name = "PasswordInput";
-            this.PasswordInput.PasswordChar = '*';
-            this.PasswordInput.Size = new System.Drawing.Size(144, 20);
-            this.PasswordInput.TabIndex = 26;
-            this.PasswordInput.TextChanged += new System.EventHandler(this.PasswordInput_TextChanged);
             // 
             // PhoneInput
             // 
@@ -228,7 +205,7 @@ namespace ControlRoomApplication.GUI
             // 
             this.NotificationTypeInput.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.NotificationTypeInput.FormattingEnabled = true;
-            this.NotificationTypeInput.Location = new System.Drawing.Point(140, 235);
+            this.NotificationTypeInput.Location = new System.Drawing.Point(164, 205);
             this.NotificationTypeInput.Name = "NotificationTypeInput";
             this.NotificationTypeInput.Size = new System.Drawing.Size(73, 21);
             this.NotificationTypeInput.TabIndex = 51;
@@ -264,7 +241,6 @@ namespace ControlRoomApplication.GUI
             this.Controls.Add(this.CancelBtn);
             this.Controls.Add(this.CreateUserBtn);
             this.Controls.Add(this.EmailLabel);
-            this.Controls.Add(this.PasswordLabel);
             this.Controls.Add(this.CompanyLabel);
             this.Controls.Add(this.LastNameLabel);
             this.Controls.Add(this.PhoneLabel);
@@ -272,7 +248,6 @@ namespace ControlRoomApplication.GUI
             this.Controls.Add(this.FirstNameLabel);
             this.Controls.Add(this.LastNameInput);
             this.Controls.Add(this.CompanyInput);
-            this.Controls.Add(this.PasswordInput);
             this.Controls.Add(this.PhoneInput);
             this.Controls.Add(this.EmailInput);
             this.Controls.Add(this.FirstNameInput);
@@ -287,7 +262,6 @@ namespace ControlRoomApplication.GUI
 
         #endregion
         private System.Windows.Forms.Label EmailLabel;
-        private System.Windows.Forms.Label PasswordLabel;
         private System.Windows.Forms.Label CompanyLabel;
         private System.Windows.Forms.Label LastNameLabel;
         private System.Windows.Forms.Label PhoneLabel;
@@ -295,7 +269,6 @@ namespace ControlRoomApplication.GUI
         private System.Windows.Forms.Label FirstNameLabel;
         private System.Windows.Forms.TextBox LastNameInput;
         private System.Windows.Forms.TextBox CompanyInput;
-        private System.Windows.Forms.TextBox PasswordInput;
         private System.Windows.Forms.TextBox PhoneInput;
         private System.Windows.Forms.TextBox EmailInput;
         private System.Windows.Forms.TextBox FirstNameInput;

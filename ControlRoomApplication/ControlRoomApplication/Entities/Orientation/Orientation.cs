@@ -11,8 +11,8 @@ namespace ControlRoomApplication.Entities
     {
         public Orientation(double azimuth, double elevation)
         {
-            azimuth = azimuth;
-            elevation = elevation;
+            this.azimuth = azimuth;
+            this.elevation = elevation;
         }
 
         public Orientation() : this(0, 0) { }

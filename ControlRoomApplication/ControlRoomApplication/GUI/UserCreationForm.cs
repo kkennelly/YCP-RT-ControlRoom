@@ -36,7 +36,7 @@ namespace ControlRoomApplication.GUI
                     phone_number = PhoneInput.Text,
                     //UR = new UserRole(?, (UserRoleEnum) RoleInput.SelectedItem),
                     notification_type = NotificationTypeInput.Text
-                    // No password? = PasswordInput.Text,
+                    //No password? = PasswordInput.Text,
                     // No Active? = ActiveInput.Text,
                     // No Status? = StatusInput.Text,
                     // No Picture Approved? = PictureApprovedInput.Text,

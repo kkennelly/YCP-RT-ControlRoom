@@ -387,6 +387,7 @@
     <Compile Include="Entities\WeatherStation\WeatherThreshold.cs" />
     <Compile Include="Entities\WeatherStation\WeatherData.cs" />
     <Compile Include="Entities\WeatherStation\WeatherStation.cs" />
+    <Compile Include="Entities\WeatherStation\WindData.cs" />
     <Compile Include="GUI\AppointmentControlForm.cs">
       <SubType>Form</SubType>
     </Compile>

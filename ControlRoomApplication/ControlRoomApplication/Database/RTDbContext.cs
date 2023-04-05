@@ -56,6 +56,7 @@ namespace ControlRoomApplication.Main
         public DbSet<User> Users { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<WeatherData> Weather { get; set; }
+        public DbSet<WindData> Wind { get; set; }
         public DbSet<SensorStatus> SensorStatus { get; set; }
         public DbSet<RadioTelescope> RadioTelescope { get; set; }
         public DbSet<ThresholdValues> ThresholdValues { get; set; }

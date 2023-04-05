@@ -381,7 +381,7 @@ namespace ControlRoomApplication.Main
                         logger.Info(Utilities.GetTimeStamp() + ": \t[" + appt.Id + "] " + appt.start_time.ToString() + " -> " + appt.end_time.ToString());
                     }
 
-                    if (ManagementThread.Start())
+                    if (ManagementThread.Start(ProgramRTControllerList[ProgramRTControllerList.Count - 1]))
                     {
                         logger.Info(Utilities.GetTimeStamp() + ": Successfully started RT controller management thread [" + RT_ID.ToString() + "]");
 
@@ -684,7 +684,7 @@ namespace ControlRoomApplication.Main
             if (loopBackBox.Checked)
             {
                 ProdcheckBox.Checked = false;
-                this.txtWSCOMPort.Text = "222"; //default WS COM port # is 221
+                this.txtWSCOMPort.Text = "4";
                 this.txtSpectraPort.Text = "777";
                 this.txtRemoteListenerCOMPort.Text = "80";
                 this.txtMcuCOMPort.Text = ((int)(8083 + ProgramPLCDriverList.Count * 3)).ToString(); ; //default MCU Port
@@ -720,7 +720,7 @@ namespace ControlRoomApplication.Main
             if (ProdcheckBox.Checked)
             {
                 loopBackBox.Checked = false;
-                this.txtWSCOMPort.Text = "222"; //default WS COM port # is 221
+                this.txtWSCOMPort.Text = "4"; //default WS COM port # is 4, make sure on device manager that it is on COM4
                 this.txtSpectraPort.Text = "8"; // Value used to be 777, but the USB's port is currently set to 8
                 this.txtMcuCOMPort.Text = "502"; //default MCU Port
                 this.txtPLCIP.Text = "192.168.0.50";//default IP address
@@ -916,6 +916,7 @@ namespace ControlRoomApplication.Main
             {
                 if (comboWeatherStationBox.Text == "Production Weather Station")
                 {
+
                     lastCreatedProductionWeatherStation = BuildWeatherStation();
                    
                     if (lastCreatedProductionWeatherStation != null)

@@ -984,8 +984,8 @@ namespace ControlRoomApplication.Controllers
 
                 //Concatenates all weather data together using ? as a elimination symbol to allow the client to split easily 
                 string weatherDataString = windSpeed + "?" + windDirection + "?" + dailyRain + "?" + rainRate + "?" + outsideTemp + "?" + insideTemp + "?" + baromPressure + "?" + dewPoint + "?" + windChill + "?" + outsideHumidity + "?" + totalRain + "?" + monthlyRain + "?" + heatIndex;
-
-                sendBack += " | BIT_FLIPPED: " + Convert.ToString(rtController.RadioTelescope.PLCDriver.CheckMCUErrors().Count > 0).ToUpper() + " | " + "PRIORITY: " + currentMovementPriority + " | " + weatherDataString;
+                //with status of weather can add lock to mobile app
+                sendBack += " | BIT_FLIPPED: " + Convert.ToString(rtController.RadioTelescope.PLCDriver.CheckMCUErrors().Count > 0).ToUpper() + " | BAD_WEATHER: " + Convert.ToString(rtController.inclementWeather) + " | " + "PRIORITY: " + currentMovementPriority + " | " + weatherDataString;
             }
 
             return sendBack;

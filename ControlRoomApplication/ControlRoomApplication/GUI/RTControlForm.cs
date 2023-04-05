@@ -107,6 +107,8 @@ namespace ControlRoomApplication.Main
             CalibrateMove();
             runControlScriptButton.Enabled = false;
 
+           
+            /* NOT USING - WAS THE EXTRA MANUAL CONTROL FORM (POSITION)
             //Initialize Free control Box based on manual control
             if (!save_state)
             {
@@ -150,6 +152,7 @@ namespace ControlRoomApplication.Main
             fiveButtonDec.Enabled = formData.freeControlEnabled;
             tenButton.Enabled = formData.freeControlEnabled;
             tenButtonDec.Enabled = formData.freeControlEnabled;
+            */
 
             //Initialize Manual control Box based on previous data (false by default)
             if (!manual_save_state)
@@ -312,8 +315,8 @@ namespace ControlRoomApplication.Main
             string Dec = TargetCoordinate.declination.ToString("0.##");
             logger.Info(Utilities.GetTimeStamp() + ": UpdateText, Target Coordinate = RA:" + RA + ", Dec:" + Dec);
             
-            TargetRATextBox.Text = RA;
-            TargetDecTextBox.Text = Dec;
+            //TargetRATextBox.Text = RA;
+            //TargetDecTextBox.Text = Dec;
 
             errorLabel.Text = "Free Control for Radio Telescope " + rtId.ToString();
         }
@@ -327,8 +330,8 @@ namespace ControlRoomApplication.Main
                 label4.Text = String.Format("{0:N2}", currentOrienation.azimuth);
                 label5.Text = String.Format("{0:N2}", currentOrienation.elevation);
 
-                ActualRATextBox.Text = ConvertedPosition.right_ascension.ToString("0.##");
-                ActualDecTextBox.Text = ConvertedPosition.declination.ToString("0.##");
+                //ActualRATextBox.Text = ConvertedPosition.right_ascension.ToString("0.##");
+                //ActualDecTextBox.Text = ConvertedPosition.declination.ToString("0.##");
             });
 
             logger.Info(Utilities.GetTimeStamp() + currentOrienation.azimuth + "|" + currentOrienation.elevation);
@@ -364,7 +367,7 @@ namespace ControlRoomApplication.Main
 
         private void UpdateIncrementButtons()
         {
-
+            /*
             switch (Increment)
             {
                 case 0.25:
@@ -382,6 +385,7 @@ namespace ControlRoomApplication.Main
                 default:
                     throw new ArgumentException("Invalid Increment");
             }
+            */
         }
 
         private void editButton_Click(object sender, EventArgs e)
@@ -392,18 +396,19 @@ namespace ControlRoomApplication.Main
             formData.freeControlEnabled = save_state;
             if (!save_state)
             {
-                editButton.Text = "Edit Position";
-                editButton.BackColor = System.Drawing.Color.Red;
-                freeControlGroupbox.BackColor = System.Drawing.Color.DarkGray;
+                //editButton.Text = "Edit Position";
+                //editButton.BackColor = System.Drawing.Color.Red;
+                //freeControlGroupbox.BackColor = System.Drawing.Color.DarkGray;
                 manualControlButton.BackColor = System.Drawing.Color.Red;
-                decIncGroupbox.BackColor = System.Drawing.Color.DarkGray;
-                RAIncGroupbox.BackColor = System.Drawing.Color.DarkGray;
-                double newRA;
-                double newDec;
-                double.TryParse(TargetRATextBox.Text, out newRA);
-                double.TryParse(TargetDecTextBox.Text, out newDec);
-                Coordinate new_coord = new Coordinate(newRA, newDec);
-                Entities.Orientation test_orientation = CoordCalc.CoordinateToOrientation(new_coord, DateTime.UtcNow);
+                //decIncGroupbox.BackColor = System.Drawing.Color.DarkGray;
+                //RAIncGroupbox.BackColor = System.Drawing.Color.DarkGray;
+                //double newRA;
+                //double newDec;
+                //double.TryParse(TargetRATextBox.Text, out newRA);
+                //double.TryParse(TargetDecTextBox.Text, out newDec);
+                //Coordinate new_coord = new Coordinate(newRA, newDec);
+                //Entities.Orientation test_orientation = CoordCalc.CoordinateToOrientation(new_coord, DateTime.UtcNow);
+                /*
                 if (test_orientation.azimuth >= 0 && test_orientation.elevation >= 0)
                 {
                     TargetCoordinate = new_coord;
@@ -412,18 +417,18 @@ namespace ControlRoomApplication.Main
                 else
                 {
                     errorLabel.Text = "Invalid Coordinate: orienation out of range";
-                }
+                }*/
             }
             else
             {
-                editButton.Text = "Save Position";
+                //editButton.Text = "Save Position";
                 manualControlButton.BackColor = System.Drawing.Color.DarkGray;
-                editButton.BackColor = System.Drawing.Color.LimeGreen;
-                freeControlGroupbox.BackColor = System.Drawing.Color.Gainsboro;
-                decIncGroupbox.BackColor = System.Drawing.Color.Gray;
-                RAIncGroupbox.BackColor = System.Drawing.Color.Gray;
+                //editButton.BackColor = System.Drawing.Color.LimeGreen;
+                //freeControlGroupbox.BackColor = System.Drawing.Color.Gainsboro;
+                //decIncGroupbox.BackColor = System.Drawing.Color.Gray;
+                //RAIncGroupbox.BackColor = System.Drawing.Color.Gray;
             }
-
+            /*
             PosDecButton.Enabled = save_state;
             NegDecButton.Enabled = save_state;
             PosRAButton.Enabled = save_state;
@@ -436,8 +441,9 @@ namespace ControlRoomApplication.Main
             fiveButtonDec.Enabled = save_state;
             tenButton.Enabled = save_state;
             tenButtonDec.Enabled = save_state;
-            TargetRATextBox.ReadOnly = save_state;
-            TargetDecTextBox.ReadOnly = save_state;
+            */
+            //TargetRATextBox.ReadOnly = save_state;
+            //TargetDecTextBox.ReadOnly = save_state;
 
             manualControlButton.Enabled = !save_state;
         }
@@ -453,14 +459,14 @@ namespace ControlRoomApplication.Main
                 manualControlButton.Text = "Activate Manual Control";
                 manualControlButton.BackColor = System.Drawing.Color.Red;
                 manualGroupBox.BackColor = System.Drawing.Color.DarkGray;
-                editButton.BackColor = System.Drawing.Color.Red;
+                //editButton.BackColor = System.Drawing.Color.Red;
             }
             else if(manual_save_state)
             {
                 manualControlButton.Text = "Deactivate Manual Control";
                 manualControlButton.BackColor = System.Drawing.Color.LimeGreen;
                 manualGroupBox.BackColor = System.Drawing.Color.Gainsboro;
-                editButton.BackColor = System.Drawing.Color.DarkGray;
+                //editButton.BackColor = System.Drawing.Color.DarkGray;
 
             }
             plusElaButton.Enabled = manual_save_state;
@@ -472,7 +478,7 @@ namespace ControlRoomApplication.Main
             speedTextBox.Enabled = manual_save_state;
             speedTrackBar.Enabled = manual_save_state;
 
-            editButton.Enabled = !manual_save_state;
+            //editButton.Enabled = !manual_save_state;
         }
 
    

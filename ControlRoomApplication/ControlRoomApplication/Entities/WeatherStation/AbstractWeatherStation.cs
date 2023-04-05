@@ -14,6 +14,9 @@ namespace ControlRoomApplication.Entities
         public Thread ReloadWeatherDataThread;
         public bool KeepReloadWeatherDataThreadAlive;
 
+        public Thread ReloadWindDataThread;
+        public bool KeepReloadWindDataThreadAlive;
+
         private double _CurrentWindSpeedMPH;
 
         public double CurrentWindSpeedMPH
@@ -77,14 +80,15 @@ namespace ControlRoomApplication.Entities
             }
         }
 
+        //change back to 20 and 30 in database when done testing
         public int CurrentWindSpeedStatus
         {
             get
             {
-                if (CurrentWindSpeedMPH < MiscellaneousHardwareConstants.WEATHER_STATION_WARNING_WIND_SPEED_MPH)
+                if (CurrentWindSpeedMPH < DatabaseOperations.FetchWeatherThreshold().WindSpeed)
                     return 0; // Safe State of the Wind Speed
-                else if (CurrentWindSpeedMPH >= MiscellaneousHardwareConstants.WEATHER_STATION_WARNING_WIND_SPEED_MPH
-                    && CurrentWindSpeedMPH <= DatabaseOperations.GetThresholdForSensor(SensorItemEnum.WIND))
+                else if (CurrentWindSpeedMPH >= DatabaseOperations.FetchWeatherThreshold().WindSpeed
+                    && CurrentWindSpeedMPH < DatabaseOperations.FetchWeatherMaxThreshold().WindSpeed)
                     return 1; // Warning State of the Wind Speed
                 else
                     return 2; // Alarm State of the Wind Speed

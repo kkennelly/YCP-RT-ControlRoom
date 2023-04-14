@@ -578,7 +578,7 @@ namespace ControlRoomApplication.Controllers
         }
 
         /// <summary>
-        /// speed in RPM
+        /// azSpeed in RPM
         /// </summary>
         /// <param name="azSpeed"></param>
         /// <param name="azDirection"></param>

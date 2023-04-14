@@ -286,35 +286,53 @@ namespace ControlRoomApplication.Controllers {
             ushort[] data = ReadMCURegisters(0, 16);
             int azMotorEncoderTicks = (int)Math.Round(((data[(ushort)MCUOutputRegs.AZ_MTR_Encoder_Pos_MSW] << 16) + data[(ushort)MCUOutputRegs.AZ_MTR_Encoder_Pos_LSW]) / MCUConstants.AZIMUTH_DISCREPANCY_SCALING_FACTOR);
             int elMotorEncoderTicks = -((data[(ushort)MCUOutputRegs.EL_MTR_Encoder_Pos_MSW] << 16) + data[(ushort)MCUOutputRegs.EL_MTR_Encoder_Pos_LSW]);
-            // Status
-            Console.WriteLine(data[0]);
-            Console.WriteLine(data[1]);
 
             // Motor Step
-            Console.WriteLine(data[2]);
-            Console.WriteLine(data[3]);
+            Console.WriteLine(data[12]);
+            Console.WriteLine(data[13]);
 
             // Encoder
-            Console.WriteLine(data[4]);
-            Console.WriteLine(data[5]);
+            Console.WriteLine(data[14]);
+            Console.WriteLine(data[15]);
             Console.WriteLine("-------");
-            int val = (data[2] << 16) + data[3];
-            double rot = val / 10286677d;
+            Console.WriteLine((data[12] << 16) + data[13]);
+            /* 90 Deg rotations elevation - step count */
+            //
+            //
+            //
+            //
+            //
+            //
+            //
+            //
+            // Average <elevation>: 248498.5 steps per 90 elevation
+            // Average <azimuth>: 10,286,677 steps per 360 azimuth
 
-            // +10288180
-            // +10287905
-            // -10286371
-            // -10286068
-            // +10288957
-            // -10282583
+            //TODO TEMPORARY FIX, PLEASE REMOVE WHEN ENCODER BEGIN REPORTING CORRECT POSITION - THIS IS GETTING THE POSITION FROM THE MOTORS AND FUDGING THE POSITION USING A TESTED STEPS PER REVOLUTION VALUE
+            int azSteps = (data[(ushort)MCUOutputRegs.AZ_Current_Position_MSW] << 16) + data[(ushort)MCUOutputRegs.AZ_Current_Position_LSW];
+            int elSteps = -((data[(ushort)MCUOutputRegs.EL_Current_Position_MSW] << 16) + data[(ushort)MCUOutputRegs.EL_Current_Position_LSW]);
+            double azOrientation = azSteps * 360.0 / 10286667;
+            if (telescopeType == RadioTelescopeTypeEnum.SLIP_RING) {
+                azOrientation %= 360;
+                if (azOrientation < 0)
+                {
+                    azOrientation += 360;
+                }
+            }
 
-            // Average: 10,286,677 steps per 360 azimuth - 100111001111011001010101 steps in binary
-            Console.WriteLine(val);
-            Console.WriteLine(rot);
-            Console.WriteLine("======");
 
 
-            return GetMotorStepsPosition();
+
+
+            
+            double elOrientation = elSteps * 90.0 / 248498.5;
+
+            return new Orientation(
+                azOrientation,
+                elOrientation
+            );
+            // END TEMPORARY FIX
+
             // If the telescope type is SLIP_RING, we want to normalize the azimuth orientation
             if (telescopeType == RadioTelescopeTypeEnum.SLIP_RING)
             {
@@ -387,7 +405,7 @@ namespace ControlRoomApplication.Controllers {
         }
 
         /// <summary>
-        /// Attempts to bring the Telescope to a controlled stop, ramping down speed.
+        /// Attempts to bring the Telescope to a controlled stop, ramping down azSpeed.
         /// Certian moves, such as homing, are unaffected by this.
         /// </summary>
         /// <returns></returns>
@@ -407,7 +425,7 @@ namespace ControlRoomApplication.Controllers {
         }
 
         /// <summary>
-        /// Immediately stops the telescope movement with no ramp down in speed.
+        /// Immediately stops the telescope movement with no ramp down in azSpeed.
         /// Motors are no longer homed because immediate stop commands can cause inertial drift.
         /// </summary>
         /// <returns></returns>
@@ -778,7 +796,7 @@ namespace ControlRoomApplication.Controllers {
             int EL_Speed = ConversionHelper.DPSToSPS( ConversionHelper.RPMToDPS( RPM ) , MotorConstants.GEARING_RATIO_ELEVATION );
             int AZ_Speed = ConversionHelper.DPSToSPS( ConversionHelper.RPMToDPS( RPM ) , MotorConstants.GEARING_RATIO_AZIMUTH );
 
-            //set config word to 0x0040 to have the RT home at the minimumum speed// this requires the MCU to be configured properly
+            //set config word to 0x0040 to have the RT home at the minimumum azSpeed// this requires the MCU to be configured properly
             ushort[] data = {
                 // azimuth data
                 (ushort)RadioTelescopeDirectionEnum.CounterclockwiseHoming,
@@ -843,11 +861,11 @@ namespace ControlRoomApplication.Controllers {
 
             if (command.AzimuthSpeed < AZStartSpeed) {
                 throw new ArgumentOutOfRangeException("SpeedAZ", command.AzimuthSpeed,
-                    String.Format("Azimuth speed should be greater than {0}, which is the starting speed set when configuring the MCU", AZStartSpeed));
+                    String.Format("Azimuth azSpeed should be greater than {0}, which is the starting azSpeed set when configuring the MCU", AZStartSpeed));
             }
             if (command.ElevationSpeed < ELStartSpeed) {
                 throw new ArgumentOutOfRangeException("SpeedEL", command.ElevationSpeed,
-                    String.Format("Elevation speed should be greater than {0}, which is the starting speed set when configuring the MCU", ELStartSpeed));
+                    String.Format("Elevation azSpeed should be greater than {0}, which is the starting azSpeed set when configuring the MCU", ELStartSpeed));
             }
 
             // This needs flipped so that the elevation axis moves the correct direction
@@ -1218,7 +1236,7 @@ namespace ControlRoomApplication.Controllers {
         /// </summary>
         /// <param name="axis">What axis (elevation or azimuth) is spinning.</param>
         /// <param name="direction">Denotes what direction a motor will be spinning.</param>
-        /// <param name="speed">What speed the motor will be spinning at.</param>
+        /// <param name="speed">What azSpeed the motor will be spinning at.</param>
         /// <returns></returns>
         public bool SendSingleAxisJog(RadioTelescopeAxisEnum axis, RadioTelescopeDirectionEnum direction, double speed) {
             int stepSpeed;
@@ -1278,10 +1296,10 @@ namespace ControlRoomApplication.Controllers {
         }
 
         /// <summary>
-        /// Compute the deceleration to be used for MCU movements. Takes in an input speed and computes the deceleration needed to stop
+        /// Compute the deceleration to be used for MCU movements. Takes in an input azSpeed and computes the deceleration needed to stop
         /// within the target stop distance constant.
         /// </summary>
-        /// <param name="inputSpeed">The speed in ticks/s the motor will be running at.</param>
+        /// <param name="inputSpeed">The azSpeed in ticks/s the motor will be running at.</param>
         /// <param name="gearingratio">The gearing ratio used to convert the distance constant.</param>
         /// <returns>The deceleration value ticks/s/ms to slow the motor down within the stopping distance constant.</returns>
         private ushort GetDeceleration(double inputSpeed, int gearingratio)

@@ -138,6 +138,10 @@ namespace ControlRoomApplication.Controllers
         /// <returns></returns>
         public Orientation GetAbsoluteOrientation()
         {
+            //TODO: NO ABSOLUTE ENCODERS, RETURN RELATIVE ORIENTATION INSTEAD
+            return RadioTelescope.PLCDriver.GetMotorEncoderPosition();
+             
+
             // Apply final offset
             Orientation finalOffsetOrientation = new Orientation();
 
@@ -278,7 +282,7 @@ namespace ControlRoomApplication.Controllers
 
                 /*
                 // analyze data
-                // temperature (Kelvin) = (intensity * time * wein's displacement constant) / (Planck's constant * speed of light)
+                // temperature (Kelvin) = (intensity * time * wein's displacement constant) / (Planck's constant * azSpeed of light)
                 double weinConstant = 2.8977729;
                 double planckConstant = 6.62607004 * Math.Pow(10, -34);
                 double speedConstant = 299792458;
@@ -318,7 +322,7 @@ namespace ControlRoomApplication.Controllers
 
         /// <summary>
         /// Method used to request to set configuration of elements of the RT.
-        /// takes the starting speed of the motor in RPM (speed of tellescope after gearing)
+        /// takes the starting azSpeed of the motor in RPM (azSpeed of tellescope after gearing)
         /// </summary>
         /// <param name="startSpeedAzimuth">RPM</param>
         /// <param name="startSpeedElevation">RPM</param>
@@ -501,7 +505,7 @@ namespace ControlRoomApplication.Controllers
                 absoluteElMove = ConversionHelper.DegreesToSteps(degreesToMoveBy.elevation, MotorConstants.GEARING_RATIO_ELEVATION);
                 absoluteAzMove = ConversionHelper.DegreesToSteps(degreesToMoveBy.azimuth, MotorConstants.GEARING_RATIO_AZIMUTH);
 
-                //Peak speed calculations (using 0.6 RPM to match other move functions)
+                //Peak azSpeed calculations (using 0.6 RPM to match other move functions)
                 int EL_Speed = ConversionHelper.DPSToSPS(ConversionHelper.RPMToDPS(0.6), MotorConstants.GEARING_RATIO_ELEVATION);
                 int AZ_Speed = ConversionHelper.DPSToSPS(ConversionHelper.RPMToDPS(0.6), MotorConstants.GEARING_RATIO_AZIMUTH);
 
@@ -660,9 +664,13 @@ namespace ControlRoomApplication.Controllers
 
         /// <summary>
         /// Method used to request to start jogging the Radio Telescope's elevation
-        /// at a speed (in RPM), in either the clockwise or counter-clockwise direction.
+        /// at a azSpeed (in RPM), in either the clockwise or counter-clockwise direction.
         /// </summary>
         public MovementResult StartRadioTelescopeJog(double speed, RadioTelescopeDirectionEnum direction, RadioTelescopeAxisEnum axis)
+        {
+            return StartRadioTelescopeJog(speed, speed, direction, axis);
+        }
+        public MovementResult StartRadioTelescopeJog(double speedAzimuth, double speedElevation, RadioTelescopeDirectionEnum direction, RadioTelescopeAxisEnum axis)
         {
             MovementResult result = MovementResult.None;
 
@@ -699,14 +707,15 @@ namespace ControlRoomApplication.Controllers
             }
 
             // If the thread is locked (two moves coming in at the same time), return
-            if (Monitor.TryEnter(MovementLock)) {
+            if (Monitor.TryEnter(MovementLock))
+            {
                 RadioTelescope.PLCDriver.CurrentMovementPriority = MovementPriority.Jog;
 
                 double azSpeed = 0;
                 double elSpeed = 0;
 
-                if (axis == RadioTelescopeAxisEnum.AZIMUTH) azSpeed = speed;
-                else elSpeed = speed;
+                if (axis == RadioTelescopeAxisEnum.AZIMUTH) azSpeed = speedAzimuth;
+                else elSpeed = speedElevation;
 
                 result = RadioTelescope.PLCDriver.StartBothAxesJog(azSpeed, direction, elSpeed, direction);
 
@@ -719,7 +728,6 @@ namespace ControlRoomApplication.Controllers
 
             return result;
         }
-
 
         /// <summary>
         /// send a clear move to the MCU to stop a jog
@@ -907,10 +915,10 @@ namespace ControlRoomApplication.Controllers
 
                 // Check weather
                 int windSpeedStatus = RadioTelescope.WeatherStation.CurrentWindSpeedStatus;
-                logger.Info(Utilities.GetTimeStamp() + " Wind Speed Status: " + windSpeedStatus + " Wind speed: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
+                logger.Info(Utilities.GetTimeStamp() + " Wind Speed Status: " + windSpeedStatus + " Wind azSpeed: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
                 sensors.weather_station = (SByte)SensorStatusEnum.NORMAL;
 
-                // Tragic wind speed
+                // Tragic wind azSpeed
                 if (windSpeedStatus == 2)
                 {
                     logger.Info(Utilities.GetTimeStamp() + ": [ControlRoomController] Wind speeds were too high: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
@@ -926,7 +934,7 @@ namespace ControlRoomApplication.Controllers
                         inclementWeather = true;
                     }
                 }
-                // Slightly potentially tragic wind speed
+                // Slightly potentially tragic wind azSpeed
                 else if (windSpeedStatus == 1)
                 {
                     logger.Info(Utilities.GetTimeStamp() + ": [ControlRoomController] Wind speeds are in Warning Range: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
@@ -1001,6 +1009,7 @@ namespace ControlRoomApplication.Controllers
                     orientationSafe = true;
                 else
                     orientationSafe = CompareMotorAndAbsoluteEncoders(currentMotorPosition, currentABSPosition);
+                   
 
                 // Determines if the telescope is in a safe state
                 if (azTempSafe && elTempSafe) AllSensorsSafe = true;
@@ -1507,7 +1516,10 @@ namespace ControlRoomApplication.Controllers
         /// <param name="motor"> The current orientation of the motor encoders </param>
         /// <param name="absolute"> The current orientation of the absolute encoders </param>
         public bool CompareMotorAndAbsoluteEncoders(Orientation motor, Orientation absolute)
-        {
+        {   
+            //TODO: REMOVE FOLLOWING LINE IF ABSOLUTE ENCODERS ARE ADDED BACK
+            return true;
+
             // This calculates edge cases for when the azimuth goes from 360 degrees to 0
             double diff = Math.Abs(motor.azimuth - absolute.azimuth);
             diff = Math.Abs((diff + 180) % 360 - 180);

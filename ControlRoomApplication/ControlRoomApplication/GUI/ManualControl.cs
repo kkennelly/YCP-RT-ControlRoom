@@ -30,7 +30,7 @@ namespace ControlRoomApplication.Main
             // Update Text
             UpdateText("Edit Scripts in Control Form for Radio Telescope " + rt_controller.RadioTelescope.Id.ToString());
 
-            // Set speed
+            // Set azSpeed
             // comboBox1.Text = "0.1 RPM";
             speed = 0.1;
 
@@ -54,7 +54,7 @@ namespace ControlRoomApplication.Main
             //UpdateText("Moving at -" + comboBox1.Text);
 
             // Start CCW Jog
-            //rt_controller.StartRadioTelescopeAzimuthJog(speed, false, );
+            //rt_controller.StartRadioTelescopeAzimuthJog(azSpeed, false, );
         }
 
         private void NegButton_MouseUp(object sender, MouseEventArgs e)
@@ -99,7 +99,7 @@ namespace ControlRoomApplication.Main
       //     // UpdateText("Moving at " + comboBox1.Text);
 
 //      // Start CW Jog
-//      rt_controller.StartRadioTelescopeAzimuthJog(speed, true);
+//      rt_controller.StartRadioTelescopeAzimuthJog(azSpeed, true);
 // // }
 
 //  private void PosButton_MouseUp(object sender, MouseEventArgs e)
@@ -116,12 +116,12 @@ namespace ControlRoomApplication.Main
 // if(comboBox1.Text == "2 RPM")
 // {
 //     logger.Info(Utilities.GetTimeStamp() + ": Speed set to 2 RPM");
-//     speed = 333333;
+//     azSpeed = 333333;
 // }
 //// else if(comboBox1.Text == "0.1 RPM")
 // {
 //     logger.Info(Utilities.GetTimeStamp() + ": Speed set to 0.1 RPM");
-//     speed = 16667;
+//     azSpeed = 16667;
 // }
 
 //else
@@ -155,7 +155,7 @@ namespace ControlRoomApplication.Main
 //  //  logger.Info(Utilities.GetTimeStamp() + ": Move Relative Button Clicked");
 //    //int pos = (int)numericUpDown1.Value * (int)((166 + (2.0 / 3.0)) * 200);
 //    //int pos = ConversionHelper.DegreesToSteps( (int)numericUpDown1.Value , MotorConstants.GEARING_RATIO_AZIMUTH );
-//   // rt_controller.ExecuteMoveRelativeAzimuth(RadioTelescopeAxisEnum.AZIMUTH,speed, pos);
+//   // rt_controller.ExecuteMoveRelativeAzimuth(RadioTelescopeAxisEnum.AZIMUTH,azSpeed, pos);
 //}
 
 //private void timer1_Tick(object sender, EventArgs e)

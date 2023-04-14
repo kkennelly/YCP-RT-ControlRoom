@@ -356,7 +356,7 @@ namespace ControlRoomApplication.GUI
          * ************************************************************/
         private void timer1_Tick(object sender, System.EventArgs e)
         {
-            double currWindSpeed = controlRoom.WeatherStation.GetWindSpeed();//wind speed
+            double currWindSpeed = controlRoom.WeatherStation.GetWindSpeed();//wind azSpeed
 
             //double testVal = rtController.RadioTelescope.Encoders.GetCurentOrientation().Azimuth;
 

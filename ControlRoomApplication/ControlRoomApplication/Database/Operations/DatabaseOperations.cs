@@ -1410,7 +1410,7 @@ namespace ControlRoomApplication.Database
         }
 
         /// <summary>
-        /// Routine to retrieve the time interval for dumping snow off of the dish (in minutes) from the database, and the warning speed
+        /// Routine to retrieve the time interval for dumping snow off of the dish (in minutes) from the database, and the warning azSpeed
         /// </summary>
         public static WeatherThreshold FetchWeatherThreshold()
         {

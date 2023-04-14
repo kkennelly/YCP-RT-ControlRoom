@@ -642,10 +642,10 @@
             this.txtCustEncoderVal.Size = new System.Drawing.Size(51, 20);
             this.txtCustEncoderVal.TabIndex = 48;
             // 
-            // textBox1
+            // ElSpeedTextbox
             // 
             this.textBox1.Location = new System.Drawing.Point(269, 44);
-            this.textBox1.Name = "textBox1";
+            this.textBox1.Name = "ElSpeedTextbox";
             this.textBox1.Size = new System.Drawing.Size(51, 20);
             this.textBox1.TabIndex = 56;
             // 

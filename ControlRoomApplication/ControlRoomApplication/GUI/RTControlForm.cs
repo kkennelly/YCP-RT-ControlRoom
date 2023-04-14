@@ -66,15 +66,17 @@ namespace ControlRoomApplication.Main
 
             // set form data object
             formData = controlFormData;
-            formData.speed = 1;
-        
+            formData.azSpeed = 1;
+            formData.elSpeed = 1;
+
             // set form data
             controlScriptsCombo.SelectedIndex = formData.controlScriptIndex;
             scanTypeComboBox.SelectedIndex = formData.spectraCyberScanIndex;
             frequency.Text = formData.frequency;
             DCGain.SelectedIndex = formData.DCGainIndex;
             integrationStepCombo.SelectedIndex = formData.integrationStepIndex;
-            speedTextBox.Text = formData.speed.ToString();
+            AzSpeedTextbox.Text = formData.azSpeed.ToString();
+            ElSpeedTextbox.Text = formData.elSpeed.ToString();
             offsetVoltage.Text = formData.offsetVoltage;
             IFGainVal.Text = formData.IFGain;
             immediateRadioButton.Checked = formData.immediateStopBool;
@@ -184,9 +186,12 @@ namespace ControlRoomApplication.Main
             subElaButton.Enabled = formData.manualControlEnabled;
             ControlledButtonRadio.Enabled = formData.manualControlEnabled;
             immediateRadioButton.Enabled = formData.manualControlEnabled;
-            speedTextBox.Enabled = formData.manualControlEnabled;
-            speedTrackBar.Enabled = formData.manualControlEnabled;
-            speedTrackBar.Value = 10;
+            AzSpeedTextbox.Enabled = formData.manualControlEnabled;
+            AzSpeedTrackbar.Enabled = formData.manualControlEnabled;
+            AzSpeedTrackbar.Value = 10;
+            ElSpeedTextbox.Enabled = formData.manualControlEnabled;
+            ElSpeedTrackbar.Enabled = formData.manualControlEnabled;
+            ElSpeedTrackbar.Value = 10;
 
 
             //Initialize Start and Stop Scan buttons as disabled
@@ -475,8 +480,10 @@ namespace ControlRoomApplication.Main
             subElaButton.Enabled = manual_save_state;
             ControlledButtonRadio.Enabled = manual_save_state;
             immediateRadioButton.Enabled = manual_save_state;
-            speedTextBox.Enabled = manual_save_state;
-            speedTrackBar.Enabled = manual_save_state;
+            AzSpeedTextbox.Enabled = manual_save_state;
+            AzSpeedTrackbar.Enabled = manual_save_state;
+            ElSpeedTextbox.Enabled = manual_save_state;
+            ElSpeedTrackbar.Enabled = manual_save_state;
 
             //editButton.Enabled = !manual_save_state;
         }
@@ -613,13 +620,15 @@ namespace ControlRoomApplication.Main
         }
 
         private void ccwAzJogButton_Down( object sender , MouseEventArgs e ) {
-            if (Validator.ValidateSpeedTextOnly(speedTextBox.Text))
+            if (Validator.ValidateSpeedTextOnly(AzSpeedTextbox.Text) && Validator.ValidateSpeedTextOnly(ElSpeedTextbox.Text))
             {
-                double speed = Convert.ToDouble(speedTextBox.Text);
-                if (Validator.ValidateSpeed(speed))
+                double azSpeed = Convert.ToDouble(AzSpeedTextbox.Text);
+                double elSpeed = Convert.ToDouble(ElSpeedTextbox.Text);
+
+                if (Validator.ValidateSpeed(azSpeed) && Validator.ValidateSpeed(elSpeed))
                 {
                     // Start CW Jog
-                    MovementResult result = rtController.StartRadioTelescopeJog(speed, RadioTelescopeDirectionEnum.CounterclockwiseOrPositive, RadioTelescopeAxisEnum.AZIMUTH);
+                    MovementResult result = rtController.StartRadioTelescopeJog(azSpeed, elSpeed, RadioTelescopeDirectionEnum.CounterclockwiseOrPositive, RadioTelescopeAxisEnum.AZIMUTH);
 
                     if (result == MovementResult.Success)
                         logger.Info($"{Utilities.GetTimeStamp()}: Successfully started azimuth counterclockwise jog.");
@@ -641,7 +650,7 @@ namespace ControlRoomApplication.Main
             }
             else
             {
-                MessageBox.Show("Invalid speed. Must be in RPMs between 0.0 and 2.0");
+                MessageBox.Show("Invalid azSpeed. Must be in RPMs between 0.0 and 2.0");
             }
         }
 
@@ -652,14 +661,15 @@ namespace ControlRoomApplication.Main
 
         private void cwAzJogButton_Down(object sender, MouseEventArgs e)
         {
-            if (Validator.ValidateSpeedTextOnly(speedTextBox.Text))
+            if (Validator.ValidateSpeedTextOnly(AzSpeedTextbox.Text) && Validator.ValidateSpeedTextOnly(ElSpeedTextbox.Text))
             {
-                double speed = Convert.ToDouble(speedTextBox.Text);
+                double azSpeed = Convert.ToDouble(AzSpeedTextbox.Text);
+                double elSpeed = Convert.ToDouble(ElSpeedTextbox.Text);
                
-                if (Validator.ValidateSpeed(speed))
+                if (Validator.ValidateSpeed(azSpeed) && Validator.ValidateSpeed(elSpeed))
                 {
                     // Start CW Jog
-                    MovementResult result = rtController.StartRadioTelescopeJog(speed, RadioTelescopeDirectionEnum.ClockwiseOrNegative, RadioTelescopeAxisEnum.AZIMUTH);
+                    MovementResult result = rtController.StartRadioTelescopeJog(azSpeed, elSpeed, RadioTelescopeDirectionEnum.ClockwiseOrNegative, RadioTelescopeAxisEnum.AZIMUTH);
 
                     if (result == MovementResult.Success)
                         logger.Info($"{Utilities.GetTimeStamp()}: Successfully started azimuth clockwise jog.");
@@ -681,7 +691,7 @@ namespace ControlRoomApplication.Main
             }
             else
             {
-                MessageBox.Show("Invalid speed. Must be in RPMs between 0.0 and 2.0");
+                MessageBox.Show("Invalid azSpeed. Must be in RPMs between 0.0 and 2.0");
             }
         }
 
@@ -737,13 +747,15 @@ namespace ControlRoomApplication.Main
         }
 
         private void plusElaButton_Down(object sender, MouseEventArgs e ){
-            if (Validator.ValidateSpeedTextOnly(speedTextBox.Text))
+            if (Validator.ValidateSpeedTextOnly(AzSpeedTextbox.Text) && Validator.ValidateSpeedTextOnly(ElSpeedTextbox.Text))
             {
-                double speed = Convert.ToDouble(speedTextBox.Text);
-                if (Validator.ValidateSpeed(speed))
+                double azSpeed = Convert.ToDouble(AzSpeedTextbox.Text);
+                double elSpeed = Convert.ToDouble(ElSpeedTextbox.Text);
+
+                if (Validator.ValidateSpeed(azSpeed) && Validator.ValidateSpeed(elSpeed))
                 {
                     // Start CW Jog
-                    MovementResult result = rtController.StartRadioTelescopeJog(speed, RadioTelescopeDirectionEnum.ClockwiseOrNegative, RadioTelescopeAxisEnum.ELEVATION);
+                    MovementResult result = rtController.StartRadioTelescopeJog(azSpeed, elSpeed, RadioTelescopeDirectionEnum.ClockwiseOrNegative, RadioTelescopeAxisEnum.ELEVATION);
                     
                     if(result == MovementResult.Success)
                         logger.Info($"{Utilities.GetTimeStamp()}: Successfully started elevation positive jog.");
@@ -765,7 +777,7 @@ namespace ControlRoomApplication.Main
             }
             else
             {
-                MessageBox.Show("Invalid speed. Must be in RPMs between 0.0 and 2.0");
+                MessageBox.Show("Invalid azSpeed. Must be in RPMs between 0.0 and 2.0");
             }
         }
 
@@ -775,13 +787,15 @@ namespace ControlRoomApplication.Main
         }
 
         private void subElaButton_Down(object sender, MouseEventArgs e ){
-            if (Validator.ValidateSpeedTextOnly(speedTextBox.Text))
+            if (Validator.ValidateSpeedTextOnly(AzSpeedTextbox.Text) && Validator.ValidateSpeedTextOnly(ElSpeedTextbox.Text))
             {
-                double speed = Convert.ToDouble(speedTextBox.Text);
-                if (Validator.ValidateSpeed(speed))
+                double azSpeed = Convert.ToDouble(AzSpeedTextbox.Text);
+                double elSpeed = Convert.ToDouble(ElSpeedTextbox.Text);
+
+                if (Validator.ValidateSpeed(azSpeed) && Validator.ValidateSpeed(elSpeed))
                 {
                     // Start CW Jog
-                    MovementResult result = rtController.StartRadioTelescopeJog(speed, RadioTelescopeDirectionEnum.CounterclockwiseOrPositive, RadioTelescopeAxisEnum.ELEVATION);
+                    MovementResult result = rtController.StartRadioTelescopeJog(azSpeed, elSpeed, RadioTelescopeDirectionEnum.CounterclockwiseOrPositive, RadioTelescopeAxisEnum.ELEVATION);
 
                     if (result == MovementResult.Success)
                         logger.Info($"{Utilities.GetTimeStamp()}: Successfully started elevation negative jog.");
@@ -803,7 +817,7 @@ namespace ControlRoomApplication.Main
             }
             else
             {
-                MessageBox.Show("Invalid speed. Must be in RPMs between 0.0 and 2.0");
+                MessageBox.Show("Invalid azSpeed. Must be in RPMs between 0.0 and 2.0");
             }
         }
 
@@ -1099,15 +1113,26 @@ namespace ControlRoomApplication.Main
             formData.IFGain = IFGainVal.Text;
         }
 
-        private void speedTrackBar_Scroll(object sender, EventArgs e)
+        private void AzSpeedTrackbarScroll(object sender, EventArgs e)
         {
-            double actualSpeed = (double)speedTrackBar.Value / 10;
-            speedTextBox.Text = actualSpeed.ToString();
+            double actualSpeed = (double)AzSpeedTrackbar.Value / 10;
+            AzSpeedTextbox.Text = actualSpeed.ToString();
             Utilities.WriteToGUIFromThread<FreeControlForm>(this, () =>
             {
-                formData.speed = Double.Parse(speedTextBox.Text);
+                formData.azSpeed = Double.Parse(AzSpeedTextbox.Text);
             });
             
+        }
+
+        private void ElSpeedTrackbarScroll(object sender, EventArgs e)
+        {
+            double actualSpeed = (double)ElSpeedTrackbar.Value / 10;
+            ElSpeedTextbox.Text = actualSpeed.ToString();
+            Utilities.WriteToGUIFromThread<FreeControlForm>(this, () =>
+            {
+                formData.elSpeed = Double.Parse(ElSpeedTextbox.Text);
+            });
+
         }
 
         private bool allScanInputsValid()
@@ -1157,6 +1182,26 @@ namespace ControlRoomApplication.Main
             {
                 rtController.EnableSoftwareStops = true;
             }
+        }
+
+        private void subElaButton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label5_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void cwAzJogButton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

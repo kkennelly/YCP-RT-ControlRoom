@@ -287,24 +287,7 @@ namespace ControlRoomApplication.Controllers {
             int azMotorEncoderTicks = (int)Math.Round(((data[(ushort)MCUOutputRegs.AZ_MTR_Encoder_Pos_MSW] << 16) + data[(ushort)MCUOutputRegs.AZ_MTR_Encoder_Pos_LSW]) / MCUConstants.AZIMUTH_DISCREPANCY_SCALING_FACTOR);
             int elMotorEncoderTicks = -((data[(ushort)MCUOutputRegs.EL_MTR_Encoder_Pos_MSW] << 16) + data[(ushort)MCUOutputRegs.EL_MTR_Encoder_Pos_LSW]);
 
-            // Motor Step
-            Console.WriteLine(data[12]);
-            Console.WriteLine(data[13]);
-
-            // Encoder
-            Console.WriteLine(data[14]);
-            Console.WriteLine(data[15]);
-            Console.WriteLine("-------");
-            Console.WriteLine((data[12] << 16) + data[13]);
-            /* 90 Deg rotations elevation - step count */
-            //
-            //
-            //
-            //
-            //
-            //
-            //
-            //
+            /*
             // Average <elevation>: 248498.5 steps per 90 elevation
             // Average <azimuth>: 10,286,677 steps per 360 azimuth
 
@@ -319,11 +302,6 @@ namespace ControlRoomApplication.Controllers {
                     azOrientation += 360;
                 }
             }
-
-
-
-
-
             
             double elOrientation = elSteps * 90.0 / 248498.5;
 
@@ -332,6 +310,7 @@ namespace ControlRoomApplication.Controllers {
                 elOrientation
             );
             // END TEMPORARY FIX
+            */
 
             // If the telescope type is SLIP_RING, we want to normalize the azimuth orientation
             if (telescopeType == RadioTelescopeTypeEnum.SLIP_RING)

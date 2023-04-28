@@ -62,6 +62,10 @@ namespace ControlRoomApplication.Controllers
         public abstract void HandleClientManagementThread();
 
 
+        public virtual ushort[] ReadMCURegisters() {
+            return null;
+        }
+
         /// <summary>
         /// 
         /// </summary>

@@ -74,6 +74,7 @@ namespace ControlRoomApplication.GUI
                 */
 
                 _appt.User = _users.Find(u => (u.first_name + " " + u.last_name).Equals(UsernameInputList.Text));
+                // TODO: This is a problem, adding two different timedate models is causing issues with displaying incorect times
                 _appt.start_time = StartDateInput.Value.AddDays(-1) + StartTimeInput.Value.TimeOfDay;
                 _appt.end_time = EndDateInput.Value.AddDays(-1) + EndTimeInput.Value.TimeOfDay;
                 _appt.status = AppointmentStatusEnum.SCHEDULED.ToString();

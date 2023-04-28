@@ -117,6 +117,11 @@ namespace ControlRoomApplication.Controllers
             }
         }
 
+        public override ushort[] ReadMCURegisters()
+        {
+            return this.MCU.ReadMCURegisters(0, 20);
+        }
+
         private async void DefaultLimitSwitchHandle( object sender , limitEventArgs e ) {
             if(e.Value) {
                 switch(e.ChangedValue) {

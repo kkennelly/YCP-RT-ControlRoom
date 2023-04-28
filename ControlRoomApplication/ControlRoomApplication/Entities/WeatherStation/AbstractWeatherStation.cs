@@ -1,12 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using ControlRoomApplication.Constants;
 using ControlRoomApplication.Database;
+using ControlRoomApplication.Util;
 
 namespace ControlRoomApplication.Entities
 {
     public abstract class AbstractWeatherStation : HeartbeatInterface
     {
+        private static readonly log4net.ILog logger =
+            log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         protected Mutex OperatingMutex;
         protected Thread OperatingThread;
         protected bool KeepOperatingThreadAlive;
@@ -18,6 +22,7 @@ namespace ControlRoomApplication.Entities
         public bool KeepReloadWindDataThreadAlive;
 
         private double _CurrentWindSpeedMPH;
+        public Queue<double> WindSpeedsMPH = new Queue<double>(0);
 
         public double CurrentWindSpeedMPH
         {
@@ -27,10 +32,20 @@ namespace ControlRoomApplication.Entities
                 double read = GetWindSpeed();
                 OperatingMutex.ReleaseMutex();
 
+                //we check this roughly 4 times a second, and it updates every 8 seconds,
+                //cant just change that time, cause other sensors need to be checked that often
+                //32 data points of the same reading, we get 5 data points and thats 160 long queue
+                //this is bad code, 161 long queue is bad.
+                WindSpeedsMPH.Enqueue(read);
+
+                if(WindSpeedsMPH.Count > DatabaseOperations.FetchWeatherThreshold().QueueSize)
+                {
+                    WindSpeedsMPH.Dequeue();
+                }
+
                 return read;
             }
         }
-
 
         public struct Weather_Data
         {
@@ -80,18 +95,58 @@ namespace ControlRoomApplication.Entities
             }
         }
 
+        public bool isBadWeather
+        {
+            get
+            {
+
+                int count = 0;
+                foreach(double d in WindSpeedsMPH) 
+                {
+                    if (d >= DatabaseOperations.FetchWeatherMaxThreshold().WindSpeed)
+                    {
+                        count++;
+                    }
+                }
+                return count >= ((WindSpeedsMPH.Count / 2) + 1);
+            }
+        }
+
+        public bool isGoodWeather
+        {
+            get
+            {
+                foreach (double d in WindSpeedsMPH)
+                {
+                    if(d >= DatabaseOperations.FetchWeatherThreshold().WindSpeed)
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+        }
+
         //change back to 20 and 30 in database when done testing
         public int CurrentWindSpeedStatus
         {
             get
             {
-                if (CurrentWindSpeedMPH < DatabaseOperations.FetchWeatherThreshold().WindSpeed)
+                if (isBadWeather)
+                    return 2;
+                else if (isGoodWeather)
+                    return 0;
+                else
+                    return 1;
+
+                /*if (CurrentWindSpeedMPH < DatabaseOperations.FetchWeatherThreshold().WindSpeed)
                     return 0; // Safe State of the Wind Speed
                 else if (CurrentWindSpeedMPH >= DatabaseOperations.FetchWeatherThreshold().WindSpeed
                     && CurrentWindSpeedMPH < DatabaseOperations.FetchWeatherMaxThreshold().WindSpeed)
                     return 1; // Warning State of the Wind Speed
                 else
-                    return 2; // Alarm State of the Wind Speed
+                    return 2; // Alarm State of the Wind Speed*/
             }
         }
 
@@ -195,6 +250,8 @@ namespace ControlRoomApplication.Entities
         public abstract float GetMonthlyRain();
         public abstract float GetWindSpeed();
         public abstract String GetWindDirection();
+
+        public abstract float GetWindDirectionDeg();
         public abstract float GetRainRate();
         public abstract int GetHeatIndex();
 

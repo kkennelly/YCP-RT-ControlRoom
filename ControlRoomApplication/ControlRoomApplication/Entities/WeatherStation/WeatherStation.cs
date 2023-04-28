@@ -247,7 +247,7 @@ namespace ControlRoomApplication.Entities.WeatherStation
                 }
 
 
-                Thread.Sleep(5000);
+                Thread.Sleep(10000);
             }
         }
 
@@ -338,6 +338,11 @@ namespace ControlRoomApplication.Entities.WeatherStation
         public override int GetHeatIndex()
         {
             return (int)data.heatIndex;
+        }
+
+        public override float GetWindDirectionDeg()
+        {
+            return (float)data.windDirectionDegrees;
         }
 
         private string ConvertWindDirDegreesToStr(float degrees)

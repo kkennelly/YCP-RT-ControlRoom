@@ -147,10 +147,12 @@ namespace ControlRoomApplication.GUI
             dataGridView1.Rows.Add(weatherStationRow);
             dataGridView1.Rows.Add(mcuRow);
             dataGridView1.Update();
-            
+
             //MCU_Statui.ColumnCount = 2;
             //MCU_Statui.Columns[0].HeaderText = "Status name";
             //MCU_Statui.Columns[1].HeaderText = "value";
+
+            SetMCUData();
 
             SetCurrentWeatherData();
             runDiagScriptsButton.Enabled = false;
@@ -163,6 +165,7 @@ namespace ControlRoomApplication.GUI
             bool currAmbTempHumidity = rtController.overrides.overrideAmbientTempHumidity;
             bool currElProx0 = rtController.overrides.overrideElevatProx0;
             bool currElProx90 = rtController.overrides.overrideElevatProx90;
+
             bool currAzimuthAbsEncoder = rtController.overrides.overrideAzimuthAbsEncoder;
             bool currElevationAbsEncoder = rtController.overrides.overrideElevationAbsEncoder;
             bool currAzimuthAccelerometer = rtController.overrides.overrideAzimuthAccelerometer;
@@ -204,11 +207,13 @@ namespace ControlRoomApplication.GUI
             txtLowerSWStopsLimit.Text = "" + rtController.RadioTelescope.minElevationDegrees.ToString("0.00");
             txtUpperSWStopsLimit.Text = "" + rtController.RadioTelescope.maxElevationDegrees.ToString("0.00");
 
+            /* ESS removed
             txtLowerTempLimit.Text = "" + rtController.MinAmbientTempThreshold.ToString("0.00");
             txtUpperTempLimit.Text = "" + rtController.MaxAmbientTempThreshold.ToString("0.00");
 
             txtLowerHumidLimit.Text = "" + rtController.MinAmbientHumidityThreshold.ToString("0.00");
             txtUpperHumidLimit.Text = "" + rtController.MaxAmbientHumidityThreshold.ToString("0.00");
+            */
 
             // Set default values for timeout validation
             DataTimeoutValid = true;
@@ -236,6 +241,34 @@ namespace ControlRoomApplication.GUI
             //outsideTempLabel.Text = Math.Round(controlRoom.WeatherStation.GetOutsideTemp(), 2).ToString();
             //insideTempLabel.Text = Math.Round(controlRoom.WeatherStation.GetInsideTemp(), 2).ToString();
             barometricPressureLabel.Text = Math.Round(controlRoom.WeatherStation.GetBarometricPressure(), 2).ToString();
+        }
+
+        private void SetMCUData()
+        {
+            ushort[] regs = rtController.ReadMCURegisters();
+            if (regs != null)
+            {
+                byte0.Text = regs[0].ToString();
+                byte1.Text = regs[1].ToString();
+                byte2.Text = regs[2].ToString();
+                byte3.Text = regs[3].ToString();
+                byte4.Text = regs[4].ToString();
+                byte5.Text = regs[5].ToString();
+                byte6.Text = regs[6].ToString();
+                byte7.Text = regs[7].ToString();
+                byte8.Text = regs[8].ToString();
+                byte9.Text = regs[9].ToString();
+                byte10.Text = regs[10].ToString();
+                byte11.Text = regs[11].ToString();
+                byte12.Text = regs[12].ToString();
+                byte13.Text = regs[13].ToString();
+                byte14.Text = regs[14].ToString();
+                byte15.Text = regs[15].ToString();
+                byte16.Text = regs[16].ToString();
+                byte17.Text = regs[17].ToString();
+                byte18.Text = regs[18].ToString();
+                byte19.Text = regs[19].ToString();
+            }
         }
 
         /// <summary>
@@ -547,6 +580,8 @@ namespace ControlRoomApplication.GUI
             }
 
             SetCurrentWeatherData();
+
+            SetMCUData();
 
             dataGridView1.Update();
 
@@ -1566,11 +1601,13 @@ namespace ControlRoomApplication.GUI
                 rtController.RadioTelescope.maxElevationDegrees = double.Parse(txtUpperSWStopsLimit.Text);
                 rtController.RadioTelescope.minElevationDegrees = double.Parse(txtLowerSWStopsLimit.Text);
 
+                /* ESS removed
                 rtController.MinAmbientTempThreshold = double.Parse(txtLowerTempLimit.Text);
                 rtController.MaxAmbientTempThreshold = double.Parse(txtUpperTempLimit.Text);
 
                 rtController.MinAmbientHumidityThreshold = double.Parse(txtLowerHumidLimit.Text);
                 rtController.MaxAmbientHumidityThreshold = double.Parse(txtUpperHumidLimit.Text);
+                */
 
                 logger.Info(Utilities.GetTimeStamp() + String.Format(" Updating Software Stop thresholds... New values: Lower = {0} , Upper = {1} ", double.Parse(txtLowerSWStopsLimit.Text), double.Parse(txtUpperSWStopsLimit.Text)));
                 DatabaseOperations.UpdateTelescope(rtController.RadioTelescope);
@@ -1667,6 +1704,7 @@ namespace ControlRoomApplication.GUI
             }
         }
 
+        /* ESS removed
         private void ValidateAmbTempLimit()
         {
             bool isUpperNumeric = Double.TryParse(txtUpperTempLimit.Text, out double requestedUpperLimit);
@@ -1742,6 +1780,7 @@ namespace ControlRoomApplication.GUI
                 }
             }
         }
+        */
 
         private void UpperSWStopsLimitText_TextChanged(object sender, EventArgs e)
         {
@@ -1773,6 +1812,7 @@ namespace ControlRoomApplication.GUI
             }
         }
 
+        /* ESS removed
         private void txtUpperTempLimit_TextChanged(object sender, EventArgs e)
         {
             ValidateAmbTempLimit();
@@ -1792,6 +1832,7 @@ namespace ControlRoomApplication.GUI
         {
             ValidateAmbHumidityLimit();
         }
+        */
 
         private void btnToggleFan_Click(object sender, EventArgs e)
         {
@@ -2062,6 +2103,16 @@ namespace ControlRoomApplication.GUI
                 UpdateSensorInitiliazation.Enabled = false;
                 comboTimingSelect.Enabled = false;
             }
+        }
+
+        private void ThresholdsGroup_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void grpMCUWords_Enter(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -26,40 +26,40 @@ namespace ControlRoomApplication.Controllers.Communications
 
         public static bool sendToAllAdmins(String titleText, String bodyText, bool testflag = false)
         {
-            if (!firebaseAppCreated)
-            {
-                FirebaseApp.Create(new AppOptions()
-                {
-                    Credential = GoogleCredential.FromFile(Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName + "/ControlRoomApplication/Constants/rtmobile-v2-528c5-firebase-adminsdk-n5z8d-ff80743be4.json")
-                });
-                firebaseAppCreated = true;
-            }
+            //if (!firebaseAppCreated)
+            //{
+            //    FirebaseApp.Create(new AppOptions()
+            //    {
+            //        Credential = GoogleCredential.FromFile(Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName + "/ControlRoomApplication/Constants/rtmobile-v2-528c5-firebase-adminsdk-n5z8d-ff80743be4.json")
+            //    });
+            //    firebaseAppCreated = true;
+            //}
             
-            // See documentation on defining a message payload.
-            var message = new Message()
-            {
-                Data = new Dictionary<string, string>()
-                {
-                    { "specialMessages", "1234" },
-                },
-                //Token = registrationToken,
-                Topic = "admin",
-                Notification = new Notification()
-                {
-                    Title = titleText,
-                    Body = bodyText
-                }
-            };
+            //// See documentation on defining a message payload.
+            //var message = new Message()
+            //{
+            //    Data = new Dictionary<string, string>()
+            //    {
+            //        { "specialMessages", "1234" },
+            //    },
+            //    //Token = registrationToken,
+            //    Topic = "admin",
+            //    Notification = new Notification()
+            //    {
+            //        Title = titleText,
+            //        Body = bodyText
+            //    }
+            //};
 
-            // Send a message to the device corresponding to the provided
-            string response = FirebaseMessaging.DefaultInstance.SendAsync(message).Result;
+            //// Send a message to the device corresponding to the provided
+            //string response = FirebaseMessaging.DefaultInstance.SendAsync(message).Result;
 
-            if (!testflag)
-            {
-                // Response is a message ID string.
-                Console.WriteLine("Successfully sent message: " + response);
-                logger.Debug(Utilities.GetTimeStamp() + ": Notification sent: " + bodyText);
-            }
+            //if (!testflag)
+            //{
+            //    // Response is a message ID string.
+            //    Console.WriteLine("Successfully sent message: " + response);
+            //    logger.Debug(Utilities.GetTimeStamp() + ": Notification sent: " + bodyText);
+            //}
 
             return true;
         }

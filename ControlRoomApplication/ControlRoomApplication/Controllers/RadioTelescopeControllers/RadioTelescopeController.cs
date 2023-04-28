@@ -90,7 +90,8 @@ namespace ControlRoomApplication.Controllers
 
             previousSnowDumpAzimuth = 0;
 
-            snowDumpTimer = new System.Timers.Timer(DatabaseOperations.FetchWeatherThreshold().SnowDumpTime * 1000 * 60);
+            //snowDumpTimer = new System.Timers.Timer(DatabaseOperations.FetchWeatherThreshold().SnowDumpTime * 1000 * 60);
+            snowDumpTimer = new System.Timers.Timer(1 * 1000 * 60);
             snowDumpTimer.Elapsed += AutomaticSnowDumpInterval;
             snowDumpTimer.AutoReset = true;
             snowDumpTimer.Enabled = true;
@@ -138,10 +139,6 @@ namespace ControlRoomApplication.Controllers
         /// <returns></returns>
         public Orientation GetAbsoluteOrientation()
         {
-            //TODO: NO ABSOLUTE ENCODERS, RETURN RELATIVE ORIENTATION INSTEAD
-            return RadioTelescope.PLCDriver.GetMotorEncoderPosition();
-             
-
             // Apply final offset
             Orientation finalOffsetOrientation = new Orientation();
 
@@ -151,7 +148,6 @@ namespace ControlRoomApplication.Controllers
             // Normalize azimuth orientation
             while (finalOffsetOrientation.azimuth > 360) finalOffsetOrientation.azimuth -= 360;
             while (finalOffsetOrientation.azimuth < 0) finalOffsetOrientation.azimuth += 360;
-
             return finalOffsetOrientation;
         }
 
@@ -814,6 +810,10 @@ namespace ControlRoomApplication.Controllers
             return result;
         }
 
+        public ushort[] ReadMCURegisters() {
+            return RadioTelescope.PLCDriver.ReadMCURegisters();
+        }
+
         /// <summary>
         /// This allows us to safely reset the motor controller errors if an error bit happens to be set.
         /// This way, we don't have to restart the hardware to get things to work.
@@ -915,7 +915,7 @@ namespace ControlRoomApplication.Controllers
 
                 // Check weather
                 int windSpeedStatus = RadioTelescope.WeatherStation.CurrentWindSpeedStatus;
-                logger.Info(Utilities.GetTimeStamp() + " Wind Speed Status: " + windSpeedStatus + " Wind azSpeed: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
+                logger.Info(Utilities.GetTimeStamp() + " Wind Speed Status:" + windSpeedStatus + " Wind Speed:" + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
                 sensors.weather_station = (SByte)SensorStatusEnum.NORMAL;
 
                 // Tragic wind azSpeed
@@ -930,6 +930,10 @@ namespace ControlRoomApplication.Controllers
                         PushNotification.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are too high: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
                         EmailNotifications.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are too high: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
                         MovementResult result = ExecuteRadioTelescopeImmediateStop(MovementPriority.Critical);
+
+                        double CurrentWindDirectionDegrees = 0;
+                        Orientation newLocation = new Orientation(CurrentWindDirectionDegrees, GetCurrentOrientation().elevation);
+                        result = MoveRadioTelescopeToOrientation(newLocation, MovementPriority.Critical, true);
                         result = StowRadioTelescope(MovementPriority.Critical);
                         inclementWeather = true;
                     }
@@ -943,8 +947,8 @@ namespace ControlRoomApplication.Controllers
 
                     if(!inclementWeather)
                     {
-                        PushNotification.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are in Warning Range: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
-                        EmailNotifications.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are in Warning Range: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
+                        //PushNotification.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are in Warning Range: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
+                        //EmailNotifications.sendToAllAdmins("WARNING: WEATHER STATION", "Wind speeds are in Warning Range: " + RadioTelescope.WeatherStation.CurrentWindSpeedMPH);
                     }
                 }
 
@@ -1228,16 +1232,18 @@ namespace ControlRoomApplication.Controllers
 
         private void AutomaticSnowDumpInterval(Object source, ElapsedEventArgs e)
         {
+            logger.Info("Checking to Snow Dump");
             double DELTA = 0.01;
             Orientation currentOrientation = GetCurrentOrientation();
 
             // Check if we need to dump the snow off of the telescope
             if (RadioTelescope.WeatherStation.GetOutsideTemp() <= 30.00 && RadioTelescope.WeatherStation.GetTotalRain() > 0.00)
             {
+                logger.Info("need to Snow Dump");
                 // We want to check stow position precision with a 0.01 degree margin of error
                 if (Math.Abs(currentOrientation.azimuth - MiscellaneousConstants.Stow.azimuth) <= DELTA && Math.Abs(currentOrientation.elevation - MiscellaneousConstants.Stow.elevation) <= DELTA)
                 {
-                    Console.WriteLine("Time threshold reached. Running snow dump...");
+                    logger.Info("Time threshold reached. Running snow dump...");
 
                     MovementResult result = SnowDump(MovementPriority.Appointment);
 
@@ -1433,6 +1439,10 @@ namespace ControlRoomApplication.Controllers
             {
                 logger.Info(Utilities.GetTimeStamp() + ": Stowing telescope with absolute encoders");
                 MovementResult result = MoveRadioTelescopeToOrientation(MiscellaneousConstants.Stow, priority, true);
+                //for wind in emergency do same, but two movement, 
+                //azimuth for wind needs to be calculated with direction in degrees and comapring that to direction of telescope
+                //1: MoveRadioTelescopeToOrientation(azimuth for wind, elevation 0, priority, true);
+                //2: MoveRadioTelescopeToOrientation(azimuth for wind, elevation 90, priority, true);
 
                 // Since the motors are not homed, the movement result will likely return an incorrect position,
                 // so check the absolute encoder orientations instead

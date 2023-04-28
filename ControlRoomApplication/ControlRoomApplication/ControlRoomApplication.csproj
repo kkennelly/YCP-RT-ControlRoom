@@ -327,7 +327,6 @@
     <Compile Include="Controllers\SensorNetwork\Enumerations\SensorNetworkSensorStatus.cs" />
     <Compile Include="Entities\DiagnosticData\Temperature.cs" />
     <Compile Include="Entities\DiagnosticData\Humidity.cs" />
-    <Compile Include="Entities\Encoder\EncoderAverages.cs" />
     <Compile Include="Entities\Exceptions\MCUExceptions.cs" />
     <Compile Include="Entities\Location\SensorLocationEnum.cs" />
     <Compile Include="Entities\Log\Log.cs" />
@@ -388,6 +387,25 @@
     <Compile Include="Entities\WeatherStation\WeatherThreshold.cs" />
     <Compile Include="Entities\WeatherStation\WeatherData.cs" />
     <Compile Include="Entities\WeatherStation\WeatherStation.cs" />
+    <Compile Include="Entities\WeatherStation\WindData.cs" />
+    <Compile Include="GUI\AppointmentControlForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\AppointmentControlForm.Designer.cs">
+      <DependentUpon>AppointmentControlForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\AppointmentCreationForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\AppointmentCreationForm.Designer.cs">
+      <DependentUpon>AppointmentCreationForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\CoordinateCreationForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\CoordinateCreationForm.Designer.cs">
+      <DependentUpon>CoordinateCreationForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="GUI\DropDownEnums\PLCDropdown.cs" />
     <Compile Include="GUI\DropDownEnums\SpectraCyberDropdown.cs" />
     <Compile Include="GUI\DropDownEnums\WeatherStationDropdown.cs" />
@@ -422,6 +440,12 @@
     <Compile Include="GUI\InputDialogs\InputDialog.Designer.cs">
       <DependentUpon>InputDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="GUI\OrientationCreationForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\OrientationCreationForm.Designer.cs">
+      <DependentUpon>OrientationCreationForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="GUI\RTControlForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -435,6 +459,30 @@
       <DependentUpon>ManualControl.cs</DependentUpon>
     </Compile>
     <Compile Include="GUI\RTControlFormData.cs" />
+    <Compile Include="GUI\SpectraCyberConfigCreationForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\SpectraCyberConfigCreationForm.Designer.cs">
+      <DependentUpon>SpectraCyberConfigCreationForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\UserCreationForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\UserCreationForm.Designer.cs">
+      <DependentUpon>UserCreationForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\ViewUsersForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\ViewUsersForm.Designer.cs">
+      <DependentUpon>ViewUsersForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\ViewAppointmentForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\ViewAppointmentForm.Designer.cs">
+      <DependentUpon>ViewAppointmentForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\201904150402332_LoggingUpdgrades.cs" />
     <Compile Include="Migrations\201904150402332_LoggingUpdgrades.Designer.cs">
       <DependentUpon>201904150402332_LoggingUpdgrades.cs</DependentUpon>
@@ -512,6 +560,15 @@
     <Content Include="YCASIcon.ico" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="GUI\AppointmentControlForm.resx">
+      <DependentUpon>AppointmentControlForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\AppointmentCreationForm.resx">
+      <DependentUpon>AppointmentCreationForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\CoordinateCreationForm.resx">
+      <DependentUpon>CoordinateCreationForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GUI\InputDialogs\CustomOrientationInputDialog.resx">
       <DependentUpon>CustomOrientationInputDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -527,6 +584,9 @@
     <EmbeddedResource Include="GUI\InputDialogs\InputDialog.resx">
       <DependentUpon>InputDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="GUI\OrientationCreationForm.resx">
+      <DependentUpon>OrientationCreationForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GUI\RTControlForm.resx">
       <DependentUpon>RTControlForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -535,6 +595,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\SpectraCyberConfigCreationForm.resx">
+      <DependentUpon>SpectraCyberConfigCreationForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\UserCreationForm.resx">
+      <DependentUpon>UserCreationForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\ViewUsersForm.resx">
+      <DependentUpon>ViewUsersForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\ViewAppointmentForm.resx">
+      <DependentUpon>ViewAppointmentForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201904150402332_LoggingUpdgrades.resx">
       <DependentUpon>201904150402332_LoggingUpdgrades.cs</DependentUpon>

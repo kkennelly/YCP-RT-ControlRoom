@@ -22,18 +22,6 @@ namespace ControlRoomApplication.Entities
         public long TimeCaptured { get; set; }
 
         [Required]
-        [Column("wind_speed")]
-        public Single ws { get; set; }
-
-        [Required]
-        [Column("wind_direction_deg")]
-        public Single wd_deg { get; set; }
-
-        [Required]
-        [Column("wind_direction_str")]
-        public String wd_str { get; set; }
-
-        [Required]
         [Column("outside_temperature_degF")]
         public Single ot { get; set; }
 
@@ -84,9 +72,6 @@ namespace ControlRoomApplication.Entities
             WeatherData dbData = new WeatherData();
 
             dbData.TimeCaptured = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-            dbData.ws = data.windSpeed;
-            dbData.wd_str = data.windDirection;
-            dbData.wd_deg = data.windDirectionDegrees;
             dbData.rd = data.dailyRain;
             dbData.rr = data.rainRate;
             dbData.ot = data.outsideTemp;

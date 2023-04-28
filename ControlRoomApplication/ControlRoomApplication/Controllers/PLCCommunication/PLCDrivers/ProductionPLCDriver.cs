@@ -38,8 +38,6 @@ namespace ControlRoomApplication.Controllers
         private bool is_test = false;
         private MCUManager MCU;
         private RadioTelescopeTypeEnum telescopeType = RadioTelescopeTypeEnum.NONE;
-        public bool PNEnabled = false;
-
         /// <summary>
         /// set this ONLY if using test driver, removes timouts and delays
         /// </summary>
@@ -117,6 +115,11 @@ namespace ControlRoomApplication.Controllers
                 Thread.Sleep(1000);
                 PLC_Modbusserver.DataStore.HoldingRegisters[(int)PLC_modbus_server_register_mapping.CTRL_HEART_BEAT]++;
             }
+        }
+
+        public override ushort[] ReadMCURegisters()
+        {
+            return this.MCU.ReadMCURegisters(0, 20);
         }
 
         private async void DefaultLimitSwitchHandle( object sender , limitEventArgs e ) {
@@ -326,8 +329,8 @@ namespace ControlRoomApplication.Controllers
                             {
                                 logger.Info(Utilities.GetTimeStamp() + ": Elevation Lower Limit Switch Hit");
 
-                                PushNotification.sendToAllAdmins("LIMIT SWITCH", "Elevation lower limit switch hit", PNEnabled);
-                                EmailNotifications.sendToAllAdmins("LIMIT SWITCH", "Elevation lower limit switch hit", PNEnabled);
+                                PushNotification.sendToAllAdmins("LIMIT SWITCH", "Elevation lower limit switch hit");
+                                EmailNotifications.sendToAllAdmins("LIMIT SWITCH", "Elevation lower limit switch hit");
                             }
                         }
                         break;
@@ -346,8 +349,8 @@ namespace ControlRoomApplication.Controllers
                             {
                                 logger.Info(Utilities.GetTimeStamp() + ": Elevation Upper Limit Switch Hit");
 
-                                PushNotification.sendToAllAdmins("LIMIT SWITCH", "Elevation upper limit switch hit", PNEnabled);
-                                EmailNotifications.sendToAllAdmins("LIMIT SWITCH", "Elevation upper limit switch hit", PNEnabled);
+                                PushNotification.sendToAllAdmins("LIMIT SWITCH", "Elevation upper limit switch hit");
+                                EmailNotifications.sendToAllAdmins("LIMIT SWITCH", "Elevation upper limit switch hit");
                             }
                         }
                         break;
@@ -360,15 +363,15 @@ namespace ControlRoomApplication.Controllers
                             {
                                 logger.Info(Utilities.GetTimeStamp() + ": gate opened");
 
-                                PushNotification.sendToAllAdmins("GATE ACTIVITY", "Gate has been opened.", PNEnabled);
-                                EmailNotifications.sendToAllAdmins("GATE ACTIVITY", "Gate has been opened.", PNEnabled);
+                                PushNotification.sendToAllAdmins("GATE ACTIVITY", "Gate has been opened.");
+                                EmailNotifications.sendToAllAdmins("GATE ACTIVITY", "Gate has been opened.");
                             }
                             else
                             {
                                 logger.Info(Utilities.GetTimeStamp() + ": gate closed");
 
-                                PushNotification.sendToAllAdmins("GATE ACTIVITY", "Gate has been closed.", PNEnabled);
-                                EmailNotifications.sendToAllAdmins("GATE ACTIVITY", "Gate has been closed.", PNEnabled);
+                                PushNotification.sendToAllAdmins("GATE ACTIVITY", "Gate has been closed.");
+                                EmailNotifications.sendToAllAdmins("GATE ACTIVITY", "Gate has been closed.");
                             }
                         }
                         break;
@@ -382,16 +385,16 @@ namespace ControlRoomApplication.Controllers
                                 logger.Info(Utilities.GetTimeStamp() + ": Estop Hit");
                                 CurrentMovementPriority = MovementPriority.Critical;
 
-                                PushNotification.sendToAllAdmins("E-STOP ACTIVITY", "E-stop has been hit.", PNEnabled);
-                                EmailNotifications.sendToAllAdmins("E-STOP ACTIVITY", "E-stop has been hit.", PNEnabled);
+                                PushNotification.sendToAllAdmins("E-STOP ACTIVITY", "E-stop has been hit.");
+                                EmailNotifications.sendToAllAdmins("E-STOP ACTIVITY", "E-stop has been hit.");
                             }
                             else
                             {
                                 logger.Info(Utilities.GetTimeStamp() + ": Estop released");
                                 CurrentMovementPriority = MovementPriority.None;
 
-                                PushNotification.sendToAllAdmins("E-STOP ACTIVITY", "E-stop has been released.", PNEnabled);
-                                EmailNotifications.sendToAllAdmins("E-STOP ACTIVITY", "E-stop has been released.", PNEnabled);
+                                PushNotification.sendToAllAdmins("E-STOP ACTIVITY", "E-stop has been released.");
+                                EmailNotifications.sendToAllAdmins("E-STOP ACTIVITY", "E-stop has been released.");
                             }
                         }
                         break;
@@ -541,18 +544,18 @@ namespace ControlRoomApplication.Controllers
             int positionTranslationAZ, positionTranslationEL;
 
             // Calculates the hard stop calculation by default
-            double azimuthOrientationMovement = target_orientation.Azimuth - current_orientation.Azimuth;
+            double azimuthOrientationMovement = target_orientation.azimuth - current_orientation.azimuth;
 
             // If the type is a slip ring, checks to see if it needs to calculate a new route
             if(telescopeType == RadioTelescopeTypeEnum.SLIP_RING)
             {
                 if(azimuthOrientationMovement > 180)
                 {
-                    azimuthOrientationMovement = (target_orientation.Azimuth - 360) - current_orientation.Azimuth;
+                    azimuthOrientationMovement = (target_orientation.azimuth - 360) - current_orientation.azimuth;
                 }
                 else if(azimuthOrientationMovement < -180)
                 {
-                    azimuthOrientationMovement = (360 - current_orientation.Azimuth) + target_orientation.Azimuth;
+                    azimuthOrientationMovement = (360 - current_orientation.azimuth) + target_orientation.azimuth;
                 }
             }
             else if(telescopeType == RadioTelescopeTypeEnum.NONE)
@@ -562,14 +565,14 @@ namespace ControlRoomApplication.Controllers
             }
 
             positionTranslationAZ = ConversionHelper.DegreesToSteps(azimuthOrientationMovement, MotorConstants.GEARING_RATIO_AZIMUTH);
-            positionTranslationEL = -1 * ConversionHelper.DegreesToSteps((target_orientation.Elevation - current_orientation.Elevation), MotorConstants.GEARING_RATIO_ELEVATION);
+            positionTranslationEL = -1 * ConversionHelper.DegreesToSteps((target_orientation.elevation - current_orientation.elevation), MotorConstants.GEARING_RATIO_ELEVATION);
 
             int EL_Speed = ConversionHelper.DPSToSPS( ConversionHelper.RPMToDPS( 0.6 ), MotorConstants.GEARING_RATIO_ELEVATION);
             int AZ_Speed = ConversionHelper.DPSToSPS( ConversionHelper.RPMToDPS( 0.6 ), MotorConstants.GEARING_RATIO_AZIMUTH);
 
             //(ObjectivePositionStepsAZ - CurrentPositionStepsAZ), (ObjectivePositionStepsEL - CurrentPositionStepsEL)
-            logger.Info(Utilities.GetTimeStamp() + ": degrees target az " + target_orientation.Azimuth + " el " + target_orientation.Elevation);
-            logger.Info(Utilities.GetTimeStamp() + ": degrees curren az " + current_orientation.Azimuth + " el " + current_orientation.Elevation);
+            logger.Info(Utilities.GetTimeStamp() + ": degrees target az " + target_orientation.azimuth + " el " + target_orientation.elevation);
+            logger.Info(Utilities.GetTimeStamp() + ": degrees curren az " + current_orientation.azimuth + " el " + current_orientation.elevation);
 
             return MCU.MoveAndWaitForCompletion(
                 AZ_Speed, EL_Speed,
@@ -580,7 +583,7 @@ namespace ControlRoomApplication.Controllers
         }
 
         /// <summary>
-        /// speed in RPM
+        /// azSpeed in RPM
         /// </summary>
         /// <param name="azSpeed"></param>
         /// <param name="azDirection"></param>
@@ -770,12 +773,6 @@ namespace ControlRoomApplication.Controllers
         public override bool GetMotorsHomed()
         {
             return MCU.MotorsHomed;
-        }
-
-        public void SetPushNotificationEnabled(bool PN)
-        {
-            PNEnabled = PN;
-            MCU.PNEnabled = PN; 
         }
     }
 }

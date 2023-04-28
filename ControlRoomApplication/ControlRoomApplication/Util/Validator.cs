@@ -67,9 +67,9 @@ namespace ControlRoomApplication.Validation {
 
       
         /// <summary>
-        ///  Validating speed from user input in RTControlForm
+        ///  Validating azSpeed from user input in RTControlForm
         /// </summary>
-        /// <param name="speed"> speed value, given by user in RPMs </param>
+        /// <param name="speed"> azSpeed value, given by user in RPMs </param>
         /// <returns> true if the value is between the accepted range, false otherwise</returns>
         public static bool ValidateSpeed(double speed)
         {
@@ -81,7 +81,7 @@ namespace ControlRoomApplication.Validation {
         /// Helper method to validate via a text box
         /// </summary>
         /// <param name="text"> user text to validate </param>
-        /// <returns> returns true, if the textbox speed value is a valid 
+        /// <returns> returns true, if the textbox azSpeed value is a valid 
         /// double AND is in the expected range. False otherwise</returns>
         public static bool ValidateSpeed(string text)
         {
@@ -105,7 +105,7 @@ namespace ControlRoomApplication.Validation {
 
         /// <summary>
         /// used to check ONLY if the text is a valid double
-        /// Does NOT account for the speed being in the expected range (use ValidateSpeed(string text) for that)
+        /// Does NOT account for the azSpeed being in the expected range (use ValidateSpeed(string text) for that)
         /// </summary>
         /// <param name="text"></param>
         /// <returns></returns>

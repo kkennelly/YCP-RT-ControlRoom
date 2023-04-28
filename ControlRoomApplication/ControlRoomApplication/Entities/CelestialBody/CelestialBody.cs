@@ -34,6 +34,11 @@ namespace ControlRoomApplication.Entities
         [ForeignKey("coordinate_id")]
         public virtual Coordinate Coordinate { get; set; }
 
-        
+
+        public override string ToString()
+        {
+            return Id + "| " + Name;
+        }
+
     }
 }

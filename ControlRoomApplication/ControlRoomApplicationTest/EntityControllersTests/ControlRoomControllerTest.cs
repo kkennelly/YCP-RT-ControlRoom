@@ -119,7 +119,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests
 
             foreach (RadioTelescopeControllerManagementThread ManagementThread in CRController.ControlRoom.RTControllerManagementThreads)
             {
-                ManagementThread.Start();
+                ManagementThread.Start(RTController0);
             }
 
             Assert.AreEqual(true, CRController.RemoveRadioTelescopeController(RTController0, true));
@@ -136,7 +136,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests
 
             foreach (RadioTelescopeControllerManagementThread ManagementThread in CRController.ControlRoom.RTControllerManagementThreads)
             {
-                ManagementThread.Start();
+                ManagementThread.Start(RTController0);
             }
 
 

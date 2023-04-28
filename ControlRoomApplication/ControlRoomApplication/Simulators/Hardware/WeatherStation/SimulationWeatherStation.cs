@@ -153,5 +153,11 @@ namespace ControlRoomApplication.Simulators.Hardware.WeatherStation
         {
             return (int)data.heatIndex;
         }
+
+        public override float GetWindDirectionDeg()
+        {
+            return (float)data.windDirectionDegrees;
+        }
+
     }
 }

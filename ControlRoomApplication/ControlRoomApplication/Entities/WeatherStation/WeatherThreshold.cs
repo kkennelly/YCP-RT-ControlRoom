@@ -7,10 +7,11 @@ namespace ControlRoomApplication.Entities
     public class WeatherThreshold
     {
 
-        public WeatherThreshold(int windSpeed, int snowDumpTime)
+        public WeatherThreshold(int windSpeed, int snowDumpTime, int queueSize)
         {
             WindSpeed = windSpeed;
             SnowDumpTime = snowDumpTime;
+            QueueSize = queueSize;
         }
 
         public WeatherThreshold()
@@ -28,6 +29,9 @@ namespace ControlRoomApplication.Entities
 
         [Column("snow_dump_time")]
         public int SnowDumpTime { get; set; }
+
+        [Column("queue_size")]
+        public int QueueSize { get; set; }
 
 
     }

@@ -98,7 +98,7 @@ namespace ControlRoomApplication.Simulators.Hardware.MCU
                     0.0,
                     MCUConstants.SIMULATION_MCU_PEAK_VELOCITY,
                     MCUConstants.SIMULATION_MCU_PEAK_ACCELERATION,
-                    orientationDegrees.Azimuth
+                    orientationDegrees.azimuth
                 );
 
                 ActiveObjectiveElevationProfile = SimulationMCUTrajectoryProfile.ForceLinearInstance(
@@ -107,7 +107,7 @@ namespace ControlRoomApplication.Simulators.Hardware.MCU
                     0.0,
                     MCUConstants.SIMULATION_MCU_PEAK_VELOCITY,
                     MCUConstants.SIMULATION_MCU_PEAK_ACCELERATION,
-                    orientationDegrees.Elevation
+                    orientationDegrees.elevation
                 );
             }
             else
@@ -118,7 +118,7 @@ namespace ControlRoomApplication.Simulators.Hardware.MCU
                     0.0,
                     MCUConstants.SIMULATION_MCU_PEAK_VELOCITY,
                     MCUConstants.SIMULATION_MCU_PEAK_ACCELERATION,
-                    orientationDegrees.Azimuth
+                    orientationDegrees.azimuth
                 );
 
                 ActiveObjectiveElevationProfile = SimulationMCUTrajectoryProfile.CalculateInstance(
@@ -127,7 +127,7 @@ namespace ControlRoomApplication.Simulators.Hardware.MCU
                     0.0,
                     MCUConstants.SIMULATION_MCU_PEAK_VELOCITY,
                     MCUConstants.SIMULATION_MCU_PEAK_ACCELERATION,
-                    orientationDegrees.Elevation
+                    orientationDegrees.elevation
                 );
             }
 
@@ -143,8 +143,8 @@ namespace ControlRoomApplication.Simulators.Hardware.MCU
                 ActiveObjectiveElevationProfile.InterpretDegreesAt(ElEncoder, ActiveObjectiveOrientationMoveStart, CoordinatedEvaluationTime)
             );
 
-            AzEncoder.SetPositionFromDegrees(NewPosition.Azimuth);
-            ElEncoder.SetPositionFromDegrees(NewPosition.Elevation);
+            AzEncoder.SetPositionFromDegrees(NewPosition.azimuth);
+            ElEncoder.SetPositionFromDegrees(NewPosition.elevation);
 
             return NewPosition;
         }

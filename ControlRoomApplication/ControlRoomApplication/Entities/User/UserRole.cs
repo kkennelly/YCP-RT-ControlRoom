@@ -21,18 +21,18 @@ namespace ControlRoomApplication.Entities
         {
             get
             {
-                return (UserRoleEnum)Enum.Parse(typeof(UserRoleEnum), user_role);
+                return (UserRoleEnum)Enum.Parse(typeof(UserRoleEnum), role);
             }
             set
             {
-                this.user_role = value.ToString();
+                this.role = value.ToString();
             }
         }
 
         private string backingtype { get; set; }
         [Required]
-        [Column("user_role")]
-        public string user_role
+        [Column("role")]
+        public string role
         {
             get
             {

@@ -144,7 +144,6 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
         /// <returns>Current azimuth position.</returns>
         public static double GetAzimuthAxisPositionFromBytes(ref int currPointer, byte[] data, double offset, double currPos)
         {
-            currPointer += 4;   // Use the average 
             double azPos = 360 / SensorNetworkConstants.AzimuthEncoderScaling * (short)(data[currPointer++] << 8 | data[currPointer++]);
 
             if (Math.Abs(azPos) > 360) return currPos;
@@ -167,7 +166,6 @@ namespace ControlRoomApplication.Controllers.SensorNetwork
         /// <returns>Current elevation position.</returns>
         public static double GetElevationAxisPositionFromBytes(ref int currPointer, byte[] data, double offset, double currPos)
         {
-            currPointer += 4;   // Use the average 
             double elPos = -0.25 * (short)(data[currPointer++] << 8 | data[currPointer++]) + 104.375;
 
             double elPosOffs = (elPos - offset);

@@ -8,9 +8,9 @@ namespace ControlRoomApplication.Entities
     {
         public Coordinate(double rightAscension, double declination)
         {
-            RightAscension = rightAscension;
-            Declination = declination;
-            apptId = -1;
+            right_ascension = rightAscension;
+            this.declination = declination;
+            appointment_id = -1;
         }
 
         public Coordinate() : this(0, 0) { }
@@ -21,11 +21,11 @@ namespace ControlRoomApplication.Entities
 
         [Required]
         [Column("right_ascension")]
-        public double RightAscension { get; set; }
+        public double right_ascension { get; set; }
 
         [Required]
         [Column("declination")]
-        public double Declination { get; set; }
+        public double declination { get; set; }
 
         [Required]
         [Column("hours")]
@@ -36,6 +36,11 @@ namespace ControlRoomApplication.Entities
         public int minutes { get; set; }
         
         [Column("appointment_id")]
-        public int apptId { get; set; }
+        public int appointment_id { get; set; }
+
+        public override string ToString()
+        {
+            return Id + "| RA: " + right_ascension + " D: " + declination;
+        }
     }
 }

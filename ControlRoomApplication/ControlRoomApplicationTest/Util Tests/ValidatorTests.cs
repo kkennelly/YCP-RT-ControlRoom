@@ -38,7 +38,7 @@ namespace ControlRoomApplication.ValidationTests {
         private string invalidSpeed3 = "";
         private string invalidSpeed4 = "3.0";
 
-        // speed TEXT ONLY values for testing
+        // azSpeed TEXT ONLY values for testing
         private string validTextSpeed1 = "2.0";
         private string validTextSpeed2 = "20.0";
         private string invalidTextSpeed1 = "hello";

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace ControlRoomApplication.Entities.Configuration {
     public class MCUConfigurationAxys {
         /// <summary>
-        /// this is the minimum speed the MCU will travel at (RPM) , it is also start all moves at this speed befor accelerating, this should be fairly small
+        /// this is the minimum azSpeed the MCU will travel at (RPM) , it is also start all moves at this azSpeed befor accelerating, this should be fairly small
         /// </summary>
         public double StartSpeed = 0.06;
         /// <summary>

@@ -80,11 +80,11 @@
             this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
-            // textBox1
+            // ElSpeedTextbox
             // 
             this.textBox1.Location = new System.Drawing.Point(11, 22);
             this.textBox1.MaximumSize = new System.Drawing.Size(1000, 1000);
-            this.textBox1.Name = "textBox1";
+            this.textBox1.Name = "ElSpeedTextbox";
             this.textBox1.Size = new System.Drawing.Size(252, 20);
             this.textBox1.TabIndex = 2;
             this.textBox1.Text = "C:\\Users\\RadioTelescope\\Scripts";

@@ -13,7 +13,7 @@ namespace ControlRoomApplication.Simulators.Hardware.MCU
         // This value is in steps/seconds
         public double InitialVelocity { get; }
 
-        // This is the maximum velocity, the speed that the profile will have during its constant velocity sequence
+        // This is the maximum velocity, the azSpeed that the profile will have during its constant velocity sequence
         // This value is in steps/second, where "steps" is in a domain like encoder tick positions
         // This is the magnitude, do not make this negative!
         public double TrajectoryPeakVelocity { get; }
@@ -253,7 +253,7 @@ namespace ControlRoomApplication.Simulators.Hardware.MCU
         }
 
         // This factory function utilizes the equations on page 20 and 21 of the 2-axis MCU documentation to form a trajectory profile
-        // with a linear acceleration to reach the peak programmed speed
+        // with a linear acceleration to reach the peak programmed azSpeed
         public static SimulationMCUTrajectoryProfile ForceLinearInstance(
             SimulationAbsoluteEncoder motorEncoder,
             double initialDegrees,

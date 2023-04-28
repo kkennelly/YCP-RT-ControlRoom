@@ -11,7 +11,8 @@ namespace ControlRoomApplication.GUI.Data
 		public string IFGain { get; set; }
 		public string offsetVoltage { get; set; }
 		public int integrationStepIndex { get; set; }
-		public double speed { get; set; }
+		public double azSpeed { get; set; }
+		public double elSpeed { get; set; }
 		public bool controlledStopBool { get; set; }
 		public bool immediateStopBool { get; set; }
 		public bool manualControlEnabled { get; set; }
@@ -20,7 +21,7 @@ namespace ControlRoomApplication.GUI.Data
 
 
 		public RTControlFormData(int controlScriptIndex, int spectraCyberScanIndex, string frequency, int DCGainIndex, string IFGain, string offsetVoltage, 
-			int integrationStepIndex, double speed, bool controlledStopBool, bool immediateStopBool, bool manualControlEnabled, bool freeControlEnabled, bool scanEnabled)
+			int integrationStepIndex, double azSpeed, double elSpeed, bool controlledStopBool, bool immediateStopBool, bool manualControlEnabled, bool freeControlEnabled, bool scanEnabled)
         {
 			this.controlScriptIndex = controlScriptIndex;
 			this.spectraCyberScanIndex = spectraCyberScanIndex;
@@ -29,7 +30,8 @@ namespace ControlRoomApplication.GUI.Data
 			this.IFGain = IFGain;
 			this.offsetVoltage = offsetVoltage;
 			this.integrationStepIndex = integrationStepIndex;
-			this.speed = speed;
+			this.azSpeed = azSpeed;
+			this.elSpeed = elSpeed;
 			this.immediateStopBool = immediateStopBool;
 			this.controlledStopBool = controlledStopBool;
 			this.manualControlEnabled = manualControlEnabled;
@@ -46,7 +48,8 @@ namespace ControlRoomApplication.GUI.Data
 			this.IFGain = "";
 			this.offsetVoltage = "";
 			this.integrationStepIndex = 0;
-			this.speed = 0;
+			this.azSpeed = 0;
+			this.elSpeed = 0;
 			this.controlledStopBool = true;
 			this.immediateStopBool = false;
 			this.manualControlEnabled = false;

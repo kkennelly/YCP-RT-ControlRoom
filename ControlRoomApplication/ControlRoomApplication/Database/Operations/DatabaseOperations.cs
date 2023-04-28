@@ -106,8 +106,11 @@ namespace ControlRoomApplication.Database
                 if (Context.SpectraCyberConfigs.Any(t => t.Id == appt.SpectraCyberConfig.Id) == false)
                     Context.SpectraCyberConfigs.Add(appt.SpectraCyberConfig);
 
-                Context.Entry(appt.Telescope).State = EntityState.Unchanged;
-                
+                if(appt.Telescope != null)
+                {
+                    Context.Entry(appt.Telescope).State = EntityState.Unchanged;
+                }
+
                 Context.Appointments.Add(appt);
                 SaveContext(Context);
 
@@ -115,9 +118,64 @@ namespace ControlRoomApplication.Database
                 List<Appointment> alist = Context.Appointments.ToList<Appointment>();
                 foreach (Coordinate c in appt.Coordinates)
                 {
-                    c.apptId = alist[alist.Count - 1].Id;
+                    c.appointment_id = alist[alist.Count - 1].Id;
                     Context.Coordinates.AddOrUpdate(c);
                 }
+                SaveContext(Context);
+            }
+
+        }
+
+        /// <summary>
+        /// Adds the specified user to the database
+        /// </summary>
+        /// <param name="user"></param>
+        public static void AddUser(User user, string userRole)
+        {
+            using (RTDbContext Context = InitializeDatabaseContext())
+            {
+                Context.Users.Add(user);
+                SaveContext(Context);
+                Context.Database.ExecuteSqlCommand($"INSERT INTO user_role SET user_id = '{user.Id}', role = '" + userRole + "'");
+                SaveContext(Context);
+            }
+        }
+
+        /// <summary>
+        /// Add a spectracyber config to the database
+        /// </summary>
+        /// <param name="config"></param>
+        public static void AddSpectraCyberConfig(SpectraCyberConfig config)
+        {
+            using (RTDbContext Context = InitializeDatabaseContext())
+            {
+                Context.SpectraCyberConfigs.Add(config);
+                SaveContext(Context);
+            }
+        }
+
+        /// <summary>
+        /// Add a coordinate to the database 
+        /// </summary>
+        /// <param name="coordinate"></param>
+        public static void AddCoordinate(Coordinate coordinate)
+        {
+            using (RTDbContext Context = InitializeDatabaseContext())
+            {
+                Context.Coordinates.Add(coordinate);
+                SaveContext(Context);
+            }
+        }
+
+        /// <summary>
+        /// Add an orientation to the database
+        /// </summary>
+        /// <param name="radioTelescope"></param>
+        public static void AddOrientation(Orientation orientation)
+        {
+            using (RTDbContext Context = InitializeDatabaseContext())
+            {
+                Context.Orientations.Add(orientation);
                 SaveContext(Context);
             }
         }
@@ -143,8 +201,6 @@ namespace ControlRoomApplication.Database
                     SaveContext(Context);
 
                 }
-            
-
         }
 
 
@@ -177,7 +233,7 @@ namespace ControlRoomApplication.Database
                     {
                         foreach(Coordinate c in coordsForAppt)
                         {
-                            if(c.apptId == a.Id) a.Coordinates.Add(c);
+                            if(c.appointment_id == a.Id) a.Coordinates.Add(c);
                         }
                     }
                 }
@@ -227,7 +283,7 @@ namespace ControlRoomApplication.Database
 
             using (RTDbContext Context = InitializeDatabaseContext())
             {
-                AllUsers = Context.Users.SqlQuery("Select * from user").ToList<User>();
+                AllUsers = Context.Users.SqlQuery("SELECT * FROM user").ToList<User>();
 
                 if (AllUsers.Count() == 0)
                 {
@@ -263,6 +319,86 @@ namespace ControlRoomApplication.Database
                 u.UR = ur;
             }
             return AdminUsers;
+        }
+
+        /// <summary>
+        /// Returns a list of all user roles from the user_role table 
+        /// </summary>
+        /// <returns></returns>
+        public static List<UserRole> GetUserRoles()
+        {
+            List<UserRole> userRoles = new List<UserRole>();
+
+            using (RTDbContext Context = InitializeDatabaseContext())
+            {
+                userRoles = Context.UserRoles.SqlQuery("SELECT * FROM user_role").ToList<UserRole>();
+            }
+
+            return userRoles;
+        }
+
+        /// <summary>
+        /// Returns a list of all SpectraCyber Configurations from the spectracyber_config table 
+        /// </summary>
+        /// <returns></returns>
+        public static List<SpectraCyberConfig> GetAllSpectraCyberConfigs()
+        {
+            List<SpectraCyberConfig> configs = new List<SpectraCyberConfig>();
+
+            using (RTDbContext Context = InitializeDatabaseContext())
+            {
+                configs = Context.SpectraCyberConfigs.SqlQuery("SELECT * FROM spectracyber_config").ToList<SpectraCyberConfig>();
+            }
+
+            return configs;
+        }
+
+        /// <summary>
+        /// Returns a list of all coordinates from the coordinate table
+        /// </summary>
+        /// <returns></returns>
+        public static List<Coordinate> GetAllCoordinates()
+        {
+            List<Coordinate> coordinates = new List<Coordinate>();
+
+            using (RTDbContext Context = InitializeDatabaseContext())
+            {
+                coordinates = Context.Coordinates.SqlQuery("SELECT * FROM coordinate").ToList<Coordinate>();
+            }
+
+            return coordinates;
+        }
+
+        /// <summary>
+        /// Returns a list of all orientations from the orientation table 
+        /// </summary>
+        /// <returns></returns>
+        public static List<Orientation> GetAllOrientations()
+        {
+            List<Orientation> orientations = new List<Orientation>();
+
+            using (RTDbContext Context = InitializeDatabaseContext())
+            {
+                orientations = Context.Orientations.SqlQuery("SELECT * FROM orientation").ToList<Orientation>();
+            }
+
+            return orientations;
+        }
+
+        /// <summary>
+        /// Returns a list of all celestial bodies from the celestial bodies table 
+        /// </summary>
+        /// <returns></returns>
+        public static List<CelestialBody> GetAllCelestialBodies()
+        {
+            List<CelestialBody> cbs = new List<CelestialBody>();
+
+            using (RTDbContext Context = InitializeDatabaseContext())
+            {
+                cbs = Context.CelestialBodies.SqlQuery("SELECT * FROM celestial_body").ToList<CelestialBody>();
+            }
+
+            return cbs;
         }
 
         /// <summary>
@@ -523,7 +659,7 @@ namespace ControlRoomApplication.Database
                     Context.Appointments.AddOrUpdate(appt);
 
                     // Retrieve all coordinates for appointment
-                    var coordsForAppt = Context.Coordinates.ToList<Coordinate>().Where(coord => coord.apptId == appt.Id);
+                    var coordsForAppt = Context.Coordinates.ToList<Coordinate>().Where(coord => coord.appointment_id == appt.Id);
 
                     // Delete coordinates
                     foreach(Coordinate c in coordsForAppt)
@@ -538,7 +674,7 @@ namespace ControlRoomApplication.Database
                     // Add coordinates
                     foreach (Coordinate c in appt.Coordinates)
                     {
-                        c.apptId = appt.Id;
+                        c.appointment_id = appt.Id;
                         Context.Coordinates.AddOrUpdate(c);
                     }
 
@@ -820,6 +956,18 @@ namespace ControlRoomApplication.Database
                Context.Weather.Add(weather);
                SaveContext(Context);
            }
+        }
+
+        /// <summary>
+        /// Adds the wind data
+        /// </summary>
+        public static void AddWindData(WindData wind)
+        {
+            using (RTDbContext Context = InitializeDatabaseContext())
+            {
+                Context.Wind.Add(wind);
+                SaveContext(Context);
+            }
         }
 
         /// <summary>
@@ -1262,7 +1410,7 @@ namespace ControlRoomApplication.Database
         }
 
         /// <summary>
-        /// Routine to retrieve the time interval for dumping snow off of the dish (in minutes) from the database
+        /// Routine to retrieve the time interval for dumping snow off of the dish (in minutes) from the database, and the warning azSpeed
         /// </summary>
         public static WeatherThreshold FetchWeatherThreshold()
         {
@@ -1274,14 +1422,36 @@ namespace ControlRoomApplication.Database
                 if (threshold == null)
                 {
                     logger.Info(Utilities.GetTimeStamp() + ": The WeatherThreshold data could not be found. Creating a new one with default values...");
-                    // default values of 0 windSpeed and 2 hours for snow dump time. If the table is empty, add it
-                    threshold = new WeatherThreshold(0, 120);
+                    // default values of 20 windSpeed and 2 hours for snow dump time. If the table is empty, add it
+                    threshold = new WeatherThreshold(20, 120, 5);
                     AddWeatherThreshold(threshold);
                 }
                 return threshold;
                
             }
             
+        }
+
+        /// <summary>
+        /// Routine to retrieve the max mph before the telescope needs to go into stow for safety from the database
+        /// </summary>
+        public static WeatherThreshold FetchWeatherMaxThreshold()
+        {
+            using (RTDbContext Context = InitializeDatabaseContext())
+            {
+                var threshold = Context.WeatherThreshold.Where(t => t.Id == 2).FirstOrDefault();
+
+                if (threshold == null)
+                {
+                    logger.Info(Utilities.GetTimeStamp() + ": The WeatherThreshold data could not be found. Creating a new one with default values...");
+                    // default values of 30 windSpeed and 2 hours for snow dump time. If the table is empty, add it
+                    threshold = new WeatherThreshold(30, 120, 5);
+                    AddWeatherThreshold(threshold);
+                }
+                return threshold;
+
+            }
+
         }
 
         /// <summary>

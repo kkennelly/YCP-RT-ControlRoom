@@ -65,8 +65,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
         [TestMethod]
         public void TestLifecycle()
         {
-            Assert.AreEqual(true, RTCMT0.Start());
-            Assert.AreEqual(true, RTCMT1.Start());
+            Assert.AreEqual(true, RTCMT0.Start(RTCMT0.RTController));
+            Assert.AreEqual(true, RTCMT1.Start(RTCMT1.RTController));
 
             Assert.AreEqual(false, RTCMT0.Busy);
             Assert.AreEqual(false, RTCMT1.Busy);

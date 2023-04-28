@@ -68,15 +68,17 @@ namespace ControlRoomApplication.Main
 
             // set form data object
             formData = controlFormData;
-            formData.speed = 1;
-        
+            formData.azSpeed = 1;
+            formData.elSpeed = 1;
+
             // set form data
             controlScriptsCombo.SelectedIndex = formData.controlScriptIndex;
             scanTypeComboBox.SelectedIndex = formData.spectraCyberScanIndex;
             frequency.Text = formData.frequency;
             DCGain.SelectedIndex = formData.DCGainIndex;
             integrationStepCombo.SelectedIndex = formData.integrationStepIndex;
-            speedTextBox.Text = formData.speed.ToString();
+            AzSpeedTextbox.Text = formData.azSpeed.ToString();
+            ElSpeedTextbox.Text = formData.elSpeed.ToString();
             offsetVoltage.Text = formData.offsetVoltage;
             IFGainVal.Text = formData.IFGain;
             immediateRadioButton.Checked = formData.immediateStopBool;
@@ -109,6 +111,8 @@ namespace ControlRoomApplication.Main
             CalibrateMove();
             runControlScriptButton.Enabled = false;
 
+           
+            /* NOT USING - WAS THE EXTRA MANUAL CONTROL FORM (POSITION)
             //Initialize Free control Box based on manual control
             if (!save_state)
             {
@@ -152,6 +156,7 @@ namespace ControlRoomApplication.Main
             fiveButtonDec.Enabled = formData.freeControlEnabled;
             tenButton.Enabled = formData.freeControlEnabled;
             tenButtonDec.Enabled = formData.freeControlEnabled;
+            */
 
             //Initialize Manual control Box based on previous data (false by default)
             if (!manual_save_state)
@@ -183,9 +188,12 @@ namespace ControlRoomApplication.Main
             subElaButton.Enabled = formData.manualControlEnabled;
             ControlledButtonRadio.Enabled = formData.manualControlEnabled;
             immediateRadioButton.Enabled = formData.manualControlEnabled;
-            speedTextBox.Enabled = formData.manualControlEnabled;
-            speedTrackBar.Enabled = formData.manualControlEnabled;
-            speedTrackBar.Value = 10;
+            AzSpeedTextbox.Enabled = formData.manualControlEnabled;
+            AzSpeedTrackbar.Enabled = formData.manualControlEnabled;
+            AzSpeedTrackbar.Value = 10;
+            ElSpeedTextbox.Enabled = formData.manualControlEnabled;
+            ElSpeedTrackbar.Enabled = formData.manualControlEnabled;
+            ElSpeedTrackbar.Value = 10;
 
 
             //Initialize Start and Stop Scan buttons as disabled
@@ -225,10 +233,10 @@ namespace ControlRoomApplication.Main
 
         private void PosDecButton_Click(object sender, EventArgs e)
         {
-            logger.Info(Utilities.GetTimeStamp() + ": Positive Declination Button Clicked");
-            Coordinate new_coord = new Coordinate(TargetCoordinate.RightAscension, TargetCoordinate.Declination + Increment);
+            logger.Info(Utilities.GetTimeStamp() + ": Positive declination Button Clicked");
+            Coordinate new_coord = new Coordinate(TargetCoordinate.right_ascension, TargetCoordinate.declination + Increment);
             Entities.Orientation test_orientation = CoordCalc.CoordinateToOrientation(new_coord, DateTime.UtcNow);
-            if(test_orientation.Azimuth > 0 && test_orientation.Elevation > 0)
+            if(test_orientation.azimuth > 0 && test_orientation.elevation > 0)
             {
                 TargetCoordinate = new_coord;
                 CoordMove();
@@ -241,10 +249,10 @@ namespace ControlRoomApplication.Main
 
         private void NegDecButton_Click(object sender, EventArgs e)
         {
-            logger.Info(Utilities.GetTimeStamp() + ": Negitive Declination Button Clicked");
-            Coordinate new_coord = new Coordinate(TargetCoordinate.RightAscension, TargetCoordinate.Declination - Increment);
+            logger.Info(Utilities.GetTimeStamp() + ": Negitive declination Button Clicked");
+            Coordinate new_coord = new Coordinate(TargetCoordinate.right_ascension, TargetCoordinate.declination - Increment);
             Entities.Orientation test_orientation = CoordCalc.CoordinateToOrientation(new_coord, DateTime.UtcNow);
-            if (test_orientation.Azimuth > 0 && test_orientation.Elevation > 0)
+            if (test_orientation.azimuth > 0 && test_orientation.elevation > 0)
             {
                 TargetCoordinate = new_coord;
                 CoordMove();
@@ -258,9 +266,9 @@ namespace ControlRoomApplication.Main
         private void NegRAButton_Click(object sender, EventArgs e)
         {
             logger.Info(Utilities.GetTimeStamp() + ": Negitive Right Ascension Button Clicked");
-            Coordinate new_coord = new Coordinate(TargetCoordinate.RightAscension - Increment, TargetCoordinate.Declination);
+            Coordinate new_coord = new Coordinate(TargetCoordinate.right_ascension - Increment, TargetCoordinate.declination);
             Entities.Orientation test_orientation = CoordCalc.CoordinateToOrientation(new_coord, DateTime.UtcNow);
-            if (test_orientation.Azimuth > 0 && test_orientation.Elevation > 0)
+            if (test_orientation.azimuth > 0 && test_orientation.elevation > 0)
             {
                 TargetCoordinate = new_coord;
                 CoordMove();
@@ -274,9 +282,9 @@ namespace ControlRoomApplication.Main
         private void PosRAButton_Click(object sender, EventArgs e)
         {
             logger.Info(Utilities.GetTimeStamp() + ": Positive Right Ascension Button Clicked");
-            Coordinate new_coord = new Coordinate(TargetCoordinate.RightAscension + Increment, TargetCoordinate.Declination);
+            Coordinate new_coord = new Coordinate(TargetCoordinate.right_ascension + Increment, TargetCoordinate.declination);
             Entities.Orientation test_orientation = CoordCalc.CoordinateToOrientation(new_coord, DateTime.UtcNow);
-            if (test_orientation.Azimuth >= 0 && test_orientation.Elevation >= 0)
+            if (test_orientation.azimuth >= 0 && test_orientation.elevation >= 0)
             {
                 TargetCoordinate = new_coord;
                 CoordMove();
@@ -310,12 +318,12 @@ namespace ControlRoomApplication.Main
 
         private void UpdateText()
         {
-            string RA = TargetCoordinate.RightAscension.ToString("0.##");
-            string Dec = TargetCoordinate.Declination.ToString("0.##");
+            string RA = TargetCoordinate.right_ascension.ToString("0.##");
+            string Dec = TargetCoordinate.declination.ToString("0.##");
             logger.Info(Utilities.GetTimeStamp() + ": UpdateText, Target Coordinate = RA:" + RA + ", Dec:" + Dec);
             
-            TargetRATextBox.Text = RA;
-            TargetDecTextBox.Text = Dec;
+            //TargetRATextBox.Text = RA;
+            //TargetDecTextBox.Text = Dec;
 
             errorLabel.Text = "Free Control for Radio Telescope " + rtId.ToString();
         }
@@ -326,14 +334,16 @@ namespace ControlRoomApplication.Main
             Coordinate ConvertedPosition = CoordCalc.OrientationToCoordinate(currentOrienation, DateTime.UtcNow);
 
             Utilities.WriteToGUIFromThread(this, () => {
-                label4.Text = String.Format("{0:N2}", currentOrienation.Azimuth);
-                label5.Text = String.Format("{0:N2}", currentOrienation.Elevation);
+                label4.Text = String.Format("{0:N2}", currentOrienation.azimuth);
+                label5.Text = String.Format("{0:N2}", currentOrienation.elevation);
 
                 ActualRATextBox.Text = ConvertedPosition.RightAscension.ToString("0.##");
                 ActualDecTextBox.Text = ConvertedPosition.Declination.ToString("0.##");
 
                 UpdateCounterbalanceCheckbox();
             });
+
+            logger.Info(Utilities.GetTimeStamp() + currentOrienation.azimuth + "|" + currentOrienation.elevation);
         }
 
         private void oneForthButton_Click(object sender, EventArgs e)
@@ -366,7 +376,7 @@ namespace ControlRoomApplication.Main
 
         private void UpdateIncrementButtons()
         {
-
+            /*
             switch (Increment)
             {
                 case 0.25:
@@ -384,6 +394,7 @@ namespace ControlRoomApplication.Main
                 default:
                     throw new ArgumentException("Invalid Increment");
             }
+            */
         }
 
         private void editButton_Click(object sender, EventArgs e)
@@ -394,19 +405,20 @@ namespace ControlRoomApplication.Main
             formData.freeControlEnabled = save_state;
             if (!save_state)
             {
-                editButton.Text = "Edit Position";
-                editButton.BackColor = System.Drawing.Color.Red;
-                freeControlGroupbox.BackColor = System.Drawing.Color.DarkGray;
+                //editButton.Text = "Edit Position";
+                //editButton.BackColor = System.Drawing.Color.Red;
+                //freeControlGroupbox.BackColor = System.Drawing.Color.DarkGray;
                 manualControlButton.BackColor = System.Drawing.Color.Red;
-                decIncGroupbox.BackColor = System.Drawing.Color.DarkGray;
-                RAIncGroupbox.BackColor = System.Drawing.Color.DarkGray;
-                double newRA;
-                double newDec;
-                double.TryParse(TargetRATextBox.Text, out newRA);
-                double.TryParse(TargetDecTextBox.Text, out newDec);
-                Coordinate new_coord = new Coordinate(newRA, newDec);
-                Entities.Orientation test_orientation = CoordCalc.CoordinateToOrientation(new_coord, DateTime.UtcNow);
-                if (test_orientation.Azimuth >= 0 && test_orientation.Elevation >= 0)
+                //decIncGroupbox.BackColor = System.Drawing.Color.DarkGray;
+                //RAIncGroupbox.BackColor = System.Drawing.Color.DarkGray;
+                //double newRA;
+                //double newDec;
+                //double.TryParse(TargetRATextBox.Text, out newRA);
+                //double.TryParse(TargetDecTextBox.Text, out newDec);
+                //Coordinate new_coord = new Coordinate(newRA, newDec);
+                //Entities.Orientation test_orientation = CoordCalc.CoordinateToOrientation(new_coord, DateTime.UtcNow);
+                /*
+                if (test_orientation.azimuth >= 0 && test_orientation.elevation >= 0)
                 {
                     TargetCoordinate = new_coord;
                     CoordMove();
@@ -414,18 +426,18 @@ namespace ControlRoomApplication.Main
                 else
                 {
                     errorLabel.Text = "Invalid Coordinate: orienation out of range";
-                }
+                }*/
             }
             else
             {
-                editButton.Text = "Save Position";
+                //editButton.Text = "Save Position";
                 manualControlButton.BackColor = System.Drawing.Color.DarkGray;
-                editButton.BackColor = System.Drawing.Color.LimeGreen;
-                freeControlGroupbox.BackColor = System.Drawing.Color.Gainsboro;
-                decIncGroupbox.BackColor = System.Drawing.Color.Gray;
-                RAIncGroupbox.BackColor = System.Drawing.Color.Gray;
+                //editButton.BackColor = System.Drawing.Color.LimeGreen;
+                //freeControlGroupbox.BackColor = System.Drawing.Color.Gainsboro;
+                //decIncGroupbox.BackColor = System.Drawing.Color.Gray;
+                //RAIncGroupbox.BackColor = System.Drawing.Color.Gray;
             }
-
+            /*
             PosDecButton.Enabled = save_state;
             NegDecButton.Enabled = save_state;
             PosRAButton.Enabled = save_state;
@@ -438,8 +450,9 @@ namespace ControlRoomApplication.Main
             fiveButtonDec.Enabled = save_state;
             tenButton.Enabled = save_state;
             tenButtonDec.Enabled = save_state;
-            TargetRATextBox.ReadOnly = save_state;
-            TargetDecTextBox.ReadOnly = save_state;
+            */
+            //TargetRATextBox.ReadOnly = save_state;
+            //TargetDecTextBox.ReadOnly = save_state;
 
             manualControlButton.Enabled = !save_state;
         }
@@ -455,14 +468,14 @@ namespace ControlRoomApplication.Main
                 manualControlButton.Text = "Activate Manual Control";
                 manualControlButton.BackColor = System.Drawing.Color.Red;
                 manualGroupBox.BackColor = System.Drawing.Color.DarkGray;
-                editButton.BackColor = System.Drawing.Color.Red;
+                //editButton.BackColor = System.Drawing.Color.Red;
             }
             else if(manual_save_state)
             {
                 manualControlButton.Text = "Deactivate Manual Control";
                 manualControlButton.BackColor = System.Drawing.Color.LimeGreen;
                 manualGroupBox.BackColor = System.Drawing.Color.Gainsboro;
-                editButton.BackColor = System.Drawing.Color.DarkGray;
+                //editButton.BackColor = System.Drawing.Color.DarkGray;
 
             }
             plusElaButton.Enabled = manual_save_state;
@@ -471,10 +484,12 @@ namespace ControlRoomApplication.Main
             subElaButton.Enabled = manual_save_state;
             ControlledButtonRadio.Enabled = manual_save_state;
             immediateRadioButton.Enabled = manual_save_state;
-            speedTextBox.Enabled = manual_save_state;
-            speedTrackBar.Enabled = manual_save_state;
+            AzSpeedTextbox.Enabled = manual_save_state;
+            AzSpeedTrackbar.Enabled = manual_save_state;
+            ElSpeedTextbox.Enabled = manual_save_state;
+            ElSpeedTrackbar.Enabled = manual_save_state;
 
-            editButton.Enabled = !manual_save_state;
+            //editButton.Enabled = !manual_save_state;
         }
 
    
@@ -561,8 +576,8 @@ namespace ControlRoomApplication.Main
                 else if (movementResult != MovementResult.None)
                 {
                     logger.Info($"{Utilities.GetTimeStamp()}: Script {indexName} FAILED with error message: {movementResult.ToString()}");
-                    PushNotification.sendToAllAdmins("Script Failed", $"Script {indexName} FAILED with error message: {movementResult.ToString()}", rtController.PNEnabled);
-                    EmailNotifications.sendToAllAdmins("Script Failed", $"Script {indexName} FAILED with error message: {movementResult.ToString()}", rtController.PNEnabled);
+                    PushNotification.sendToAllAdmins("Script Failed", $"Script {indexName} FAILED with error message: {movementResult.ToString()}");
+                    EmailNotifications.sendToAllAdmins("Script Failed", $"Script {indexName} FAILED with error message: {movementResult.ToString()}");
                 }
             });
         }
@@ -609,13 +624,15 @@ namespace ControlRoomApplication.Main
         }
 
         private void ccwAzJogButton_Down( object sender , MouseEventArgs e ) {
-            if (Validator.ValidateSpeedTextOnly(speedTextBox.Text))
+            if (Validator.ValidateSpeedTextOnly(AzSpeedTextbox.Text) && Validator.ValidateSpeedTextOnly(ElSpeedTextbox.Text))
             {
-                double speed = Convert.ToDouble(speedTextBox.Text);
-                if (Validator.ValidateSpeed(speed))
+                double azSpeed = Convert.ToDouble(AzSpeedTextbox.Text);
+                double elSpeed = Convert.ToDouble(ElSpeedTextbox.Text);
+
+                if (Validator.ValidateSpeed(azSpeed) && Validator.ValidateSpeed(elSpeed))
                 {
                     // Start CW Jog
-                    MovementResult result = rtController.StartRadioTelescopeJog(speed, RadioTelescopeDirectionEnum.CounterclockwiseOrPositive, RadioTelescopeAxisEnum.AZIMUTH);
+                    MovementResult result = rtController.StartRadioTelescopeJog(azSpeed, elSpeed, RadioTelescopeDirectionEnum.CounterclockwiseOrPositive, RadioTelescopeAxisEnum.AZIMUTH);
 
                     if (result == MovementResult.Success)
                         logger.Info($"{Utilities.GetTimeStamp()}: Successfully started azimuth counterclockwise jog.");
@@ -626,8 +643,8 @@ namespace ControlRoomApplication.Main
                     else
                     {
                         logger.Info($"{Utilities.GetTimeStamp()}: An error occurred trying to jog az counterclockwise: {result.ToString()}");
-                        PushNotification.sendToAllAdmins("Jog Error", $"An error occurred trying to jog az counterclockwise: {result.ToString()}", rtController.PNEnabled);
-                        EmailNotifications.sendToAllAdmins("Jog Error", $"An error occurred trying to jog az counterclockwise: {result.ToString()}", rtController.PNEnabled);
+                        PushNotification.sendToAllAdmins("Jog Error", $"An error occurred trying to jog az counterclockwise: {result.ToString()}");
+                        EmailNotifications.sendToAllAdmins("Jog Error", $"An error occurred trying to jog az counterclockwise: {result.ToString()}");
                     }
                 }
                 else
@@ -637,7 +654,7 @@ namespace ControlRoomApplication.Main
             }
             else
             {
-                MessageBox.Show("Invalid speed. Must be in RPMs between 0.0 and 2.0");
+                MessageBox.Show("Invalid azSpeed. Must be in RPMs between 0.0 and 2.0");
             }
         }
 
@@ -648,14 +665,15 @@ namespace ControlRoomApplication.Main
 
         private void cwAzJogButton_Down(object sender, MouseEventArgs e)
         {
-            if (Validator.ValidateSpeedTextOnly(speedTextBox.Text))
+            if (Validator.ValidateSpeedTextOnly(AzSpeedTextbox.Text) && Validator.ValidateSpeedTextOnly(ElSpeedTextbox.Text))
             {
-                double speed = Convert.ToDouble(speedTextBox.Text);
+                double azSpeed = Convert.ToDouble(AzSpeedTextbox.Text);
+                double elSpeed = Convert.ToDouble(ElSpeedTextbox.Text);
                
-                if (Validator.ValidateSpeed(speed))
+                if (Validator.ValidateSpeed(azSpeed) && Validator.ValidateSpeed(elSpeed))
                 {
                     // Start CW Jog
-                    MovementResult result = rtController.StartRadioTelescopeJog(speed, RadioTelescopeDirectionEnum.ClockwiseOrNegative, RadioTelescopeAxisEnum.AZIMUTH);
+                    MovementResult result = rtController.StartRadioTelescopeJog(azSpeed, elSpeed, RadioTelescopeDirectionEnum.ClockwiseOrNegative, RadioTelescopeAxisEnum.AZIMUTH);
 
                     if (result == MovementResult.Success)
                         logger.Info($"{Utilities.GetTimeStamp()}: Successfully started azimuth clockwise jog.");
@@ -666,8 +684,8 @@ namespace ControlRoomApplication.Main
                     else
                     {
                         logger.Info($"{Utilities.GetTimeStamp()}: An error occurred trying to jog az clockwise: {result.ToString()}");
-                        PushNotification.sendToAllAdmins("Jog Error", $"An error occurred trying to jog az clockwise: {result.ToString()}", rtController.PNEnabled);
-                        EmailNotifications.sendToAllAdmins("Jog Error", $"An error occurred trying to jog az clockwise: {result.ToString()}", rtController.PNEnabled);
+                        PushNotification.sendToAllAdmins("Jog Error", $"An error occurred trying to jog az clockwise: {result.ToString()}");
+                        EmailNotifications.sendToAllAdmins("Jog Error", $"An error occurred trying to jog az clockwise: {result.ToString()}");
                     }
                 }
                 else
@@ -677,7 +695,7 @@ namespace ControlRoomApplication.Main
             }
             else
             {
-                MessageBox.Show("Invalid speed. Must be in RPMs between 0.0 and 2.0");
+                MessageBox.Show("Invalid azSpeed. Must be in RPMs between 0.0 and 2.0");
             }
         }
 
@@ -733,13 +751,15 @@ namespace ControlRoomApplication.Main
         }
 
         private void plusElaButton_Down(object sender, MouseEventArgs e ){
-            if (Validator.ValidateSpeedTextOnly(speedTextBox.Text))
+            if (Validator.ValidateSpeedTextOnly(AzSpeedTextbox.Text) && Validator.ValidateSpeedTextOnly(ElSpeedTextbox.Text))
             {
-                double speed = Convert.ToDouble(speedTextBox.Text);
-                if (Validator.ValidateSpeed(speed))
+                double azSpeed = Convert.ToDouble(AzSpeedTextbox.Text);
+                double elSpeed = Convert.ToDouble(ElSpeedTextbox.Text);
+
+                if (Validator.ValidateSpeed(azSpeed) && Validator.ValidateSpeed(elSpeed))
                 {
                     // Start CW Jog
-                    MovementResult result = rtController.StartRadioTelescopeJog(speed, RadioTelescopeDirectionEnum.ClockwiseOrNegative, RadioTelescopeAxisEnum.ELEVATION);
+                    MovementResult result = rtController.StartRadioTelescopeJog(azSpeed, elSpeed, RadioTelescopeDirectionEnum.ClockwiseOrNegative, RadioTelescopeAxisEnum.ELEVATION);
                     
                     if(result == MovementResult.Success)
                         logger.Info($"{Utilities.GetTimeStamp()}: Successfully started elevation positive jog.");
@@ -750,8 +770,8 @@ namespace ControlRoomApplication.Main
                     else
                     {
                         logger.Info($"{Utilities.GetTimeStamp()}: An error occurred trying to positive jog el: {result.ToString()}");
-                        PushNotification.sendToAllAdmins("Jog Error", $"An error occurred trying to positive jog el: {result.ToString()}", rtController.PNEnabled);
-                        EmailNotifications.sendToAllAdmins("Jog Error", $"An error occurred trying to positive jog el: {result.ToString()}", rtController.PNEnabled);
+                        PushNotification.sendToAllAdmins("Jog Error", $"An error occurred trying to positive jog el: {result.ToString()}");
+                        EmailNotifications.sendToAllAdmins("Jog Error", $"An error occurred trying to positive jog el: {result.ToString()}");
                     }
                 }
                 else
@@ -761,7 +781,7 @@ namespace ControlRoomApplication.Main
             }
             else
             {
-                MessageBox.Show("Invalid speed. Must be in RPMs between 0.0 and 2.0");
+                MessageBox.Show("Invalid azSpeed. Must be in RPMs between 0.0 and 2.0");
             }
         }
 
@@ -771,13 +791,15 @@ namespace ControlRoomApplication.Main
         }
 
         private void subElaButton_Down(object sender, MouseEventArgs e ){
-            if (Validator.ValidateSpeedTextOnly(speedTextBox.Text))
+            if (Validator.ValidateSpeedTextOnly(AzSpeedTextbox.Text) && Validator.ValidateSpeedTextOnly(ElSpeedTextbox.Text))
             {
-                double speed = Convert.ToDouble(speedTextBox.Text);
-                if (Validator.ValidateSpeed(speed))
+                double azSpeed = Convert.ToDouble(AzSpeedTextbox.Text);
+                double elSpeed = Convert.ToDouble(ElSpeedTextbox.Text);
+
+                if (Validator.ValidateSpeed(azSpeed) && Validator.ValidateSpeed(elSpeed))
                 {
                     // Start CW Jog
-                    MovementResult result = rtController.StartRadioTelescopeJog(speed, RadioTelescopeDirectionEnum.CounterclockwiseOrPositive, RadioTelescopeAxisEnum.ELEVATION);
+                    MovementResult result = rtController.StartRadioTelescopeJog(azSpeed, elSpeed, RadioTelescopeDirectionEnum.CounterclockwiseOrPositive, RadioTelescopeAxisEnum.ELEVATION);
 
                     if (result == MovementResult.Success)
                         logger.Info($"{Utilities.GetTimeStamp()}: Successfully started elevation negative jog.");
@@ -788,8 +810,8 @@ namespace ControlRoomApplication.Main
                     else
                     {
                         logger.Info($"{Utilities.GetTimeStamp()}: An error occurred trying to negative jog el: {result.ToString()}");
-                        PushNotification.sendToAllAdmins("Jog Error", $"An error occurred trying to negative jog el: {result.ToString()}", rtController.PNEnabled);
-                        EmailNotifications.sendToAllAdmins("Jog Error", $"An error occurred trying to negative jog el: {result.ToString()}", rtController.PNEnabled);
+                        PushNotification.sendToAllAdmins("Jog Error", $"An error occurred trying to negative jog el: {result.ToString()}");
+                        EmailNotifications.sendToAllAdmins("Jog Error", $"An error occurred trying to negative jog el: {result.ToString()}");
                     }
                 }
                 else
@@ -799,7 +821,7 @@ namespace ControlRoomApplication.Main
             }
             else
             {
-                MessageBox.Show("Invalid speed. Must be in RPMs between 0.0 and 2.0");
+                MessageBox.Show("Invalid azSpeed. Must be in RPMs between 0.0 and 2.0");
             }
         }
 
@@ -1095,13 +1117,24 @@ namespace ControlRoomApplication.Main
             formData.IFGain = IFGainVal.Text;
         }
 
-        private void speedTrackBar_Scroll(object sender, EventArgs e)
+        private void AzSpeedTrackbarScroll(object sender, EventArgs e)
         {
-            double actualSpeed = (double)speedTrackBar.Value / 10;
-            speedTextBox.Text = actualSpeed.ToString();
+            double actualSpeed = (double)AzSpeedTrackbar.Value / 10;
+            AzSpeedTextbox.Text = actualSpeed.ToString();
             Utilities.WriteToGUIFromThread<FreeControlForm>(this, () =>
             {
-                formData.speed = Double.Parse(speedTextBox.Text);
+                formData.azSpeed = Double.Parse(AzSpeedTextbox.Text);
+            });
+            
+        }
+
+        private void ElSpeedTrackbarScroll(object sender, EventArgs e)
+        {
+            double actualSpeed = (double)ElSpeedTrackbar.Value / 10;
+            ElSpeedTextbox.Text = actualSpeed.ToString();
+            Utilities.WriteToGUIFromThread<FreeControlForm>(this, () =>
+            {
+                formData.elSpeed = Double.Parse(ElSpeedTextbox.Text);
             });
             
         }
@@ -1197,6 +1230,26 @@ namespace ControlRoomApplication.Main
             {
                 rtController.EnableSoftwareStops = true;
             }
+        }
+
+        private void subElaButton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label5_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void cwAzJogButton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -24,7 +24,6 @@ namespace ControlRoomApplication.Controllers
 
         protected Thread ClientManagmentThread;
 
-        public bool PNEnabled; 
         public LimitSwitchData limitSwitchData;
         public HomeSensorData homeSensorData;
         public MiscPlcInput plcInput;
@@ -62,6 +61,10 @@ namespace ControlRoomApplication.Controllers
         /// </summary>
         public abstract void HandleClientManagementThread();
 
+
+        public virtual ushort[] ReadMCURegisters() {
+            return null;
+        }
 
         /// <summary>
         /// 

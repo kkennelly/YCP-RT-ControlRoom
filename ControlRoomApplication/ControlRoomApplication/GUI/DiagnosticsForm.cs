@@ -100,8 +100,6 @@ namespace ControlRoomApplication.GUI
 
         private int rtId;
 
-        bool pushEmailNotifsEnabled = false;
-
         private Acceleration[] azOld;
         private Acceleration[] elOld;
         private Acceleration[] cbOld;
@@ -150,11 +148,11 @@ namespace ControlRoomApplication.GUI
             dataGridView1.Rows.Add(mcuRow);
             dataGridView1.Update();
 
-            PushEmailNotif_checkBox.Enabled = true;
-
             //MCU_Statui.ColumnCount = 2;
             //MCU_Statui.Columns[0].HeaderText = "Status name";
             //MCU_Statui.Columns[1].HeaderText = "value";
+
+            SetMCUData();
 
             SetCurrentWeatherData();
             runDiagScriptsButton.Enabled = false;
@@ -168,9 +166,6 @@ namespace ControlRoomApplication.GUI
             bool currElProx0 = rtController.overrides.overrideElevatProx0;
             bool currElProx90 = rtController.overrides.overrideElevatProx90;
 
-            // Manually set LS Override to 0 on the PLC (off) 
-            rtController.RadioTelescope.PLCDriver.setregvalue((ushort)PLC_modbus_server_register_mapping.LIMIT_OVERRIDE, (ushort) 0);
-
             bool currAzimuthAbsEncoder = rtController.overrides.overrideAzimuthAbsEncoder;
             bool currElevationAbsEncoder = rtController.overrides.overrideElevationAbsEncoder;
             bool currAzimuthAccelerometer = rtController.overrides.overrideAzimuthAccelerometer;
@@ -178,8 +173,6 @@ namespace ControlRoomApplication.GUI
             bool currCounterbalanceAccelerometer = rtController.overrides.overrideCounterbalanceAccelerometer;
             UpdateOverrideButtons(currMain, currWS, currAZ, currEL, currAmbTempHumidity, currElProx0, currElProx90, 
                 currAzimuthAbsEncoder, currElevationAbsEncoder, currAzimuthAccelerometer, currElevationAccelerometer, currCounterbalanceAccelerometer);
-
-
 
             SensorSettingsThread = new BackgroundWorker();
             SensorSettingsThread.DoWork += new DoWorkEventHandler(SensorSettingsRoutine);
@@ -214,11 +207,13 @@ namespace ControlRoomApplication.GUI
             txtLowerSWStopsLimit.Text = "" + rtController.RadioTelescope.minElevationDegrees.ToString("0.00");
             txtUpperSWStopsLimit.Text = "" + rtController.RadioTelescope.maxElevationDegrees.ToString("0.00");
 
+            /* ESS removed
             txtLowerTempLimit.Text = "" + rtController.MinAmbientTempThreshold.ToString("0.00");
             txtUpperTempLimit.Text = "" + rtController.MaxAmbientTempThreshold.ToString("0.00");
 
             txtLowerHumidLimit.Text = "" + rtController.MinAmbientHumidityThreshold.ToString("0.00");
             txtUpperHumidLimit.Text = "" + rtController.MaxAmbientHumidityThreshold.ToString("0.00");
+            */
 
             // Set default values for timeout validation
             DataTimeoutValid = true;
@@ -248,6 +243,34 @@ namespace ControlRoomApplication.GUI
             barometricPressureLabel.Text = Math.Round(controlRoom.WeatherStation.GetBarometricPressure(), 2).ToString();
         }
 
+        private void SetMCUData()
+        {
+            ushort[] regs = rtController.ReadMCURegisters();
+            if (regs != null)
+            {
+                byte0.Text = regs[0].ToString();
+                byte1.Text = regs[1].ToString();
+                byte2.Text = regs[2].ToString();
+                byte3.Text = regs[3].ToString();
+                byte4.Text = regs[4].ToString();
+                byte5.Text = regs[5].ToString();
+                byte6.Text = regs[6].ToString();
+                byte7.Text = regs[7].ToString();
+                byte8.Text = regs[8].ToString();
+                byte9.Text = regs[9].ToString();
+                byte10.Text = regs[10].ToString();
+                byte11.Text = regs[11].ToString();
+                byte12.Text = regs[12].ToString();
+                byte13.Text = regs[13].ToString();
+                byte14.Text = regs[14].ToString();
+                byte15.Text = regs[15].ToString();
+                byte16.Text = regs[16].ToString();
+                byte17.Text = regs[17].ToString();
+                byte18.Text = regs[18].ToString();
+                byte19.Text = regs[19].ToString();
+            }
+        }
+
         /// <summary>
         /// Gets and displays the current statuses of the hardware components for the specified configuration.
         /// </summary>
@@ -262,10 +285,9 @@ namespace ControlRoomApplication.GUI
                     break;
                 }
                 // Check if the SpectraCyber returns a valid single scan. 
-                //SpectraCyberResponse resp = rtController.RadioTelescope.SpectraCyberController.DoSpectraCyberScan();
+                SpectraCyberResponse resp = rtController.RadioTelescope.SpectraCyberController.DoSpectraCyberScan();
 
-                // Trying previous method: 
-                if (rtController.RadioTelescope.SpectraCyberController.TestIfComponentIsAlive())
+                if (resp.Valid)
                 {
                     // A valid scan shows that the SC is online. 
                     statuses[0] = "Online";
@@ -314,7 +336,7 @@ namespace ControlRoomApplication.GUI
                     statuses[2] = "Offline"; 
                 }
 
-                Thread.Sleep(3000);
+                Thread.Sleep(1000);
             }
         }
 
@@ -367,14 +389,14 @@ namespace ControlRoomApplication.GUI
          * ************************************************************/
         private void timer1_Tick(object sender, System.EventArgs e)
         {
-            double currWindSpeed = controlRoom.WeatherStation.GetWindSpeed();//wind speed
+            double currWindSpeed = controlRoom.WeatherStation.GetWindSpeed();//wind azSpeed
 
             //double testVal = rtController.RadioTelescope.Encoders.GetCurentOrientation().Azimuth;
 
             Entities.Orientation currAbsOrientation = rtController.GetAbsoluteOrientation();
 
-            _azEncoderDegrees = currAbsOrientation.Azimuth;
-            _elEncoderDegrees = currAbsOrientation.Elevation;
+            _azEncoderDegrees = currAbsOrientation.azimuth;
+            _elEncoderDegrees = currAbsOrientation.elevation;
             lblAzAbsPos.Text = Math.Round(_azEncoderDegrees, 2).ToString();
 
             // Check if elevation encoder is timed out, output ERR if so, otherwise output current position
@@ -559,6 +581,8 @@ namespace ControlRoomApplication.GUI
 
             SetCurrentWeatherData();
 
+            SetMCUData();
+
             dataGridView1.Update();
 
             // Spectra Cyber Tab Updates
@@ -685,7 +709,7 @@ namespace ControlRoomApplication.GUI
                 azimuthAccChart.ChartAreas[0].AxisX.Minimum = double.NaN;
                 azimuthAccChart.ChartAreas[0].AxisX.Maximum = double.NaN;
 
-                if (azOld != null && !Acceleration.SequenceEquals(azOld, azimuthAccel))
+                if (azOld != null && Acceleration.SequenceEquals(azOld, azimuthAccel))
                 {
                     for (int i = 0; i < azimuthAccel.Length; i++)
                     {
@@ -734,7 +758,7 @@ namespace ControlRoomApplication.GUI
                 elevationAccChart.ChartAreas[0].AxisX.Minimum = double.NaN;
                 elevationAccChart.ChartAreas[0].AxisX.Maximum = double.NaN;
 
-                if (elOld != null && !Acceleration.SequenceEquals(elOld, eleAccel))
+                if (elOld != null && Acceleration.SequenceEquals(elOld, eleAccel))
                 {
                     for (int i = 0; i < eleAccel.Length; i++)
                     {
@@ -782,7 +806,7 @@ namespace ControlRoomApplication.GUI
                 counterBalanceAccChart.ChartAreas[0].AxisX.Minimum = double.NaN;
                 counterBalanceAccChart.ChartAreas[0].AxisX.Maximum = double.NaN;
 
-                if (cbOld != null && !Acceleration.SequenceEquals(cbOld, cbAccel))
+                if (cbOld != null && Acceleration.SequenceEquals(cbOld, cbAccel))
                 {
                     for (int i = 0; i < cbAccel.Length; i++)
                     {
@@ -834,7 +858,7 @@ namespace ControlRoomApplication.GUI
         private void btnTest_Click(object sender, System.EventArgs e)
         {
             logger.Debug(Utilities.GetTimeStamp() + ": Test notification being sent");
-            PushNotification.sendToAllAdmins("Test Header", "Test sent from control form", mainF.PNEnabled, false);
+            PushNotification.sendToAllAdmins("Test Header", "Test sent from control form", false);
         }
 
         private void btnAddOneTemp_Click(object sender, System.EventArgs e)
@@ -915,10 +939,10 @@ namespace ControlRoomApplication.GUI
             switch (caseSwitch)
             {
                 case 1: // Elevation Lower Limit Switch
-                    rtController.MoveRadioTelescopeToOrientation(new Entities.Orientation(currOrientation.Azimuth, -14), MovementPriority.Manual);
+                    rtController.MoveRadioTelescopeToOrientation(new Entities.Orientation(currOrientation.azimuth, -14), MovementPriority.Manual);
                     break;
                 case 2: // Elevation Upper Limit Switch
-                    rtController.MoveRadioTelescopeToOrientation(new Entities.Orientation(currOrientation.Azimuth, 92), MovementPriority.Manual);
+                    rtController.MoveRadioTelescopeToOrientation(new Entities.Orientation(currOrientation.azimuth, 92), MovementPriority.Manual);
                     break;
                 default:
 
@@ -943,18 +967,12 @@ namespace ControlRoomApplication.GUI
                 ElivationLimitSwitch0.Text = "DISABLED";
                 ElivationLimitSwitch0.BackColor = System.Drawing.Color.Red;
                 rtController.setOverride("elevation proximity (1)", true);
-
-                // Write to PLC. 
-                LimitSwitchHandlePLC();
             }
             else if (rtController.overrides.overrideElevatProx0)
             {
                 ElivationLimitSwitch0.Text = "ENABLED";
                 ElivationLimitSwitch0.BackColor = System.Drawing.Color.LimeGreen;
                 rtController.setOverride("elevation proximity (1)", false);
-
-                // Write to PLC. 
-                LimitSwitchHandlePLC();
             }
         }
 
@@ -965,55 +983,13 @@ namespace ControlRoomApplication.GUI
                 ElevationLimitSwitch90.Text = "DISABLED";
                 ElevationLimitSwitch90.BackColor = System.Drawing.Color.Red;
                 rtController.setOverride("elevation proximity (2)", true);
-
-                // Write to PLC. 
-                LimitSwitchHandlePLC();
             }
-            else if (rtController.overrides.overrideElevatProx90)
+            else
             {
                 ElevationLimitSwitch90.Text = "ENABLED";
                 ElevationLimitSwitch90.BackColor = System.Drawing.Color.LimeGreen;
                 rtController.setOverride("elevation proximity (2)", false);
-
-                // Write to PLC. 
-                LimitSwitchHandlePLC(); 
-                
             }
-        }
-
-        private void LimitSwitchHandlePLC()
-        {
-            // 4 cases to consider when disabling limit switches on PLC. 
-            // 0: Both Limit switches are enabled.
-            // 1: LS 0 is disabled
-            // 256: LS 90 is disabled
-            // 257: Both LS are disabled.
-
-            ushort LSOverride = 0; 
-
-            if(!rtController.overrides.overrideElevatProx0 && !rtController.overrides.overrideElevatProx90)
-            {
-                // Both LS are enabled. 
-                LSOverride = 0; 
-
-            } else if (rtController.overrides.overrideElevatProx0 && !rtController.overrides.overrideElevatProx90)
-            {
-                // LS 0 is disabled. 
-                LSOverride = 1; 
-
-            } else if (!rtController.overrides.overrideElevatProx0 && rtController.overrides.overrideElevatProx90)
-            {
-                // LS 90 is disabled. 
-                LSOverride = 256; 
-
-            } else if (rtController.overrides.overrideElevatProx0 && rtController.overrides.overrideElevatProx90)
-            {
-                // Both LS are disabled. 
-                LSOverride = 257; 
-            }
-
-            // Write the value to the PLC Register. 
-            rtController.RadioTelescope.PLCDriver.setregvalue((ushort)PLC_modbus_server_register_mapping.LIMIT_OVERRIDE, LSOverride);
         }
 
         private void diagnosticScriptCombo_SelectedIndexChanged(object sender, EventArgs e)
@@ -1625,11 +1601,13 @@ namespace ControlRoomApplication.GUI
                 rtController.RadioTelescope.maxElevationDegrees = double.Parse(txtUpperSWStopsLimit.Text);
                 rtController.RadioTelescope.minElevationDegrees = double.Parse(txtLowerSWStopsLimit.Text);
 
+                /* ESS removed
                 rtController.MinAmbientTempThreshold = double.Parse(txtLowerTempLimit.Text);
                 rtController.MaxAmbientTempThreshold = double.Parse(txtUpperTempLimit.Text);
 
                 rtController.MinAmbientHumidityThreshold = double.Parse(txtLowerHumidLimit.Text);
                 rtController.MaxAmbientHumidityThreshold = double.Parse(txtUpperHumidLimit.Text);
+                */
 
                 logger.Info(Utilities.GetTimeStamp() + String.Format(" Updating Software Stop thresholds... New values: Lower = {0} , Upper = {1} ", double.Parse(txtLowerSWStopsLimit.Text), double.Parse(txtUpperSWStopsLimit.Text)));
                 DatabaseOperations.UpdateTelescope(rtController.RadioTelescope);
@@ -1726,6 +1704,7 @@ namespace ControlRoomApplication.GUI
             }
         }
 
+        /* ESS removed
         private void ValidateAmbTempLimit()
         {
             bool isUpperNumeric = Double.TryParse(txtUpperTempLimit.Text, out double requestedUpperLimit);
@@ -1801,6 +1780,7 @@ namespace ControlRoomApplication.GUI
                 }
             }
         }
+        */
 
         private void UpperSWStopsLimitText_TextChanged(object sender, EventArgs e)
         {
@@ -1832,6 +1812,7 @@ namespace ControlRoomApplication.GUI
             }
         }
 
+        /* ESS removed
         private void txtUpperTempLimit_TextChanged(object sender, EventArgs e)
         {
             ValidateAmbTempLimit();
@@ -1851,6 +1832,7 @@ namespace ControlRoomApplication.GUI
         {
             ValidateAmbHumidityLimit();
         }
+        */
 
         private void btnToggleFan_Click(object sender, EventArgs e)
         {
@@ -2123,12 +2105,14 @@ namespace ControlRoomApplication.GUI
             }
         }
 
-        private void PushEmailNotif_checkBox_CheckedChanged(object sender, EventArgs e)
+        private void ThresholdsGroup_Enter(object sender, EventArgs e)
         {
-            pushEmailNotifsEnabled = PushEmailNotif_checkBox.Checked ? true : false;
 
-            // Update value on Main Form and across application. 
-            mainF.PNBox_CheckedChanged(pushEmailNotifsEnabled); 
+        }
+
+        private void grpMCUWords_Enter(object sender, EventArgs e)
+        {
+
         }
     }
 }

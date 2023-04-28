@@ -77,7 +77,7 @@ namespace ControlRoomApplication.Main
             this.label6 = new System.Windows.Forms.Label();
             this.ElSpeedTextbox = new System.Windows.Forms.TextBox();
             this.UseCounterbalanceCheckbox = new System.Windows.Forms.CheckBox();
-            this.RAIncGroupbox.SuspendLayout();
+           // this.RAIncGroupbox.SuspendLayout();
             this.overRideGroupbox.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.spectraCyberGroupBox.SuspendLayout();

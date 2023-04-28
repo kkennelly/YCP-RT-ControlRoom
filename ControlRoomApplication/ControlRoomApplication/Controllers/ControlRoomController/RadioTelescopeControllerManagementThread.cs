@@ -747,7 +747,7 @@ namespace ControlRoomApplication.Controllers
         /// <returns></returns>
         public bool CheckOutOfRangeAbsEncoder()
         {
-            Double elevation = RTController.GetAbsoluteOrientation().Elevation;
+            Double elevation = RTController.GetAbsoluteOrientation().elevation;
             return (elevation < 0 || elevation > 92);
         }
         /// <summary>

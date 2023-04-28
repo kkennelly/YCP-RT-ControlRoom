@@ -337,8 +337,8 @@ namespace ControlRoomApplication.Main
                 label4.Text = String.Format("{0:N2}", currentOrienation.azimuth);
                 label5.Text = String.Format("{0:N2}", currentOrienation.elevation);
 
-                ActualRATextBox.Text = ConvertedPosition.RightAscension.ToString("0.##");
-                ActualDecTextBox.Text = ConvertedPosition.Declination.ToString("0.##");
+                // ActualRATextBox.Text = ConvertedPosition.RightAscension.ToString("0.##");
+                // ActualDecTextBox.Text = ConvertedPosition.Declination.ToString("0.##");
 
                 UpdateCounterbalanceCheckbox();
             });

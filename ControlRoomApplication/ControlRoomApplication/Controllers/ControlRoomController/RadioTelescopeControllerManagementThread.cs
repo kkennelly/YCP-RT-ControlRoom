@@ -61,7 +61,7 @@ namespace ControlRoomApplication.Controllers
                 ManagementMutex.ReleaseMutex();
             }
         }
-
+        
         public int RadioTelescopeID
         {
             get
@@ -90,7 +90,7 @@ namespace ControlRoomApplication.Controllers
         {
             RTController = controller;
 
-            ManagementThread = new Thread(new ThreadStart(SpinRoutine))
+            ManagementThread = new Thread(new ParameterizedThreadStart(SpinRoutine))
             {
                 Name = "RTControllerManagementThread (ID=" + RadioTelescopeID.ToString() + ")"
             };
@@ -116,7 +116,7 @@ namespace ControlRoomApplication.Controllers
             // TCPListener = new RemoteListener(8090, IPAddress.Parse("10.127.7.112"), controller);
         }
 
-        public bool Start()
+        public bool Start(RadioTelescopeController controller)
         {
             KeepThreadAlive = true;
 
@@ -124,7 +124,7 @@ namespace ControlRoomApplication.Controllers
             {
                 // Sensors.Add(new Sensor(SensorItemEnum.WIND_SPEED, SensorStatusEnum.NORMAL));
 
-                ManagementThread.Start();
+                ManagementThread.Start(controller);
             }
             catch (Exception e)
             {
@@ -180,8 +180,9 @@ namespace ControlRoomApplication.Controllers
             InterruptAppointmentFlag = true;
         }
 
-        private void SpinRoutine()
+        private void SpinRoutine(Object controller)
         {
+            RadioTelescopeController c = (RadioTelescopeController)controller;
             bool KeepAlive = KeepThreadAlive;
 
             // Let MCU connect
@@ -190,66 +191,18 @@ namespace ControlRoomApplication.Controllers
 
             while (KeepAlive)
             {
+                if(c.inclementWeather)
+                {
+                    Thread.Sleep(60000);
+                    continue;
+                }
+
                 NextAppointment = WaitForNextAppointment();
 
                 //Compares the ID of each appointment to see if they have changed
                 if (NextAppointment != null && NextAppointment.Equals(OldAppointment))
                 {
                     logger.Info(Utilities.GetTimeStamp() + ": Waiting for next Appointment");
-                }
-
-                // Checks if Appointment is overdue.
-                // We consider appointments that have a start_time over one minute
-                // from the current time as overdue.
-                if (NextAppointment != null)
-                {
-                    // Get start time of appointment. 
-                    DateTime start = NextAppointment.start_time;
-
-                    // Get current time based on PC's local time. 
-                    DateTime current = DateTime.UtcNow;
-
-                    // Compare current time to appointment.  
-                    TimeSpan diff = current.Subtract(start);
-
-                    // We know it is overdue if the TimeSpan is less than or equal to a negative number of minutes.
-                    if (diff.TotalMinutes >= MiscellaneousConstants.OVERDUE_APPOINTMENT_MINUTES)
-                    {
-                        // If the end time has not been reached yet, we can still run the appointment. However, still
-                        // notify the user about the late start.                         
-                        if (NextAppointment.end_time.CompareTo(DateTime.UtcNow) > 0)
-                        {
-                            logger.Info(Utilities.GetTimeStamp() + ": Appointment is overdue, but end time has not passed. The appointment will start, but may not finish on time.");
-                            // Notify the user about the late start. 
-                            string subject = Utilities.GetTimeStamp() + ": Radio Telescope Appointment Delayed";
-                            string body = "Your appointment scheduled for " + NextAppointment.start_time.ToString() + " was delayed due to the " +
-                                "Radio Telescope Control Room having been offline. Your appointment will end at the scheduled time and may end " +
-                                "before it has time to finish. Apologies for any inconvienence.";
-                            logger.Info(Utilities.GetTimeStamp() + ": Notifying user...");
-                            //EmailNotifications.sendToUser(NextAppointment.User, subject, body, "system@ycpradiotelescope.com");
-                        }
-                        else
-                        {
-                            // In the case that the end time has already passed, cancel the appointment and notify the user. 
-                            logger.Info(Utilities.GetTimeStamp() + ": Appointment is overdue and end time has passed. Cancelling appointment...");
-
-                            // Cancel the appointment. 
-                            NextAppointment._Status = AppointmentStatusEnum.CANCELED;
-
-                            // Update the appointment. 
-                            DatabaseOperations.UpdateAppointment(NextAppointment);
-
-                            // Notify the user via email. 
-                            string subject = Utilities.GetTimeStamp() + ": Radio Telescope Appointment Cancelled";
-                            string body = "Your appointment scheduled for " + NextAppointment.start_time.ToString() + " has been cancelled due to the " +
-                                "Radio Telescope Control Room having been offline. Apologies for any inconvienence.";
-                            logger.Info(Utilities.GetTimeStamp() + ": Notifying user...");
-                            //EmailNotifications.sendToUser(NextAppointment.User, subject, body, "system@ycpradiotelescope.com"); 
-
-                            // Continue to the next appointment. 
-                            continue;
-                        }
-                    }
                 }
 
                 if (NextAppointment != null)
@@ -282,7 +235,7 @@ namespace ControlRoomApplication.Controllers
                         RTController.MoveRadioTelescopeToOrientation(new Orientation(RTController.GetCurrentOrientation().azimuth, 90), MovementPriority.Appointment);
 
                         startZenithCalTime = DateTime.Now;
-
+                        
                         StartReadingData(NextAppointment);
                         Thread.Sleep(MiscellaneousConstants.CALIBRATION_MS);
                         StopReadingRFData();
@@ -339,7 +292,7 @@ namespace ControlRoomApplication.Controllers
                     // Start movement thread
                     AppointmentMovementThread.Start();
 
-                    if (NextAppointment._Type != AppointmentTypeEnum.FREE_CONTROL)
+                    if(NextAppointment._Type != AppointmentTypeEnum.FREE_CONTROL)
                     {
                         // End PLC thread & SpectraCyber 
                         AppointmentMovementThread.Join();
@@ -494,7 +447,7 @@ namespace ControlRoomApplication.Controllers
                 // Delay between checking database for new appointments
                 Thread.Sleep(100);
 
-                if (!waiting) logger.Info(Utilities.GetTimeStamp() + ": Waiting for the next appointment to be within 1 minutes.");
+                if(!waiting) logger.Info(Utilities.GetTimeStamp() + ": Waiting for the next appointment to be within 1 minutes.");
                 waiting = true;
             }
 
@@ -527,7 +480,7 @@ namespace ControlRoomApplication.Controllers
             double duration = NextAppointment._Type == AppointmentTypeEnum.FREE_CONTROL ? length.TotalSeconds : length.TotalMinutes;
             bool scanStarted = false;
 
-            for (int i = 0; i <= (int)duration; i++)
+            for (int i = 0; i <= (int) duration; i++)
             {
                 // before we move, check to see if it is safe
                 if (checkCurrentSensorAndOverrideStatus())
@@ -561,7 +514,7 @@ namespace ControlRoomApplication.Controllers
                         // Kate - removed the check for azumith < 0 in the below if statement due to Todd's request
                         // Reason being, we should not have an azimuth below 0 be given to us. That check is in the
                         // method calling this!
-                        if (NextObjectiveOrientation.elevation < 0)
+                        if (NextObjectiveOrientation.azimuth < 0)
                         {
                             logger.Warn(Utilities.GetTimeStamp() + ": Invalid Appt: Az = " + NextObjectiveOrientation.azimuth + ", El = " + NextObjectiveOrientation.elevation);
                             InterruptAppointmentFlag = true;
@@ -569,7 +522,7 @@ namespace ControlRoomApplication.Controllers
                         }
 
                         logger.Info(Utilities.GetTimeStamp() + ": Moving to Next Objective: Az = " + NextObjectiveOrientation.azimuth + ", El = " + NextObjectiveOrientation.elevation);
-
+                        
                         MovementResult apptMovementResult = RTController.MoveRadioTelescopeToOrientation(NextObjectiveOrientation, MovementPriority.Appointment);
 
                         // Start SpectraCyber if the next appointment is NOT an appointment created by the control form
@@ -588,7 +541,7 @@ namespace ControlRoomApplication.Controllers
                         {
                             timeoutCounter++;
                         }
-                        else if (apptMovementResult == MovementResult.Success)
+                        else if(apptMovementResult == MovementResult.Success)
                         {
                             timeoutCounter = 0;
                         }
@@ -603,12 +556,12 @@ namespace ControlRoomApplication.Controllers
                         {
                             break;
                         }
-
-                        Thread.Sleep(100);
+                        
+                         Thread.Sleep(100);
 
                         NextObjectiveOrientation = null;
                     }
-                }
+                } 
                 else
                 {
                     logger.Info(Utilities.GetTimeStamp() + ": Telescope stopped movement.");
@@ -649,7 +602,7 @@ namespace ControlRoomApplication.Controllers
                 string currentPath = AppDomain.CurrentDomain.BaseDirectory;
 
                 List<RFData> data = NextAppointment.RFDatas.Where(x => x.time_captured > startTime).ToList();
-
+                
                 try
                 {
                     appDataAttachmentPath = Path.Combine(currentPath, $"{fname}.csv");
@@ -694,7 +647,7 @@ namespace ControlRoomApplication.Controllers
         /// </summary>
         private void StopReadingRFData()
         {
-            logger.Info(Utilities.GetTimeStamp() + ": Stopping Reading of RTData");
+            logger.Info(Utilities.GetTimeStamp() + ": Stoping Reading of RTData");
             RTController.RadioTelescope.SpectraCyberController.StopScan();
             RTController.RadioTelescope.SpectraCyberController.RemoveActiveAppointmentID();
             RTController.RadioTelescope.SpectraCyberController.SetSpectraCyberModeType(SpectraCyberModeTypeEnum.UNKNOWN);
@@ -711,7 +664,7 @@ namespace ControlRoomApplication.Controllers
             // loop through all the current sensors
 
             CheckAndSwitchElevationDevice();
-
+            
             foreach (Sensor curSensor in Sensors)
             {
                 // if the sensor is in the ALARM state
@@ -727,11 +680,11 @@ namespace ControlRoomApplication.Controllers
                         RTController.ExecuteRadioTelescopeImmediateStop(MovementPriority.GeneralStop);
                         OverallSensorStatus = false;
                         return false;
-                    }
+                    }                    
                 }
             }
 
-            if (safeTel == false)
+            if(safeTel == false)
             {
                 logger.Info(Utilities.GetTimeStamp() + ": Telescope in safe state.");
                 safeTel = true;
@@ -825,8 +778,7 @@ namespace ControlRoomApplication.Controllers
                 RTController.UseCounterbalance = false;
 
                 altSensor = Sensors.Find(Sensor => Sensor.Item == SensorItemEnum.ELEVATION_ABS_ENCODER);
-                if (altSensor.Status != SensorStatusEnum.ALARM)
-                {
+                if (altSensor.Status != SensorStatusEnum.ALARM) {
                     RTController.UseElevationAbsEncoder = true;
                     RTController.UseMotorEncoder = false;
                 }

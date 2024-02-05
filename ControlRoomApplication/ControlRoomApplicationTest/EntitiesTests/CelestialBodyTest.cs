@@ -29,8 +29,8 @@ namespace ControlRoomApplicationTest.EntitiesTests
             Assert.AreEqual(CelestialBodyConstants.SUN, celestial_body_1.Name);
             Assert.AreEqual(CelestialBodyConstants.MOON, celestial_body_2.Name);
             Assert.AreEqual(CelestialBodyConstants.NONE, celestial_body_3.Name);
-            Assert.AreEqual(0, celestial_body_3.Coordinate.RightAscension);
-            Assert.AreEqual(0, celestial_body_3.Coordinate.Declination);
+            Assert.AreEqual(0, celestial_body_3.Coordinate.right_ascension);
+            Assert.AreEqual(0, celestial_body_3.Coordinate.declination);
         }
     }
 }

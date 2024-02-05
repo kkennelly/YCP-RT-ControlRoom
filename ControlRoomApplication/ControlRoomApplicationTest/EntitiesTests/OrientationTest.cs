@@ -30,10 +30,10 @@ namespace ControlRoomApplicationTest.EntitiesTests
         [TestMethod]
         public void TestInitialization()
         {
-            Assert.AreEqual(azimuth_1, orientation_1.Azimuth);
-            Assert.AreEqual(elevation_1, orientation_1.Elevation);
-            Assert.AreEqual(azimuth_2, orientation_2.Azimuth);
-            Assert.AreEqual(elevation_2, orientation_2.Elevation);
+            Assert.AreEqual(azimuth_1, orientation_1.azimuth);
+            Assert.AreEqual(elevation_1, orientation_1.elevation);
+            Assert.AreEqual(azimuth_2, orientation_2.azimuth);
+            Assert.AreEqual(elevation_2, orientation_2.elevation);
         }
 
         [TestMethod]
@@ -42,11 +42,11 @@ namespace ControlRoomApplicationTest.EntitiesTests
             azimuth_1 = 10;
             elevation_1 = 25;
 
-            orientation_1.Azimuth = azimuth_1;
-            orientation_1.Elevation = elevation_1;
+            orientation_1.azimuth = azimuth_1;
+            orientation_1.elevation = elevation_1;
 
-            Assert.AreEqual(azimuth_1, orientation_1.Azimuth);
-            Assert.AreEqual(elevation_1, orientation_1.Elevation);
+            Assert.AreEqual(azimuth_1, orientation_1.azimuth);
+            Assert.AreEqual(elevation_1, orientation_1.elevation);
         }
 
         [TestMethod]
@@ -57,10 +57,10 @@ namespace ControlRoomApplicationTest.EntitiesTests
             azimuth_2 = 10;
             elevation_2 = 25.15987524;
 
-            orientation_1.Azimuth = azimuth_1;
-            orientation_1.Elevation = elevation_1;
-            orientation_2.Azimuth = azimuth_2;
-            orientation_2.Elevation = elevation_2;
+            orientation_1.azimuth = azimuth_1;
+            orientation_1.elevation = elevation_1;
+            orientation_2.azimuth = azimuth_2;
+            orientation_2.elevation = elevation_2;
 
             Assert.IsTrue(orientation_1.Equals(orientation_2));
         }
@@ -73,10 +73,10 @@ namespace ControlRoomApplicationTest.EntitiesTests
             azimuth_2 = 10;
             elevation_2 = 25.15987524;
 
-            orientation_1.Azimuth = azimuth_1;
-            orientation_1.Elevation = elevation_1;
-            orientation_2.Azimuth = azimuth_2;
-            orientation_2.Elevation = elevation_2;
+            orientation_1.azimuth = azimuth_1;
+            orientation_1.elevation = elevation_1;
+            orientation_2.azimuth = azimuth_2;
+            orientation_2.elevation = elevation_2;
 
             Assert.IsFalse(orientation_1.Equals(orientation_2));
         }
@@ -116,8 +116,8 @@ namespace ControlRoomApplicationTest.EntitiesTests
             Orientation cloned = (Orientation)initial.Clone();
 
             // Verify cloned orientation's azimuth and elevation are the same
-            Assert.AreEqual(initial.Azimuth, cloned.Azimuth);
-            Assert.AreEqual(initial.Elevation, cloned.Elevation);
+            Assert.AreEqual(initial.azimuth, cloned.azimuth);
+            Assert.AreEqual(initial.elevation, cloned.elevation);
         }
     }
 }

@@ -157,11 +157,11 @@ namespace ControlRoomApplicationTest.DatabaseOperationsTests
             Assert.AreEqual(new_appt._Type, output_appts[1]._Type);
 
             // Coordinates
-            Assert.AreEqual(new_appt.Id, output_appts[1].Coordinates.First().apptId);
+            Assert.AreEqual(new_appt.Id, output_appts[1].Coordinates.First().appointment_id);
             Assert.AreEqual(new_appt.Coordinates.First().hours, output_appts[1].Coordinates.First().hours);
             Assert.AreEqual(new_appt.Coordinates.First().minutes, output_appts[1].Coordinates.First().minutes);
-            Assert.AreEqual(new_appt.Coordinates.First().Declination, output_appts[1].Coordinates.First().Declination);
-            Assert.AreEqual(new_appt.Coordinates.First().RightAscension, output_appts[1].Coordinates.First().RightAscension);
+            Assert.AreEqual(new_appt.Coordinates.First().declination, output_appts[1].Coordinates.First().declination);
+            Assert.AreEqual(new_appt.Coordinates.First().right_ascension, output_appts[1].Coordinates.First().right_ascension);
 
             // Other entities that Appointment uses
             Assert.AreEqual(new_appt.celestial_body_id, output_appts[1].celestial_body_id);
@@ -282,11 +282,11 @@ namespace ControlRoomApplicationTest.DatabaseOperationsTests
             expectedCoordinates.Add(new Coordinate(5, 5));
 
             // Verify coordinates are correct
-            Assert.AreEqual(expectedCoordinates[0].Declination, resultCoordinates[0].Declination);
-            Assert.AreEqual(expectedCoordinates[0].RightAscension, resultCoordinates[0].RightAscension);
+            Assert.AreEqual(expectedCoordinates[0].declination, resultCoordinates[0].declination);
+            Assert.AreEqual(expectedCoordinates[0].right_ascension, resultCoordinates[0].right_ascension);
 
-            Assert.AreEqual(expectedCoordinates[1].Declination, resultCoordinates[1].Declination);
-            Assert.AreEqual(expectedCoordinates[1].RightAscension, resultCoordinates[1].RightAscension);
+            Assert.AreEqual(expectedCoordinates[1].declination, resultCoordinates[1].declination);
+            Assert.AreEqual(expectedCoordinates[1].right_ascension, resultCoordinates[1].right_ascension);
 
         }
 
@@ -317,8 +317,8 @@ namespace ControlRoomApplicationTest.DatabaseOperationsTests
             Coordinate expectedCoordinate = new Coordinate(0, 0);
 
             // Verify coordinates are correct
-            Assert.AreEqual(expectedCoordinate.Declination, resultCoordinates[0].Declination);
-            Assert.AreEqual(expectedCoordinate.RightAscension, resultCoordinates[0].RightAscension);
+            Assert.AreEqual(expectedCoordinate.declination, resultCoordinates[0].declination);
+            Assert.AreEqual(expectedCoordinate.right_ascension, resultCoordinates[0].right_ascension);
         }
 
         [TestMethod]
@@ -436,12 +436,12 @@ namespace ControlRoomApplicationTest.DatabaseOperationsTests
             Assert.IsTrue(telescope.Location.Name == retrievedTele.Location.Name);
 
             // current orientation (not yet implemented)
-            Assert.IsTrue(telescope.CurrentOrientation.Azimuth == retrievedTele.CurrentOrientation.Azimuth);
-            Assert.IsTrue(telescope.CurrentOrientation.Elevation == retrievedTele.CurrentOrientation.Elevation);
+            Assert.IsTrue(telescope.CurrentOrientation.azimuth == retrievedTele.CurrentOrientation.azimuth);
+            Assert.IsTrue(telescope.CurrentOrientation.elevation == retrievedTele.CurrentOrientation.elevation);
 
             // calibration orientation (not yet implemented)
-            Assert.IsTrue(telescope.CalibrationOrientation.Azimuth == retrievedTele.CalibrationOrientation.Azimuth);
-            Assert.IsTrue(telescope.CalibrationOrientation.Elevation == retrievedTele.CalibrationOrientation.Elevation);
+            Assert.IsTrue(telescope.CalibrationOrientation.azimuth == retrievedTele.CalibrationOrientation.azimuth);
+            Assert.IsTrue(telescope.CalibrationOrientation.elevation == retrievedTele.CalibrationOrientation.elevation);
 
             // elevation thresholds
             Assert.IsTrue(telescope.maxElevationDegrees == retrievedTele.maxElevationDegrees);
@@ -460,10 +460,10 @@ namespace ControlRoomApplicationTest.DatabaseOperationsTests
             Assert.IsTrue(teleByID.Location.Longitude == retrievedTele.Location.Longitude);
             Assert.IsTrue(teleByID.Location.Altitude == retrievedTele.Location.Altitude);
             Assert.IsTrue(teleByID.Location.Name == retrievedTele.Location.Name);
-            Assert.IsTrue(teleByID.CurrentOrientation.Azimuth == retrievedTele.CurrentOrientation.Azimuth);
-            Assert.IsTrue(teleByID.CurrentOrientation.Elevation == retrievedTele.CurrentOrientation.Elevation);
-            Assert.IsTrue(teleByID.CalibrationOrientation.Azimuth == retrievedTele.CalibrationOrientation.Azimuth);
-            Assert.IsTrue(teleByID.CalibrationOrientation.Elevation == retrievedTele.CalibrationOrientation.Elevation);
+            Assert.IsTrue(teleByID.CurrentOrientation.azimuth == retrievedTele.CurrentOrientation.azimuth);
+            Assert.IsTrue(teleByID.CurrentOrientation.elevation == retrievedTele.CurrentOrientation.elevation);
+            Assert.IsTrue(teleByID.CalibrationOrientation.azimuth == retrievedTele.CalibrationOrientation.azimuth);
+            Assert.IsTrue(teleByID.CalibrationOrientation.elevation == retrievedTele.CalibrationOrientation.elevation);
             Assert.IsTrue(teleByID.maxElevationDegrees == retrievedTele.maxElevationDegrees);
             Assert.IsTrue(teleByID.minElevationDegrees == retrievedTele.minElevationDegrees);
         }
@@ -699,12 +699,12 @@ namespace ControlRoomApplicationTest.DatabaseOperationsTests
             Assert.IsTrue(telescope.Location.Name == retrievedTele.Location.Name);
 
             // current orientation (not yet implemented)
-            Assert.IsTrue(telescope.CurrentOrientation.Azimuth == retrievedTele.CurrentOrientation.Azimuth);
-            Assert.IsTrue(telescope.CurrentOrientation.Elevation == retrievedTele.CurrentOrientation.Elevation);
+            Assert.IsTrue(telescope.CurrentOrientation.azimuth == retrievedTele.CurrentOrientation.azimuth);
+            Assert.IsTrue(telescope.CurrentOrientation.elevation == retrievedTele.CurrentOrientation.elevation);
 
             // calibration orientation (not yet implemented)
-            Assert.IsTrue(telescope.CalibrationOrientation.Azimuth == retrievedTele.CalibrationOrientation.Azimuth);
-            Assert.IsTrue(telescope.CalibrationOrientation.Elevation == retrievedTele.CalibrationOrientation.Elevation);
+            Assert.IsTrue(telescope.CalibrationOrientation.azimuth == retrievedTele.CalibrationOrientation.azimuth);
+            Assert.IsTrue(telescope.CalibrationOrientation.elevation == retrievedTele.CalibrationOrientation.elevation);
 
             // elevation thresholds
             Assert.IsTrue(telescope.maxElevationDegrees == retrievedTele.maxElevationDegrees);
@@ -749,10 +749,10 @@ namespace ControlRoomApplicationTest.DatabaseOperationsTests
             // Change values so the updated one is different
             original.ElevationTemp1Init = false;
             original.AzimuthTemp1Init = false;
-            original.ElevationAccelerometerInit = false;
+            original.ElevationAmbientInit = false;
             original.AzimuthAccelerometerInit = false;
             original.CounterbalanceAccelerometerInit = false;
-            original.ElevationEncoderInit = false;
+            original.AzimuthEncoderInit = false;
             original.AzimuthEncoderInit = false;
             original.TimeoutDataRetrieval = 5;
             original.TimeoutInitialization = 5;
@@ -818,7 +818,7 @@ namespace ControlRoomApplicationTest.DatabaseOperationsTests
         [TestMethod]
         public void testAddAndFetchWeatherStation()
         {
-            WeatherThreshold testThreshold = new WeatherThreshold(10, 120);
+            WeatherThreshold testThreshold = new WeatherThreshold(10, 120, 1);
             DatabaseOperations.AddWeatherThreshold(testThreshold);
             int time = DatabaseOperations.FetchWeatherThreshold().SnowDumpTime;
             Assert.AreEqual(120, time);

@@ -127,8 +127,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             Assert.AreEqual(Server.CurrentCounterbalanceAccl[0].z, expectedValue);
 
             // 0.1 is the approximate margin of error with the conversions
-            Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, expectedValue, 0.16);
-            Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, expectedValue, 0.16);
+            Assert.AreEqual(Server.CurrentAbsoluteOrientation.elevation, expectedValue, 0.16);
+            Assert.AreEqual(Server.CurrentAbsoluteOrientation.azimuth, expectedValue, 0.16);
 
             Assert.IsTrue(Server.FanIsOn);
         }
@@ -168,8 +168,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             Assert.AreEqual(Server.CurrentCounterbalanceAccl[0].y, 0);
             Assert.AreEqual(Server.CurrentCounterbalanceAccl[0].z, 0);
             
-            Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, 0);
-            Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, 0);
+            Assert.AreEqual(Server.CurrentAbsoluteOrientation.elevation, 0);
+            Assert.AreEqual(Server.CurrentAbsoluteOrientation.azimuth, 0);
 
             Assert.IsFalse(Server.FanIsOn);
         }
@@ -208,8 +208,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             Assert.AreEqual(Server.CurrentCounterbalanceAccl[0].y, 0);
             Assert.AreEqual(Server.CurrentCounterbalanceAccl[0].z, 0);
 
-            Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, 0);
-            Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, 0);
+            Assert.AreEqual(Server.CurrentAbsoluteOrientation.elevation, 0);
+            Assert.AreEqual(Server.CurrentAbsoluteOrientation.azimuth, 0);
 
             Assert.IsFalse(Server.FanIsOn);
         }
@@ -249,8 +249,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             Assert.AreEqual(Server.CurrentCounterbalanceAccl[0].y, 0);
             Assert.AreEqual(Server.CurrentCounterbalanceAccl[0].z, 0);
 
-            Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, 0);
-            Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, 0);
+            Assert.AreEqual(Server.CurrentAbsoluteOrientation.elevation, 0);
+            Assert.AreEqual(Server.CurrentAbsoluteOrientation.azimuth, 0);
 
             Assert.IsFalse(Server.FanIsOn);
         }
@@ -289,8 +289,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             Assert.AreEqual(Server.CurrentCounterbalanceAccl[0].y, 0);
             Assert.AreEqual(Server.CurrentCounterbalanceAccl[0].z, 0);
 
-            Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, 0);
-            Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, 50, 0.17); // This should be the only populated value
+            Assert.AreEqual(Server.CurrentAbsoluteOrientation.elevation, 0);
+            Assert.AreEqual(Server.CurrentAbsoluteOrientation.azimuth, 50, 0.17); // This should be the only populated value
 
             Assert.IsFalse(Server.FanIsOn);
         }
@@ -329,8 +329,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             Assert.AreEqual(Server.CurrentCounterbalanceAccl[0].y, 0);
             Assert.AreEqual(Server.CurrentCounterbalanceAccl[0].z, 0);
 
-            Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, 50, 0.17); // This should be the only populated value
-            Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, 0);
+            Assert.AreEqual(Server.CurrentAbsoluteOrientation.elevation, 50, 0.17); // This should be the only populated value
+            Assert.AreEqual(Server.CurrentAbsoluteOrientation.azimuth, 0);
 
             Assert.IsFalse(Server.FanIsOn);
         }
@@ -369,8 +369,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             Assert.AreEqual(Server.CurrentCounterbalanceAccl[0].y, 0);
             Assert.AreEqual(Server.CurrentCounterbalanceAccl[0].z, 0);
 
-            Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, 0);
-            Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, 0);
+            Assert.AreEqual(Server.CurrentAbsoluteOrientation.elevation, 0);
+            Assert.AreEqual(Server.CurrentAbsoluteOrientation.azimuth, 0);
 
             Assert.IsFalse(Server.FanIsOn);
         }
@@ -409,8 +409,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             Assert.AreEqual(Server.CurrentCounterbalanceAccl[0].y, 0);
             Assert.AreEqual(Server.CurrentCounterbalanceAccl[0].z, 0);
 
-            Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, 0);
-            Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, 0);
+            Assert.AreEqual(Server.CurrentAbsoluteOrientation.elevation, 0);
+            Assert.AreEqual(Server.CurrentAbsoluteOrientation.azimuth, 0);
 
             Assert.IsFalse(Server.FanIsOn);
         }
@@ -449,8 +449,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             Assert.AreEqual(Server.CurrentCounterbalanceAccl[0].y, 2);
             Assert.AreEqual(Server.CurrentCounterbalanceAccl[0].z, 3);
 
-            Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, 0);
-            Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, 0);
+            Assert.AreEqual(Server.CurrentAbsoluteOrientation.elevation, 0);
+            Assert.AreEqual(Server.CurrentAbsoluteOrientation.azimuth, 0);
 
             Assert.IsFalse(Server.FanIsOn);
         }
@@ -489,8 +489,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             Assert.AreEqual(Server.CurrentCounterbalanceAccl[0].y, 0);
             Assert.AreEqual(Server.CurrentCounterbalanceAccl[0].z, 0);
 
-            Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, 0);
-            Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, 0);
+            Assert.AreEqual(Server.CurrentAbsoluteOrientation.elevation, 0);
+            Assert.AreEqual(Server.CurrentAbsoluteOrientation.azimuth, 0);
 
             Assert.IsTrue(Server.FanIsOn);
         }
@@ -566,8 +566,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             Assert.AreEqual(Server.CurrentCounterbalanceAccl[0].y, 0);
             Assert.AreEqual(Server.CurrentCounterbalanceAccl[0].z, 0);
 
-            Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, 0);
-            Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, 0);
+            Assert.AreEqual(Server.CurrentAbsoluteOrientation.elevation, 0);
+            Assert.AreEqual(Server.CurrentAbsoluteOrientation.azimuth, 0);
 
             Assert.IsFalse(Server.FanIsOn);
         }
@@ -607,8 +607,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             Assert.AreEqual(Server.CurrentCounterbalanceAccl[0].y, 0);
             Assert.AreEqual(Server.CurrentCounterbalanceAccl[0].z, 0);
 
-            Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, 0);
-            Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, 0);
+            Assert.AreEqual(Server.CurrentAbsoluteOrientation.elevation, 0);
+            Assert.AreEqual(Server.CurrentAbsoluteOrientation.azimuth, 0);
 
             Assert.IsFalse(Server.FanIsOn);
         }
@@ -650,8 +650,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             Assert.AreEqual(Server.CurrentCounterbalanceAccl[0].y, 0);
             Assert.AreEqual(Server.CurrentCounterbalanceAccl[0].z, 0);
 
-            Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, 0);
-            Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, 0);
+            Assert.AreEqual(Server.CurrentAbsoluteOrientation.elevation, 0);
+            Assert.AreEqual(Server.CurrentAbsoluteOrientation.azimuth, 0);
 
             Assert.IsFalse(Server.FanIsOn);
         }
@@ -690,8 +690,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             Assert.AreEqual(Server.CurrentCounterbalanceAccl[0].y, 0);
             Assert.AreEqual(Server.CurrentCounterbalanceAccl[0].z, 0);
 
-            Assert.AreEqual(Server.CurrentAbsoluteOrientation.Elevation, 0);
-            Assert.AreEqual(Server.CurrentAbsoluteOrientation.Azimuth, 0);
+            Assert.AreEqual(Server.CurrentAbsoluteOrientation.elevation, 0);
+            Assert.AreEqual(Server.CurrentAbsoluteOrientation.azimuth, 0);
 
             Assert.IsFalse(Server.FanIsOn);
         }
@@ -853,7 +853,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests
 
             Thread.Sleep(25); // wait for data to be received
 
-            Assert.AreEqual(50, Server.CurrentAbsoluteOrientation.Elevation, 0.17);
+            Assert.AreEqual(50, Server.CurrentAbsoluteOrientation.elevation, 0.17);
             Assert.AreEqual(SensorNetworkStatusEnum.ReceivingData, Server.Status);
 
             Thread.Sleep(500);
@@ -864,7 +864,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests
 
             Thread.Sleep(25); // wait for data to be received
 
-            Assert.AreEqual(25, Server.CurrentAbsoluteOrientation.Elevation, 0.17);
+            Assert.AreEqual(25, Server.CurrentAbsoluteOrientation.elevation, 0.17);
             Assert.AreEqual(SensorNetworkStatusEnum.ReceivingData, Server.Status);
 
             Thread.Sleep(500);
@@ -875,7 +875,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests
 
             Thread.Sleep(25); // wait for data to be received
 
-            Assert.AreEqual(50, Server.CurrentAbsoluteOrientation.Elevation, 0.17);
+            Assert.AreEqual(50, Server.CurrentAbsoluteOrientation.elevation, 0.17);
             Assert.AreEqual(SensorNetworkStatusEnum.ReceivingData, Server.Status);
 
             Thread.Sleep(500);
@@ -886,7 +886,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests
 
             Thread.Sleep(25); // wait for data to be received
 
-            Assert.AreEqual(25, Server.CurrentAbsoluteOrientation.Elevation, 0.17);
+            Assert.AreEqual(25, Server.CurrentAbsoluteOrientation.elevation, 0.17);
             Assert.AreEqual(SensorNetworkStatusEnum.ReceivingData, Server.Status);
 
             // End everything
@@ -950,7 +950,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests
 
             Thread.Sleep(25); // wait for data to be received
 
-            Assert.AreEqual(25, Server.CurrentAbsoluteOrientation.Elevation, 0.17);
+            Assert.AreEqual(25, Server.CurrentAbsoluteOrientation.elevation, 0.17);
             Assert.AreEqual(SensorNetworkStatusEnum.ReceivingData, Server.Status);
 
             // End everything
@@ -1012,7 +1012,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests
 
             Thread.Sleep(25); // wait for data to be received
 
-            Assert.AreEqual(50, Server.CurrentAbsoluteOrientation.Elevation, 0.17);
+            Assert.AreEqual(50, Server.CurrentAbsoluteOrientation.elevation, 0.17);
             Assert.AreEqual(SensorNetworkStatusEnum.ReceivingData, Server.Status);
 
             Thread.Sleep(500);
@@ -1023,7 +1023,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests
 
             Thread.Sleep(25); // wait for data to be received
 
-            Assert.AreEqual(25, Server.CurrentAbsoluteOrientation.Elevation, 0.17);
+            Assert.AreEqual(25, Server.CurrentAbsoluteOrientation.elevation, 0.17);
             Assert.AreEqual(SensorNetworkStatusEnum.ReceivingData, Server.Status);
 
             // Stop the monitoring routine. We aren't testing this, so no asserts are being checked here

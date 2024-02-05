@@ -81,8 +81,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests {
             Orientation CurrentOrientation = TestRadioTelescopeController.GetCurrentOrientation();
             // Ensure the objects are identical
             Assert.AreEqual(response, MovementResult.Success);
-            Assert.AreEqual(Orientation.Azimuth, CurrentOrientation.Azimuth, 0.001);
-            Assert.AreEqual(Orientation.Elevation, CurrentOrientation.Elevation, 0.001);
+            Assert.AreEqual(Orientation.azimuth, CurrentOrientation.azimuth, 0.001);
+            Assert.AreEqual(Orientation.elevation, CurrentOrientation.elevation, 0.001);
 
 
             Orientation = new Orientation(28.0, 42.0);
@@ -91,8 +91,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests {
             // Call the GetCurrentOrientationMethod
             CurrentOrientation = TestRadioTelescopeController.GetCurrentOrientation();
             Assert.AreEqual(response, MovementResult.Success);
-            Assert.AreEqual(Orientation.Azimuth, CurrentOrientation.Azimuth, 0.001);
-            Assert.AreEqual(Orientation.Elevation, CurrentOrientation.Elevation, 0.001);
+            Assert.AreEqual(Orientation.azimuth, CurrentOrientation.azimuth, 0.001);
+            Assert.AreEqual(Orientation.elevation, CurrentOrientation.elevation, 0.001);
 
 
             Orientation = new Orientation(310.0, 42.0);
@@ -102,8 +102,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests {
             CurrentOrientation = TestRadioTelescopeController.GetCurrentOrientation();
             // Ensure the objects are identical
             Assert.AreEqual(response, MovementResult.Success);
-            Assert.AreEqual(Orientation.Azimuth, CurrentOrientation.Azimuth, 0.001);
-            Assert.AreEqual(Orientation.Elevation, CurrentOrientation.Elevation, 0.001);
+            Assert.AreEqual(Orientation.azimuth, CurrentOrientation.azimuth, 0.001);
+            Assert.AreEqual(Orientation.elevation, CurrentOrientation.elevation, 0.001);
 
         }
 
@@ -152,8 +152,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests {
             // telescope isn't calibrated. At this time, all we care about is the movement
 
             // The Radio Telescope should now have a CurrentOrienation of what it had before the call
-            Assert.AreEqual(TestRadioTelescopeController.RadioTelescope.CurrentOrientation.Azimuth, before.Azimuth);
-            Assert.AreEqual(TestRadioTelescopeController.RadioTelescope.CurrentOrientation.Elevation, before.Elevation);
+            Assert.AreEqual(TestRadioTelescopeController.RadioTelescope.CurrentOrientation.azimuth, before.azimuth);
+            Assert.AreEqual(TestRadioTelescopeController.RadioTelescope.CurrentOrientation.elevation, before.elevation);
         }
 
         [TestMethod]
@@ -173,8 +173,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests {
 
             // Ensure the objects are identical
             Assert.AreEqual(response, MovementResult.Success);
-            Assert.AreEqual(Orientation.Azimuth, CurrentOrientation.Azimuth, 0.001);
-            Assert.AreEqual(Orientation.Elevation, CurrentOrientation.Elevation, 0.001);
+            Assert.AreEqual(Orientation.azimuth, CurrentOrientation.azimuth, 0.001);
+            Assert.AreEqual(Orientation.elevation, CurrentOrientation.elevation, 0.001);
         }
 
         [TestMethod]
@@ -194,8 +194,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests {
 
             // Ensure the objects are identical
             Assert.AreEqual(response, MovementResult.Success);
-            Assert.AreEqual(TargetOrientation.Azimuth, CurrentOrientation.Azimuth, 0.001);
-            Assert.AreEqual(TargetOrientation.Elevation, CurrentOrientation.Elevation, 0.001);
+            Assert.AreEqual(TargetOrientation.azimuth, CurrentOrientation.azimuth, 0.001);
+            Assert.AreEqual(TargetOrientation.elevation, CurrentOrientation.elevation, 0.001);
         }
 
         [TestMethod]
@@ -215,8 +215,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests {
 
             // Ensure the objects are identical
             Assert.AreEqual(response, MovementResult.Success);
-            Assert.AreEqual(TargetOrientation.Azimuth, CurrentOrientation.Azimuth, 0.001);
-            Assert.AreEqual(TargetOrientation.Elevation, CurrentOrientation.Elevation, 0.001);
+            Assert.AreEqual(TargetOrientation.azimuth, CurrentOrientation.azimuth, 0.001);
+            Assert.AreEqual(TargetOrientation.elevation, CurrentOrientation.elevation, 0.001);
         }
 
         [TestMethod]
@@ -238,8 +238,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests {
 
             // Ensure the objects are identical
             Assert.AreEqual(response, MovementResult.Success);
-            Assert.AreEqual(TargetOrientation.Azimuth, CurrentOrientation.Azimuth, 0.001);
-            Assert.AreEqual(TargetOrientation.Elevation, CurrentOrientation.Elevation, 0.001);
+            Assert.AreEqual(TargetOrientation.azimuth, CurrentOrientation.azimuth, 0.001);
+            Assert.AreEqual(TargetOrientation.elevation, CurrentOrientation.elevation, 0.001);
         }
 
         [TestMethod]
@@ -261,8 +261,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests {
 
             // Ensure the objects are identical
             Assert.AreEqual(response, MovementResult.Success);
-            Assert.AreEqual(TargetOrientation.Azimuth, CurrentOrientation.Azimuth, 0.001);
-            Assert.AreEqual(TargetOrientation.Elevation, CurrentOrientation.Elevation, 0.001);
+            Assert.AreEqual(TargetOrientation.azimuth, CurrentOrientation.azimuth, 0.001);
+            Assert.AreEqual(TargetOrientation.elevation, CurrentOrientation.elevation, 0.001);
         }
 
         [TestMethod]
@@ -323,16 +323,16 @@ namespace ControlRoomApplicationTest.EntityControllersTests {
 
             // Calculate motor steps from current orientation
             int currStepsAz, currStepsEl;
-            currStepsAz = ConversionHelper.DegreesToSteps(currOrientation.Azimuth, MotorConstants.GEARING_RATIO_AZIMUTH);
-            currStepsEl = ConversionHelper.DegreesToSteps(currOrientation.Elevation, MotorConstants.GEARING_RATIO_ELEVATION);
+            currStepsAz = ConversionHelper.DegreesToSteps(currOrientation.azimuth, MotorConstants.GEARING_RATIO_AZIMUTH);
+            currStepsEl = ConversionHelper.DegreesToSteps(currOrientation.elevation, MotorConstants.GEARING_RATIO_ELEVATION);
 
             // Set target orientation on both Azimuth and Elevation, respectively
             Orientation expectedOrientation = new Orientation(100, 100);
 
             // Calculate motor steps necessary for movement
             int posTransAz, posTransEl;
-            posTransAz = ConversionHelper.DegreesToSteps(expectedOrientation.Azimuth - currOrientation.Azimuth, MotorConstants.GEARING_RATIO_AZIMUTH);
-            posTransEl = ConversionHelper.DegreesToSteps(expectedOrientation.Elevation - currOrientation.Elevation, MotorConstants.GEARING_RATIO_ELEVATION);
+            posTransAz = ConversionHelper.DegreesToSteps(expectedOrientation.azimuth - currOrientation.azimuth, MotorConstants.GEARING_RATIO_AZIMUTH);
+            posTransEl = ConversionHelper.DegreesToSteps(expectedOrientation.elevation - currOrientation.elevation, MotorConstants.GEARING_RATIO_ELEVATION);
 
             // Move telescope
             TestRadioTelescopeController.RadioTelescope.PLCDriver.RelativeMove(100_000, 100_000, posTransAz, posTransEl, expectedOrientation);
@@ -353,16 +353,16 @@ namespace ControlRoomApplicationTest.EntityControllersTests {
 
             // Calculate motor steps from current orientation
             int currStepsAz, currStepsEl;
-            currStepsAz = ConversionHelper.DegreesToSteps(currOrientation.Azimuth, MotorConstants.GEARING_RATIO_AZIMUTH);
-            currStepsEl = ConversionHelper.DegreesToSteps(currOrientation.Elevation, MotorConstants.GEARING_RATIO_ELEVATION);
+            currStepsAz = ConversionHelper.DegreesToSteps(currOrientation.azimuth, MotorConstants.GEARING_RATIO_AZIMUTH);
+            currStepsEl = ConversionHelper.DegreesToSteps(currOrientation.elevation, MotorConstants.GEARING_RATIO_ELEVATION);
 
             // Set target orientation on both Azimuth and Elevation, respectively
             Orientation expectedOrientation = new Orientation(0, 0);
 
             // Calculate motor steps necessary for movement
             int posTransAz, posTransEl;
-            posTransAz = ConversionHelper.DegreesToSteps(expectedOrientation.Azimuth - currOrientation.Azimuth, MotorConstants.GEARING_RATIO_AZIMUTH);
-            posTransEl = ConversionHelper.DegreesToSteps(expectedOrientation.Elevation - currOrientation.Elevation, MotorConstants.GEARING_RATIO_ELEVATION);
+            posTransAz = ConversionHelper.DegreesToSteps(expectedOrientation.azimuth - currOrientation.azimuth, MotorConstants.GEARING_RATIO_AZIMUTH);
+            posTransEl = ConversionHelper.DegreesToSteps(expectedOrientation.elevation - currOrientation.elevation, MotorConstants.GEARING_RATIO_ELEVATION);
 
             // Move telescope
             TestRadioTelescopeController.RadioTelescope.PLCDriver.RelativeMove(100_000, 100_000, posTransAz, posTransEl, expectedOrientation);
@@ -386,16 +386,16 @@ namespace ControlRoomApplicationTest.EntityControllersTests {
 
             // Calculate motor steps from current orientation
             int currStepsAz, currStepsEl;
-            currStepsAz = ConversionHelper.DegreesToSteps(currOrientation.Azimuth, MotorConstants.GEARING_RATIO_AZIMUTH);
-            currStepsEl = ConversionHelper.DegreesToSteps(currOrientation.Elevation, MotorConstants.GEARING_RATIO_ELEVATION);
+            currStepsAz = ConversionHelper.DegreesToSteps(currOrientation.azimuth, MotorConstants.GEARING_RATIO_AZIMUTH);
+            currStepsEl = ConversionHelper.DegreesToSteps(currOrientation.elevation, MotorConstants.GEARING_RATIO_ELEVATION);
 
             // Set target orientation on both Azimuth and Elevation, respectively
             Orientation expectedOrientation = new Orientation(360, 210);
 
             // Calculate motor steps necessary for movement
             int posTransAz, posTransEl;
-            posTransAz = ConversionHelper.DegreesToSteps(expectedOrientation.Azimuth - currOrientation.Azimuth, MotorConstants.GEARING_RATIO_AZIMUTH);
-            posTransEl = ConversionHelper.DegreesToSteps(expectedOrientation.Elevation - currOrientation.Elevation, MotorConstants.GEARING_RATIO_ELEVATION);
+            posTransAz = ConversionHelper.DegreesToSteps(expectedOrientation.azimuth - currOrientation.azimuth, MotorConstants.GEARING_RATIO_AZIMUTH);
+            posTransEl = ConversionHelper.DegreesToSteps(expectedOrientation.elevation - currOrientation.elevation, MotorConstants.GEARING_RATIO_ELEVATION);
 
             // Move telescope
             TestRadioTelescopeController.RadioTelescope.PLCDriver.RelativeMove(100_000, 100_000, posTransAz, posTransEl, expectedOrientation);
@@ -404,8 +404,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests {
             Orientation resultOrientation = TestRadioTelescopeController.RadioTelescope.PLCDriver.GetMotorEncoderPosition();
 
             // Assert expected and result are identical
-            Assert.AreEqual(expectedOrientation.Azimuth, resultOrientation.Azimuth, 0.001);
-            Assert.AreEqual(expectedOrientation.Elevation, resultOrientation.Elevation, 0.001);
+            Assert.AreEqual(expectedOrientation.azimuth, resultOrientation.azimuth, 0.001);
+            Assert.AreEqual(expectedOrientation.elevation, resultOrientation.elevation, 0.001);
         }
 
         [TestMethod]
@@ -546,7 +546,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests {
         [TestMethod]
         public void TestHomeTelescope_ElevationAbsoluteEncoderOff_IncorrectPosition()
         {
-            SensorNetworkServer.CurrentAbsoluteOrientation.Elevation = 1;
+            SensorNetworkServer.CurrentAbsoluteOrientation.elevation = 1;
 
             MovementResult result = TestRadioTelescopeController.HomeTelescope(MovementPriority.Manual);
 
@@ -556,7 +556,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests {
         [TestMethod]
         public void TestHomeTelescope_AzimuthAbsoluteEncoderOff_IncorrectPosition()
         {
-            SensorNetworkServer.CurrentAbsoluteOrientation.Azimuth = 1;
+            SensorNetworkServer.CurrentAbsoluteOrientation.azimuth = 1;
 
             MovementResult result = TestRadioTelescopeController.HomeTelescope(MovementPriority.Manual);
 
@@ -566,8 +566,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests {
         [TestMethod]
         public void TestHomeTelescope_BothAbsoluteEncodersOff_IncorrectPosition()
         {
-            SensorNetworkServer.CurrentAbsoluteOrientation.Azimuth = 1;
-            SensorNetworkServer.CurrentAbsoluteOrientation.Elevation = 1;
+            SensorNetworkServer.CurrentAbsoluteOrientation.azimuth = 1;
+            SensorNetworkServer.CurrentAbsoluteOrientation.elevation = 1;
 
             MovementResult result = TestRadioTelescopeController.HomeTelescope(MovementPriority.Manual);
 
@@ -577,7 +577,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests {
         [TestMethod]
         public void TestHomeTelescope_AzimuthAbsoluteEncoderOffButOverridden_Success()
         {
-            SensorNetworkServer.CurrentAbsoluteOrientation.Azimuth = 1;
+            SensorNetworkServer.CurrentAbsoluteOrientation.azimuth = 1;
             TestRadioTelescopeController.overrides.setAzimuthAbsEncoder(true);
 
             MovementResult result = TestRadioTelescopeController.HomeTelescope(MovementPriority.Manual);
@@ -588,7 +588,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests {
         [TestMethod]
         public void TestHomeTelescope_ElevationAbsoluteEncoderOffButOverridden_Success()
         {
-            SensorNetworkServer.CurrentAbsoluteOrientation.Elevation = 1;
+            SensorNetworkServer.CurrentAbsoluteOrientation.elevation = 1;
             TestRadioTelescopeController.overrides.setElevationAbsEncoder(true);
 
             MovementResult result = TestRadioTelescopeController.HomeTelescope(MovementPriority.Manual);
@@ -599,8 +599,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests {
         [TestMethod]
         public void TestHomeTelescope_BothAbsoluteEncodersOffButOverridden_Success()
         {
-            SensorNetworkServer.CurrentAbsoluteOrientation.Elevation = 1;
-            SensorNetworkServer.CurrentAbsoluteOrientation.Azimuth = 1;
+            SensorNetworkServer.CurrentAbsoluteOrientation.elevation = 1;
+            SensorNetworkServer.CurrentAbsoluteOrientation.azimuth = 1;
             TestRadioTelescopeController.overrides.setElevationAbsEncoder(true);
             TestRadioTelescopeController.overrides.setAzimuthAbsEncoder(true);
 
@@ -934,8 +934,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests {
 
             Assert.AreEqual(MovementResult.Success, result);
             //verify move within 1/10th of a degree 
-            Assert.AreEqual(TestRadioTelescopeController.GetCurrentOrientation().Azimuth,340, 0.1);
-            Assert.AreEqual(TestRadioTelescopeController.GetCurrentOrientation().Elevation, 70,0.1);
+            Assert.AreEqual(TestRadioTelescopeController.GetCurrentOrientation().azimuth,340, 0.1);
+            Assert.AreEqual(TestRadioTelescopeController.GetCurrentOrientation().elevation, 70,0.1);
 
         }
 
@@ -997,8 +997,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests {
             Assert.AreEqual(MovementResult.RequestedAzimuthMoveTooLarge, result);
 
             //ensure that the telescope did not move in either dimension
-            Assert.AreEqual(TestRadioTelescopeController.GetCurrentOrientation().Azimuth,0, 0.1);
-            Assert.AreEqual(TestRadioTelescopeController.GetCurrentOrientation().Elevation, 0,0.1);
+            Assert.AreEqual(TestRadioTelescopeController.GetCurrentOrientation().azimuth,0, 0.1);
+            Assert.AreEqual(TestRadioTelescopeController.GetCurrentOrientation().elevation, 0,0.1);
         }
 
         [TestMethod]
@@ -1011,8 +1011,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests {
             Assert.AreEqual(MovementResult.InvalidRequestedPostion, result);
 
             //ensure that the telescope did not move in either dimension
-            Assert.AreEqual(TestRadioTelescopeController.GetCurrentOrientation().Azimuth, 0);
-            Assert.AreEqual(TestRadioTelescopeController.GetCurrentOrientation().Elevation, 0);
+            Assert.AreEqual(TestRadioTelescopeController.GetCurrentOrientation().azimuth, 0);
+            Assert.AreEqual(TestRadioTelescopeController.GetCurrentOrientation().elevation, 0);
         }
 
         [TestMethod]
@@ -1220,7 +1220,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests {
         {
             double smallDiscrepancy = MiscellaneousConstants.MOTOR_ABSOLUTE_ENCODER_DISCREPANCY / 2;
             Orientation motor = new Orientation(2.98, 10.02);
-            Orientation absolute = new Orientation(motor.Azimuth + smallDiscrepancy, motor.Elevation + smallDiscrepancy);
+            Orientation absolute = new Orientation(motor.azimuth + smallDiscrepancy, motor.elevation + smallDiscrepancy);
             
             Assert.IsTrue(TestRadioTelescopeController.CompareMotorAndAbsoluteEncoders(motor, absolute));
         }
@@ -1234,7 +1234,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests {
             double smallDiscrepancy = MiscellaneousConstants.MOTOR_ABSOLUTE_ENCODER_DISCREPANCY / 2;
             double largeDiscrepancy = MiscellaneousConstants.MOTOR_ABSOLUTE_ENCODER_DISCREPANCY * 2;
             Orientation motor = new Orientation(15.0, 24.49);
-            Orientation absolute = new Orientation(motor.Azimuth + largeDiscrepancy, motor.Elevation + smallDiscrepancy);
+            Orientation absolute = new Orientation(motor.azimuth + largeDiscrepancy, motor.elevation + smallDiscrepancy);
             
             Assert.IsFalse(TestRadioTelescopeController.CompareMotorAndAbsoluteEncoders(motor, absolute));
         }
@@ -1248,7 +1248,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests {
             double smallDiscrepancy = MiscellaneousConstants.MOTOR_ABSOLUTE_ENCODER_DISCREPANCY / 2;
             double largeDiscrepancy = MiscellaneousConstants.MOTOR_ABSOLUTE_ENCODER_DISCREPANCY * 2;
             Orientation motor = new Orientation(15.0, 24.49);
-            Orientation absolute = new Orientation(motor.Azimuth + smallDiscrepancy, motor.Elevation + largeDiscrepancy);
+            Orientation absolute = new Orientation(motor.azimuth + smallDiscrepancy, motor.elevation + largeDiscrepancy);
 
             Assert.IsFalse(TestRadioTelescopeController.CompareMotorAndAbsoluteEncoders(motor, absolute));
         }
@@ -1261,7 +1261,7 @@ namespace ControlRoomApplicationTest.EntityControllersTests {
         {
             double largeDiscrepancy = MiscellaneousConstants.MOTOR_ABSOLUTE_ENCODER_DISCREPANCY * 2;
             Orientation motor = new Orientation(6.01, -2.045);
-            Orientation absolute = new Orientation(motor.Azimuth + largeDiscrepancy, motor.Elevation + largeDiscrepancy);
+            Orientation absolute = new Orientation(motor.azimuth + largeDiscrepancy, motor.elevation + largeDiscrepancy);
             
             Assert.IsFalse(TestRadioTelescopeController.CompareMotorAndAbsoluteEncoders(motor, absolute));
         }

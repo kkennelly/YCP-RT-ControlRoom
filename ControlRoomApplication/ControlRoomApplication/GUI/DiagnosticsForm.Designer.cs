@@ -1175,9 +1175,9 @@
             this.lblAzLimit1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblAzLimit1.Location = new System.Drawing.Point(6, 48);
             this.lblAzLimit1.Name = "lblAzLimit1";
-            this.lblAzLimit1.Size = new System.Drawing.Size(160, 15);
+            this.lblAzLimit1.Size = new System.Drawing.Size(191, 15);
             this.lblAzLimit1.TabIndex = 10;
-            this.lblAzLimit1.Text = "Elevation Limit Switch 1";
+            this.lblAzLimit1.Text = "Elevation Upper Limit Switch";
             // 
             // lblAzLimit2
             // 
@@ -1185,9 +1185,9 @@
             this.lblAzLimit2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblAzLimit2.Location = new System.Drawing.Point(6, 63);
             this.lblAzLimit2.Name = "lblAzLimit2";
-            this.lblAzLimit2.Size = new System.Drawing.Size(160, 15);
+            this.lblAzLimit2.Size = new System.Drawing.Size(191, 15);
             this.lblAzLimit2.TabIndex = 11;
-            this.lblAzLimit2.Text = "Elevation Limit Switch 2";
+            this.lblAzLimit2.Text = "Elevation Lower Limit Switch";
             // 
             // grpMcuStatus
             // 

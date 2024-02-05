@@ -27,8 +27,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             Orientation test_orientation_1 = new Orientation(40.81, -40.75);
             Orientation output_orientation_1 = CoordinateCalculationController.CoordinateToOrientation(coord_1, date_1);
 
-            Assert.AreEqual(test_orientation_1.Azimuth, output_orientation_1.Azimuth, 0.5);
-            Assert.AreEqual(test_orientation_1.Elevation, output_orientation_1.Elevation, 0.5);
+            Assert.AreEqual(test_orientation_1.azimuth, output_orientation_1.azimuth, 0.5);
+            Assert.AreEqual(test_orientation_1.elevation, output_orientation_1.elevation, 0.5);
 
             // Test at 6:00:00 AM local time (Converted to UTC)
             DateTime date_2 = new DateTime(2018, 12, 14, 11, 0, 0);
@@ -36,8 +36,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             Orientation test_orientation_2 = new Orientation(166.09, 50.04);
             Orientation output_orientation_2 = CoordinateCalculationController.CoordinateToOrientation(coord_2, date_2);
 
-            Assert.AreEqual(test_orientation_2.Azimuth, output_orientation_2.Azimuth, 0.5);
-            Assert.AreEqual(test_orientation_2.Elevation, output_orientation_2.Elevation, 0.5);
+            Assert.AreEqual(test_orientation_2.azimuth, output_orientation_2.azimuth, 0.5);
+            Assert.AreEqual(test_orientation_2.elevation, output_orientation_2.elevation, 0.5);
 
             // Test at 5:55:02 PM local time (Converted to UTC)
             DateTime date_3 = new DateTime(2018, 2, 3, 22, 55, 2);
@@ -45,8 +45,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             Orientation test_orientation_3 = new Orientation(348.36, 45.00);
             Orientation output_orientation_3 = CoordinateCalculationController.CoordinateToOrientation(coord_3, date_3);
 
-            Assert.AreEqual(test_orientation_3.Azimuth, output_orientation_3.Azimuth, 0.5);
-            Assert.AreEqual(test_orientation_3.Elevation, output_orientation_3.Elevation, 0.5);
+            Assert.AreEqual(test_orientation_3.azimuth, output_orientation_3.azimuth, 0.5);
+            Assert.AreEqual(test_orientation_3.elevation, output_orientation_3.elevation, 0.5);
         }
 
         [TestMethod]
@@ -59,8 +59,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             Orientation output_orientation_1 = CoordinateCalculationController.CoordinateToOrientation(coord_1, date_1);
             Coordinate output_coordinate_1 = CoordinateCalculationController.OrientationToCoordinate(output_orientation_1, date_1);
 
-            Assert.AreEqual(coord_1.RightAscension, output_coordinate_1.RightAscension, 0.5);
-            Assert.AreEqual(coord_1.Declination, output_coordinate_1.Declination, 0.5);
+            Assert.AreEqual(coord_1.right_ascension, output_coordinate_1.right_ascension, 0.5);
+            Assert.AreEqual(coord_1.declination, output_coordinate_1.declination, 0.5);
 
             // Test at 6:00:00 AM local time (Converted to UTC)
             DateTime date_2 = new DateTime(2018, 12, 14, 11, 0, 0);
@@ -69,8 +69,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             Orientation output_orientation_2 = CoordinateCalculationController.CoordinateToOrientation(coord_2, date_2);
             Coordinate output_coordinate_2 = CoordinateCalculationController.OrientationToCoordinate(output_orientation_2, date_2);
 
-            Assert.AreEqual(coord_2.RightAscension, output_coordinate_2.RightAscension, 0.5);
-            Assert.AreEqual(coord_2.Declination, output_coordinate_2.Declination, 0.5);
+            Assert.AreEqual(coord_2.right_ascension, output_coordinate_2.right_ascension, 0.5);
+            Assert.AreEqual(coord_2.declination, output_coordinate_2.declination, 0.5);
 
             // Test at 5:55:02 PM local time (Converted to UTC)
             DateTime date_3 = new DateTime(2018, 2, 3, 22, 55, 2);
@@ -79,8 +79,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             Orientation output_orientation_3 = CoordinateCalculationController.CoordinateToOrientation(coord_3, date_3);
             Coordinate output_coordinate_3 = CoordinateCalculationController.OrientationToCoordinate(output_orientation_3, date_3);
 
-            Assert.AreEqual(coord_3.RightAscension, output_coordinate_3.RightAscension, 0.5);
-            Assert.AreEqual(coord_3.Declination, output_coordinate_3.Declination, 0.5);
+            Assert.AreEqual(coord_3.right_ascension, output_coordinate_3.right_ascension, 0.5);
+            Assert.AreEqual(coord_3.declination, output_coordinate_3.declination, 0.5);
         }
 
         [TestMethod]
@@ -192,8 +192,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             appt.Coordinates.Add(coord_1);
             Coordinate output_coord_1 = CoordinateCalculationController.GetPointCoordinate(appt);
 
-            Assert.AreEqual(coord_1.RightAscension, output_coord_1.RightAscension, 0.05);
-            Assert.AreEqual(coord_1.Declination, output_coord_1.Declination, 0.05);
+            Assert.AreEqual(coord_1.right_ascension, output_coord_1.right_ascension, 0.05);
+            Assert.AreEqual(coord_1.declination, output_coord_1.declination, 0.05);
         }
 
         [TestMethod]
@@ -205,8 +205,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             appt.CelestialBody = new CelestialBody(CelestialBodyConstants.SUN);
             Coordinate output_coord_1 = CoordinateCalculationController.GetCelestialBodyCoordinate(appt, date);
             Orientation output_orientation_1 = CoordinateCalculationController.CoordinateToOrientation(output_coord_1, date);
-            Assert.AreEqual(26.74, output_orientation_1.Elevation, 0.05);
-            Assert.AreEqual(179.6, output_orientation_1.Azimuth, 0.05);
+            Assert.AreEqual(26.74, output_orientation_1.elevation, 0.05);
+            Assert.AreEqual(179.6, output_orientation_1.azimuth, 0.05);
         }
 
         [TestMethod]
@@ -218,8 +218,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             appt.CelestialBody = new CelestialBody(CelestialBodyConstants.SUN);
             Coordinate output_coord_1 = CoordinateCalculationController.GetCelestialBodyCoordinate(appt, date);
 
-            Assert.AreEqual(17.4508, output_coord_1.RightAscension, 0.05);
-            Assert.AreEqual(-23.2207, output_coord_1.Declination, 0.05);
+            Assert.AreEqual(17.4508, output_coord_1.right_ascension, 0.05);
+            Assert.AreEqual(-23.2207, output_coord_1.declination, 0.05);
         }
 
         [TestMethod]
@@ -229,22 +229,22 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             DateTime date = new DateTime(2018, 12, 14, 17, 0, 0);
             Coordinate output_coord_1 = CoordinateCalculationController.GetSunCoordinate(date);
 
-            Assert.AreEqual(17.4508, output_coord_1.RightAscension, 0.05);
-            Assert.AreEqual(-23.2207, output_coord_1.Declination, 0.05);
+            Assert.AreEqual(17.4508, output_coord_1.right_ascension, 0.05);
+            Assert.AreEqual(-23.2207, output_coord_1.declination, 0.05);
 
             // Test at sunrise local time (Converted to UTC)  
             date = new DateTime(2018, 12, 14, 12, 0, 0);
             Coordinate output_coord_2 = CoordinateCalculationController.GetSunCoordinate(date);
 
-            Assert.AreEqual(17.4354, output_coord_2.RightAscension, 0.05);
-            Assert.AreEqual(-23.2085, output_coord_2.Declination, 0.05);
+            Assert.AreEqual(17.4354, output_coord_2.right_ascension, 0.05);
+            Assert.AreEqual(-23.2085, output_coord_2.declination, 0.05);
 
             // Test at sunset local time (Converted to UTC)  
             date = new DateTime(2018, 12, 14, 22, 0, 0);
             Coordinate output_coord_3 = CoordinateCalculationController.GetSunCoordinate(date);
 
-            Assert.AreEqual(17.4661, output_coord_3.RightAscension, 0.05);
-            Assert.AreEqual(-23.2327, output_coord_3.Declination, 0.05);
+            Assert.AreEqual(17.4661, output_coord_3.right_ascension, 0.05);
+            Assert.AreEqual(-23.2327, output_coord_3.declination, 0.05);
         }
 
         [TestMethod]
@@ -254,22 +254,22 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             DateTime date = new DateTime(2018, 12, 14, 18, 0, 0);
             Coordinate output_coord_1 = CoordinateCalculationController.GetMoonCoordinate(date);
 
-            Assert.AreEqual(23.1637847, output_coord_1.RightAscension, 1);
-            Assert.AreEqual(-9.5685756655, output_coord_1.Declination, 1);
+            Assert.AreEqual(23.1637847, output_coord_1.right_ascension, 1);
+            Assert.AreEqual(-9.5685756655, output_coord_1.declination, 1);
 
             // Test at sunset local time (Converted to UTC)  
             date = new DateTime(2018, 12, 14, 22, 0, 0);
             Coordinate output_coord_2 = CoordinateCalculationController.GetMoonCoordinate(date);
 
-            Assert.AreEqual(23.2914, output_coord_2.RightAscension, 1);
-            Assert.AreEqual(-8.9042, output_coord_2.Declination, 1);
+            Assert.AreEqual(23.2914, output_coord_2.right_ascension, 1);
+            Assert.AreEqual(-8.9042, output_coord_2.declination, 1);
 
             // Test at moonrise local time (Converted to UTC)
             date = new DateTime(2018, 12, 15, 0, 0, 0);
             Coordinate output_coord_3 = CoordinateCalculationController.GetMoonCoordinate(date);
 
-            Assert.AreEqual(23.3550, output_coord_3.RightAscension, 1);
-            Assert.AreEqual(-8.565285, output_coord_3.Declination, 1);
+            Assert.AreEqual(23.3550, output_coord_3.right_ascension, 1);
+            Assert.AreEqual(-8.565285, output_coord_3.declination, 1);
         }
 
         [TestMethod]
@@ -290,10 +290,10 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             Coordinate output_coord_2 = CoordinateCalculationController.GetRasterCoordinate(appt, end);
             Orientation output_orientation_2 = CoordinateCalculationController.CoordinateToOrientation(output_coord_2, end);
 
-            Assert.AreEqual(46.41, output_orientation_1.Elevation, 0.05);
-            Assert.AreEqual(119.24, output_orientation_1.Azimuth, 0.05);
-            Assert.AreEqual(31.04, output_orientation_2.Elevation, 0.05);
-            Assert.AreEqual(97, output_orientation_2.Azimuth, 0.05);
+            Assert.AreEqual(46.41, output_orientation_1.elevation, 0.05);
+            Assert.AreEqual(119.24, output_orientation_1.azimuth, 0.05);
+            Assert.AreEqual(31.04, output_orientation_2.elevation, 0.05);
+            Assert.AreEqual(97, output_orientation_2.azimuth, 0.05);
         }
 
         [TestMethod]
@@ -312,11 +312,11 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             Coordinate output_coord_1 = CoordinateCalculationController.GetRasterCoordinate(appt, start);
             Coordinate output_coord_2 = CoordinateCalculationController.GetRasterCoordinate(appt, end);
 
-            Assert.AreEqual(coord_1.RightAscension, output_coord_1.RightAscension, 0.05);
-            Assert.AreEqual(coord_1.Declination, output_coord_1.Declination, 0.05);
+            Assert.AreEqual(coord_1.right_ascension, output_coord_1.right_ascension, 0.05);
+            Assert.AreEqual(coord_1.declination, output_coord_1.declination, 0.05);
 
-            Assert.IsTrue(coord_2.RightAscension > output_coord_2.RightAscension);
-            Assert.IsTrue(coord_2.Declination > output_coord_2.Declination);
+            Assert.IsTrue(coord_2.right_ascension > output_coord_2.right_ascension);
+            Assert.IsTrue(coord_2.declination > output_coord_2.declination);
         }
 
         [TestMethod]
@@ -331,8 +331,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
             drift_scan_appt.Orientation = test_orientation;
 
             var orientation_orientation = CoordinateCalculationController.CalculateOrientation(drift_scan_appt, date);
-            Assert.AreEqual(test_orientation.Elevation, orientation_orientation.Elevation, 0.05);
-            Assert.AreEqual(test_orientation.Azimuth, orientation_orientation.Azimuth, 0.05);
+            Assert.AreEqual(test_orientation.elevation, orientation_orientation.elevation, 0.05);
+            Assert.AreEqual(test_orientation.azimuth, orientation_orientation.azimuth, 0.05);
         }
 
         [TestMethod]
@@ -350,15 +350,15 @@ namespace ControlRoomApplicationTest.EntityControllersTests
 
             // Test free control calibration
             var free_control_orientation_1 = CoordinateCalculationController.CalculateOrientation(free_control_appt, date);
-            Assert.IsTrue(free_control_orientation_1.Elevation == test_orientation.Elevation);
-            Assert.IsTrue(free_control_orientation_1.Azimuth == test_orientation.Azimuth);
+            Assert.IsTrue(free_control_orientation_1.elevation == test_orientation.elevation);
+            Assert.IsTrue(free_control_orientation_1.azimuth == test_orientation.azimuth);
             Assert.IsTrue(free_control_appt.Orientation == null);
 
             // Test free control move
             free_control_appt.Coordinates.Add(new Coordinate(0, 0));
             var free_control_orientation_2 = CoordinateCalculationController.CalculateOrientation(free_control_appt, date);
-            Assert.AreEqual(-37.14, free_control_orientation_2.Elevation, 0.05);
-            Assert.AreEqual(309.5, free_control_orientation_2.Azimuth, 0.05);
+            Assert.AreEqual(-37.14, free_control_orientation_2.elevation, 0.05);
+            Assert.AreEqual(309.5, free_control_orientation_2.azimuth, 0.05);
             Assert.IsTrue(free_control_appt.Coordinates.Count == 0);
 
             // Test free control move without coords
@@ -379,8 +379,8 @@ namespace ControlRoomApplicationTest.EntityControllersTests
 
             // Test free control move
             var free_control_coordinate_1 = CoordinateCalculationController.GetFreeControlCoordinate(free_control_appt);
-            Assert.AreEqual(0, free_control_coordinate_1.RightAscension, 0.05);
-            Assert.AreEqual(0, free_control_coordinate_1.Declination, 0.05);
+            Assert.AreEqual(0, free_control_coordinate_1.right_ascension, 0.05);
+            Assert.AreEqual(0, free_control_coordinate_1.declination, 0.05);
             Assert.IsTrue(free_control_appt.Coordinates.Count == 0);
 
             // Test free control move without coords
